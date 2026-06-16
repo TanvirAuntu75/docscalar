@@ -36,6 +36,7 @@ const OrganizePdf = lazy(() => import('./pages/pdf/OrganizePdf'))
 const AddWatermark = lazy(() => import('./pages/pdf/AddWatermark'))
 const AddPageNumbers = lazy(() => import('./pages/pdf/AddPageNumbers'))
 const SignPdf = lazy(() => import('./pages/pdf/SignPdf'))
+const FileUploadZoneDemo = lazy(() => import('./components/FileUploadZoneDemo'))
 const PowerpointToPdf = lazy(() => import('./pages/document/PowerpointToPdf'))
 const ExcelToPdf = lazy(() => import('./pages/document/ExcelToPdf'))
 const HtmlToPdf = lazy(() => import('./pages/document/HtmlToPdf'))
@@ -122,6 +123,7 @@ export default function App() {
             <Route path="/pdf-to-powerpoint" element={<PdfToPowerpoint />} />
             <Route path="/pdf-to-pdfa" element={<PdfToPdfa />} />
             <Route path="/redact-pdf" element={<RedactPdf />} />
+            <Route path="/upload-demo" element={<FileUploadZoneDemo />} />
             <Route path="/ocr-pdf" element={<OcrPdf />} />
             <Route path="/coming-soon/:toolId" element={<ComingSoon />} />
             <Route path="/privacy" element={<Privacy />} />
