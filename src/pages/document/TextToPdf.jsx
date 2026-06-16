@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ToolIcon from '../../components/ToolIcon';
-import { Link } from 'react-router-dom';
+
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -14,6 +14,7 @@ export default function TextToPdf() {
   const [files, setFiles] = useState([]);
   const [title, setTitle] = useState('');
   const [fontSize, setFontSize] = useState(12);
+  const [lineSpacing, setLineSpacing] = useState(1.5);
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
@@ -47,7 +48,8 @@ export default function TextToPdf() {
     setProgress(10);
     try {
       const pdfBlob = await textToPdf(finalContent, { 
-        fontSize: Number(fontSize), 
+        fontSize: Number(fontSize),
+        lineSpacing: Number(lineSpacing),
         title: title || 'DocForge Document' 
       }, (pct) => {
         setProgress(pct);
@@ -183,6 +185,15 @@ export default function TextToPdf() {
                     <option value="16">16 pt (Large)</option>
                     <option value="18">18 pt (Very Large)</option>
                     <option value="24">24 pt (Headline)</option>
+                  </select>
+                </div>
+                <div className="option-group">
+                  <label>Line Spacing</label>
+                  <select value={lineSpacing} onChange={(e) => setLineSpacing(e.target.value)}>
+                    <option value="1.0">1.0 (Single)</option>
+                    <option value="1.15">1.15 (Default)</option>
+                    <option value="1.5">1.5 (1.5 lines)</option>
+                    <option value="2.0">2.0 (Double)</option>
                   </select>
                 </div>
               </div>
