@@ -7,12 +7,19 @@ export default function ToolCard({ tool }) {
 
   return (
     <div
-      className="bg-white dark:bg-[#1a1a1c] border border-[#e4e4e7] dark:border-[#2a2a2c] rounded-2xl p-6 flex flex-col gap-4 hover:border-primary/45 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-all duration-200 cursor-pointer group relative overflow-hidden text-left shadow-sm dark:shadow-none"
+      className="bg-white dark:bg-[#1a1a1c] border border-[#e4e4e7] dark:border-[#2a2a2c] rounded-2xl p-6 flex flex-col gap-4 hover:border-primary/45 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent transition-all duration-200 cursor-pointer group relative overflow-hidden text-left shadow-sm dark:shadow-none"
       onClick={() => navigate(tool.path)}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && navigate(tool.path)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navigate(tool.path);
+        }
+      }}
       id={`tool-${tool.id}`}
+      aria-labelledby={`tool-${tool.id}-title`}
+      aria-describedby={`tool-${tool.id}-desc`}
     >
       <div className="flex justify-between items-start z-10">
         <div className="w-14 h-14 flex items-center justify-center select-none">
@@ -21,10 +28,10 @@ export default function ToolCard({ tool }) {
       </div>
 
       <div className="z-10 mt-auto">
-        <h3 className="text-[17px] font-bold text-gray-800 dark:text-gray-100 mb-1 group-hover:text-primary transition-colors">
+        <h3 id={`tool-${tool.id}-title`} className="text-[17px] font-bold text-gray-800 dark:text-gray-100 mb-1 group-hover:text-primary transition-colors">
           {tool.title}
         </h3>
-        <p className="text-[13px] text-gray-500 dark:text-gray-400 leading-relaxed">
+        <p id={`tool-${tool.id}-desc`} className="text-[13px] text-gray-500 dark:text-gray-400 leading-relaxed">
           {tool.description}
         </p>
       </div>

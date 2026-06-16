@@ -1,0 +1,3 @@
+## 2024-06-16 - [Keyboard Accessibility for role="button"]
+**Learning:** Custom interactive elements like `ToolCard` that act as buttons (with `role="button"` and `tabIndex={0}`) MUST implement both `Enter` and `Space` key handling to meet expected button behavior. Additionally, they often lack sufficient visual focus states unless explicitly added via `focus-visible` utility classes.
+**Action:** When adding `role="button"`, always implement `onKeyDown` with support for both `Enter` and Space (preventing default scroll on Space), and add explicit focus styles like `focus-visible:outline-none focus-visible:ring-2` so keyboard users know which item has focus.
