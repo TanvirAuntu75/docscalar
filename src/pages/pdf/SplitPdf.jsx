@@ -140,12 +140,12 @@ export default function SplitPdf() {
                   <label>Mode</label>
                   <select value={mode} onChange={(e) => setMode(e.target.value)}>
                     <option value="all">Split every page</option>
-                    <option value="range">Extract specific pages</option>
+                    <option value="range">Extract and split specific pages</option>
                   </select>
                 </div>
                 {mode === 'range' && (
                   <div className="option-group">
-                    <label>Pages (e.g. 1-3, 5, 7-9)</label>
+                    <label>Pages to extract and split (e.g. 1-3, 5, 7-9)</label>
                     <input type="text" value={range} onChange={(e) => setRange(e.target.value)} placeholder="1-3, 5, 7-9" />
                   </div>
                 )}

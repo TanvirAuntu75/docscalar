@@ -1,4 +1,5 @@
 /* Split PDF engine using background worker */
+import { PDFDocument } from 'pdf-lib';
 import ConversionWorker from '../../workers/pdf.worker.js?worker';
 
 /**
