@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>DocForge - Mobile Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Instrument+Serif:ital@0;1&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#62df7d",
+                        "surface-container-high": "#ece8e1",
+                        "inverse-on-surface": "#f4f0e9",
+                        "on-tertiary-container": "#003b15",
+                        "tertiary-fixed": "#7ffc97",
+                        "primary-container": "#f97316",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#4a4642",
+                        "inverse-primary": "#ffb690",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#9d4300",
+                        "on-surface-variant": "#584237",
+                        "outline-variant": "#e0c0b1",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#ffb690",
+                        "surface-container-low": "#f7f3ec",
+                        "surface-container-highest": "#e6e2db",
+                        "outline": "#8c7164",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1c1c18",
+                        "background": "#fdf9f2",
+                        "secondary-container": "#e6ded9",
+                        "surface-dim": "#dddad3",
+                        "secondary-fixed": "#e9e1dc",
+                        "surface-variant": "#e6e2db",
+                        "on-secondary-fixed": "#1e1b18",
+                        "surface-bright": "#fdf9f2",
+                        "inverse-surface": "#31302c",
+                        "surface-container": "#f1ede6",
+                        "on-secondary-container": "#67625e",
+                        "tertiary-container": "#2cb055",
+                        "secondary-fixed-dim": "#ccc5c0",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1c18",
+                        "secondary": "#625d59",
+                        "primary-fixed": "#ffdbca",
+                        "on-primary-container": "#582200",
+                        "on-primary-fixed-variant": "#783200",
+                        "on-tertiary-fixed": "#002109",
+                        "on-primary-fixed": "#341100",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fdf9f2",
+                        "on-tertiary-fixed-variant": "#005320",
+                        "surface-tint": "#9d4300",
+                        "tertiary": "#006e2d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "4xl": "96px",
+                        "5xl": "128px",
+                        "sm": "8px",
+                        "base": "8px",
+                        "2xl": "48px",
+                        "3xl": "64px",
+                        "xl": "32px",
+                        "container-max": "1200px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "h1": ["Inter"],
+                        "h2": ["Inter"],
+                        "display-hero-mobile": ["Instrument Serif"],
+                        "display-hero": ["Instrument Serif"],
+                        "label-mono": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "button": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h3": ["24px", { "lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h1": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "display-hero-mobile": ["56px", { "lineHeight": "1.1", "fontWeight": "400" }],
+                        "display-hero": ["96px", { "lineHeight": "1.0", "letterSpacing": "-0.04em", "fontWeight": "400" }],
+                        "label-mono": ["13px", { "lineHeight": "1.0", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "button": ["15px", { "lineHeight": "1.0", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md antialiased w-[375px] mx-auto overflow-x-hidden">
+<!-- Top Navigation (Mobile Version) -->
+<header class="sticky top-0 z-50 w-full bg-surface-container-lowest border-b border-surface-variant flex justify-between items-center px-margin-mobile py-sm">
+<div class="font-h2 text-h2 text-primary">DocForge</div>
+<button class="text-on-surface p-sm">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</header>
+<main class="w-full">
+<!-- Hero Section -->
+<section class="px-margin-mobile py-2xl bg-surface-container flex flex-col items-center text-center">
+<h1 class="font-display-hero-mobile text-display-hero-mobile text-on-surface mb-md">Documents,<br/>handled.</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl">The swiss-army knife for your professional files. Convert, edit, and secure with precision.</p>
+<div class="w-full flex flex-col gap-sm">
+<button class="w-full bg-primary-container text-on-secondary font-button text-button py-md px-lg rounded-[10px] active:bg-[#C2410C] transition-colors">Start Free →</button>
+<button class="w-full bg-transparent border border-surface-variant text-on-surface font-button text-button py-md px-lg rounded-[10px] active:bg-surface-variant transition-colors">Explore Tools</button>
+</div>
+</section>
+<!-- Drop Zone -->
+<section class="px-margin-mobile py-xl">
+<div class="w-full h-[120px] rounded-xl border-2 border-dashed border-outline-variant bg-surface flex flex-col items-center justify-center cursor-pointer active:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-outline mb-xs" data-icon="upload_file">upload_file</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Tap to upload a file</span>
+</div>
+</section>
+<!-- Tools Grid (Single Column) -->
+<section class="px-margin-mobile py-xl bg-surface">
+<h2 class="font-h3 text-h3 text-on-surface mb-lg">Core Utilities</h2>
+<div class="flex flex-col gap-md">
+<!-- Tool Card 1 -->
+<div class="bg-surface-container border border-surface-variant rounded-xl p-md flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+<div>
+<h3 class="font-button text-button text-on-surface">PDF to Word</h3>
+<p class="font-body-md text-[14px] text-on-surface-variant">Convert layouts perfectly</p>
+</div>
+</div>
+<!-- Tool Card 2 -->
+<div class="bg-surface-container border border-surface-variant rounded-xl p-md flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined" data-icon="merge">merge</span>
+</div>
+<div>
+<h3 class="font-button text-button text-on-surface">Merge PDFs</h3>
+<p class="font-body-md text-[14px] text-on-surface-variant">Combine multiple files</p>
+</div>
+</div>
+<!-- Tool Card 3 -->
+<div class="bg-surface-container border border-surface-variant rounded-xl p-md flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined" data-icon="compress">compress</span>
+</div>
+<div>
+<h3 class="font-button text-button text-on-surface">Compress</h3>
+<p class="font-body-md text-[14px] text-on-surface-variant">Reduce file size</p>
+</div>
+</div>
+<!-- Tool Card 4 -->
+<div class="bg-surface-container border border-surface-variant rounded-xl p-md flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined" data-icon="edit_document">edit_document</span>
+</div>
+<div>
+<h3 class="font-button text-button text-on-surface">Edit PDF</h3>
+<p class="font-body-md text-[14px] text-on-surface-variant">Modify text &amp; images</p>
+</div>
+</div>
+<!-- Tool Card 5 -->
+<div class="bg-surface-container border border-surface-variant rounded-xl p-md flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+</div>
+<div>
+<h3 class="font-button text-button text-on-surface">Protect</h3>
+<p class="font-body-md text-[14px] text-on-surface-variant">Add passwords &amp; encryption</p>
+</div>
+</div>
+<!-- Tool Card 6 -->
+<div class="bg-surface-container border border-surface-variant rounded-xl p-md flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined" data-icon="signature">signature</span>
+</div>
+<div>
+<h3 class="font-button text-button text-on-surface">eSign</h3>
+<p class="font-body-md text-[14px] text-on-surface-variant">Sign documents securely</p>
+</div>
+</div>
+</div>
+<button class="mt-lg font-button text-button text-primary flex items-center gap-xs">
+                View All Tools <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</section>
+<!-- How It Works (Stacked) -->
+<section class="px-margin-mobile py-2xl bg-surface-container-low">
+<h2 class="font-h3 text-h3 text-on-surface mb-xl text-center">Zero friction workflow.</h2>
+<div class="flex flex-col gap-lg">
+<div class="flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center mb-sm font-label-mono text-label-mono text-on-surface">1</div>
+<h3 class="font-button text-button text-on-surface mb-xs">Upload</h3>
+<p class="font-body-md text-[14px] text-on-surface-variant">Drag or select your file securely.</p>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center mb-sm font-label-mono text-label-mono text-on-surface">2</div>
+<h3 class="font-button text-button text-on-surface mb-xs">Process</h3>
+<p class="font-body-md text-[14px] text-on-surface-variant">Our engine handles the conversion instantly.</p>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center mb-sm font-label-mono text-label-mono text-on-surface">3</div>
+<h3 class="font-button text-button text-on-surface mb-xs">Download</h3>
+<p class="font-body-md text-[14px] text-on-surface-variant">Get your pristine file, ready to go.</p>
+</div>
+</div>
+</section>
+<!-- Trust Strip (Stacked) -->
+<section class="px-margin-mobile py-xl bg-surface border-y border-surface-variant">
+<div class="flex flex-col gap-md items-center text-center">
+<div class="flex flex-col items-center gap-xs">
+<span class="material-symbols-outlined text-outline" data-icon="verified_user">verified_user</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant">256-bit SSL</span>
+</div>
+<div class="flex flex-col items-center gap-xs">
+<span class="material-symbols-outlined text-outline" data-icon="delete_sweep">delete_sweep</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant">Auto-Delete in 1hr</span>
+</div>
+<div class="flex flex-col items-center gap-xs">
+<span class="material-symbols-outlined text-outline" data-icon="groups">groups</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant">1M+ Users</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full bg-inverse-surface text-inverse-on-surface border-t border-outline px-margin-mobile py-2xl flex flex-col gap-lg">
+<div class="font-h3 text-h3 text-surface-bright">DocForge</div>
+<div class="flex flex-col gap-md font-body-md text-body-md text-on-secondary-container">
+<a class="hover:text-primary-fixed transition-colors" href="#">Product</a>
+<a class="hover:text-primary-fixed transition-colors" href="#">Company</a>
+<a class="hover:text-primary-fixed transition-colors" href="#">Legal</a>
+<a class="hover:text-primary-fixed transition-colors" href="#">Support</a>
+</div>
+<div class="font-body-md text-body-md text-on-secondary-container pt-lg border-t border-surface-variant/20">
+            © 2024 DocForge. Built with zero tracking.
+        </div>
+</footer>
+</body></html>

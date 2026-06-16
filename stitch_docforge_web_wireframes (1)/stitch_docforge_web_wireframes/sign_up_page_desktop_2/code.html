@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign Up - DocuAll</title>
+<!-- Google Fonts: Inter & Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config injected from Brand Anchors -->
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "tertiary": "#c3d9ff",
+                "surface-container-high": "#2a2a2a",
+                "on-tertiary": "#00315f",
+                "secondary-fixed": "#ffdbc8",
+                "secondary-fixed-dim": "#ffb68b",
+                "on-primary": "#00390c",
+                "tertiary-container": "#93beff",
+                "background": "#131313",
+                "outline-variant": "#3c4b3a",
+                "surface-container-low": "#1c1b1b",
+                "on-surface": "#e5e2e1",
+                "on-tertiary-fixed": "#001c3b",
+                "inverse-primary": "#006e20",
+                "on-secondary-fixed-variant": "#753400",
+                "primary-container": "#00d948",
+                "on-secondary-container": "#602a00",
+                "secondary": "#ffb68b",
+                "on-tertiary-container": "#004c8e",
+                "on-surface-variant": "#bbcbb5",
+                "on-background": "#e5e2e1",
+                "surface-bright": "#3a3939",
+                "primary-fixed-dim": "#25e452",
+                "surface-tint": "#25e452",
+                "outline": "#859581",
+                "surface": "#131313",
+                "on-primary-fixed-variant": "#005316",
+                "on-primary-fixed": "#002205",
+                "inverse-on-surface": "#313030",
+                "surface-container": "#201f1f",
+                "on-primary-container": "#005818",
+                "secondary-container": "#ff7f1c",
+                "on-secondary-fixed": "#321200",
+                "on-error-container": "#ffdad6",
+                "surface-container-highest": "#353534",
+                "error-container": "#93000a",
+                "on-error": "#690005",
+                "surface-variant": "#353534",
+                "tertiary-fixed-dim": "#a6c8ff",
+                "tertiary-fixed": "#d5e3ff",
+                "surface-container-lowest": "#0e0e0e",
+                "inverse-surface": "#e5e2e1",
+                "error": "#ffb4ab",
+                "primary": "#42f761",
+                "on-tertiary-fixed-variant": "#004786",
+                "on-secondary": "#522300",
+                "surface-dim": "#131313",
+                "primary-fixed": "#6fff7b"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "stack-lg": "32px",
+                "gutter": "24px",
+                "margin-mobile": "20px",
+                "margin-desktop": "80px",
+                "stack-sm": "8px",
+                "section-gap": "120px",
+                "container-max": "1280px",
+                "stack-md": "16px"
+        },
+        "fontFamily": {
+                "body-md": [
+                        "Inter"
+                ],
+                "label-md": [
+                        "Inter"
+                ],
+                "display-lg": [
+                        "Plus Jakarta Sans"
+                ],
+                "headline-sm": [
+                        "Plus Jakarta Sans"
+                ],
+                "headline-md": [
+                        "Plus Jakarta Sans"
+                ],
+                "label-sm": [
+                        "Inter"
+                ],
+                "display-lg-mobile": [
+                        "Plus Jakarta Sans"
+                ],
+                "body-lg": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-lg": [
+                        "64px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.04em",
+                                "fontWeight": "800"
+                        }
+                ],
+                "headline-sm": [
+                        "24px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-md": [
+                        "32px",
+                        {
+                                "lineHeight": "1.3",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "500"
+                        }
+                ],
+                "display-lg-mobile": [
+                        "40px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "800"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            background-image: radial-gradient(circle at 50% 50%, rgba(66, 247, 97, 0.08) 0%, theme('colors.background') 80%);
+        }
+
+        .card-bg {
+            background: linear-gradient(135deg, rgba(32, 31, 31, 0.8) 0%, rgba(28, 27, 27, 0.9) 100%);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .input-glow-focus:focus-within {
+            box-shadow: 0 0 0 1px theme('colors.primary-container'), 0 0 12px -2px rgba(0, 217, 72, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center relative overflow-hidden py-10 px-margin-mobile md:px-margin-desktop">
+<!-- Main Card Container -->
+<main class="card-bg w-full max-w-[480px] rounded-2xl p-8 sm:p-10 relative z-10 flex flex-col gap-stack-lg">
+<!-- Header -->
+<header class="text-center flex flex-col items-center">
+<div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-surface-container border border-white/10 mb-6 shadow-inner">
+<span class="material-symbols-outlined text-primary-container text-[28px]" style="font-variation-settings: 'FILL' 1;">document_scanner</span>
+</div>
+<h1 class="font-headline-md text-headline-md text-on-surface mb-2 tracking-tight">Create an account</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Join DocuAll for high-performance productivity.</p>
+</header>
+<!-- Sign Up Form -->
+<form class="flex flex-col gap-stack-md" onsubmit="event.preventDefault();">
+<!-- Full Name Field -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="fullName">Full Name</label>
+<div class="relative input-glow-focus rounded-lg transition-all duration-300">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none transition-colors">person</span>
+<input class="w-full bg-surface-container-lowest border border-white/10 rounded-lg py-3.5 pl-12 pr-4 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-transparent transition-colors" id="fullName" placeholder="Jane Doe" required="" type="text"/>
+</div>
+</div>
+<!-- Email Field -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="email">Email Address</label>
+<div class="relative input-glow-focus rounded-lg transition-all duration-300">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none transition-colors">mail</span>
+<input class="w-full bg-surface-container-lowest border border-white/10 rounded-lg py-3.5 pl-12 pr-4 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-transparent transition-colors" id="email" placeholder="jane@company.com" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="password">Password</label>
+<div class="relative input-glow-focus rounded-lg transition-all duration-300">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none transition-colors">lock</span>
+<input class="w-full bg-surface-container-lowest border border-white/10 rounded-lg py-3.5 pl-12 pr-12 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-transparent transition-colors" id="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors focus:outline-none" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-1">Must be at least 8 characters.</p>
+</div>
+<!-- Primary Action -->
+<button class="w-full mt-4 bg-primary-container text-on-primary-container font-label-md text-label-md py-3.5 px-6 rounded-lg flex items-center justify-center gap-2 hover:bg-primary transition-all duration-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] hover:shadow-[0_0_20px_rgba(0,217,72,0.3)] active:scale-[0.98]" type="submit">
+<span>Create Account</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</form>
+<!-- Divider -->
+<div class="flex items-center gap-4 before:h-[1px] before:flex-1 before:bg-white/10 after:h-[1px] after:flex-1 after:bg-white/10">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Or continue with</span>
+</div>
+<!-- Social Actions -->
+<div class="flex flex-col gap-3">
+<button class="w-full bg-transparent border border-white/10 hover:border-white/20 hover:bg-white/5 text-on-surface font-label-md text-label-md py-3 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 active:scale-[0.98]">
+<svg class="w-5 h-5" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+<span>Sign up with Google</span>
+</button>
+<button class="w-full bg-transparent border border-white/10 hover:border-white/20 hover:bg-white/5 text-on-surface font-label-md text-label-md py-3 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 active:scale-[0.98]">
+<svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M16.365 7.124c.792-1.025 1.328-2.454 1.184-3.876-1.182.05-2.666.837-3.486 1.862-.656.812-1.298 2.274-1.118 3.668 1.332.106 2.628-.625 3.42-1.654zm-4.148 10.638c-.287.97-.834 1.89-1.576 2.88-.636.852-1.428 1.95-2.584 1.95-1.116 0-1.528-.708-2.868-.708-1.33 0-1.782.684-2.846.708-1.156.024-2.02-1.176-2.656-2.074-1.252-1.776-2.204-4.524-2.204-6.84 0-3.324 1.954-4.884 3.754-4.884 1.114 0 2.146.756 2.844.756.72 0 1.954-.804 3.286-.804 1.378 0 2.508.576 3.216 1.62-2.736 1.584-2.28 5.628.372 6.648-.612 1.584-1.5 3.036-2.062 4.092-.852 1.608-1.186 2.508-1.996 2.508-1.092 0-1.404-.708-2.68-.708s-1.61.708-2.68.708c-.78 0-1.144-.9-1.996-2.508zM14.28 18.28c.36-.61.73-1.27 1.07-1.97.28-.58.55-1.18.79-1.79-1.37-.84-2.01-2.43-1.84-3.95.14-1.24.81-2.34 1.85-3.03-.68-.82-1.66-1.28-2.71-1.28-1.16 0-2.24.71-2.85.71-.62 0-1.7-.71-2.86-.71-1.48 0-2.86 1.05-3.55 2.37-1.35 2.55-1.31 5.91.07 8.36.43.76.95 1.5 1.55 2.17.65.73 1.37 1.48 2.27 1.48.86 0 1.25-.56 2.25-.56s1.39.56 2.25.56c.9 0 1.62-.75 2.27-1.48.54-.61 1.03-1.28 1.44-1.93z"></path>
+</svg>
+<span>Sign up with Apple</span>
+</button>
+</div>
+<!-- Footer Link -->
+<div class="text-center mt-2">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Already have an account? 
+                <a class="text-primary hover:text-primary-fixed transition-colors font-label-md" href="#">Log In</a>
+</p>
+</div>
+</main>
+<!-- Interactive script for input focus states -->
+<script>
+        document.querySelectorAll('input').forEach(input => {
+            const icon = input.parentElement.querySelector('.material-symbols-outlined');
+            
+            input.addEventListener('focus', () => {
+                if(icon) icon.classList.add('text-primary');
+            });
+            
+            input.addEventListener('blur', () => {
+                if(icon) icon.classList.remove('text-primary');
+            });
+        });
+    </script>
+</body></html>

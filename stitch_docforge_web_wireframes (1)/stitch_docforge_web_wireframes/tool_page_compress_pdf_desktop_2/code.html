@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Compress PDF - DocuAll</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed-dim": "#a6c8ff",
+                      "on-tertiary-fixed-variant": "#004786",
+                      "primary-container": "#00d948",
+                      "inverse-on-surface": "#313030",
+                      "on-surface-variant": "#bbcbb5",
+                      "on-tertiary-fixed": "#001c3b",
+                      "outline-variant": "#3c4b3a",
+                      "surface-bright": "#3a3939",
+                      "on-secondary-container": "#602a00",
+                      "on-primary": "#00390c",
+                      "on-error-container": "#ffdad6",
+                      "surface-container-high": "#2a2a2a",
+                      "on-primary-fixed-variant": "#005316",
+                      "surface-container-lowest": "#0e0e0e",
+                      "surface-container": "#201f1f",
+                      "surface-container-low": "#1c1b1b",
+                      "primary-fixed-dim": "#25e452",
+                      "on-surface": "#e5e2e1",
+                      "surface": "#131313",
+                      "on-primary-fixed": "#002205",
+                      "on-error": "#690005",
+                      "primary-fixed": "#6fff7b",
+                      "surface-variant": "#353534",
+                      "on-primary-container": "#005818",
+                      "inverse-primary": "#006e20",
+                      "tertiary-container": "#93beff",
+                      "error-container": "#93000a",
+                      "on-tertiary": "#00315f",
+                      "on-background": "#e5e2e1",
+                      "secondary": "#ffb68b",
+                      "outline": "#859581",
+                      "on-tertiary-container": "#004c8e",
+                      "inverse-surface": "#e5e2e1",
+                      "tertiary": "#c3d9ff",
+                      "secondary-fixed": "#ffdbc8",
+                      "on-secondary": "#522300",
+                      "secondary-container": "#ff7f1c",
+                      "background": "#131313",
+                      "secondary-fixed-dim": "#ffb68b",
+                      "on-secondary-fixed-variant": "#753400",
+                      "tertiary-fixed": "#d5e3ff",
+                      "surface-container-highest": "#353534",
+                      "surface-dim": "#131313",
+                      "surface-tint": "#25e452",
+                      "primary": "#42f761",
+                      "on-secondary-fixed": "#321200",
+                      "error": "#ffb4ab"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "section-gap": "120px",
+                      "margin-mobile": "20px",
+                      "stack-lg": "32px",
+                      "margin-desktop": "80px",
+                      "stack-sm": "8px",
+                      "stack-md": "16px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "display-lg-mobile": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "display-lg": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-sm": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-lg": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "800"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .glass-panel {
+            background: rgba(18, 18, 18, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hero-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0,217,72,0.15) 0%, rgba(19,19,19,0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .drag-active {
+            border-color: #00d948;
+            background: rgba(0, 217, 72, 0.05);
+            box-shadow: inset 0 0 20px rgba(0, 217, 72, 0.1);
+        }
+        .btn-primary-glow {
+            transition: all 0.3s ease;
+        }
+        .btn-primary-glow:hover {
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 217, 72, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col relative overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="bg-background/80 backdrop-blur-md shadow-sm border-b border-white/10 docked full-width top-0 z-50 transition-all duration-300">
+<div class="w-full flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<!-- Brand -->
+<a class="font-display-lg font-headline-sm font-bold text-on-surface text-headline-sm flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">description</span>
+                DocuAll
+            </a>
+<!-- Desktop Nav Links -->
+<div class="hidden md:flex items-center gap-stack-lg">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md text-body-md hover:text-primary transition-all duration-300" href="#">Home</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md text-body-md hover:text-primary transition-all duration-300 Active: scale-95 duration-200" href="#">Tools</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md text-body-md hover:text-primary transition-all duration-300" href="#">Features</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md text-body-md hover:text-primary transition-all duration-300" href="#">Pricing</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md text-body-md hover:text-primary transition-all duration-300" href="#">Blog</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md text-body-md hover:text-primary transition-all duration-300" href="#">Support</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-stack-md">
+<button class="hidden md:flex text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<a class="hidden md:inline-flex text-on-surface hover:text-primary transition-colors font-label-md text-label-md" href="#">Login</a>
+<a class="bg-primary-container text-on-primary font-label-md text-label-md px-6 py-2 rounded-full btn-primary-glow" href="#">Sign Up</a>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow relative pt-32 pb-section-gap z-10 flex flex-col items-center justify-center">
+<div class="hero-glow"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full relative z-10">
+<!-- Hero Header -->
+<div class="text-center mb-stack-lg md:mb-16">
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-on-surface mb-stack-md">Compress PDF</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Reduce file size while optimizing for maximal PDF quality. Fast, secure, and professional.</p>
+</div>
+<!-- Main Conversion Tool Area (Center-Weighted) -->
+<div class="flex flex-col md:flex-row gap-stack-lg md:gap-12 items-start justify-center max-w-5xl mx-auto">
+<!-- Batch Canvas Dropzone -->
+<div class="w-full md:w-2/3">
+<div class="glass-panel border-2 border-dashed border-outline-variant rounded-xl p-12 text-center flex flex-col items-center justify-center min-h-[400px] transition-all duration-300 cursor-pointer hover:border-primary-container relative overflow-hidden" id="dropzone">
+<!-- Abstract 3D Asset Representation -->
+<div class="mb-8 relative transform hover:-translate-y-2 transition-transform duration-500">
+<div class="w-32 h-40 bg-surface-container-high border border-white/10 rounded-lg shadow-xl relative z-10 flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+<span class="material-symbols-outlined text-6xl text-primary opacity-80" style="font-variation-settings: 'FILL' 1;">picture_as_pdf</span>
+</div>
+<!-- Floor Contact Shadow -->
+<div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-24 h-4 bg-black/50 blur-md rounded-[100%]"></div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-sm">Drag &amp; drop PDFs here</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg">or click to browse from your device</p>
+<button class="bg-primary-container text-on-primary font-label-md text-label-md px-8 py-3 rounded-full btn-primary-glow flex items-center gap-2 z-20">
+<span class="material-symbols-outlined text-xl">upload_file</span>
+                            Select Files
+                        </button>
+</div>
+</div>
+<!-- Settings Panel -->
+<div class="w-full md:w-1/3 glass-panel rounded-xl p-8 sticky top-32">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">tune</span>
+                        Compression Level
+                    </h3>
+<div class="space-y-4">
+<!-- Option 1 -->
+<label class="block cursor-pointer">
+<input checked="" class="sr-only peer" name="compression" type="radio" value="basic"/>
+<div class="p-4 border border-outline-variant rounded-lg bg-surface-container-low peer-checked:border-primary peer-checked:bg-primary/5 transition-all duration-200">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-md text-label-md text-on-surface">Basic</span>
+<span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Good quality, medium file size.</p>
+</div>
+</label>
+<!-- Option 2 -->
+<label class="block cursor-pointer">
+<input class="sr-only peer" name="compression" type="radio" value="strong"/>
+<div class="p-4 border border-outline-variant rounded-lg bg-surface-container-low peer-checked:border-primary peer-checked:bg-primary/5 transition-all duration-200">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-md text-label-md text-on-surface">Strong</span>
+<span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Recommended. High compression, good quality.</p>
+</div>
+</label>
+<!-- Option 3 -->
+<label class="block cursor-pointer">
+<input class="sr-only peer" name="compression" type="radio" value="extreme"/>
+<div class="p-4 border border-outline-variant rounded-lg bg-surface-container-low peer-checked:border-primary peer-checked:bg-primary/5 transition-all duration-200">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-md text-label-md text-on-surface">Extreme</span>
+<span class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Lowest quality, smallest file size.</p>
+</div>
+</label>
+</div>
+<button class="w-full mt-stack-lg bg-surface-container-high hover:bg-surface-variant text-on-surface font-label-md text-label-md px-6 py-3 rounded-lg border border-outline-variant hover:border-primary transition-all duration-300 flex items-center justify-center gap-2">
+                        Compress Now
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Features Section -->
+<div class="mt-section-gap grid grid-cols-1 md:grid-cols-3 gap-gutter max-w-5xl mx-auto">
+<div class="glass-panel p-8 rounded-xl text-center hover:border-primary/50 transition-colors duration-300">
+<div class="w-16 h-16 mx-auto bg-surface-container mb-stack-md rounded-full flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-3xl text-primary">security</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-stack-sm text-xl">Secure</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">All files are processed locally or deleted instantly from our servers after compression.</p>
+</div>
+<div class="glass-panel p-8 rounded-xl text-center hover:border-primary/50 transition-colors duration-300">
+<div class="w-16 h-16 mx-auto bg-surface-container mb-stack-md rounded-full flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-3xl text-primary">bolt</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-stack-sm text-xl">Fast</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Optimized algorithms ensure your PDFs are compressed in seconds, not minutes.</p>
+</div>
+<div class="glass-panel p-8 rounded-xl text-center hover:border-primary/50 transition-colors duration-300">
+<div class="w-16 h-16 mx-auto bg-surface-container mb-stack-md rounded-full flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-3xl text-primary">high_quality</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-stack-sm text-xl">High Quality</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Advanced compression maintains visual fidelity while significantly reducing file size.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-white/5 w-full py-section-gap px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-4 gap-gutter z-20 relative">
+<div class="col-span-1 md:col-span-1">
+<a class="font-display-lg text-headline-sm font-extrabold text-on-surface flex items-center gap-2 mb-stack-md text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span>
+                DocuAll
+            </a>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 DocuAll Inc. All rights reserved.</p>
+</div>
+<div class="flex flex-col gap-stack-sm">
+<h5 class="font-label-md text-label-md text-on-surface mb-2">Product</h5>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Tools</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Features</a>
+</div>
+<div class="flex flex-col gap-stack-sm">
+<h5 class="font-label-md text-label-md text-on-surface mb-2">Company</h5>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Blog</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Support</a>
+</div>
+<div class="flex flex-col gap-stack-sm">
+<h5 class="font-label-md text-label-md text-on-surface mb-2">Legal</h5>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Privacy</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Terms</a>
+</div>
+</footer>
+<script>
+        // Simple Dropzone Interaction Script
+        const dropzone = document.getElementById('dropzone');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropzone.classList.add('drag-active');
+        }
+
+        function unhighlight(e) {
+            dropzone.classList.remove('drag-active');
+        }
+
+        dropzone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            let dt = e.dataTransfer;
+            let files = dt.files;
+            // In a real implementation, this would pass to the compression logic
+            console.log("Files dropped:", files);
+        }
+    </script>
+</body></html>

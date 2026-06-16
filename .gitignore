@@ -1,0 +1,44 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Env files
+.env
+.env.local
+.env.*
+
+# Local SQLite databases
+docforge.db
+docforge.db-shm
+docforge.db-wal
+docforge.db-journal
+
+# Python pycache
+__pycache__/
+backend/__pycache__/
+
+# Backend upload/output folders
+backend/uploads/
+backend/output/
+backend/test_output/

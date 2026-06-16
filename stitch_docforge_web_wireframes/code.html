@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DocuAll - All-in-One Document Conversion</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#e5e2e1",
+                        "secondary": "#ffb68b",
+                        "tertiary-container": "#93beff",
+                        "on-secondary-fixed": "#321200",
+                        "on-tertiary-container": "#004c8e",
+                        "surface-dim": "#131313",
+                        "on-primary": "#00390c",
+                        "primary-fixed": "#6fff7b",
+                        "on-error": "#690005",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary": "#42f761",
+                        "inverse-surface": "#e5e2e1",
+                        "inverse-on-surface": "#313030",
+                        "outline": "#859581",
+                        "error": "#ffb4ab",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-variant": "#353534",
+                        "on-primary-container": "#005818",
+                        "tertiary-fixed-dim": "#a6c8ff",
+                        "secondary-container": "#ff7f1c",
+                        "surface-bright": "#3a3939",
+                        "on-primary-fixed-variant": "#005316",
+                        "on-primary-fixed": "#002205",
+                        "surface-container": "#201f1f",
+                        "on-secondary-fixed-variant": "#753400",
+                        "primary-container": "#00d948",
+                        "inverse-primary": "#006e20",
+                        "secondary-fixed": "#ffdbc8",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-container": "#602a00",
+                        "tertiary": "#c3d9ff",
+                        "on-tertiary-fixed": "#001c3b",
+                        "on-tertiary-fixed-variant": "#004786",
+                        "background": "#131313",
+                        "secondary-fixed-dim": "#ffb68b",
+                        "primary-fixed-dim": "#25e452",
+                        "on-tertiary": "#00315f",
+                        "on-surface-variant": "#bbcbb5",
+                        "error-container": "#93000a",
+                        "on-secondary": "#522300",
+                        "surface": "#131313",
+                        "on-surface": "#e5e2e1",
+                        "surface-container-highest": "#353534",
+                        "surface-container-high": "#2a2a2a",
+                        "tertiary-fixed": "#d5e3ff",
+                        "surface-tint": "#25e452",
+                        "outline-variant": "#3c4b3a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "section-gap": "120px",
+                        "stack-sm": "8px",
+                        "margin-desktop": "80px",
+                        "margin-mobile": "20px",
+                        "container-max": "1280px",
+                        "stack-lg": "32px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "display-lg-mobile": ["Plus Jakarta Sans"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-sm": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800" }],
+                        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glow-effect:hover {
+            box-shadow: 0 0 20px rgba(66, 247, 97, 0.3);
+        }
+        .hero-bg {
+            background: radial-gradient(circle at 70% 50%, rgba(66, 247, 97, 0.05) 0%, rgba(19, 19, 19, 1) 60%);
+        }
+        .card-bg {
+            background: linear-gradient(135deg, rgba(32, 31, 31, 0.8) 0%, rgba(28, 27, 27, 0.9) 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="bg-background/40 backdrop-blur-xl border-b border-white/10 full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-20 max-w-container-max mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-headline-md">description</span>
+<span class="text-headline-sm font-headline-md font-bold text-on-surface tracking-tight">DocuAll</span>
+</div>
+<div class="hidden md:flex items-center gap-stack-md font-label-md text-label-md">
+<a class="text-primary border-b-2 border-primary pb-1 scale-95 duration-150 ease-in-out" href="#">Home</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-white/5 rounded-lg px-3 py-2 transition-all" href="#">Tools</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-white/5 rounded-lg px-3 py-2 transition-all" href="#">Features</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-white/5 rounded-lg px-3 py-2 transition-all" href="#">Pricing</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-white/5 rounded-lg px-3 py-2 transition-all" href="#">Blog</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-white/5 rounded-lg px-3 py-2 transition-all" href="#">Support</a>
+</div>
+<div class="flex items-center gap-stack-sm">
+<button class="hidden md:flex items-center justify-center w-10 h-10 text-on-surface-variant hover:text-on-surface transition-colors rounded-full hover:bg-white/5">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md px-4 py-2 hover:bg-white/5 rounded-lg transition-all">Login</button>
+<button class="bg-primary-container text-on-primary-container font-label-md text-label-md px-6 py-2.5 rounded-lg hover:bg-primary-fixed-dim transition-all glow-effect">Sign Up</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative pt-24 pb-section-gap hero-bg overflow-hidden">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-gutter items-center relative z-10">
+<div class="flex flex-col gap-stack-md z-20">
+<div class="inline-flex items-center gap-2 bg-surface-container border border-outline-variant rounded-full px-4 py-2 w-max shadow-[0_0_15px_rgba(66,247,97,0.1)]">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">All-in-One Document Converter</span>
+</div>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">
+                    Convert Any Document.<br/>
+<span class="text-primary-container">Fast.</span> <span class="text-secondary-container">Secure.</span> Simple.
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg">
+                    Convert, compress, merge, split, and manage all your documents in one place. Fast. Secure. Reliable.
+                </p>
+<div class="flex flex-col sm:flex-row gap-stack-sm pt-stack-sm">
+<button class="bg-primary-container text-on-primary-container font-label-md text-label-md px-8 py-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-dim transition-all glow-effect group">
+                        Start Converting Now
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<button class="bg-surface-container text-on-surface font-label-md text-label-md px-8 py-4 rounded-lg border border-outline-variant hover:border-primary-container hover:bg-white/5 transition-all">
+                        Explore All Tools
+                    </button>
+</div>
+<div class="flex flex-wrap items-center gap-stack-md pt-stack-lg border-t border-white/10 mt-stack-md">
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+                        100% Secure
+                    </div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">layers</span>
+                        100+ Formats
+                    </div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+                        No Quality Loss
+                    </div>
+</div>
+</div>
+<div class="relative h-[400px] md:h-[600px] w-full flex items-center justify-center mt-12 md:mt-0">
+<img alt="A high-fidelity 3D rendering of a modern digital conversion platform. A sleek, dark, rounded glass base sits in the center with a glowing green neon recycling or refresh symbol hovering above it. Surrounding this central hub, floating isometric 3D document icons (PDF in red, DOCX in blue, XLSX in green, PPTX in orange, TXT in grey) converge towards the glowing center. The scene is lit with dramatic, cinematic studio lighting against a deep charcoal background, highlighting the glossy textures of the 3D objects and creating soft contact shadows, conveying a premium, technological, and magical transformation process." class="w-full h-full object-contain drop-shadow-2xl z-10" data-alt="A high-fidelity 3D rendering of a modern digital conversion platform. A sleek, dark, rounded glass base sits in the center with a glowing green neon recycling or refresh symbol hovering above it. Surrounding this central hub, floating isometric 3D document icons (PDF in red, DOCX in blue, XLSX in green, PPTX in orange, TXT in grey) converge towards the glowing center. The scene is lit with dramatic, cinematic studio lighting against a deep charcoal background, highlighting the glossy textures of the 3D objects and creating soft contact shadows, conveying a premium, technological, and magical transformation process." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4WlxbQuHuftXcke_MZjF2d5zCguAg42-eTQgYW6f9FWGeD7pmlm2aMBa4aEx9iJdCb4umGvjXxc9dR4f7wW8j1PjIGbvpdgms3l6Wsk5euai6hvqOv6nRGatIBziH2OGoXQEGfhyVE6xM8z0zOvaLmV6SBKOF2YpU54I_LJ7WRqxTIazJA5T2JqeJxL_zAwihpGoqaWTrpCXe8w39PhiqxYfeLv8IPP9YLygavWUAOR6xkXMvkCoY0EgSt6dLwLioiTGeWGj7Ak8"/>
+<!-- Decorative background elements -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-primary-container/10 blur-[100px] rounded-full z-0"></div>
+</div>
+</div>
+</section>
+<!-- Popular Conversions -->
+<section class="py-section-gap bg-surface-container-lowest relative">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="flex flex-col md:flex-row justify-between items-end mb-stack-lg gap-stack-md">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-2">
+                        Popular <span class="text-secondary-container">Conversions</span>
+</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">The most frequently used tools by our professionals.</p>
+</div>
+<button class="text-on-surface hover:text-primary transition-colors font-label-md text-label-md flex items-center gap-1 group">
+                    View All Tools 
+                    <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-gutter">
+<!-- Card 1 -->
+<div class="card-bg border border-white/5 rounded-xl p-stack-md flex flex-col items-center justify-center gap-stack-md hover:border-primary/50 transition-all cursor-pointer group shadow-lg hover:shadow-[0_0_20px_rgba(66,247,97,0.15)] relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-2 z-10">
+<div class="w-12 h-12 bg-error/10 rounded-lg flex items-center justify-center text-error border border-error/20">
+<span class="font-bold text-sm">PDF</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">arrow_forward</span>
+<div class="w-12 h-12 bg-tertiary-container/10 rounded-lg flex items-center justify-center text-tertiary-container border border-tertiary-container/20">
+<span class="font-bold text-sm">WORD</span>
+</div>
+</div>
+<div class="text-center z-10">
+<h3 class="font-label-md text-label-md text-on-surface mb-1">PDF to Word</h3>
+<span class="text-primary text-xs font-medium flex items-center justify-center gap-1 opacity-80 group-hover:opacity-100">
+                            Convert <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="card-bg border border-white/5 rounded-xl p-stack-md flex flex-col items-center justify-center gap-stack-md hover:border-primary/50 transition-all cursor-pointer group shadow-lg hover:shadow-[0_0_20px_rgba(66,247,97,0.15)] relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-2 z-10">
+<div class="w-12 h-12 bg-tertiary-container/10 rounded-lg flex items-center justify-center text-tertiary-container border border-tertiary-container/20">
+<span class="font-bold text-sm">WORD</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">arrow_forward</span>
+<div class="w-12 h-12 bg-error/10 rounded-lg flex items-center justify-center text-error border border-error/20">
+<span class="font-bold text-sm">PDF</span>
+</div>
+</div>
+<div class="text-center z-10">
+<h3 class="font-label-md text-label-md text-on-surface mb-1">Word to PDF</h3>
+<span class="text-primary text-xs font-medium flex items-center justify-center gap-1 opacity-80 group-hover:opacity-100">
+                            Convert <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="card-bg border border-white/5 rounded-xl p-stack-md flex flex-col items-center justify-center gap-stack-md hover:border-primary/50 transition-all cursor-pointer group shadow-lg hover:shadow-[0_0_20px_rgba(66,247,97,0.15)] relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-2 z-10">
+<div class="w-12 h-12 bg-error/10 rounded-lg flex items-center justify-center text-error border border-error/20">
+<span class="font-bold text-sm">PDF</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">arrow_forward</span>
+<div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary border border-primary/20">
+<span class="font-bold text-sm">EXCEL</span>
+</div>
+</div>
+<div class="text-center z-10">
+<h3 class="font-label-md text-label-md text-on-surface mb-1">PDF to Excel</h3>
+<span class="text-primary text-xs font-medium flex items-center justify-center gap-1 opacity-80 group-hover:opacity-100">
+                            Convert <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="card-bg border border-white/5 rounded-xl p-stack-md flex flex-col items-center justify-center gap-stack-md hover:border-primary/50 transition-all cursor-pointer group shadow-lg hover:shadow-[0_0_20px_rgba(66,247,97,0.15)] relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-2 z-10">
+<div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary border border-primary/20">
+<span class="font-bold text-sm">EXCEL</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">arrow_forward</span>
+<div class="w-12 h-12 bg-error/10 rounded-lg flex items-center justify-center text-error border border-error/20">
+<span class="font-bold text-sm">PDF</span>
+</div>
+</div>
+<div class="text-center z-10">
+<h3 class="font-label-md text-label-md text-on-surface mb-1">Excel to PDF</h3>
+<span class="text-primary text-xs font-medium flex items-center justify-center gap-1 opacity-80 group-hover:opacity-100">
+                            Convert <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="card-bg border border-white/5 rounded-xl p-stack-md flex flex-col items-center justify-center gap-stack-md hover:border-primary/50 transition-all cursor-pointer group shadow-lg hover:shadow-[0_0_20px_rgba(66,247,97,0.15)] relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-2 z-10">
+<div class="w-12 h-12 bg-error/10 rounded-lg flex items-center justify-center text-error border border-error/20">
+<span class="font-bold text-sm">PDF</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">arrow_forward</span>
+<div class="w-12 h-12 bg-secondary-container/10 rounded-lg flex items-center justify-center text-secondary-container border border-secondary-container/20">
+<span class="font-bold text-sm">PPT</span>
+</div>
+</div>
+<div class="text-center z-10">
+<h3 class="font-label-md text-label-md text-on-surface mb-1">PDF to PPT</h3>
+<span class="text-primary text-xs font-medium flex items-center justify-center gap-1 opacity-80 group-hover:opacity-100">
+                            Convert <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="card-bg border border-white/5 rounded-xl p-stack-md flex flex-col items-center justify-center gap-stack-md hover:border-primary/50 transition-all cursor-pointer group shadow-lg hover:shadow-[0_0_20px_rgba(66,247,97,0.15)] relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-2 z-10">
+<div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center text-tertiary border border-tertiary/20">
+<span class="material-symbols-outlined">image</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">arrow_forward</span>
+<div class="w-12 h-12 bg-error/10 rounded-lg flex items-center justify-center text-error border border-error/20">
+<span class="font-bold text-sm">PDF</span>
+</div>
+</div>
+<div class="text-center z-10">
+<h3 class="font-label-md text-label-md text-on-surface mb-1">Image to PDF</h3>
+<span class="text-primary text-xs font-medium flex items-center justify-center gap-1 opacity-80 group-hover:opacity-100">
+                            Convert <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Section -->
+<section class="py-section-gap bg-background">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+<div class="lg:col-span-4 flex flex-col gap-4">
+<h2 class="font-display-lg-mobile md:font-headline-md text-display-lg-mobile md:text-headline-md text-on-surface">
+                        Everything You Need<br/>
+<span class="text-primary-container">in One Place</span>
+</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm">
+                        Streamline your workflow with our comprehensive suite of document management tools designed for professionals.
+                    </p>
+</div>
+<div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Feature 1 -->
+<div class="card-bg p-6 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
+<span class="material-symbols-outlined">sync</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface mb-2">Convert</h4>
+<p class="font-body-sm text-[14px] text-on-surface-variant leading-relaxed">Convert between 100+ file formats instantly with zero quality loss.</p>
+</div>
+<!-- Feature 2 -->
+<div class="card-bg p-6 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+<div class="w-10 h-10 rounded-full bg-secondary-container/10 flex items-center justify-center text-secondary-container mb-4">
+<span class="material-symbols-outlined">compress</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface mb-2">Compress</h4>
+<p class="font-body-sm text-[14px] text-on-surface-variant leading-relaxed">Reduce file size significantly without losing visible quality.</p>
+</div>
+<!-- Feature 3 -->
+<div class="card-bg p-6 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+<div class="w-10 h-10 rounded-full bg-tertiary-container/10 flex items-center justify-center text-tertiary-container mb-4">
+<span class="material-symbols-outlined">layers</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface mb-2">Merge</h4>
+<p class="font-body-sm text-[14px] text-on-surface-variant leading-relaxed">Combine multiple files into a single, organized document.</p>
+</div>
+<!-- Feature 4 -->
+<div class="card-bg p-6 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+<div class="w-10 h-10 rounded-full bg-primary-fixed-dim/10 flex items-center justify-center text-primary-fixed-dim mb-4">
+<span class="material-symbols-outlined">security</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface mb-2">Secure</h4>
+<p class="font-body-sm text-[14px] text-on-surface-variant leading-relaxed">Your files are encrypted and automatically deleted after 2 hours.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-white/5 full-width py-stack-lg">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="col-span-1 md:col-span-2">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary text-headline-sm">description</span>
+<span class="text-headline-sm font-headline-md text-on-surface font-bold">DocuAll</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm mb-6">
+                    © 2024 DocuAll. Premium Document Solutions. Elevating document management for modern professionals.
+                </p>
+</div>
+<div class="col-span-1">
+<h4 class="font-label-md text-label-md text-on-surface mb-4">Legal</h4>
+<div class="flex flex-col gap-3 font-label-sm text-label-sm">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+</div>
+<div class="col-span-1">
+<h4 class="font-label-md text-label-md text-on-surface mb-4">Resources</h4>
+<div class="flex flex-col gap-3 font-label-sm text-label-sm">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Contact Us</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">API Docs</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Status</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

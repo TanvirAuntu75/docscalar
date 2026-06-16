@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || 'light';
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DocForge — Free Online PDF, Image & Document Tools | 100% Private</title>
+  <meta name="description" content="Convert, compress, merge, and edit PDF, image, and document files instantly — 100% free, no upload needed. Your files never leave your device." />
+  <meta name="keywords" content="PDF converter, compress PDF, merge PDF, image converter, DOCX to PDF, free online tools, privacy, client-side" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://docforge.app/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="DocForge — Free Online Document Tools" />
+  <meta property="og:description" content="Convert, compress, and edit documents instantly. 100% private — files never leave your device." />
+  <meta property="og:url" content="https://docforge.app/" />
+  <meta property="og:site_name" content="DocForge" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="DocForge — Free Online Document Tools" />
+  <meta name="twitter:description" content="Convert, compress, and edit documents instantly. 100% private." />
+  <link rel="stylesheet" href="/fonts/icons.css" />
+  <link rel="stylesheet" href="/fonts/fonts.css" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "DocForge",
+    "url": "https://docforge.app",
+    "description": "Free online document conversion tools. PDF, Image, and Document processing — 100% client-side, your files never leave your device.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+  <noscript><style>.app-root{display:none}</style></noscript>
+  <!-- Umami Analytics (Privacy-First, Local NZ Compliant) -->
+  <script async src="https://analytics.umami.is/script.js" data-website-id="YOUR_UMAMI_WEBSITE_ID"></script>
+</head>
+<body>
+  <noscript>
+    <div style="padding:2rem;text-align:center;color:#fff;background:#0a0e1a;">
+      <h1>DocForge requires JavaScript</h1>
+      <p>Please enable JavaScript to use this application.</p>
+    </div>
+  </noscript>
+  <div id="root" class="app-root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>

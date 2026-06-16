@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DocuAll - User Dashboard</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#00d948",
+                    "outline-variant": "#3c4b3a",
+                    "secondary-fixed": "#ffdbc8",
+                    "inverse-surface": "#e5e2e1",
+                    "on-surface-variant": "#bbcbb5",
+                    "on-surface": "#e5e2e1",
+                    "on-tertiary": "#00315f",
+                    "on-primary-fixed": "#002205",
+                    "primary": "#42f761",
+                    "tertiary-container": "#93beff",
+                    "on-error": "#690005",
+                    "surface-tint": "#25e452",
+                    "secondary": "#ffb68b",
+                    "secondary-container": "#ff7f1c",
+                    "inverse-primary": "#006e20",
+                    "surface-bright": "#3a3939",
+                    "surface": "#131313",
+                    "tertiary": "#c3d9ff",
+                    "surface-variant": "#353534",
+                    "on-tertiary-container": "#004c8e",
+                    "on-secondary-fixed": "#321200",
+                    "on-secondary-fixed-variant": "#753400",
+                    "on-primary-fixed-variant": "#005316",
+                    "on-primary": "#00390c",
+                    "surface-container-highest": "#353534",
+                    "on-background": "#e5e2e1",
+                    "on-primary-container": "#005818",
+                    "error": "#ffb4ab",
+                    "outline": "#859581",
+                    "on-tertiary-fixed": "#001c3b",
+                    "background": "#131313",
+                    "surface-container-lowest": "#0e0e0e",
+                    "surface-container-high": "#2a2a2a",
+                    "error-container": "#93000a",
+                    "surface-container-low": "#1c1b1b",
+                    "secondary-fixed-dim": "#ffb68b",
+                    "on-secondary": "#522300",
+                    "primary-fixed": "#6fff7b",
+                    "on-secondary-container": "#602a00",
+                    "surface-dim": "#131313",
+                    "primary-fixed-dim": "#25e452",
+                    "tertiary-fixed": "#d5e3ff",
+                    "inverse-on-surface": "#313030",
+                    "on-error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#a6c8ff",
+                    "on-tertiary-fixed-variant": "#004786",
+                    "surface-container": "#201f1f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "section-gap": "120px",
+                    "margin-desktop": "80px",
+                    "stack-md": "16px",
+                    "container-max": "1280px",
+                    "margin-mobile": "20px",
+                    "stack-lg": "32px",
+                    "gutter": "24px",
+                    "stack-sm": "8px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "display-lg-mobile": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-sm": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                    "display-lg-mobile": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                    "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                    "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                    "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                    "headline-sm": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                    "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800" }],
+                    "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        /* Custom Utilities for Glow Effects and Smooth Transitions */
+        .inner-glow:hover {
+            box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.2);
+        }
+        .outer-glow:hover {
+            box-shadow: 0 0 20px rgba(0, 217, 72, 0.15);
+        }
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(19, 19, 19, 0.9) 0%, rgba(28, 27, 27, 0.8) 100%);
+            backdrop-filter: blur(20px);
+        }
+        .subtle-border {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .3d-hover-lift {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .3d-hover-lift:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased min-h-screen flex overflow-hidden">
+<!-- Mobile Nav Toggle (Hidden on Desktop) -->
+<button class="md:hidden fixed top-4 right-4 z-50 p-2 rounded-lg bg-surface border border-white/10 text-on-surface" id="mobile-menu-btn">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<!-- Sidebar Navigation -->
+<aside class="w-64 h-screen bg-surface-container-lowest border-r border-white/5 flex flex-col transition-transform duration-300 absolute md:relative z-40 -translate-x-full md:translate-x-0" id="sidebar">
+<!-- Logo Area -->
+<div class="h-20 flex items-center px-6 border-b border-white/5">
+<span class="font-headline-sm text-headline-sm font-extrabold text-primary-container tracking-tight">DocuAll</span>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 px-4 py-8 space-y-2 overflow-y-auto">
+<!-- Active State: Recent Files -->
+<a class="flex items-center px-4 py-3 rounded-lg bg-primary-container/10 text-primary-container relative group" href="#">
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary-container rounded-r-full"></div>
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 1;">folder_open</span>
+<span class="font-label-md text-label-md">Recent Files</span>
+</a>
+<!-- Inactive State: Tools -->
+<a class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-primary-container transition-colors" style="font-variation-settings: 'FILL' 0;">build</span>
+<span class="font-label-md text-label-md">Tools</span>
+</a>
+<!-- Inactive State: Settings -->
+<a class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-primary-container transition-colors" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<!-- Upgrade Section (Bottom of Sidebar) -->
+<div class="p-4 mt-auto border-t border-white/5">
+<div class="bg-surface-container-low rounded-xl p-4 subtle-border relative overflow-hidden">
+<!-- Decorative Glow -->
+<div class="absolute -top-10 -right-10 w-24 h-24 bg-primary-container/20 rounded-full blur-2xl"></div>
+<h4 class="font-label-md text-label-md text-on-surface mb-1 relative z-10">Pro Workspace</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-4 relative z-10">Unlock unlimited bulk conversions.</p>
+<button class="w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-2 rounded-lg inner-glow transition-all outer-glow relative z-10">
+                    Upgrade Now
+                </button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 h-screen overflow-y-auto bg-surface-container-lowest relative">
+<!-- Ambient Background Glow for tactile depth -->
+<div class="absolute top-0 right-0 w-1/2 h-[500px] bg-primary-container/5 blur-[120px] rounded-full pointer-events-none"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 relative z-10">
+<!-- Dashboard Header -->
+<header class="flex justify-between items-end mb-stack-lg">
+<div>
+<h1 class="font-headline-md text-headline-md text-on-surface mb-2">Welcome back, Alex</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Here is an overview of your recent high-performance conversions.</p>
+</div>
+<!-- Profile Avatar -->
+<div class="hidden md:flex items-center space-x-3 cursor-pointer group">
+<div class="text-right">
+<p class="font-label-md text-label-md text-on-surface group-hover:text-primary-container transition-colors">Alex.design</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Free Plan</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-white/10 flex items-center justify-center overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover opacity-90" data-alt="A hyper-realistic, high-contrast portrait of a professional user in a dark, sleek corporate environment. Lighting is dramatic and moody, emphasizing a premium, modern aesthetic with subtle neon green rim lighting to match the UI's brand colors. The background is pure pitch black #050505 to blend seamlessly." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAgNmH34zfkaLUxTA-cRscEaG6DXQu4NwUoKVxXW3n3HhIBbP6FMfVJL8ELtRUktxLU3AMARdxAU0nxlA37ib654ldBmBVkIqXly4-aMdjZeUKYc3EUeioxTAzMvrSIABCW9naCs6F3nPDAzf0Lc-roEkZfgPJC9_yL3y12yCC2H2wA2aZYc1FCDvXGad7a2XRY_Pjk6aE_6IQBOA_ZkGmcSYEI6U6aiG8CDM6pXY7z2Du5VPRNDa9IKK6Zf1HAOR8UPdyNucmn4E"/>
+</div>
+</div>
+</header>
+<!-- Hero Component: The File Uploader -->
+<section class="mb-section-gap">
+<div class="w-full glass-panel subtle-border rounded-xl border-2 border-dashed border-outline-variant p-section-gap flex flex-col items-center justify-center text-center cursor-pointer group transition-all duration-300 hover:border-primary-container hover:bg-primary-container/[0.02]" id="dropzone">
+<div class="w-20 h-20 mb-6 rounded-full bg-surface border border-white/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 group-hover:border-primary-container/50 outer-glow">
+<span class="material-symbols-outlined text-4xl text-primary-container" style="font-variation-settings: 'FILL' 0;">cloud_upload</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-3">Start New Conversion</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md mx-auto mb-8">
+                        Drag and drop your complex files here, or click to browse. We support high-fidelity PDF, DOCX, and advanced data sheets.
+                    </p>
+<button class="bg-primary-container text-on-primary-container font-label-md text-label-md px-8 py-4 rounded-full flex items-center inner-glow transition-all 3d-hover-lift outer-glow">
+<span class="material-symbols-outlined mr-2" style="font-variation-settings: 'FILL' 1;">add</span>
+                        Select Files
+                    </button>
+</div>
+</section>
+<!-- Recent Conversions Section -->
+<section>
+<div class="flex items-center justify-between mb-stack-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Recent Files</h3>
+<a class="font-label-md text-label-md text-primary-container hover:text-primary transition-colors flex items-center" href="#">
+                        View All <span class="material-symbols-outlined ml-1 text-sm" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
+</a>
+</div>
+<!-- Bento Grid Layout for Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="glass-panel subtle-border rounded-xl p-stack-md flex flex-col 3d-hover-lift group relative overflow-hidden">
+<!-- Decorative Top Gradient to simulate lighting -->
+<div class="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none"></div>
+<div class="w-full h-48 bg-surface-container-low rounded-lg mb-4 flex items-center justify-center overflow-hidden subtle-border">
+<img alt="3D PDF Asset" class="w-3/4 h-3/4 object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" data-alt="A highly realistic 3D render of a geometric PDF document icon hovering above a sleek surface. The object is constructed from matte dark grey materials with intense, glowing electric green accents. It is viewed from a precise isometric angle with sophisticated top-left studio lighting casting soft contact shadows. Set against a pure pitch-black #050505 background. Corporate modern aesthetic, tactile and premium." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2Jacs_wO2D7Tg0j-zSu3hgGpPniijp14Xg0i-Vvp2zu3IoKWCBdpg1yMPjw2ql-w2Z6JAaeQxNUIH-kuSY-aYXIEdzxeCX9pFduxYb_rpr2qLhMtGoWtmwdkjLpHy4wiOTIcQ3AhZ8PA3nm2tFvJUR4LDq_-Q0-5FgJKSmzKMlLmRuvHmK4l_ncEApe_Geg7uhUvvVMzGRYkUfaozwNLp8LFLQNcKunmfYHbgk_nm8ZSsVnqcWSm68dP3vsx3IpTkuXLdBVTWQkw"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-1">Q4_Financial_Report.pdf</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-1" style="font-variation-settings: 'FILL' 0;">history</span>
+                                    Converted 2 hours ago
+                                </p>
+</div>
+<button class="p-2 rounded-lg hover:bg-white/5 text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">download</span>
+</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="glass-panel subtle-border rounded-xl p-stack-md flex flex-col 3d-hover-lift group relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none"></div>
+<div class="w-full h-48 bg-surface-container-low rounded-lg mb-4 flex items-center justify-center overflow-hidden subtle-border">
+<img alt="3D DOCX Asset" class="w-3/4 h-3/4 object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" data-alt="A sophisticated 3D tactile representation of a Word document icon. The design features a heavy, corporate modern block structure made of deep charcoal #121212 material with sharp, luminous green edges. It floats slightly, casting a physical contact shadow on a completely black void background. The lighting is dramatic and directional from the top-left, emphasizing depth and premium quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuLYw935aKi01Ri4ioN_CgEkuj_fqM6YW6UYuiFcilne3y1eTFkLZEwznqFBDNjZRT0tB87gWDqwtGtO_IzCSpLS40ZMikAEfvAQzq4isiLbGBkjA7ALgS5F2KTA6I2FfckX7q7rRAG_z5p7vaWrZG5XNFTY3H73KyblGk_I61sD7f7YVFbikvsdiS2a2Y65O_pNgiCrFl8BfnF_oBdfvmAER0nVyIPiWQ81CNeHQg2qfKcgIcXUxCg0C_ytAVnmGbp7XJYuwFjlY"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-1">Project_Proposal_Draft.docx</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-1" style="font-variation-settings: 'FILL' 0;">history</span>
+                                    Converted yesterday
+                                </p>
+</div>
+<button class="p-2 rounded-lg hover:bg-white/5 text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">download</span>
+</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="glass-panel subtle-border rounded-xl p-stack-md flex flex-col 3d-hover-lift group relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none"></div>
+<div class="w-full h-48 bg-surface-container-low rounded-lg mb-4 flex items-center justify-center overflow-hidden subtle-border">
+<img alt="3D Image Asset" class="w-3/4 h-3/4 object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" data-alt="A stylized, high-fidelity 3D rendering of an image file icon, designed for a modern enterprise UI. The object is formed by intersecting translucent dark glass and solid black planes, accented by internal glowing neon green #00D948 lights. It sits on a pristine, reflective black surface in a studio lighting setup, creating a strong sense of physical scale and corporate efficiency." src="https://lh3.googleusercontent.com/aida-public/AB6AXuALvt3pnxqRSBZW1Hkwwp_My22Kupks9iq3CbbZc88V361qatomSpTe61DTvO0jbEFZC6KOQyU_AmOxZ4EZ0z4V-VfV_zhIZT-HeZK2JnI7gHsbB5R1pCqOPkqhQsbnzhC00DVPtyYm7m3rp9irIQlVsh2bLVFEN6fiHkoNHUEaJ2v2DzKxwT30cpjfoWVJMjhdhckRVStbipIWrgKEC-8vpfMSXsSymIPtXxWEMC_trfa27qpqrd_kWrXn4zJtlRbxlbVF4t9qhic"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-1">Marketing_Assets_V2.zip</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-1" style="font-variation-settings: 'FILL' 0;">history</span>
+                                    Converted Oct 24
+                                </p>
+</div>
+<button class="p-2 rounded-lg hover:bg-white/5 text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">download</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer spacing -->
+<div class="h-24"></div>
+</div>
+</main>
+<!-- Simple Interactivity Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropzone = document.getElementById('dropzone');
+            
+            // Drag and drop micro-interactions
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropzone.classList.add('border-primary-container', 'bg-primary-container/[0.05]');
+                    dropzone.classList.remove('border-outline-variant');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropzone.classList.remove('border-primary-container', 'bg-primary-container/[0.05]');
+                    dropzone.classList.add('border-outline-variant');
+                }, false);
+            });
+
+            // Mobile menu toggle
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            let isMenuOpen = false;
+
+            mobileBtn.addEventListener('click', () => {
+                isMenuOpen = !isMenuOpen;
+                if (isMenuOpen) {
+                    sidebar.classList.remove('-translate-x-full');
+                    sidebar.classList.add('translate-x-0', 'shadow-2xl');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    sidebar.classList.remove('translate-x-0', 'shadow-2xl');
+                }
+            });
+        });
+    </script>
+</body></html>

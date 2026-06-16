@@ -1,0 +1,64 @@
+import os
+import sys
+import glob
+from pathlib import Path
+
+# Dynamically register standard Windows paths for Tesseract and Ghostscript if not on PATH
+if sys.platform == "win32":
+    tess_dir = r"C:\Program Files\Tesseract-OCR"
+    if os.path.exists(tess_dir) and tess_dir not in os.environ.get("PATH", ""):
+        os.environ["PATH"] += os.pathsep + tess_dir
+
+    gs_dirs = glob.glob(r"C:\Program Files\gs\gs*\bin")
+    for gs_dir in gs_dirs:
+        if gs_dir not in os.environ.get("PATH", ""):
+            os.environ["PATH"] += os.pathsep + gs_dir
+
+
+# Base Paths
+BASE_DIR = Path(__file__).resolve().parent
+UPLOAD_DIR = BASE_DIR / "uploads"
+OUTPUT_DIR = BASE_DIR / "output"
+
+# Create directories if they don't exist
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+# Server Config
+PORT = int(os.getenv("PORT", 8000))
+HOST = os.getenv("HOST", "127.0.0.1")
+
+# Redis Config
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+
+# Cloudflare R2 / AWS S3 Config (Optional - for Shareable Links)
+R2_ACCOUNT_ID = os.getenv("R2_ACCOUNT_ID", "")
+R2_ACCESS_KEY_ID = os.getenv("R2_ACCESS_KEY_ID", "")
+R2_SECRET_ACCESS_KEY = os.getenv("R2_SECRET_ACCESS_KEY", "")
+R2_BUCKET_NAME = os.getenv("R2_BUCKET_NAME", "docforge-shares")
+
+# Anthropic Claude API Key (for SmartConvert AI features)
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+
+# LibreOffice Path Auto-detection
+def detect_libreoffice_path():
+    # Check default Windows locations
+    windows_paths = [
+        r"C:\Program Files\LibreOffice\program\soffice.exe",
+        r"C:\Program Files (x86)\LibreOffice\program\soffice.exe",
+    ]
+    for p in windows_paths:
+        if Path(p).exists():
+            return p
+            
+    # Default fallback for Linux/macOS (should be in PATH)
+    return "libreoffice"
+
+LIBREOFFICE_PATH = os.getenv("LIBREOFFICE_PATH", detect_libreoffice_path())
+
+# Hard ceiling — must match RequestSizeLimitMiddleware in main.py
+# 200MB for PDFs + overhead. Per-extension limits are enforced inside upload_file().
+MAX_UPLOAD_SIZE = 210 * 1024 * 1024  # 210 MB hard gate
+CLEANUP_INTERVAL_MINS = 10
+FILE_EXPIRY_MINS = 30

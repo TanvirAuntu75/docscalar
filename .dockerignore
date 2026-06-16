@@ -1,0 +1,33 @@
+# Ignore node modules and build artifacts
+node_modules/
+dist/
+build/
+
+# Ignore Python cache and virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Ignore temporary downloads and extraction folders
+7za920.zip
+7za_extracted/
+tesseract-setup.exe
+tesseract/
+gImageReader_portable.zip
+gImageReader_extracted/
+7z-extra.7z
+7z_extra/
+
+# Ignore git and local IDE configs
+.git/
+.gitignore
+.vscode/
+.idea/
+.gemini/

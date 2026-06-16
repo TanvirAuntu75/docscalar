@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Split PDF - DocuAll</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#a6c8ff",
+                    "on-tertiary-fixed-variant": "#004786",
+                    "primary-container": "#00d948",
+                    "inverse-on-surface": "#313030",
+                    "on-surface-variant": "#bbcbb5",
+                    "on-tertiary-fixed": "#001c3b",
+                    "outline-variant": "#3c4b3a",
+                    "surface-bright": "#3a3939",
+                    "on-secondary-container": "#602a00",
+                    "on-primary": "#00390c",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-high": "#2a2a2a",
+                    "on-primary-fixed-variant": "#005316",
+                    "surface-container-lowest": "#0e0e0e",
+                    "surface-container": "#201f1f",
+                    "surface-container-low": "#1c1b1b",
+                    "primary-fixed-dim": "#25e452",
+                    "on-surface": "#e5e2e1",
+                    "surface": "#131313",
+                    "on-primary-fixed": "#002205",
+                    "on-error": "#690005",
+                    "primary-fixed": "#6fff7b",
+                    "surface-variant": "#353534",
+                    "on-primary-container": "#005818",
+                    "inverse-primary": "#006e20",
+                    "tertiary-container": "#93beff",
+                    "error-container": "#93000a",
+                    "on-tertiary": "#00315f",
+                    "on-background": "#e5e2e1",
+                    "secondary": "#ffb68b",
+                    "outline": "#859581",
+                    "on-tertiary-container": "#004c8e",
+                    "inverse-surface": "#e5e2e1",
+                    "tertiary": "#c3d9ff",
+                    "secondary-fixed": "#ffdbc8",
+                    "on-secondary": "#522300",
+                    "secondary-container": "#ff7f1c",
+                    "background": "#131313",
+                    "secondary-fixed-dim": "#ffb68b",
+                    "on-secondary-fixed-variant": "#753400",
+                    "tertiary-fixed": "#d5e3ff",
+                    "surface-container-highest": "#353534",
+                    "surface-dim": "#131313",
+                    "surface-tint": "#25e452",
+                    "primary": "#42f761",
+                    "on-secondary-fixed": "#321200",
+                    "error": "#ffb4ab"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "section-gap": "120px",
+                    "margin-mobile": "20px",
+                    "stack-lg": "32px",
+                    "margin-desktop": "80px",
+                    "stack-sm": "8px",
+                    "stack-md": "16px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "display-lg-mobile": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-sm": ["Plus Jakarta Sans"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                    "display-lg-mobile": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .glow-hover:hover {
+            box-shadow: 0 0 15px rgba(0, 217, 72, 0.3);
+        }
+        .file-drop-active {
+            border-color: #00D948;
+            background-color: rgba(0, 217, 72, 0.05);
+            box-shadow: inset 0 0 20px rgba(0, 217, 72, 0.2);
+        }
+        .page-selected {
+            border-color: #00D948;
+            background-color: rgba(0, 217, 72, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col pt-[80px]">
+<!-- TopNavBar -->
+<nav class="bg-background/80 backdrop-blur-md font-body-md text-body-md shadow-sm border-b border-white/10 fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-headline-sm font-bold text-on-surface">DocuAll</span>
+</div>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors hover:text-primary transition-all duration-300" href="#">Home</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 hover:text-primary transition-all duration-300" href="#">Tools</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors hover:text-primary transition-all duration-300" href="#">Features</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors hover:text-primary transition-all duration-300" href="#">Pricing</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors hover:text-primary transition-all duration-300" href="#">Blog</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors hover:text-primary transition-all duration-300" href="#">Support</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface hover:text-primary transition-colors">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="text-on-surface hover:text-primary transition-colors font-label-md text-label-md">Login</button>
+<button class="bg-primary text-on-primary font-label-md text-label-md py-2 px-4 rounded-full glow-hover transition-all">Sign Up</button>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop py-section-gap w-full max-w-container-max mx-auto">
+<!-- Header -->
+<div class="text-center mb-stack-lg max-w-2xl">
+<h1 class="font-headline-md text-headline-md text-on-surface mb-stack-sm">Split PDF Files</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Separate one page or a whole set for easy conversion into independent PDF files.</p>
+</div>
+<!-- Uploader Zone -->
+<div class="w-full max-w-3xl bg-[#121212] border-2 border-dashed border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:border-primary" id="upload-zone">
+<div class="w-32 h-32 mb-6 opacity-80 animate-bounce">
+<img alt="Abstract 3D rendering of floating documents and files in a dark tech environment." class="w-full h-full object-contain filter grayscale" data-alt="A hyper-realistic 3D isometric rendering of a glowing, transparent PDF document icon floating above a sleek, dark surface. The document has a faint neon green edge light. The background is pure black #050505, emphasizing the tactile 3D nature of the object. Soft contact shadows ground the floating asset. Corporate Modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA118bBhqEX5QNIfLqEbQfXN63Zl3B1Ym76DLxPEnjXiGO2oUp_QHl_y-k6g5GuZmyPnG-DdZ31hLOXSM1-wsYFEsSkLaTszj0CZrkNSVcyQKgM41G-CCRQ8VMIIY1BbC0vB9NcOTyA4s0akKBMMKrefMqDYRyENdwESkWjOlmSkbARVvPLI_X202adAgnyMDEw6-VbktWKvkkbrdoxkDoX0nhYI-MIrLXHAveFrmWCpYH64POSVZYmiQ7Iz3XOMZwnGQwhQK1D1Vc"/>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-2">Select PDF file</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">or drop PDF here</p>
+<button class="bg-primary text-on-primary font-label-md text-label-md py-3 px-8 rounded-lg glow-hover transition-all">Select File</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest font-body-md text-body-md border-t border-white/5 w-full py-section-gap px-margin-desktop max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-4 gap-gutter mt-auto">
+<div class="col-span-1 md:col-span-4 flex justify-between items-center mb-stack-lg border-b border-white/10 pb-stack-lg">
+<span class="font-display-lg text-headline-sm font-extrabold text-on-surface">DocuAll</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-stack-sm">Product</h4>
+<ul class="space-y-2">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Features</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Pricing</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-stack-sm">Tools</h4>
+<ul class="space-y-2">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Split PDF</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Merge PDF</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-stack-sm">Company</h4>
+<ul class="space-y-2">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">About Us</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Careers</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-stack-sm">Support</h4>
+<ul class="space-y-2">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Help Center</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Contact</a></li>
+</ul>
+</div>
+<div class="col-span-1 md:col-span-4 mt-stack-lg pt-stack-lg border-t border-white/5 flex justify-between items-center text-sm text-on-surface-variant">
+<p>© 2024 DocuAll Inc. All rights reserved.</p>
+<div class="flex gap-4">
+<a class="hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple interactions for the upload zone
+        const uploadZone = document.getElementById('upload-zone');
+        
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('file-drop-active');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('file-drop-active');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('file-drop-active');
+            // In a real app, transition to the split interface here
+            alert('File dropped! Transitioning to split view...');
+        });
+    </script>
+</body></html>
