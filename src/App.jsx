@@ -61,28 +61,24 @@ function ScrollToTop() {
 
 function LoadingSpinner() {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-      <div className="loading-spinner" />
+    <div className="flex justify-center items-center min-h-[60vh]">
+      <div className="relative p-6 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-4 border-white/10 border-t-white/80 rounded-full animate-spin" />
+        <span className="text-sm font-medium text-white/80 tracking-widest uppercase">Loading</span>
+      </div>
     </div>
   )
 }
 
 export default function App() {
-  const { isPro, isAuthenticated } = useAuth();
-  const location = useLocation();
-
-  // If the user is logged in and is on the homepage or dashboard, hide the default header and footer
-  // Use localStorage as a fallback during hydration to prevent flashing or render-skipping
-  const isAuth = isAuthenticated || localStorage.getItem('isAuthenticated') === 'true';
-  const cleanPath = location.pathname.replace(/\/$/, '');
-  const isWorkspaceOrDashboard = isAuth && (cleanPath === '' || cleanPath === '/dashboard');
-  const mainPadding = isWorkspaceOrDashboard ? 'pt-0' : (isPro ? 'pt-[72px]' : 'pt-[88px]');
+  const { isPro } = useAuth();
+  const mainPadding = isPro ? 'pt-[72px]' : 'pt-[88px]';
 
   return (
     <>
       <div className="app-bg-mesh" />
       <ScrollToTop />
-      {!isWorkspaceOrDashboard && <Header />}
+      <Header />
       <main className={`main-content ${mainPadding}`}>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
@@ -155,7 +151,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </main>
-      {!isWorkspaceOrDashboard && <Footer />}
+      <Footer />
     </>
   )
 }
