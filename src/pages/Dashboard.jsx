@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts';
 import SEOHead from '../components/SEOHead';
 import { getFiles, deleteFile } from '../utils/db';
 
@@ -40,6 +41,27 @@ export default function Dashboard() {
     timezone: 'Asia/Dhaka'
   });
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+
+  const searchRef = useRef(null);
+
+  const TABS = ['profile', 'security', 'billing', 'history'];
+
+  useKeyboardShortcuts({
+    '/': (e) => {
+      e.preventDefault();
+      setActiveTab('history');
+      setTimeout(() => searchRef.current?.focus(), 0);
+    },
+    'Escape': (e) => {
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
+      setSearchQuery('');
+      if (confirmDialog) {
+        setConfirmDialog(null);
+      }
+    }
+  });
 
   useEffect(() => {
     const loadHistoryData = async () => {
@@ -723,6 +745,7 @@ export default function Dashboard() {
                 {/* Search Log Bar */}
                 <div className="relative w-full sm:w-[260px]">
                   <input
+                    ref={searchRef}
                     type="text"
                     placeholder="Search logs by file name..."
                     value={searchQuery}
