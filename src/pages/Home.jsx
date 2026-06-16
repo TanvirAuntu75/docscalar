@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import ToolCard from '../components/ToolCard';
 import ToolIcon from '../components/ToolIcon';
@@ -796,13 +796,16 @@ export default function Home() {
     { title: 'View All 13 Tools', icon: 'apps', desc: 'Explore our complete collection of document utilities.', path: 'scroll', implemented: true },
   ];
 
-  const filteredTools = TOOLS.filter((tool) => {
-    const matchesTab = activeTab === 'all' || tool.category === activeTab;
-    const matchesSearch =
-      tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tool.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesTab && matchesSearch;
-  });
+  // ⚡ Bolt: Wrapped filteredTools in useMemo to prevent recalculating the filter on every re-render.
+  const filteredTools = useMemo(() => {
+    return TOOLS.filter((tool) => {
+      const matchesTab = activeTab === 'all' || tool.category === activeTab;
+      const matchesSearch =
+        tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.description.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesTab && matchesSearch;
+    });
+  }, [activeTab, searchQuery]);
 
   const isWorkspaceView = isAuthenticated;
 

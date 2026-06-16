@@ -1,0 +1,3 @@
+## 2024-05-18 - Heavy Inline SVG Re-rendering Bottleneck
+**Learning:** In React architectures, heavy inline SVGs (like `ToolIcon.jsx` with many paths and gradients) become a major performance bottleneck if they are re-rendered frequently. When a user typed in the `Home.jsx` search input, the state update caused all `ToolCard` components to re-render, forcing React to diff thousands of SVG DOM nodes on every keystroke, causing severe input lag.
+**Action:** Always wrap heavy, pure visual components (like complex SVG icons) and their immediate containers (like `ToolCard`) in `React.memo()`. Pair this with `useMemo` on list filtering to guarantee stable prop references so `React.memo()` can successfully short-circuit the re-render cycle.
