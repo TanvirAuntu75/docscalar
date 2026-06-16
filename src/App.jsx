@@ -5,6 +5,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 import PublicOnlyRoute from './components/PublicOnlyRoute'
+import ErrorBoundary from './components/ErrorBoundary'
 
 const Home = lazy(() => import('./pages/Home'))
 const PdfToImage = lazy(() => import('./pages/pdf/PdfToImage'))
@@ -84,10 +85,11 @@ export default function App() {
       <ScrollToTop />
       {!isWorkspaceOrDashboard && <Header />}
       <main className={`main-content ${mainPadding}`}>
-        <Suspense fallback={<LoadingSpinner />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/pdf-to-image" element={<PdfToImage />} />
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/pdf-to-image" element={<PdfToImage />} />
             <Route path="/image-to-pdf" element={<ImageToPdf />} />
             <Route path="/merge-pdf" element={<MergePdf />} />
             <Route path="/split-pdf" element={<SplitPdf />} />
@@ -145,15 +147,16 @@ export default function App() {
             <Route path="/pricing" element={<Pricing />} />
 
             {/* Dashboard — Accessible to all logged-in users */}
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </main>
       {!isWorkspaceOrDashboard && <Footer />}
     </>
