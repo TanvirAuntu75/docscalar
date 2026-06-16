@@ -2,7 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import ToolIcon from './ToolIcon';
 
-export default function ToolCard({ tool }) {
+// ⚡ Bolt: Wrapped ToolCard in React.memo to prevent unnecessary re-renders when parent state (like search input) changes.
+export default React.memo(function ToolCard({ tool }) {
   const navigate = useNavigate();
 
   return (
@@ -30,6 +31,6 @@ export default function ToolCard({ tool }) {
       </div>
     </div>
   );
-}
+});
 
 

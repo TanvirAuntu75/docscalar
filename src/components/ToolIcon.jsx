@@ -1,6 +1,7 @@
 import React from 'react';
 
-export default function ToolIcon({ id, size = 48 }) {
+// ⚡ Bolt: Wrapped ToolIcon in React.memo because it's a heavy inline SVG. Preventing its re-render saves significant CPU cycles.
+export default React.memo(function ToolIcon({ id, size = 48 }) {
   // Brand color gradients & tokens matching DocForge's editor brand
   const getGradientInfo = () => {
     switch (id) {
@@ -1193,4 +1194,4 @@ export default function ToolIcon({ id, size = 48 }) {
       {renderIconContent()}
     </svg>
   );
-}
+});
