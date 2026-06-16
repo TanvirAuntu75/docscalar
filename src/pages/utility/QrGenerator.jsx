@@ -3,7 +3,7 @@ import ToolIcon from '../../components/ToolIcon';
 import { Link } from 'react-router-dom';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
-import { generateQRToCanvas } from '../../engines/utility/qrGenerate';
+import { generateQRToCanvas, generateQRSVG } from '../../engines/utility/qrGenerate';
 import { saveAs } from 'file-saver';
 
 export default function QrGenerator() {
@@ -42,13 +42,28 @@ export default function QrGenerator() {
     return () => clearTimeout(timer);
   }, [text, size, darkColor, lightColor, errorCorrection]);
 
-  const handleDownload = () => {
+  const handleDownloadPNG = () => {
     if (!canvasRef.current) return;
     canvasRef.current.toBlob((blob) => {
       if (blob) {
         saveAs(blob, 'qr-code.png');
       }
     }, 'image/png');
+  };
+
+  const handleDownloadSVG = async () => {
+    try {
+      const svgString = await generateQRSVG(text, {
+        size,
+        darkColor,
+        lightColor,
+        errorCorrection,
+      });
+      const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      saveAs(blob, 'qr-code.svg');
+    } catch (err) {
+      setError(err.message || 'Failed to generate SVG');
+    }
   };
 
   return (
@@ -161,15 +176,26 @@ export default function QrGenerator() {
             {error && <div style={{ color: 'var(--color-danger)', padding: '1rem', maxWidth: '200px' }}>{error}</div>}
           </div>
 
-          <button 
-            className="btn btn-success btn-lg flex items-center justify-center gap-2" 
-            onClick={handleDownload} 
-            disabled={!!error}
-            style={{ width: '100%', maxWidth: '250px' }}
-          >
+          <div style={{ display: 'flex', gap: '1rem', width: '100%', maxWidth: '400px', justifyContent: 'center' }}>
+            <button
+              className="btn btn-success btn-lg flex items-center justify-center gap-2"
+              onClick={handleDownloadPNG}
+              disabled={!!error}
+              style={{ flex: 1 }}
+            >
               <span className="material-symbols-outlined text-[20px] select-none">download</span>
-              <span>Download QR Code</span>
+              <span>PNG</span>
             </button>
+            <button
+              className="btn btn-success btn-lg flex items-center justify-center gap-2"
+              onClick={handleDownloadSVG}
+              disabled={!!error}
+              style={{ flex: 1 }}
+            >
+              <span className="material-symbols-outlined text-[20px] select-none">download</span>
+              <span>SVG</span>
+            </button>
+          </div>
         </div>
       </div>
 
