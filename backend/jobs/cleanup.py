@@ -23,12 +23,15 @@ def cleanup_expired_files():
                 # Check modification time
                 file_age = now - file_path.stat().st_mtime
                 if file_age > expiry_threshold:
-                    size_freed += file_path.stat().st_size
                     if file_path.is_file():
+                        size_freed += file_path.stat().st_size
                         file_path.unlink()
                     elif file_path.is_dir():
                         # Recurse clean directories (e.g. split chunks)
                         import shutil
+                        # Calculate total size of directory contents
+                        dir_size = sum(f.stat().st_size for f in file_path.rglob('*') if f.is_file())
+                        size_freed += dir_size
                         shutil.rmtree(file_path)
                     cleaned_count += 1
             except Exception as e:
