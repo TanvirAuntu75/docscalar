@@ -74,7 +74,7 @@ export function cleanTextForWinAnsi(text, font, fallback = '?') {
       font.encodeText(char);
       validationCache.set(char, char);
       result.push(char);
-    } catch (e) {
+    } catch {
       // Character is not encodable. Fallback.
       validationCache.set(char, fallback);
       result.push(fallback);

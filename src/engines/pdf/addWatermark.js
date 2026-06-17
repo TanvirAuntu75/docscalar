@@ -1,5 +1,5 @@
 import { PDFDocument, StandardFonts, rgb, degrees } from 'pdf-lib';
-import { cleanTextForWinAnsi } from '../../utils/pdfSanitizer';
+import { cleanTextForWinAnsi } from '../../utils/pdfSanitizer.js';
 
 // Parse hex colors to standard rgb values (0.0 to 1.0)
 const hexToRgb = (hex) => {

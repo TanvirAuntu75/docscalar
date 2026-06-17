@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import ToolIcon from '../../components/ToolIcon';
-import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -181,12 +180,10 @@ export default function AddWatermark() {
               gap: '2rem',
               marginTop: '1.5rem'
             }}>
-              {/* Responsive 2-column layout inside the panel */}
+              {/* Layout for options and preview inside the panel */}
               <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'window.innerWidth > 768 ? "1.2fr 1fr" : "1fr"',
                 gap: '2rem'
-              }} className="md:grid-cols-2">
+              }} className="flex flex-col">
                 
                 {/* Configuration Columns */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
