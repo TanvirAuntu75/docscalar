@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import ToolIcon from '../../components/ToolIcon';
-import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -63,7 +62,7 @@ export default function ImageResizer() {
           }
           cleanup();
         };
-      } catch (err) {
+      } catch {
         if (active) {
           setError('Failed to process the selected file.');
         }
