@@ -110,7 +110,7 @@ export default function PdfToWord() {
       convertFormData.append('file_id', uploadData.file_id);
       convertFormData.append('filename', uploadData.filename);
 
-      const convertRes = await apiFetch(`${BACKEND_URL}/api/convert/pdf-to-word`, {
+      const convertRes = await apiFetch(`${BACKEND_URL}/api/convert/pdf-to-docx`, {
         method: 'POST',
         body: convertFormData
       });

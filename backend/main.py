@@ -430,7 +430,7 @@ async def security_unlock_file(
         "status": "queued"
     }
 
-@app.post("/api/convert/pdf-to-word")
+@app.post("/api/convert/pdf-to-docx")
 @limiter.limit("5/minute")
 async def api_pdf_to_word(
     request: Request,
