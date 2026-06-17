@@ -42,3 +42,4 @@ backend/__pycache__/
 backend/uploads/
 backend/output/
 backend/test_output/
+venv/
