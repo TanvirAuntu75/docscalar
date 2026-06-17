@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import ToolCard from '../components/ToolCard';
+import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts';
 import ToolIcon from '../components/ToolIcon';
 import SEOHead from '../components/SEOHead';
 import AdPlaceholder from '../components/AdPlaceholder';
@@ -146,6 +147,108 @@ export default function Home() {
   const fileInputRef = useRef(null);
   const workspaceInputRef = useRef(null);
   const toolsRef = useRef(null);
+
+  const toolsSearchRef = useRef(null);
+  const guestToolsSearchRef = useRef(null);
+
+  const SIDEBAR_TABS = ['workspace', 'queue', 'converter', 'reformatter', 'templates', 'settings'];
+
+  const focusCard = (direction) => {
+    const cards = Array.from(document.querySelectorAll('[data-tool-card]'));
+    if (cards.length === 0) return;
+
+    const activeEl = document.activeElement;
+    const isCardFocused = activeEl && activeEl.hasAttribute('data-tool-card');
+
+    if (!isCardFocused) {
+      if (['ArrowDown', 'ArrowRight'].includes(direction)) {
+        cards[0].focus();
+        return true;
+      } else if (['ArrowUp', 'ArrowLeft'].includes(direction)) {
+        cards[cards.length - 1].focus();
+        return true;
+      }
+      return false;
+    }
+
+    const currentIndex = cards.indexOf(activeEl);
+    let nextIndex = currentIndex;
+
+    // Approximate grid navigation: 1, 2, 3, or 4 columns depending on screen size.
+    // For simplicity, Left/Right moves by 1.
+    // Up/Down moves by finding the closest card vertically, or moving by a fixed offset
+    // Let's get column count by comparing Y offsets of the first few cards.
+    let columns = 1;
+    for (let i = 1; i < cards.length; i++) {
+      if (cards[i].getBoundingClientRect().top > cards[0].getBoundingClientRect().top + 10) {
+        columns = i;
+        break;
+      }
+      if (i === cards.length - 1) columns = cards.length;
+    }
+
+    switch (direction) {
+      case 'ArrowRight':
+        nextIndex = Math.min(currentIndex + 1, cards.length - 1);
+        break;
+      case 'ArrowLeft':
+        nextIndex = Math.max(currentIndex - 1, 0);
+        break;
+      case 'ArrowDown':
+        nextIndex = Math.min(currentIndex + columns, cards.length - 1);
+        break;
+      case 'ArrowUp':
+        nextIndex = Math.max(currentIndex - columns, 0);
+        break;
+    }
+
+    if (nextIndex !== currentIndex) {
+      cards[nextIndex].focus();
+      cards[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      return true;
+    }
+
+    return true; // prevent default to stop scrolling if at edge but focused on a card
+  };
+
+  useKeyboardShortcuts({
+    '/': (e) => {
+      e.preventDefault();
+      if (isAuthenticated) {
+        setActiveSidebarTab('converter');
+        setTimeout(() => toolsSearchRef.current?.focus(), 0);
+      } else {
+        setTimeout(() => {
+          guestToolsSearchRef.current?.focus();
+          guestToolsSearchRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 0);
+      }
+    },
+    'Escape': (e) => {
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
+      setSearchQuery('');
+      setModalOpen(false);
+      setOpenDropdownId(null);
+      setOpenMenuId(null);
+      if (confirmDialog) {
+        setConfirmDialog(null);
+      }
+    },
+    'ArrowRight': (e) => {
+      if (focusCard('ArrowRight')) e.preventDefault();
+    },
+    'ArrowLeft': (e) => {
+      if (focusCard('ArrowLeft')) e.preventDefault();
+    },
+    'ArrowDown': (e) => {
+      if (focusCard('ArrowDown')) e.preventDefault();
+    },
+    'ArrowUp': (e) => {
+      if (focusCard('ArrowUp')) e.preventDefault();
+    }
+  });
 
   // local simulated conversion progress effect for hero visual
   useEffect(() => {
@@ -1461,6 +1564,7 @@ export default function Home() {
                     </div>
                     <div className="relative w-full md:w-[320px]">
                       <input
+                        ref={toolsSearchRef}
                         type="text"
                         placeholder="Search tools (e.g. compress, convert)..."
                         value={searchQuery}
@@ -2051,6 +2155,7 @@ export default function Home() {
                 {/* Search Bar */}
                 <div className="relative w-full md:w-[320px]">
                   <input
+                    ref={guestToolsSearchRef}
                     type="text"
                     placeholder="Search tools (e.g. compress, convert)..."
                     value={searchQuery}
