@@ -531,6 +531,19 @@ export const TOOLS = [
 
   // ── Utility Tools ──────────────────────────────────
   {
+    id: 'conversion-pipeline',
+    category: 'utility',
+    title: 'Conversion Pipeline',
+    description: 'Chain multiple conversion tools into an automated workflow',
+    icon: 'account_tree',
+    iconBg: 'rgba(236, 72, 153, 0.15)', // Pink-ish
+    iconColor: 'hsl(330, 80%, 65%)',
+    path: '/conversion-pipeline',
+    accept: null,
+    multiple: true,
+    implemented: true,
+  },
+  {
     id: 'text-to-pdf',
     category: 'utility',
     title: 'Text to PDF',

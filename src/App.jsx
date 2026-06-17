@@ -53,6 +53,7 @@ const PdfToPowerpoint = lazy(() => import('./pages/document/PdfToPowerpoint'))
 const PdfToPdfa = lazy(() => import('./pages/document/PdfToPdfa'))
 const RedactPdf = lazy(() => import('./pages/pdf/RedactPdf'))
 const OcrPdf = lazy(() => import('./pages/pdf/OcrPdf'))
+const ConversionPipeline = lazy(() => import('./pages/utility/ConversionPipeline'))
 import { TOOLS } from './utils/constants'
 
 function ScrollToTop() {
@@ -123,6 +124,7 @@ export default function App() {
             <Route path="/redact-pdf" element={<RedactPdf />} />
             <Route path="/upload-demo" element={<FileUploadZoneDemo />} />
             <Route path="/ocr-pdf" element={<OcrPdf />} />
+            <Route path="/conversion-pipeline" element={<ConversionPipeline />} />
             <Route path="/coming-soon/:toolId" element={<ComingSoon />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
