@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import ToolIcon from '../../components/ToolIcon';
-import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -142,7 +141,11 @@ export default function ImageCompressor() {
           </div>
           <div className="result-title">Compression Complete!</div>
           <div className="result-info">
-            Reduced total size by <strong>{formatFileSize(totalSaved)}</strong> ({totalPercent}% smaller)
+            {totalSaved < 0 ? (
+              <>Increased total size by <strong>{formatFileSize(Math.abs(totalSaved))}</strong> (+{Math.abs(totalPercent)}% larger)</>
+            ) : (
+              <>Reduced total size by <strong>{formatFileSize(totalSaved)}</strong> ({totalPercent}% smaller)</>
+            )}
           </div>
 
           <div style={{ width: '100%', maxWidth: '600px', margin: '1.5rem auto', textAlign: 'left', background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
