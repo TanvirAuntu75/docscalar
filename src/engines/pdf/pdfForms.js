@@ -10,6 +10,7 @@ export async function getFormFields(file) {
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await PDFDocument.load(arrayBuffer);
   const form = pdfDoc.getForm();
+  const pages = pdfDoc.getPages();
   
   let fields;
   try {
@@ -47,11 +48,54 @@ export async function getFormFields(file) {
       options = field.getOptions();
     }
 
+    // Extract layout information from widgets
+    const widgetData = [];
+    try {
+      const widgets = field.acroField.getWidgets();
+      for (const widget of widgets) {
+        const rect = widget.getRectangle(); // {x, y, width, height}
+        const P = widget.P();
+        let pageIndex = -1;
+
+        for (let i = 0; i < pages.length; i++) {
+          if (P && pages[i].ref && pages[i].ref.tag === P.tag) {
+            pageIndex = i;
+            break;
+          } else {
+            // fallback: check Annots
+            const annots = pages[i].node.Annots();
+            if (annots) {
+              const annotsArray = annots.asArray();
+              for (let j = 0; j < annotsArray.length; j++) {
+                 if (annotsArray[j] === widget.dict) {
+                   pageIndex = i;
+                   break;
+                 }
+              }
+            }
+          }
+          if (pageIndex !== -1) break;
+        }
+
+        if (pageIndex !== -1) {
+          const pageSize = pages[pageIndex].getSize();
+          widgetData.push({
+            rect,
+            pageIndex,
+            pageSize
+          });
+        }
+      }
+    } catch (e) {
+      console.warn(`Failed to extract widgets for field ${name}`);
+    }
+
     return {
       name,
       type,
       value,
-      options
+      options,
+      widgets: widgetData
     };
   });
 }

@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ToolIcon from '../../components/ToolIcon';
 import { Link } from 'react-router-dom';
+import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -8,6 +10,8 @@ import useFileProcessor from '../../hooks/useFileProcessor';
 import { getFormFields, fillFormFields } from '../../engines/pdf/pdfForms';
 import { saveFile } from '../../utils/db';
 import { saveAs } from 'file-saver';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 export default function PdfForms() {
   const {
@@ -29,22 +33,50 @@ export default function PdfForms() {
   const [scanning, setScanning] = useState(false);
   const [scanMessage, setScanMessage] = useState('');
 
+  // Canvas rendering state
+  const [pdfDocument, setPdfDocument] = useState(null);
+  const [totalPages, setTotalPages] = useState(0);
+  const [activePageIndex, setActivePageIndex] = useState(0);
+
+  const containerRef = useRef(null);
+  const pdfCanvasRef = useRef(null);
+  const overlayCanvasRef = useRef(null);
+
   // Scan PDF for form fields when file loaded
   useEffect(() => {
     if (files.length === 0) {
       setFormFields([]);
       setFieldValues({});
       setScanMessage('');
+      setPdfDocument(null);
+      setTotalPages(0);
+      setActivePageIndex(0);
       return;
     }
 
-    const scanForm = async () => {
+    let activePdf = null;
+    let isCancelled = false;
+
+    const scanFormAndLoadPdf = async () => {
       setScanning(true);
-      setScanMessage('Scanning document structure for interactive fields...');
+      setScanMessage('Scanning document structure and rendering pages...');
       setError(null);
 
       try {
+        // 1. Load document via PDF.js for rendering
+        const arrayBuffer = await files[0].arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        if (isCancelled) {
+          pdf.destroy();
+          return;
+        }
+        activePdf = pdf;
+        setPdfDocument(pdf);
+        setTotalPages(pdf.numPages);
+
+        // 2. Extract fields via PDF-lib
         const fields = await getFormFields(files[0]);
+        if (isCancelled) return;
         setFormFields(fields);
         
         // Initialize state values map
@@ -60,14 +92,51 @@ export default function PdfForms() {
           setScanMessage(`Scan complete: Found ${fields.length} interactive fields.`);
         }
       } catch (err) {
-        setError('Failed to scan PDF form fields. Make sure the document structure is valid.');
+        if (!isCancelled) {
+          setError('Failed to process PDF form. Make sure the document is not corrupted.');
+        }
       } finally {
-        setScanning(false);
+        if (!isCancelled) setScanning(false);
       }
     };
 
-    scanForm();
+    scanFormAndLoadPdf();
+
+    return () => {
+      isCancelled = true;
+      if (activePdf) activePdf.destroy();
+    };
   }, [files, setError]);
+
+  // Render active page
+  useEffect(() => {
+    if (!pdfDocument) return;
+
+    const renderPage = async () => {
+      try {
+        const page = await pdfDocument.getPage(activePageIndex + 1);
+        const canvas = pdfCanvasRef.current;
+        const overlay = overlayCanvasRef.current;
+        if (!canvas || !overlay) return;
+
+        // Use a scale that provides good resolution
+        const scale = 1.5;
+        const viewport = page.getViewport({ scale });
+
+        // Size both canvases identically
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
+
+      } catch (err) {
+        console.error('Error rendering page:', err);
+      }
+    };
+
+    renderPage();
+  }, [pdfDocument, activePageIndex]);
 
   const handleValueChange = (name, val) => {
     setFieldValues(prev => ({
@@ -154,106 +223,182 @@ export default function PdfForms() {
           )}
 
           {files.length > 0 && !scanning && formFields.length > 0 && (
-            <div className="options-panel animate-[fadeIn_0.22s_ease-out]" style={{ marginTop: '1.5rem' }}>
-              <div className="options-title" style={{ marginBottom: '1.25rem' }}>Fill Document Fields</div>
+            <div className="options-panel animate-[fadeIn_0.22s_ease-out]" style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.25rem',
+              marginTop: '1.5rem'
+            }}>
 
-              {/* Dynamic form inputs container */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: '1.25rem',
-                maxHeight: '400px',
-                overflowY: 'auto',
-                padding: '0.5rem'
-              }} className="no-scrollbar">
-                {formFields.map((field) => {
-                  const currentValue = fieldValues[field.name] ?? '';
-                  return (
-                    <div 
-                      key={field.name}
+              <div className="options-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>Interactive Document Viewer</span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                  Page {activePageIndex + 1} / {totalPages}
+                </span>
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div style={{
+                  display: 'flex',
+                  gap: '0.35rem',
+                  overflowX: 'auto',
+                  paddingBottom: '0.5rem',
+                  whiteSpace: 'nowrap'
+                }} className="no-scrollbar">
+                  {Array.from({ length: totalPages }).map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActivePageIndex(idx)}
+                      className={`btn ${activePageIndex === idx ? 'btn-primary' : 'btn-secondary'}`}
                       style={{
-                        display: 'flex',
-                        flexDirection: field.type === 'checkbox' ? 'row-reverse' : 'column',
-                        alignItems: field.type === 'checkbox' ? 'center' : 'stretch',
-                        justifyContent: field.type === 'checkbox' ? 'flex-end' : 'stretch',
-                        gap: '0.4rem',
-                        padding: '0.75rem',
-                        background: 'var(--bg-secondary)',
-                        border: '1px solid var(--border-subtle)',
-                        borderRadius: '8px'
+                        padding: '0.35rem 0.65rem',
+                        fontSize: '0.75rem',
+                        minWidth: '40px',
+                        border: activePageIndex === idx ? '1px solid var(--color-primary)' : '1px solid var(--border-subtle)'
                       }}
                     >
-                      <label style={{ 
-                        fontSize: '0.8rem', 
-                        fontWeight: '600', 
-                        color: 'var(--text-primary)',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                        cursor: field.type === 'checkbox' ? 'pointer' : 'default',
-                        userSelect: 'none'
-                      }} htmlFor={`field-${field.name}`}>
-                        {field.name.replace(/\[\d+\]/g, '').replace(/_/g, ' ') || 'Unnamed Field'}
-                      </label>
+                      Page {idx + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
 
-                      {field.type === 'text' && (
-                        <input
-                          id={`field-${field.name}`}
-                          type="text"
-                          value={currentValue}
-                          onChange={(e) => handleValueChange(field.name, e.target.value)}
-                          style={{
-                            padding: '0.5rem 0.75rem',
-                            background: 'var(--bg-primary)',
-                            border: '1px solid var(--border-subtle)',
-                            borderRadius: '6px',
-                            color: 'var(--text-primary)',
-                            fontSize: '0.85rem',
-                            outline: 'none'
-                          }}
-                        />
-                      )}
+              {/* Canvas Workspace */}
+              <div
+                ref={containerRef}
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  background: 'var(--bg-secondary)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  padding: '1.5rem',
+                }}
+              >
+                <div style={{ position: 'relative', display: 'inline-block', maxWidth: '100%' }}>
 
-                      {field.type === 'checkbox' && (
-                        <input
-                          id={`field-${field.name}`}
-                          type="checkbox"
-                          checked={!!currentValue}
-                          onChange={(e) => handleValueChange(field.name, e.target.checked)}
-                          style={{
-                            width: '16px',
-                            height: '16px',
-                            accentColor: 'var(--color-primary)',
-                            cursor: 'pointer'
-                          }}
-                        />
-                      )}
+                  {/* PDF render layer */}
+                  <canvas
+                    ref={pdfCanvasRef}
+                    style={{
+                      display: 'block',
+                      maxWidth: '100%',
+                      maxHeight: '600px',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                      borderRadius: '4px',
+                      pointerEvents: 'none'
+                    }}
+                  />
 
-                      {field.type === 'select' && (
-                        <select
-                          id={`field-${field.name}`}
-                          value={currentValue}
-                          onChange={(e) => handleValueChange(field.name, e.target.value)}
-                          style={{
-                            padding: '0.5rem 0.75rem',
-                            background: 'var(--bg-primary)',
-                            border: '1px solid var(--border-subtle)',
-                            borderRadius: '6px',
-                            color: 'var(--text-primary)',
-                            fontSize: '0.85rem',
-                            outline: 'none',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          <option value="">-- Select Option --</option>
-                          {field.options && field.options.map(opt => (
-                            <option key={opt} value={opt}>{opt}</option>
-                          ))}
-                        </select>
-                      )}
-                    </div>
-                  );
-                })}
+                  {/* Absolute HTML Interactive Overlay */}
+                  <div
+                    ref={overlayCanvasRef}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      zIndex: 15,
+                      pointerEvents: 'none'
+                    }}
+                  >
+                    {formFields.map((field) => {
+                      if (!field.widgets || field.widgets.length === 0) return null;
+
+                      return field.widgets.map((widget, wIdx) => {
+                        if (widget.pageIndex !== activePageIndex) return null;
+
+                        // pdf-lib origin is bottom-left, HTML is top-left
+                        const pdfRect = widget.rect;
+                        const pageSize = widget.pageSize;
+
+                        const xPercent = pdfRect.x / pageSize.width;
+                        const yPercent = (pageSize.height - pdfRect.y - pdfRect.height) / pageSize.height;
+                        const wPercent = pdfRect.width / pageSize.width;
+                        const hPercent = pdfRect.height / pageSize.height;
+
+                        const currentValue = fieldValues[field.name] ?? '';
+
+                        // Shared styles for inputs over canvas
+                        const inputStyle = {
+                          position: 'absolute',
+                          left: `${xPercent * 100}%`,
+                          top: `${yPercent * 100}%`,
+                          width: `${wPercent * 100}%`,
+                          height: `${hPercent * 100}%`,
+                          background: field.type === 'text' || field.type === 'select' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
+                          border: '1px solid rgba(59, 130, 246, 0.4)',
+                          color: '#000',
+                          fontSize: '0.8rem',
+                          fontFamily: 'sans-serif',
+                          pointerEvents: 'auto',
+                          outline: 'none',
+                          padding: '0 4px',
+                          margin: 0,
+                          boxSizing: 'border-box'
+                        };
+
+                        if (field.type === 'checkbox') {
+                          return (
+                            <input
+                              key={`${field.name}-${wIdx}`}
+                              type="checkbox"
+                              checked={!!currentValue}
+                              onChange={(e) => handleValueChange(field.name, e.target.checked)}
+                              style={{
+                                ...inputStyle,
+                                accentColor: 'var(--color-primary)',
+                                cursor: 'pointer'
+                              }}
+                              title={field.name}
+                            />
+                          );
+                        }
+
+                        if (field.type === 'select') {
+                          return (
+                            <select
+                              key={`${field.name}-${wIdx}`}
+                              value={currentValue}
+                              onChange={(e) => handleValueChange(field.name, e.target.value)}
+                              style={{
+                                ...inputStyle,
+                                cursor: 'pointer',
+                                opacity: 0.8 // slight transparency so background text isn't entirely hidden
+                              }}
+                              title={field.name}
+                            >
+                              <option value="">-</option>
+                              {field.options && field.options.map(opt => (
+                                <option key={opt} value={opt}>{opt}</option>
+                              ))}
+                            </select>
+                          );
+                        }
+
+                        return (
+                          <input
+                            key={`${field.name}-${wIdx}`}
+                            type="text"
+                            value={currentValue}
+                            onChange={(e) => handleValueChange(field.name, e.target.value)}
+                            style={{
+                              ...inputStyle,
+                              backgroundColor: currentValue ? 'rgba(255,255,255,0.9)' : 'rgba(59, 130, 246, 0.15)'
+                            }}
+                            title={field.name}
+                          />
+                        );
+                      });
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
           )}
