@@ -23,6 +23,7 @@ export default function Dashboard() {
     successRate: '100%',
   });
   const [recentActivity, setRecentActivity] = useState([]);
+  const [conversionHistory, setConversionHistory] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
@@ -117,6 +118,31 @@ export default function Dashboard() {
 
     loadHistoryData();
   }, []);
+
+  useEffect(() => {
+    try {
+      const historyRaw = localStorage.getItem('conversionHistory');
+      if (historyRaw) {
+        setConversionHistory(JSON.parse(historyRaw));
+      }
+    } catch (err) {
+      console.error('Failed to load conversion history:', err);
+    }
+  }, []);
+
+  const handleDeleteConversionHistoryItem = (id) => {
+    try {
+      const historyRaw = localStorage.getItem('conversionHistory');
+      if (historyRaw) {
+        let history = JSON.parse(historyRaw);
+        history = history.filter(item => item.id !== id);
+        localStorage.setItem('conversionHistory', JSON.stringify(history));
+        setConversionHistory(history);
+      }
+    } catch (err) {
+      console.error('Failed to delete conversion history item:', err);
+    }
+  };
 
   const getRelativeTime = (dateStr) => {
     try {
@@ -858,6 +884,56 @@ export default function Dashboard() {
                   </div>
                 )}
               </div>
+
+              {/* Conversion History Tracker */}
+              <div className="bg-surface border border-outline-variant rounded-2xl p-6 shadow-sm flex flex-col gap-5 text-left mt-6">
+                <div className="text-left pb-4 border-b border-outline-variant/60">
+                  <h3 className="font-semibold text-on-background text-sm">Conversion History Tracker</h3>
+                  <p className="text-xs text-on-surface-variant mt-0.5 font-medium">History of successful conversions across all tools.</p>
+                </div>
+
+                {conversionHistory.length > 0 ? (
+                  <div className="flex flex-col gap-3">
+                    {conversionHistory.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-surface-container-low border border-outline-variant rounded-xl gap-4 text-left"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 select-none text-primary bg-primary/10`}>
+                            <span className="material-symbols-outlined text-[18px] fill">sync</span>
+                          </div>
+                          <div className="min-w-0 text-left">
+                            <h4 className="font-semibold text-xs text-on-background truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px]">{item.filename}</h4>
+                            <p className="text-[10px] text-on-surface-variant font-semibold flex items-center gap-1.5 mt-0.5">
+                              <span>{item.toolName}</span>
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between sm:justify-end gap-3 flex-shrink-0">
+                          <span className="font-label-mono text-[9px] text-outline uppercase font-semibold">{getRelativeTime(item.timestamp)}</span>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => handleDeleteConversionHistoryItem(item.id)}
+                              className="p-2 border border-outline-variant hover:border-error hover:text-error rounded-lg transition-all bg-surface text-outline shadow-sm"
+                              title="Delete History Entry"
+                            >
+                              <span className="material-symbols-outlined text-[14px]">close</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 border border-dashed border-outline-variant rounded-xl bg-surface-container-low text-on-surface-variant">
+                    <span className="material-symbols-outlined text-[28px] text-outline mb-1.5 select-none">history</span>
+                    <p className="text-xs font-semibold text-on-background">No conversion history found.</p>
+                  </div>
+                )}
+              </div>
+
             </div>
           )}
 
