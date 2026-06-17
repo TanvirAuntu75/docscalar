@@ -54,6 +54,7 @@ const PdfToPdfa = lazy(() => import('./pages/document/PdfToPdfa'))
 const RedactPdf = lazy(() => import('./pages/pdf/RedactPdf'))
 const OcrPdf = lazy(() => import('./pages/pdf/OcrPdf'))
 import { TOOLS } from './utils/constants'
+import Skeleton from './components/ui/Skeleton'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -61,12 +62,23 @@ function ScrollToTop() {
   return null
 }
 
-function LoadingSpinner() {
+function PageSkeleton() {
   return (
-    <div className="flex justify-center items-center min-h-[60vh]">
-      <div className="relative p-6 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-4 border-white/10 border-t-white/80 rounded-full animate-spin" />
-        <span className="text-sm font-medium text-white/80 tracking-widest uppercase">Loading</span>
+    <div className="flex flex-col gap-6 p-6 w-full max-w-[1200px] mx-auto min-h-[60vh] mt-8">
+      {/* Title skeleton */}
+      <div className="flex flex-col items-center gap-4 mb-8">
+        <Skeleton variant="text" className="w-3/4 max-w-md h-12" />
+        <Skeleton variant="text" className="w-1/2 max-w-sm h-6" />
+      </div>
+
+      {/* Main content box skeleton */}
+      <Skeleton className="w-full h-64 md:h-96" />
+
+      {/* Details/Action area skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+        <Skeleton className="h-32" />
+        <Skeleton className="h-32" />
+        <Skeleton className="h-32" />
       </div>
     </div>
   )
@@ -83,7 +95,7 @@ export default function App() {
       <Header />
       <main className={`main-content ${mainPadding}`}>
         <ErrorBoundary>
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<PageSkeleton />}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/pdf-to-image" element={<PdfToImage />} />
