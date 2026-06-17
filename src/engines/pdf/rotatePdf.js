@@ -4,18 +4,18 @@ import ConversionWorker from '../../workers/pdf.worker.js?worker';
 /**
  * Rotate all pages or specific pages in a PDF using a background Web Worker.
  * @param {File} file
- * @param {number} angle - 90, 180, or 270
+ * @param {number|number[]} rotations - 90, 180, or 270, or an array of angles for each page
  * @param {function} onProgress
  * @returns {Promise<Blob>}
  */
-export async function rotatePdf(file, angle = 90, onProgress) {
+export async function rotatePdf(file, rotations = 90, onProgress) {
   return new Promise((resolve, reject) => {
     const worker = new ConversionWorker();
 
     file.arrayBuffer().then((arrayBuffer) => {
       worker.postMessage({
         type: 'rotatePdf',
-        payload: { arrayBuffer, angle }
+        payload: { arrayBuffer, rotations }
       }, [arrayBuffer]);
     }).catch(reject);
 

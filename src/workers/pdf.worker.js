@@ -29,8 +29,8 @@ self.onmessage = async (e) => {
         break;
       }
       case 'rotatePdf': {
-        const { arrayBuffer, angle } = payload;
-        const buffer = await handleRotatePdf(arrayBuffer, angle);
+        const { arrayBuffer, rotations } = payload;
+        const buffer = await handleRotatePdf(arrayBuffer, rotations);
         result = { pdfBuffer: buffer };
         transferables = [buffer];
         break;
@@ -148,13 +148,14 @@ function parseRange(rangeStr, max) {
 }
 
 // 3. Rotate PDF logic
-async function handleRotatePdf(arrayBuffer, angle) {
+async function handleRotatePdf(arrayBuffer, rotations) {
   const pdfDoc = await PDFDocument.load(arrayBuffer);
   const pages = pdfDoc.getPages();
   
   pages.forEach((page, i) => {
     const currentRotation = page.getRotation().angle;
-    page.setRotation(degrees(currentRotation + angle));
+    const rotationAmount = Array.isArray(rotations) ? (rotations[i] || 0) : rotations;
+    page.setRotation(degrees(currentRotation + rotationAmount));
     self.postMessage({ type: 'progress', progress: Math.round(((i + 1) / pages.length) * 100) });
   });
   
