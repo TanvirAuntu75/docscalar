@@ -51,33 +51,44 @@ def convert_with_libreoffice(input_path: str, target_format: str) -> ConversionR
         # Output to our designated output directory
         output_dir = config.OUTPUT_DIR
         
-        # Build subprocess command
-        # --headless: Run without GUI
-        # --convert-to: Target format
-        # --outdir: Output directory
-        cmd = [
-            config.LIBREOFFICE_PATH,
-            "--headless",
-            "--convert-to",
-            target_format,
-            "--outdir",
-            str(output_dir),
-            str(input_file)
-        ]
+        # Create a temporary directory for an isolated LibreOffice user profile
+        with tempfile.TemporaryDirectory() as temp_env:
+            # The UserInstallation path must be a file URI
+            env_uri = Path(temp_env).as_uri()
 
-        # In Windows, prevent console window popup during background execution
-        creation_flags = 0
-        if sys.platform == "win32":
-            # 0x08000000 = CREATE_NO_WINDOW
-            creation_flags = 0x08000000
+            # Build subprocess command
+            # --headless: Run without GUI
+            # --convert-to: Target format
+            # --outdir: Output directory
+            cmd = [
+                config.LIBREOFFICE_PATH,
+                "--headless",
+                "--invisible",
+                "--nologo",
+                "--nodefault",
+                "--norestore",
+                "--nofirststartwizard",
+                f"-env:UserInstallation={env_uri}",
+                "--convert-to",
+                target_format,
+                "--outdir",
+                str(output_dir),
+                str(input_file)
+            ]
 
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=120, # 2 minutes timeout to prevent hanging
-            creationflags=creation_flags
-        )
+            # In Windows, prevent console window popup during background execution
+            creation_flags = 0
+            if sys.platform == "win32":
+                # 0x08000000 = CREATE_NO_WINDOW
+                creation_flags = 0x08000000
+
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=120, # 2 minutes timeout to prevent hanging
+                creationflags=creation_flags
+            )
 
         if result.returncode != 0:
             return ConversionResult(
