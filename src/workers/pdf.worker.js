@@ -97,33 +97,21 @@ async function handleSplitPdf(arrayBuffer, mode, range) {
     pageIndices = Array.from({ length: totalPages }, (_, i) => i);
   }
   
-  if (mode === 'all') {
-    const blobs = [];
-    const names = [];
-    for (let i = 0; i < pageIndices.length; i++) {
-      const newDoc = await PDFDocument.create();
-      const [page] = await newDoc.copyPages(srcDoc, [pageIndices[i]]);
-      newDoc.addPage(page);
-      const pdfBytes = await newDoc.save();
-      
-      blobs.push({ arrayBuffer: pdfBytes.buffer, type: 'application/pdf' });
-      names.push(`page-${pageIndices[i] + 1}.pdf`);
-      
-      self.postMessage({ type: 'progress', progress: Math.round(((i + 1) / pageIndices.length) * 100) });
-    }
-    return { blobs, names };
-  } else {
+  // In both 'all' and 'range' mode, split the matching pages into separate PDFs
+  const blobs = [];
+  const names = [];
+  for (let i = 0; i < pageIndices.length; i++) {
     const newDoc = await PDFDocument.create();
-    const pages = await newDoc.copyPages(srcDoc, pageIndices);
-    pages.forEach((p) => newDoc.addPage(p));
+    const [page] = await newDoc.copyPages(srcDoc, [pageIndices[i]]);
+    newDoc.addPage(page);
     const pdfBytes = await newDoc.save();
     
-    self.postMessage({ type: 'progress', progress: 100 });
-    return {
-      blobs: [{ arrayBuffer: pdfBytes.buffer, type: 'application/pdf' }],
-      names: ['extracted-pages.pdf']
-    };
+    blobs.push({ arrayBuffer: pdfBytes.buffer, type: 'application/pdf' });
+    names.push(`page-${pageIndices[i] + 1}.pdf`);
+
+    self.postMessage({ type: 'progress', progress: Math.round(((i + 1) / pageIndices.length) * 100) });
   }
+  return { blobs, names };
 }
 
 // Helper to parse page range strings (e.g. "1-3,5,7-9")
