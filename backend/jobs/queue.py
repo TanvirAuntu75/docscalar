@@ -66,7 +66,7 @@ def enqueue_job(func, *args, **kwargs):
     if USE_REDIS:
         # In RQ, we pass run_sync_or_async as the job target, and the actual function + args as parameters
         job = task_queue.enqueue(run_sync_or_async, func, *args, **kwargs, job_id=job_id, result_ttl=3600)
-        return job.get_id()
+        return job.id
     else:
         # Fallback tracking
         with in_memory_jobs_lock:

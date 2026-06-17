@@ -14,11 +14,13 @@ RUN npm run build
 FROM python:3.11-slim AS backend-runner
 WORKDIR /app
 
-# Install system dependencies (Tesseract, Ghostscript, and dependencies for Playwright)
+# Install system dependencies (Tesseract, Ghostscript, LibreOffice, and dependencies for Playwright)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     tesseract-ocr \
     ghostscript \
     curl \
+    default-jre \
+    libreoffice \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy backend requirements and install them
