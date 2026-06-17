@@ -8,6 +8,7 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
   const [dragOver, setDragOver] = useState(false);
   const [isWindowDragging, setIsWindowDragging] = useState(false);
   const [imagePreviews, setImagePreviews] = useState({});
+  const [draggedIndex, setDraggedIndex] = useState(null);
   const dragCounter = useRef(0);
   const [toast, setToast] = useState(null);
 
@@ -105,6 +106,8 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
   useEffect(() => {
     const handleDragEnter = (e) => {
       e.preventDefault();
+      if (!e.dataTransfer.types.includes('Files')) return;
+
       dragCounter.current++;
       if (dragCounter.current === 1) {
         setIsWindowDragging(true);
@@ -113,6 +116,8 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
 
     const handleDragLeave = (e) => {
       e.preventDefault();
+      if (!e.dataTransfer.types.includes('Files')) return;
+
       dragCounter.current--;
       if (dragCounter.current === 0) {
         setIsWindowDragging(false);
@@ -176,6 +181,43 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
   const removeFile = useCallback((index) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
   }, [setFiles]);
+
+  // Item reordering drag handlers
+  const handleDragStartItem = (e, index) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    // Firefox requires setting data to allow drag
+    e.dataTransfer.setData('text/plain', index);
+
+    // Optional: Make it semi-transparent while dragging
+    setTimeout(() => {
+      if (e.target instanceof HTMLElement) {
+        e.target.style.opacity = '0.5';
+      }
+    }, 0);
+  };
+
+  const handleDragEnterItem = (e, targetIndex) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === targetIndex) return;
+
+    setFiles((prevFiles) => {
+      const newFiles = [...prevFiles];
+      const draggedItem = newFiles[draggedIndex];
+      newFiles.splice(draggedIndex, 1);
+      newFiles.splice(targetIndex, 0, draggedItem);
+      return newFiles;
+    });
+
+    setDraggedIndex(targetIndex);
+  };
+
+  const handleDragEndItem = (e) => {
+    setDraggedIndex(null);
+    if (e.target instanceof HTMLElement) {
+      e.target.style.opacity = '1';
+    }
+  };
 
   // Retrieve contextual layout information matching this tool
   const getToolMetadata = () => {
@@ -597,7 +639,12 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
               return (
                 <div
                   key={`${file.name}-${i}`}
-                  className="w-48 h-64 bg-surface border border-outline-variant/50 dark:border-zinc-800/70 rounded-2xl flex flex-col justify-between p-4 relative group shadow-[0_4px_12px_rgba(0,0,0,0.015)] hover:shadow-md hover:border-primary/40 transition-all duration-200"
+                  draggable={multiple}
+                  onDragStart={(e) => handleDragStartItem(e, i)}
+                  onDragEnter={(e) => handleDragEnterItem(e, i)}
+                  onDragEnd={handleDragEndItem}
+                  onDragOver={(e) => e.preventDefault()}
+                  className={`w-48 h-64 bg-surface border border-outline-variant/50 dark:border-zinc-800/70 rounded-2xl flex flex-col justify-between p-4 relative group shadow-[0_4px_12px_rgba(0,0,0,0.015)] hover:shadow-md hover:border-primary/40 transition-all duration-200 ${draggedIndex === i ? 'opacity-50 border-dashed border-primary scale-105' : ''} ${multiple ? 'cursor-grab active:cursor-grabbing' : ''}`}
                 >
                   {/* Remove file button */}
                   <button
