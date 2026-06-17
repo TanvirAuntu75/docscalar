@@ -102,22 +102,23 @@ export default function ImageCompressor() {
         <>
           <FileDropzone accept="image/*" multiple={true} files={files} setFiles={setFiles} />
           {files.length > 0 && (
-            <div className="options-panel">
-              <div className="options-title">Compression Settings</div>
-              <div className="options-row">
-                <div className="option-group" style={{ flex: 1 }}>
-                  <label>Quality: {Math.round(quality * 100)}%</label>
-                  <input 
-                    type="range" 
-                    min="10" 
-                    max="100" 
-                    value={quality * 100} 
-                    onChange={(e) => setQuality(e.target.value / 100)} 
-                  />
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.25rem', display: 'block' }}>
-                    Lower quality means smaller file sizes. 70% is recommended for best quality-to-size ratio.
-                  </span>
-                </div>
+            <div className="options-panel animate-[fadeIn_0.22s_ease-out] max-w-md mx-auto mt-6 p-6 rounded-2xl border border-[var(--border-color)] bg-[var(--surface-color)] text-left">
+              <h3 className="text-base font-semibold mb-4 text-[var(--text-primary)]">Compression Settings</h3>
+              <div className="mb-4">
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2">
+                  Quality: {Math.round(quality * 100)}% ({quality > 0.7 ? 'High (less compression)' : quality > 0.4 ? 'Medium (recommended)' : 'Low (max compression)'})
+                </label>
+                <input
+                  type="range"
+                  min="10"
+                  max="100"
+                  value={quality * 100}
+                  onChange={(e) => setQuality(e.target.value / 100)}
+                  className="w-full h-1 bg-[var(--background-color)] rounded-lg appearance-none cursor-pointer accent-red-500"
+                />
+                <span className="text-xs text-[var(--text-secondary)] mt-2 block">
+                  Lower quality means smaller file sizes. 70% is recommended for best quality-to-size ratio.
+                </span>
               </div>
             </div>
           )}
@@ -135,7 +136,7 @@ export default function ImageCompressor() {
           </div>
         </>
       ) : (
-        <div className="result-area">
+        <div className="result-area animate-[fadeIn_0.22s_ease-out]">
           <div className="result-icon select-none">
             <span className="material-symbols-outlined text-[48px] text-green-500 fill select-none">check_circle</span>
           </div>
