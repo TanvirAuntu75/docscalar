@@ -17,7 +17,7 @@ async def run_tests():
     print("==================================================")
     
     # 1. Setup paths
-    input_docx = Path("C:/Users/Tanvir Alam/Desktop/New folder/SOP_NZ3_Final.docx")
+    input_docx = Path("test_dummy_real2.docx")
     if not input_docx.exists():
         print(f"Error: Test document not found at: {input_docx}")
         return
