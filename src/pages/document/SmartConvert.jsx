@@ -43,8 +43,9 @@ export default function SmartConvert() {
     if (poller.status === 'finished' && poller.result) {
       setProcessing(false);
       const originalName = files[0]?.name.replace(/\.[^.]+$/, '') || 'document';
-      const modeSuffixes = { clean: '_formatted', summarize: '_summary', translate: '_translated' };
-      const finalName = `${originalName}${modeSuffixes[mode] || '_processed'}.pdf`;
+      const modeSuffixes = { clean: '_formatted', summarize: '_summary', translate: '_translated', extract_tables: '_tables' };
+      const extension = mode === 'extract_tables' ? '.md' : '.pdf';
+      const finalName = `${originalName}${modeSuffixes[mode] || '_processed'}${extension}`;
       const downloadUrl = poller.result.downloadUrl;
 
       setResult({
@@ -56,7 +57,8 @@ export default function SmartConvert() {
       apiFetch(downloadUrl)
         .then(res => res.blob())
         .then(blob => {
-          saveFile(finalName, blob.size, 'application/pdf', 'Smart Reformatter', blob);
+          const mimeType = mode === 'extract_tables' ? 'text/markdown' : 'application/pdf';
+          saveFile(finalName, blob.size, mimeType, 'Smart Reformatter', blob);
         })
         .catch(err => console.error('Failed to sync processed file locally:', err));
 
@@ -213,17 +215,17 @@ export default function SmartConvert() {
                   style={{ flexDirection: 'column', padding: '1rem', height: '100px', fontSize: '0.9rem' }}
                 >
                   <span style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>📝</span>
-                  <strong>Summarize Text</strong>
+                  <strong>Summarize + Convert</strong>
                   <span style={{ fontSize: '0.7rem', opacity: 0.8, fontWeight: 'normal' }}>Get main highlights</span>
                 </button>
                 <button 
-                  className={`btn ${mode === 'translate' ? 'btn-primary' : 'btn-secondary'}`}
-                  onClick={() => setMode('translate')}
+                  className={`btn ${mode === 'extract_tables' ? 'btn-primary' : 'btn-secondary'}`}
+                  onClick={() => setMode('extract_tables')}
                   style={{ flexDirection: 'column', padding: '1rem', height: '100px', fontSize: '0.9rem' }}
                 >
-                  <span style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>🌐</span>
-                  <strong>Translate</strong>
-                  <span style={{ fontSize: '0.7rem', opacity: 0.8, fontWeight: 'normal' }}>English ↔ Bengali</span>
+                  <span style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>📊</span>
+                  <strong>Extract Tables Only</strong>
+                  <span style={{ fontSize: '0.7rem', opacity: 0.8, fontWeight: 'normal' }}>Pull tables to CSV/Markdown</span>
                 </button>
               </div>
             </div>
@@ -282,7 +284,7 @@ export default function SmartConvert() {
           <div className="action-bar">
             <button className="btn btn-success btn-lg flex items-center justify-center gap-2" onClick={downloadFile}>
               <span className="material-symbols-outlined text-[20px] select-none">download</span>
-              <span>Download PDF</span>
+              <span>{mode === 'extract_tables' ? 'Download Markdown' : 'Download PDF'}</span>
             </button>
             <button className="btn btn-secondary flex items-center justify-center gap-1.5" onClick={reset}>
               <span className="material-symbols-outlined text-[16px] select-none">restart_alt</span>
