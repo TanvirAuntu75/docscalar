@@ -61,6 +61,25 @@ export async function saveFile(name, size, type, action, blob) {
       const request = store.add(record);
 
       request.onsuccess = () => {
+        try {
+          const historyRaw = localStorage.getItem('conversionHistory');
+          let history = [];
+          if (historyRaw) {
+            history = JSON.parse(historyRaw);
+          }
+          history.unshift({
+            id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
+            filename: name,
+            toolName: action,
+            timestamp: new Date().toISOString()
+          });
+          if (history.length > 100) {
+            history = history.slice(0, 100);
+          }
+          localStorage.setItem('conversionHistory', JSON.stringify(history));
+        } catch (err) {
+          console.error('Failed to save conversion history to localStorage:', err);
+        }
         resolve(request.result); // Returns key (id)
       };
 
