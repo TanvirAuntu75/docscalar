@@ -75,6 +75,11 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
 
 app.add_middleware(RequestSizeLimitMiddleware)
 
+@app.get("/api/health")
+async def health_check():
+    """Basic health check endpoint."""
+    return {"status": "ok"}
+
 # Enable CORS for Vite frontend
 app.add_middleware(
     CORSMiddleware,
