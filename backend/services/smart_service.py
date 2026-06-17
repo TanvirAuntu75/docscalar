@@ -96,7 +96,21 @@ async def process_smart_convert(input_path: str, mode: str) -> ConversionResult:
         if enhanced_text.startswith("Error:") or enhanced_text.startswith("AI Processing failed:"):
             return ConversionResult(success=False, error_message=enhanced_text)
 
-        # Step 3: Check if LibreOffice is available on the machine
+        # Step 3: Check if we are extracting tables (skip PDF conversion)
+        if mode == "extract_tables":
+            # Output directly to a markdown file
+            output_file_name = f"{input_file.stem}_tables.md"
+            output_file_path = input_file.parent / output_file_name
+            with open(output_file_path, "w", encoding="utf-8") as f:
+                f.write(enhanced_text)
+
+            return ConversionResult(
+                success=True,
+                output_path=str(output_file_path),
+                file_size_bytes=output_file_path.stat().st_size
+            )
+
+        # Step 4: Check if LibreOffice is available on the machine
         libreoffice_available = False
         if config.LIBREOFFICE_PATH:
             if Path(config.LIBREOFFICE_PATH).exists() or shutil.which(config.LIBREOFFICE_PATH):

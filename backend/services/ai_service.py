@@ -32,6 +32,11 @@ async def generate_ai_enhancement(text: str, mode: str) -> str:
             "You are a professional translator. Translate the following text. If it is in English, translate to Bengali. If it is in Bengali, translate to English. "
             "IMPORTANT: Output ONLY the translated text. Do NOT include any introduction, conversational preamble, "
             "explanations, or closing remarks. Start directly with the translation:\n\n"
+        ),
+        "extract_tables": (
+            "You are a data extraction assistant. Extract all data tables from the following text and output them in standard Markdown table format. "
+            "IMPORTANT: Output ONLY the Markdown tables. Do NOT include any introduction, conversational preamble, "
+            "explanations, or closing remarks. If there are no tables, output 'No tables found.' Start directly with the tables:\n\n"
         )
     }
 
