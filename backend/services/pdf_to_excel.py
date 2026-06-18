@@ -78,7 +78,7 @@ MATH_ARTIFACTS_RE = re.compile(
 TEXT_TABLE_SETTINGS = {
     "vertical_strategy": "text",
     "horizontal_strategy": "text",
-    "min_words_vertical": 3,
+    "min_words_vertical": 2,      # Reduced from 3 to catch borderless grids effectively
     "min_words_horizontal": 1,
     "snap_tolerance": 5,
     "join_tolerance": 5,
@@ -153,8 +153,39 @@ class DocumentStructure:
 # Phase 1: Page Scanner
 # ============================================================================
 
+# Common font mis-mappings to intercept and correct
+# 'ZapfDingbats', 'Symbol', and some wingdings map standard ASCII to symbols.
+GLYPH_CORRECTIONS = {
+    '3': '✓',
+    '4': '✔',
+    '8': '✘',
+    'n': '■',
+    'o': '☐',
+    'l': '●',
+    'm': '❍',
+    'p': '❑',
+    'q': '❒',
+    'H': '★',
+    '›': '↑',
+    'œ': '↓',
+    '¡': '★',
+}
+
 class PageScanner:
     """Extracts all raw elements from each PDF page."""
+
+    @staticmethod
+    def _fix_glyphs(chars: list):
+        """Mutate characters in-place to correct known font glyph mis-mappings."""
+        for char in chars:
+            font = char.get("fontname", "").lower()
+            text = char.get("text", "")
+            if text in GLYPH_CORRECTIONS:
+                if "dingbat" in font or "symbol" in font or "wingding" in font:
+                    char["text"] = GLYPH_CORRECTIONS[text]
+                # Also handle cases where PDF text extraction failed and gave weird mappings even in standard fonts
+                elif text == 'H' and ("star" in font or "rating" in font):
+                     char["text"] = '★'
 
     @staticmethod
     def scan_page(page) -> PageScan:
@@ -169,6 +200,9 @@ class PageScanner:
         is_blank = len(chars) == 0 and len(images) == 0
         is_image_only = len(chars) == 0 and len(images) > 0
         is_landscape = width > height
+
+        # Intercept and fix bad glyphs BEFORE pdfplumber word/table extraction uses them
+        PageScanner._fix_glyphs(chars)
 
         if is_blank or is_image_only:
             return PageScan(
@@ -201,6 +235,32 @@ class PageScanner:
     # ------------------------------------------------------------------
 
     @staticmethod
+    def _filter_nested_tables(tables: list) -> list:
+        """Remove any table that is fully enclosed within another table's bbox."""
+        valid_tables = []
+        for i, t1 in enumerate(tables):
+            is_nested = False
+            for j, t2 in enumerate(tables):
+                if i != j:
+                    b1 = t1.bbox
+                    b2 = t2.bbox
+                    # Check if b1 is entirely inside b2
+                    if (b1[0] >= b2[0] - 2 and b1[1] >= b2[1] - 2 and
+                        b1[2] <= b2[2] + 2 and b1[3] <= b2[3] + 2):
+
+                        # Tie breaker for exact duplicates: keep the first one
+                        if b1 == b2:
+                            if i > j:
+                                is_nested = True
+                                break
+                        else:
+                            is_nested = True
+                            break
+            if not is_nested:
+                valid_tables.append(t1)
+        return valid_tables
+
+    @staticmethod
     def _extract_tables_with_fallback(page) -> list:
         """
         4-strategy cascade for maximum table extraction coverage.
@@ -215,6 +275,9 @@ class PageScanner:
         S4: Return the 1-col garbage from S1 (better than nothing).
         """
         found = page.find_tables()
+
+        if found:
+            found = PageScanner._filter_nested_tables(found)
 
         # S1: all tables have >=2 cols → return immediately
         if found and all(len((t.extract() or [[]])[0]) > 1 for t in found):
@@ -357,6 +420,7 @@ class PageScanner:
             # S3: full-page text strategy
             found_text = page.find_tables(table_settings=TEXT_TABLE_SETTINGS)
             if found_text:
+                found_text = PageScanner._filter_nested_tables(found_text)
                 valid = [t for t in found_text
                          if len((t.extract() or [[]])[0]) > 1]
                 if valid:
@@ -409,6 +473,10 @@ class PageScanner:
             # When two adjacent header cells together form a single column name
             # (e.g. 'Start Date Ba' + 'se Salary') we merge them.
             rows_data = PageScanner._repair_split_headers(rows_data)
+
+            # Fix rowspan in header
+            rows_data = PageScanner._fix_header_rowspan(rows_data)
+
             col_count = len(rows_data[0]) if rows_data else col_count
 
             result.append({
@@ -419,6 +487,48 @@ class PageScanner:
                 "extracted_title": extracted_title,
             })
         return result
+
+    @staticmethod
+    def _fix_header_rowspan(rows_data: list) -> list:
+        """
+        Fix vertical merges (rowspans) in header rows.
+        If the first row has text in a column, and the second row has None/empty in that column,
+        but other columns in the second row have text, it implies a vertical merge.
+        We push the text down or concatenate them to form a single resolved header row.
+        """
+        if not rows_data or len(rows_data) < 2:
+            return rows_data
+
+        row0 = rows_data[0]
+        row1 = rows_data[1]
+
+        # Check if row0 and row1 look like a split header (row0 has some items, row1 has others)
+        row0_has_text = any(c and str(c).strip() for c in row0)
+        row1_has_text = any(c and str(c).strip() for c in row1)
+
+        if row0_has_text and row1_has_text:
+            merged_header = []
+            is_merged = False
+            for c0, c1 in zip(row0, row1):
+                s0 = str(c0).strip() if c0 else ""
+                s1 = str(c1).strip() if c1 else ""
+
+                if s0 and not s1:
+                    merged_header.append(s0)
+                    is_merged = True
+                elif not s0 and s1:
+                    merged_header.append(s1)
+                    is_merged = True
+                elif s0 and s1:
+                    merged_header.append(f"{s0} {s1}")
+                    is_merged = True
+                else:
+                    merged_header.append(None)
+
+            if is_merged:
+                return [merged_header] + rows_data[2:]
+
+        return rows_data
 
     @staticmethod
     def _repair_split_headers(rows_data: list) -> list:
@@ -801,7 +911,6 @@ class DataNormalizer:
     """Parses and types every cell value for proper Excel formatting."""
 
     # Pre-compiled patterns (class-level for performance)
-    _RE_PCT = re.compile(r'^([+-]?\d+\.?\d*)\s*%$')
     _RE_CURRENCY = re.compile(
         r'^([£$€¥₹₽¢])\s*([+-]?\d{1,3}(?:[,.\s]\d{3})*(?:[.,]\d+)?)\s*$|'
         r'^([+-]?\d{1,3}(?:[,.\s]\d{3})*(?:[.,]\d+)?)\s*([£$€¥₹₽¢])\s*$'
@@ -834,22 +943,23 @@ class DataNormalizer:
           8. Float        → (12.34, "float")
           9. String       → (cleaned_str, "string")
         """
-        if raw is None or str(raw).strip() == "":
+        if raw is None or str(raw) == "":
             return (None, "empty")
+
+        # Explicitly preserve a single space if it's the exact content
+        if str(raw) == " ":
+            return (" ", "string")
 
         text = str(raw).strip()
 
         # 1. Boolean
         low = text.lower()
-        if low in ("true", "yes", "✓", "✔", "☑"):
+        if low in ("true", "✓", "✔", "☑"):
             return (True, "boolean")
-        if low in ("false", "no", "✗", "✘", "☐"):
+        if low in ("false", "✗", "✘", "☐"):
             return (False, "boolean")
 
-        # 2. Percentage
-        m = DataNormalizer._RE_PCT.match(text)
-        if m:
-            return (float(m.group(1)) / 100, "percentage")
+        # 2. Percentage (Removed: Percentages are now treated as strings so <2.5% and +12.4% are handled consistently)
 
         # 3. Currency
         m = DataNormalizer._RE_CURRENCY.match(text)
@@ -885,12 +995,12 @@ class DataNormalizer:
 
         # 7. Float (with optional comma grouping)
         if DataNormalizer._RE_FLOAT_COMMA.match(text):
-            return (float(text.replace(',', '')), "float")
+            return (round(float(text.replace(',', '')), 4), "float")
 
         # 8. Plain number (no grouping separators)
         try:
             if '.' in text:
-                return (float(text), "float")
+                return (round(float(text), 4), "float")
             return (int(text), "integer")
         except ValueError:
             pass
@@ -901,6 +1011,44 @@ class DataNormalizer:
             c for c in cleaned
             if not unicodedata.category(c).startswith('C') or c in '\n\t'
         )
+
+        # Repair visual text wrapping: replace single newlines with spaces.
+        # But preserve double newlines (paragraphs) and bulleted list newlines.
+        # Bullet patterns: -, •, *, 1.
+        if '\n' in cleaned:
+            parts = cleaned.split('\n')
+            fixed_parts = []
+            for i, part in enumerate(parts):
+                stripped = part.strip()
+                if i == 0:
+                    fixed_parts.append(part)
+                    continue
+
+                # Check if this part looks like the start of a new item
+                is_bullet = bool(re.match(r'^[-•*]|\d+\.', stripped))
+                prev_is_empty = (parts[i-1].strip() == "")
+
+                if prev_is_empty:
+                    # We need to preserve the double newline
+                    fixed_parts.append('\n\n' + part)
+                elif is_bullet:
+                    fixed_parts.append('\n' + part)
+                else:
+                    # It's a visual wrap continuation, replace newline with space
+                    # Ensure we don't double space if there's trailing/leading spaces
+                    if fixed_parts[-1].endswith(' ') or part.startswith(' '):
+                        # Append directly but strip the newline from original
+                        fixed_parts[-1] += part.lstrip(' ') if fixed_parts[-1].endswith(' ') else part
+                    else:
+                        fixed_parts[-1] += ' ' + part.lstrip(' ')
+
+            # Reconstruct the string, properly keeping double newlines if they existed
+            cleaned = "".join(fixed_parts)
+            # Cleanup any weird spacing artifacts created by the join
+            cleaned = cleaned.replace(' \n', '\n').replace('\n ', '\n')
+            # Fix triple newlines from the double newline logic
+            cleaned = cleaned.replace('\n\n\n', '\n\n')
+
         return (cleaned, "string")
 
     @staticmethod
@@ -993,38 +1141,79 @@ class ExcelRenderer:
     # ------------------------------------------------------------------
 
     def render(self, doc: DocumentStructure, output_path: Path):
-        """Render the complete document into a single Excel worksheet."""
+        """Render the complete document into multiple Excel worksheets."""
         wb = openpyxl.Workbook()
-        ws = wb.active
-        ws.title = "Extracted Data"
 
-        # Keep track of the current row across all sections
-        current_row = 1
+        # Remove the default sheet created by openpyxl
+        default_sheet = wb.active
+        wb.remove(default_sheet)
 
-        # Render sections serially
+        has_content = False
+
+        # Helper to generate valid Excel sheet names (max 31 chars, no forbidden chars)
+        def clean_sheet_name(name: str, used_names: set) -> str:
+            if not name:
+                name = "Sheet"
+            # Remove forbidden chars
+            for char in EXCEL_FORBIDDEN_CHARS:
+                name = name.replace(char, "")
+            name = name.strip()[:MAX_SHEET_NAME_LEN]
+
+            if not name:
+                name = "Sheet"
+
+            base_name = name
+            counter = 1
+            while name in used_names:
+                suffix = f" ({counter})"
+                max_base_len = MAX_SHEET_NAME_LEN - len(suffix)
+                name = f"{base_name[:max_base_len]}{suffix}"
+                counter += 1
+
+            used_names.add(name)
+            return name
+
+        used_sheet_names = set()
+
+        # Render each section as its own worksheet
         for section in doc.sections:
             if not section.tables:
                 continue
+
+            sheet_title = clean_sheet_name(section.title or f"Section {len(used_sheet_names)+1}", used_sheet_names)
+            ws = wb.create_sheet(title=sheet_title)
+
+            current_row = 1
             written = self._write_section(ws, section, start_row=current_row)
-            current_row += written + 3   # 3-row gap between major sections
+            has_content = True
 
-        # Render orphan tables
-        for i, tg in enumerate(doc.orphan_tables):
-            label = tg.title or f"Table {i + 1}"
+        # Render orphan tables into a separate "Orphans" sheet, or individual sheets
+        if doc.orphan_tables:
+            ws_orphans = wb.create_sheet(title=clean_sheet_name("Orphan Tables", used_sheet_names))
+            current_row = 1
             
-            # Write a simple title for the orphan table
-            title_cell = ws.cell(row=current_row, column=1, value=label)
-            title_cell.font = self._font_section
-            current_row += 2
-            
-            written = self._write_table(ws, tg, start_row=current_row, freeze=False)
-            current_row += written + 3
+            for i, tg in enumerate(doc.orphan_tables):
+                label = tg.title or f"Table {i + 1}"
 
-        # Absolute fallback
-        if current_row == 1:
+                # Write a simple title for the orphan table
+                title_cell = ws_orphans.cell(row=current_row, column=1, value=label)
+                title_cell.font = self._font_section
+                current_row += 2
+
+                written = self._write_table(ws_orphans, tg, start_row=current_row, freeze=(i==0))
+                current_row += written + 3
+            has_content = True
+
+        # Absolute fallback if no content
+        if not has_content:
+            ws = wb.create_sheet(title="Extracted Data")
             ws['A1'] = "No tables were detected in this PDF document."
             ws['A1'].font = self._font_message
             ws.column_dimensions['A'].width = 50
+
+        # Activate the first sheet
+        if wb.sheetnames:
+            wb.active = wb[wb.sheetnames[0]]
 
         wb.save(output_path)
 
@@ -1120,10 +1309,7 @@ class ExcelRenderer:
                     c.fill = self._fill_alt
 
                 # Number formatting
-                if fmt == "percentage":
-                    c.number_format = '0.00%'
-                    c.alignment = self._align_right
-                elif fmt.startswith("currency_"):
+                if fmt.startswith("currency_"):
                     sym = fmt.split("_", 1)[1]
                     c.number_format = {'$': '$#,##0.00', '€': '€#,##0.00',
                                        '£': '£#,##0.00'}.get(sym, '#,##0.00')
