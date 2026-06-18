@@ -9,6 +9,9 @@ import { CATEGORIES, TOOLS } from '../utils/constants';
 import { saveFile, getFiles, deleteFile, clearFiles } from '../utils/db';
 import { saveAs } from 'file-saver';
 import { useAuth } from '../context/AuthContext';
+import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl;
 
 // Import actual conversion engines
 import { docxToPdf } from '../engines/document/docxToPdf';
@@ -89,6 +92,14 @@ export default function Home() {
   const [openMenuId, setOpenMenuId] = useState(null);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [toolsCategoryFilter, setToolsCategoryFilter] = useState('all');
+  // Collapsible sidebar (hidden by default, Gemini-style)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Upload canvas state — set when a file is dropped/selected
+  const [canvasFile, setCanvasFile] = useState(null);
+  const [canvasTools, setCanvasTools] = useState([]);
+  const [canvasLocked, setCanvasLocked] = useState(null); // null=unknown, true=locked, false=unlocked
+  const [canvasDetecting, setCanvasDetecting] = useState(false);
+
 
   // Handle category query parameters (e.g. ?category=pdf) to filter tools or switch tabs
   useEffect(() => {
@@ -365,6 +376,35 @@ export default function Home() {
 
     if (validFiles.length === 0) return;
 
+    // Single file → show the interactive Upload Canvas
+    if (validFiles.length === 1) {
+      const file = validFiles[0];
+      const ext = '.' + file.name.split('.').pop().toLowerCase();
+
+      // Reset canvas state
+      setCanvasFile(file);
+      setCanvasLocked(null);
+      setCanvasDetecting(ext === '.pdf');
+      setCanvasTools(ext === '.pdf' ? [] : (getActionsForFile(file.name) || []));
+
+      if (ext === '.pdf') {
+        // Async: detect lock state, then set tools
+        detectPdfLock(file).then((isLocked) => {
+          setCanvasLocked(isLocked);
+          setCanvasTools(isLocked ? PDF_LOCKED_ACTIONS : PDF_UNLOCKED_ACTIONS);
+          setCanvasDetecting(false);
+        });
+      }
+      return;
+    }
+
+    // Multi-file → go straight to queue
+    addFilesToQueueDirect(validFiles);
+  };
+
+
+  // Internal: add files directly to queue (used for multi-file drop & "Add to Queue" from canvas)
+  const addFilesToQueueDirect = (validFiles) => {
     // Enforce limits: PRO users have 50 files limit.
     const limit = 50;
     const currentCount = workspaceQueue.length;
@@ -398,6 +438,7 @@ export default function Home() {
 
     setWorkspaceQueue(prev => [...prev, ...items]);
   };
+
 
   const executeWorkspaceAction = async (itemId, action) => {
     const itemIndex = workspaceQueue.findIndex(i => i.id === itemId);
@@ -532,9 +573,45 @@ export default function Home() {
     }
   };
 
+  // Canvas: user picks a tool → queue file and start immediately
+  const handleCanvasToolSelect = (toolAction) => {
+    if (!canvasFile) return;
+    const actions = getActionsForFile(canvasFile.name);
+    const itemId = `ws-${Date.now()}-0-${Math.random().toString(36).substr(2, 9)}`;
+    const newItem = {
+      id: itemId,
+      file: canvasFile,
+      name: canvasFile.name,
+      size: canvasFile.size,
+      type: canvasFile.type,
+      detectedActions: actions ? actions.map(a => a.id) : [toolAction.id],
+      selectedAction: toolAction.id,
+      status: 'PendingAction',
+      progress: 0,
+      resultBlob: null,
+      resultName: null,
+      timestamp: Date.now(),
+    };
+    setWorkspaceQueue(prev => [...prev, newItem]);
+    setCanvasFile(null);
+    setCanvasTools([]);
+    // Auto-start the conversion
+    setTimeout(() => executeWorkspaceAction(itemId, toolAction.id), 80);
+  };
+
+  // Canvas: "Add to Queue" without immediately running
+  const handleCanvasAddToQueue = () => {
+    if (!canvasFile) return;
+    addFilesToQueueDirect([canvasFile]);
+    setCanvasFile(null);
+    setCanvasTools([]);
+    showToast(`${canvasFile.name} added to queue.`);
+  };
+
   const removeWorkspaceQueueItem = (itemId) => {
     setWorkspaceQueue(prev => prev.filter(i => i.id !== itemId));
   };
+
 
   const toggleStarItem = (itemId) => {
     setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, starred: !i.starred } : i));
@@ -581,65 +658,62 @@ export default function Home() {
   };
 
   // Helper to resolve actions based on file extension
+  // NOTE: icon field is now the tool ID — rendered via <ToolIcon> in the canvas
+  const PDF_UNLOCKED_ACTIONS = [
+    { id: 'compress-pdf',  title: 'Compress PDF' },
+    { id: 'merge-pdf',     title: 'Merge PDF' },
+    { id: 'split-pdf',     title: 'Split PDF' },
+    { id: 'pdf-to-image',  title: 'PDF to Images' },
+    { id: 'rotate-pdf',    title: 'Rotate PDF' },
+    { id: 'protect-pdf',   title: 'Protect PDF' },
+  ];
+
+  const PDF_LOCKED_ACTIONS = [
+    { id: 'unlock-pdf',   title: 'Unlock PDF' },
+  ];
+
+  const IMAGE_ACTIONS = [
+    { id: 'image-compressor', title: 'Compress Image' },
+    { id: 'image-converter',  title: 'Convert Format' },
+    { id: 'image-resizer',    title: 'Resize Image' },
+    { id: 'image-to-pdf',     title: 'Image to PDF' },
+  ];
+
   const getActionsForFile = (filename) => {
     const ext = '.' + filename.split('.').pop().toLowerCase();
     const actionsMap = {
-      '.pdf': [
-        { id: 'compress-pdf', title: 'Compress PDF', icon: '📦' },
-        { id: 'merge-pdf', title: 'Merge PDF', icon: '📎' },
-        { id: 'split-pdf', title: 'Split PDF', icon: '✂️' },
-        { id: 'pdf-to-image', title: 'PDF to Images', icon: '🖼️' },
-        { id: 'rotate-pdf', title: 'Rotate PDF', icon: '🔄' },
-        { id: 'protect-pdf', title: 'Protect PDF', icon: '🔒' },
-        { id: 'unlock-pdf', title: 'Unlock PDF', icon: '🔓' },
-      ],
+      '.pdf':  PDF_UNLOCKED_ACTIONS, // may be overridden after lock detection
       '.docx': [
-        { id: 'docx-to-pdf', title: 'DOCX to PDF', icon: '📄' },
-        { id: 'ai-summarizer', title: 'Smart Reformatter', icon: '🪄' },
+        { id: 'docx-to-pdf',    title: 'DOCX to PDF' },
+        { id: 'ai-summarizer',  title: 'Smart Reformatter' },
       ],
       '.txt': [
-        { id: 'text-to-pdf', title: 'Text to PDF', icon: '📝' },
-        { id: 'ai-summarizer', title: 'Smart Reformatter', icon: '🪄' },
+        { id: 'text-to-pdf',   title: 'Text to PDF' },
+        { id: 'ai-summarizer', title: 'Smart Reformatter' },
       ],
-      '.png': [
-        { id: 'image-compressor', title: 'Image Compressor', icon: '📦' },
-        { id: 'image-converter', title: 'Image Converter', icon: '🔄' },
-        { id: 'image-resizer', title: 'Image Resizer', icon: '📐' },
-        { id: 'image-to-pdf', title: 'Images to PDF', icon: '📄' },
-      ],
-      '.jpg': [
-        { id: 'image-compressor', title: 'Image Compressor', icon: '📦' },
-        { id: 'image-converter', title: 'Image Converter', icon: '🔄' },
-        { id: 'image-resizer', title: 'Image Resizer', icon: '📐' },
-        { id: 'image-to-pdf', title: 'Images to PDF', icon: '📄' },
-      ],
-      '.jpeg': [
-        { id: 'image-compressor', title: 'Image Compressor', icon: '📦' },
-        { id: 'image-converter', title: 'Image Converter', icon: '🔄' },
-        { id: 'image-resizer', title: 'Image Resizer', icon: '📐' },
-        { id: 'image-to-pdf', title: 'Images to PDF', icon: '📄' },
-      ],
-      '.webp': [
-        { id: 'image-compressor', title: 'Image Compressor', icon: '📦' },
-        { id: 'image-converter', title: 'Image Converter', icon: '🔄' },
-        { id: 'image-resizer', title: 'Image Resizer', icon: '📐' },
-        { id: 'image-to-pdf', title: 'Images to PDF', icon: '📄' },
-      ],
-      '.bmp': [
-        { id: 'image-compressor', title: 'Image Compressor', icon: '📦' },
-        { id: 'image-converter', title: 'Image Converter', icon: '🔄' },
-        { id: 'image-resizer', title: 'Image Resizer', icon: '📐' },
-        { id: 'image-to-pdf', title: 'Images to PDF', icon: '📄' },
-      ],
-      '.gif': [
-        { id: 'image-compressor', title: 'Image Compressor', icon: '📦' },
-        { id: 'image-converter', title: 'Image Converter', icon: '🔄' },
-        { id: 'image-resizer', title: 'Image Resizer', icon: '📐' },
-        { id: 'image-to-pdf', title: 'Images to PDF', icon: '📄' },
-      ],
+      '.png':  IMAGE_ACTIONS,
+      '.jpg':  IMAGE_ACTIONS,
+      '.jpeg': IMAGE_ACTIONS,
+      '.webp': IMAGE_ACTIONS,
+      '.bmp':  IMAGE_ACTIONS,
+      '.gif':  IMAGE_ACTIONS,
     };
-
     return actionsMap[ext] || null;
+  };
+
+  // Detect whether a PDF file is password-protected using PDF.js
+  const detectPdfLock = async (file) => {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+      await loadingTask.promise;
+      return false; // opened fine → unlocked
+    } catch (err) {
+      if (err && err.name === 'PasswordException') {
+        return true; // password required → locked
+      }
+      return false; // other error → treat as unlocked
+    }
   };
 
   // Guest Landing Page single uploader flow
@@ -1101,8 +1175,18 @@ export default function Home() {
             USER WORKSPACE (Side-by-side Layout)
             ────────────────────────────────────────────────────────── */
         <>
-          {/* LEFT SIDEBAR */}
-          <aside className="w-68 md:w-72 h-full bg-surface-container flex flex-col border-r border-outline-variant flex-shrink-0 text-left select-none py-3.5 px-4 overflow-hidden">
+          {/* LEFT SIDEBAR — collapsible, push-style */}
+          <aside
+            className={`h-full bg-surface-container flex flex-col border-r border-outline-variant flex-shrink-0 text-left select-none py-3.5 px-4 overflow-hidden transition-all duration-300 ease-in-out`}
+            style={{
+              width: sidebarOpen ? '288px' : '0px',
+              minWidth: sidebarOpen ? '288px' : '0px',
+              opacity: sidebarOpen ? 1 : 0,
+              paddingLeft: sidebarOpen ? undefined : '0px',
+              paddingRight: sidebarOpen ? undefined : '0px',
+              pointerEvents: sidebarOpen ? 'auto' : 'none',
+            }}
+          >
             {/* Logo Brand */}
             <div className="flex items-center gap-3 mb-4 font-h2 text-xl font-bold tracking-tight select-none">
               <svg className="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1284,12 +1368,26 @@ export default function Home() {
           <div className="flex-1 flex flex-col h-full overflow-hidden">
 
             {/* Workspace Header */}
-            <header className="h-[60px] border-b border-outline-variant flex items-center justify-between px-6 flex-shrink-0 select-none bg-surface/90 backdrop-blur-md relative z-30">
-              <div className="flex flex-col justify-center text-left min-w-0 flex-shrink-0">
-                <h1 className="font-bold text-[15px] text-on-background leading-tight">
-                  Welcome back, <span className="text-primary">{userEmail ? userEmail.split('@')[0] : 'there'}</span> ✏️
-                </h1>
-                <p className="text-[10px] text-on-surface-variant font-medium leading-none mt-0.5">Create. Convert. Perfect.</p>
+            <header className="h-[60px] border-b border-outline-variant flex items-center justify-between px-4 flex-shrink-0 select-none bg-surface/90 backdrop-blur-md relative z-30">
+              {/* Left: sidebar toggle + branding */}
+              <div className="flex items-center gap-3 flex-shrink-0">
+                {/* Gemini-style sidebar toggle button */}
+                <button
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="w-8 h-8 rounded-xl border border-outline-variant hover:border-primary text-outline hover:text-primary flex items-center justify-center transition-all bg-surface hover:bg-primary/5"
+                  title={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+                  aria-label="Toggle sidebar"
+                >
+                  <span className="material-symbols-outlined text-[20px]">
+                    {sidebarOpen ? 'menu_open' : 'menu'}
+                  </span>
+                </button>
+                <div className="flex flex-col justify-center text-left min-w-0">
+                  <h1 className="font-bold text-[15px] text-on-background leading-tight">
+                    Welcome back, <span className="text-primary">{userEmail ? userEmail.split('@')[0] : 'there'}</span> ✏️
+                  </h1>
+                  <p className="text-[10px] text-on-surface-variant font-medium leading-none mt-0.5">Create. Convert. Perfect.</p>
+                </div>
               </div>
               {activeSidebarTab !== 'converter' && (
                 <div className="flex-1 max-w-[320px] mx-6">
@@ -1350,8 +1448,113 @@ export default function Home() {
                   {/* LEFT COLUMN */}
                   <div className="flex-1 flex flex-col gap-4 min-w-0">
 
-                    {/* GRADIENT HERO DROP ZONE */}
-                    {activeSidebarTab === 'workspace' && (
+                    {/* UPLOAD CANVAS — shown when a file is dropped/selected */}
+                    {activeSidebarTab === 'workspace' && canvasFile ? (
+                      <div className="canvas-slide-up relative rounded-3xl overflow-hidden flex-shrink-0 border border-outline-variant"
+                        style={{ minHeight: '340px', background: 'linear-gradient(145deg, var(--color-bg-surface, #faf8f4) 0%, var(--color-bg-surface-container, #f3ede6) 100%)' }}
+                      >
+                        {/* Close canvas button */}
+                        <button
+                          onClick={() => { setCanvasFile(null); setCanvasTools([]); setCanvasLocked(null); setCanvasDetecting(false); }}
+                          className="absolute top-4 right-4 z-20 w-8 h-8 rounded-xl border border-outline-variant hover:border-error text-outline hover:text-error flex items-center justify-center transition-all bg-surface/80 backdrop-blur-sm"
+                          title="Dismiss"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">close</span>
+                        </button>
+
+                        <div className="flex flex-col items-center justify-center gap-5 py-10 px-8 text-center relative z-10">
+                          {/* File card with 3D glow + lock badge */}
+                          <div
+                            className="file-card-glow relative flex flex-col items-center gap-3 px-10 py-6 rounded-2xl border border-primary/20 bg-surface cursor-default select-none shadow-sm"
+                            style={{ minWidth: '200px' }}
+                          >
+                            {/* Lock / Unlock status badge — top-right of card */}
+                            {canvasLocked === true && (
+                              <div className="absolute -top-2.5 -right-2.5 flex items-center gap-1 bg-amber-500 text-white text-[9px] font-bold px-2 py-1 rounded-full shadow-md">
+                                <span className="material-symbols-outlined text-[12px] fill">lock</span>
+                                LOCKED
+                              </div>
+                            )}
+                            {canvasLocked === false && (
+                              <div className="absolute -top-2.5 -right-2.5 flex items-center gap-1 bg-success text-white text-[9px] font-bold px-2 py-1 rounded-full shadow-md">
+                                <span className="material-symbols-outlined text-[12px] fill">lock_open</span>
+                                UNLOCKED
+                              </div>
+                            )}
+
+                            {/* File type badge */}
+                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-extrabold text-sm shadow-md ${getFileBadge(canvasFile.name).bg} ${getFileBadge(canvasFile.name).text}`}>
+                              {getFileBadge(canvasFile.name).label}
+                            </div>
+                            <div className="flex flex-col items-center gap-0.5">
+                              <p className="font-bold text-[13px] text-on-background max-w-[180px] truncate">{canvasFile.name}</p>
+                              <p className="text-[10px] text-on-surface-variant font-medium">{formatSize(canvasFile.size)}</p>
+                            </div>
+                          </div>
+
+                          {/* Tool chips header / detecting state */}
+                          {canvasDetecting ? (
+                            <div className="flex flex-col items-center gap-3">
+                              <p className="text-[11px] font-bold text-outline uppercase tracking-widest">Analysing file…</p>
+                              <div className="flex gap-2">
+                                {[0, 1, 2, 3].map(i => (
+                                  <div
+                                    key={i}
+                                    className="h-10 rounded-xl bg-surface-container border border-outline-variant/50"
+                                    style={{ width: `${90 + i * 14}px`, animation: `pulse 1.4s ease-in-out ${i * 0.18}s infinite` }}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              {/* Status message for locked PDFs */}
+                              {canvasLocked === true && (
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 text-[11px] font-semibold">
+                                  <span className="material-symbols-outlined text-[14px] fill">lock</span>
+                                  This PDF is password-protected. Unlock it first.
+                                </div>
+                              )}
+
+                              <p className="text-[11px] font-bold text-outline uppercase tracking-widest">
+                                {canvasLocked === true ? 'Available Action' : 'What would you like to do?'}
+                              </p>
+
+                              {/* 3D animated tool chip cards with ToolIcon */}
+                              <div className="flex flex-wrap justify-center gap-2.5 max-w-[560px]">
+                                {canvasTools.map((tool, idx) => (
+                                  <button
+                                    key={tool.id}
+                                    onClick={() => handleCanvasToolSelect(tool)}
+                                    className="tool-chip-in group flex items-center gap-2.5 pl-3 pr-4 py-2.5 rounded-2xl border border-outline-variant hover:border-primary bg-surface hover:bg-primary/8 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1 hover:scale-[1.03] text-left"
+                                    style={{ animationDelay: `${idx * 65}ms` }}
+                                  >
+                                    <div className="w-7 h-7 flex items-center justify-center flex-shrink-0">
+                                      <ToolIcon id={tool.id} size={28} />
+                                    </div>
+                                    <span className="text-[12px] font-semibold text-on-background group-hover:text-primary transition-colors whitespace-nowrap">{tool.title}</span>
+                                    <span className="material-symbols-outlined text-[13px] text-outline group-hover:text-primary group-hover:translate-x-0.5 transition-all">arrow_forward</span>
+                                  </button>
+                                ))}
+                              </div>
+
+                              {/* Add to queue instead */}
+                              <button
+                                onClick={handleCanvasAddToQueue}
+                                className="text-[11px] text-on-surface-variant hover:text-primary font-semibold flex items-center gap-1.5 transition-colors border border-outline-variant hover:border-primary/40 px-4 py-1.5 rounded-xl"
+                              >
+                                <span className="material-symbols-outlined text-[13px]">add_to_queue</span>
+                                Add to Queue instead
+                              </button>
+                            </>
+                          )}
+                        </div>
+                        <input type="file" ref={workspaceInputRef} onChange={handleWorkspaceFileSelect} multiple={true} className="hidden" accept=".pdf,.docx,.txt,image/*" />
+                      </div>
+
+
+                    ) : activeSidebarTab === 'workspace' ? (
+                      /* GRADIENT HERO DROP ZONE (default — no file selected) */
                       <div
                         onClick={() => workspaceInputRef.current?.click()}
                         onDragOver={(e) => e.preventDefault()}
@@ -1378,7 +1581,8 @@ export default function Home() {
                         </div>
                         <input type="file" ref={workspaceInputRef} onChange={handleWorkspaceFileSelect} multiple={true} className="hidden" accept=".pdf,.docx,.txt,image/*" />
                       </div>
-                    )}
+                    ) : null}
+
 
                     {/* QUEUE HEADER */}
                     <div className="flex flex-col gap-3">

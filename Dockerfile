@@ -40,9 +40,11 @@ COPY backend/ ./backend
 # Environment variables
 ENV PORT=8000
 ENV HOST=0.0.0.0
+ENV PYTHONPATH=/app
 
 # Expose backend port
 EXPOSE 8000
 
 # Start server
-CMD ["python", "backend/main.py"]
+CMD ["python", "-m", "backend.main"]
+
