@@ -502,31 +502,29 @@ class PageScanner:
         row0 = rows_data[0]
         row1 = rows_data[1]
 
-        # Check if row0 and row1 look like a split header (row0 has some items, row1 has others)
-        row0_has_text = any(c and str(c).strip() for c in row0)
-        row1_has_text = any(c and str(c).strip() for c in row1)
+        row0_texts = [str(c).strip() if c else "" for c in row0]
+        row1_texts = [str(c).strip() if c else "" for c in row1]
 
-        if row0_has_text and row1_has_text:
+        # Check for structural rowspan signature:
+        # A true rowspan header typically has at least one column where row0 has text and row1 is empty (the spanning cell),
+        # AND at least one column where row0 is empty and row1 has text (the sub-columns of a grouped header).
+        # Without this strict check, we might accidentally merge a regular header with the first row of data.
+        has_span_down = any(t0 and not t1 for t0, t1 in zip(row0_texts, row1_texts))
+        has_sub_cols = any(not t0 and t1 for t0, t1 in zip(row0_texts, row1_texts))
+
+        if has_span_down and has_sub_cols:
             merged_header = []
-            is_merged = False
-            for c0, c1 in zip(row0, row1):
-                s0 = str(c0).strip() if c0 else ""
-                s1 = str(c1).strip() if c1 else ""
-
+            for s0, s1 in zip(row0_texts, row1_texts):
                 if s0 and not s1:
                     merged_header.append(s0)
-                    is_merged = True
                 elif not s0 and s1:
                     merged_header.append(s1)
-                    is_merged = True
                 elif s0 and s1:
                     merged_header.append(f"{s0} {s1}")
-                    is_merged = True
                 else:
                     merged_header.append(None)
 
-            if is_merged:
-                return [merged_header] + rows_data[2:]
+            return [merged_header] + rows_data[2:]
 
         return rows_data
 
