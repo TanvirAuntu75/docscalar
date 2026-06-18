@@ -76,6 +76,7 @@ export default function Header() {
   const [timeoutId, setTimeoutId] = useState(null);
   const [expandedCategory, setExpandedCategory] = useState(null);
   const [activeTab, setActiveTab] = useState('organize');
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const handleMouseEnter = (menu) => {
     if (timeoutId) clearTimeout(timeoutId);
@@ -95,6 +96,17 @@ export default function Header() {
       if (timeoutId) clearTimeout(timeoutId);
     };
   }, [timeoutId]);
+
+  useEffect(() => {
+    if (!profileDropdownOpen) return;
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest('.profile-dropdown-container')) {
+        setProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener('click', handleOutsideClick);
+    return () => document.removeEventListener('click', handleOutsideClick);
+  }, [profileDropdownOpen]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
@@ -176,23 +188,30 @@ export default function Header() {
       : "bg-surface-container-low/80 backdrop-blur-xl fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-32px)] max-w-container-max rounded-full border border-outline-variant/30 shadow-lg z-50 transition-all duration-200"
     }>
       <div className={isPro 
-        ? "flex justify-between items-center px-8 py-4 max-w-container-max mx-auto relative"
-        : "flex justify-between items-center px-6 py-3 relative"
+        ? "flex justify-between items-center gap-4 lg:gap-8 px-8 py-4 max-w-container-max mx-auto relative"
+        : "flex justify-between items-center gap-4 lg:gap-8 px-6 py-3 relative"
       }>
-        {/* Logo */}
-        <div 
-          className="flex items-center gap-2 cursor-pointer select-none font-h2 text-h2 font-semibold text-primary tracking-tight"
-          onClick={handleLogoClick}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && handleLogoClick()}
-        >
-          <span className="material-symbols-outlined text-primary text-[28px] fill">description</span>
-          <span>DocForge</span>
+        {/* Logo & Brand */}
+        <div className="flex items-center gap-4 flex-shrink-0">
+          <div 
+            className="flex items-center gap-2 cursor-pointer select-none font-h2 text-h2 font-semibold text-primary tracking-tight"
+            onClick={handleLogoClick}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && handleLogoClick()}
+          >
+            <span className="material-symbols-outlined text-primary text-[26px] fill">description</span>
+            <span className="text-on-background">Doc<span className="text-primary">Forge</span></span>
+          </div>
+          
+          {/* Vertical Divider */}
+          {isAuthenticated && (
+            <div className="h-5 w-[1px] bg-outline-variant/60 hidden lg:block mx-1"></div>
+          )}
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex items-center gap-lg font-body-md text-body-md">
+        <div className="hidden lg:flex items-center gap-6 font-body-md text-body-md">
           {/* Workspace / Home link */}
           <Link 
             className={`font-semibold pb-0.5 transition-colors ${location.pathname === '/' ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`} 
@@ -207,7 +226,13 @@ export default function Header() {
             onMouseEnter={() => handleMouseEnter('pdf-tools')}
             onMouseLeave={handleMouseLeave}
           >
-            <button className="flex items-center gap-1 font-semibold text-on-surface-variant hover:text-primary transition-colors cursor-pointer select-none">
+            <button 
+              onClick={() => {
+                setActiveDropdown(null);
+                navigate('/?category=pdf');
+              }}
+              className="flex items-center gap-1 font-semibold text-on-surface-variant hover:text-primary transition-colors cursor-pointer select-none"
+            >
               PDF Tools
               <span className={`material-symbols-outlined text-[18px] transition-transform duration-200 ${activeDropdown === 'pdf-tools' ? 'rotate-180 text-primary' : ''}`}>
                 keyboard_arrow_down
@@ -290,7 +315,13 @@ export default function Header() {
             onMouseEnter={() => handleMouseEnter('image-utilities')}
             onMouseLeave={handleMouseLeave}
           >
-            <button className="flex items-center gap-1 font-semibold text-on-surface-variant hover:text-primary transition-colors cursor-pointer select-none">
+            <button 
+              onClick={() => {
+                setActiveDropdown(null);
+                navigate('/?category=image');
+              }}
+              className="flex items-center gap-1 font-semibold text-on-surface-variant hover:text-primary transition-colors cursor-pointer select-none"
+            >
               Image & Utilities
               <span className={`material-symbols-outlined text-[18px] transition-transform duration-200 ${activeDropdown === 'image-utilities' ? 'rotate-180 text-primary' : ''}`}>
                 keyboard_arrow_down
@@ -383,38 +414,90 @@ export default function Header() {
 
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
-              {/* User Tier Badge */}
-              {isPro ? (
-                <div className="flex items-center gap-1 bg-primary/10 border border-primary/30 text-primary px-3 py-1.5 rounded-full font-label-mono text-[11px] font-bold shadow-[0_0_12px_rgba(249,115,22,0.1)] select-none">
-                  <span className="material-symbols-outlined text-[14px] fill">workspace_premium</span>
-                  PRO
-                </div>
-              ) : (
-                <div className="flex items-center gap-1 bg-outline-variant/30 border border-outline text-outline font-label-mono text-[11px] font-bold px-3 py-1 rounded-full select-none">
-                  FREE
-                </div>
-              )}
-              {/* User Email */}
-              <span className="text-sm font-semibold text-on-surface-variant hidden xl:inline select-none">
-                {userEmail ? userEmail.split('@')[0] : 'User'}
-              </span>
-              {/* Sign Out Button */}
-              <button 
-                onClick={handleLogout}
-                className="font-button text-xs text-on-surface-variant hover:text-error hover:bg-error-container/10 border border-outline-variant hover:border-error px-4 py-2 rounded-lg transition-colors flex items-center gap-1"
-              >
-                <span className="material-symbols-outlined text-[14px]">logout</span>
-                Sign Out
-              </button>
               {/* Go Pro CTA button for Free logged in users */}
               {!isPro && (
                 <button 
-                  className="font-button text-button btn-theme-primary px-5 py-2.5 rounded-lg shadow-sm flex items-center gap-1"
+                  className="font-button text-xs btn-theme-primary px-4 py-2 rounded-lg shadow-sm flex items-center gap-1 hover:scale-[1.02] active:scale-[0.98] transition-all"
                   onClick={handleCtaClick}
                 >
-                  Go Pro <span className="text-[14px]">→</span>
+                  Go Pro <span className="text-[12px]">→</span>
                 </button>
               )}
+
+              {/* User Profile Dropdown */}
+              <div className="relative profile-dropdown-container">
+                <button
+                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  className="flex items-center gap-1.5 p-1 rounded-full hover:bg-surface-container-high transition-all"
+                  aria-label="User menu"
+                >
+                  <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm border border-primary/20 uppercase select-none">
+                    {userEmail ? userEmail[0] : 'U'}
+                  </div>
+                  <span className="material-symbols-outlined text-[18px] text-outline">
+                    keyboard_arrow_down
+                  </span>
+                </button>
+
+                {/* Dropdown Menu */}
+                {profileDropdownOpen && (
+                  <div className="absolute right-0 mt-2.5 w-56 bg-surface border border-outline-variant rounded-2xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150 text-left">
+                    {/* User Header Info */}
+                    <div className="px-4 py-2 border-b border-outline-variant/60 flex flex-col gap-1">
+                      <span className="text-[10px] font-label-mono text-outline uppercase tracking-wider font-bold">Account</span>
+                      <span className="text-xs font-semibold text-on-background truncate">{userEmail}</span>
+                      <div className="mt-1">
+                        {isPro ? (
+                          <span className="inline-flex items-center gap-0.5 bg-primary/10 border border-primary/20 text-primary text-[9px] font-bold px-2 py-0.5 rounded-full">
+                            <span className="material-symbols-outlined text-[10px] fill">workspace_premium</span>
+                            PRO PLAN
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center bg-outline-variant/30 border border-outline text-outline text-[9px] font-bold px-2 py-0.5 rounded-full">
+                            FREE PLAN
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Links */}
+                    <div className="py-1">
+                      <Link
+                        to="/"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">grid_view</span>
+                        Studio Workspace
+                      </Link>
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">dashboard</span>
+                        Dashboard
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-outline-variant/60 my-1"></div>
+
+                    {/* Sign Out */}
+                    <div className="px-1">
+                      <button
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-error hover:bg-error/5 rounded-xl transition-all text-left"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">logout</span>
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <div className="flex items-center gap-3">

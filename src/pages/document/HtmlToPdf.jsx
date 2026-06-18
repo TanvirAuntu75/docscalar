@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -164,20 +164,13 @@ export default function HtmlToPdf() {
   };
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Convert HTML to PDF Online Free | DocForge" 
-        description="Convert static HTML files to formatted PDF documents. Uses premium CSS print styles for layout preservation."
-      />
-      
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="html-to-pdf" size={48} />
-        </div>
-        <h1>HTML to PDF</h1>
-        <p className="tool-page-subtitle">Convert HTML document pages (.html) to styled, printable PDF documents</p>
-        
-        {!checkingBackend && (
+    <ToolPageLayout
+      toolId="html-to-pdf"
+      title="HTML to PDF"
+      description="Convert HTML document pages (.html) to styled, printable PDF documents"
+      headerContent={
+        <>
+          {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -201,7 +194,15 @@ export default function HtmlToPdf() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Convert HTML to PDF Online Free | DocForge" 
+        description="Convert static HTML files to formatted PDF documents. Uses premium CSS print styles for layout preservation."
+      />
+      
+      
 
       {!result ? (
         <>
@@ -272,6 +273,6 @@ export default function HtmlToPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -105,10 +105,11 @@ export default function ImageResizer() {
     setResult(null);
 
     // Validation
+    let targetW, targetH;
     if (mode === 'exact') {
-      const w = Number(width);
-      const h = Number(height);
-      if (isNaN(w) || w <= 0 || isNaN(h) || h <= 0) {
+      targetW = Number(width);
+      targetH = Number(height);
+      if (isNaN(targetW) || targetW <= 0 || isNaN(targetH) || targetH <= 0) {
         setError('Width and height must be positive numbers greater than 0.');
         return;
       }
@@ -116,6 +117,22 @@ export default function ImageResizer() {
       const pct = Number(percentage);
       if (isNaN(pct) || pct <= 0) {
         setError('Percentage must be a positive number greater than 0.');
+        return;
+      }
+      if (originalDimensions) {
+        const scale = pct / 100;
+        targetW = Math.round(originalDimensions.w * scale);
+        targetH = Math.round(originalDimensions.h * scale);
+      }
+    }
+
+    if (targetW && targetH) {
+      if (targetW > 16384 || targetH > 16384) {
+        setError(`Requested dimensions (${targetW} x ${targetH}) exceed the maximum supported browser canvas size of 16,384 pixels.`);
+        return;
+      }
+      if (targetW * targetH > 268435456) {
+        setError(`Requested resolution (${targetW} x ${targetH} = ${(targetW * targetH / 1000000).toFixed(1)}M pixels) exceeds the browser's maximum canvas area limit (268.4M pixels).`);
         return;
       }
     }
@@ -138,6 +155,12 @@ export default function ImageResizer() {
           const ratio = img.height / img.width;
           fileOpts.width = Number(width);
           fileOpts.height = Math.round(Number(width) * ratio);
+        }
+
+        const resolvedW = fileOpts.width || (originalDimensions ? originalDimensions.w : 1);
+        const resolvedH = fileOpts.height || (originalDimensions ? originalDimensions.h : 1);
+        if (resolvedW > 16384 || resolvedH > 16384 || (resolvedW * resolvedH) > 268435456) {
+          throw new Error(`The target dimensions for "${file.name}" (${resolvedW} x ${resolvedH}) exceed browser canvas limits.`);
         }
 
         const res = await resizeImage(file, fileOpts);
@@ -174,28 +197,34 @@ export default function ImageResizer() {
   const downloadAll = async () => {
     if (!result) return;
     if (result.length === 1) {
+      if (!result[0].blob) {
+        setError('The resized image data is empty. The size may have exceeded browser constraints.');
+        return;
+      }
       saveAs(result[0].blob, result[0].name);
     } else {
       const zip = new JSZip();
-      result.forEach((r) => zip.file(r.name, r.blob));
+      result.forEach((r) => {
+        if (r.blob) {
+          zip.file(r.name, r.blob);
+        }
+      });
       const zipBlob = await zip.generateAsync({ type: 'blob' });
       saveAs(zipBlob, 'resized-images.zip');
     }
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="image-resizer"
+      title="Image Resizer"
+      description="Resize multiple images to exact dimensions or relative percentage"
+    >
       <SEOHead 
         title="Resize Image Online Free (Change Image Dimensions)" 
         description="Resize images online free of charge. Resize by percentage or exact pixel dimensions (width/height) with aspect ratio locking. 100% private."
       />
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="image-resizer" size={48} />
-        </div>
-        <h1>Image Resizer</h1>
-        <p className="tool-page-subtitle">Resize multiple images to exact dimensions or relative percentage</p>
-      </div>
+      
 
       {!result ? (
         <>
@@ -312,6 +341,6 @@ export default function ImageResizer() {
       )}
       
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

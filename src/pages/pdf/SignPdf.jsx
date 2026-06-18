@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -371,19 +371,17 @@ export default function SignPdf() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="sign-pdf"
+      title="Sign PDF"
+      description="Electronically sign your PDF document by drawing, typing, or uploading a signature"
+    >
       <SEOHead 
         title="Sign PDF Online Free — Place Signature on PDF | DocForge" 
         description="Create your electronic signature (draw, type, or upload) and visually place it on any page of your PDF file completely client-side."
       />
       
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="sign-pdf" size={48} />
-        </div>
-        <h1>Sign PDF</h1>
-        <p className="tool-page-subtitle">Electronically sign your PDF document by drawing, typing, or uploading a signature</p>
-      </div>
+      
 
       {!result ? (
         <>
@@ -806,6 +804,6 @@ export default function SignPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

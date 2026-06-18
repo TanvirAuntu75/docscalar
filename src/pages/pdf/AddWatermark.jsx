@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -156,18 +156,16 @@ export default function AddWatermark() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="add-watermark"
+      title="Add Watermark"
+      description="Overlay customizable text or images onto your PDF document pages"
+    >
       <SEOHead 
         title="Add Watermark to PDF Online Free (100% Client-Side) | DocForge" 
         description="Overlay custom text or image watermarks onto PDF pages. Choose font sizes, opacity, rotation, and alignment positions offline."
       />
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="add-watermark" size={48} />
-        </div>
-        <h1>Add Watermark</h1>
-        <p className="tool-page-subtitle">Overlay customizable text or images onto your PDF document pages</p>
-      </div>
+      
 
       {!result ? (
         <>
@@ -520,6 +518,6 @@ export default function AddWatermark() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

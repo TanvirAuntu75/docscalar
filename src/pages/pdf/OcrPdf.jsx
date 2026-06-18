@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -169,20 +169,13 @@ export default function OcrPdf() {
   };
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="OCR PDF Online Free — Searchable PDF Converter | DocForge" 
-        description="Make scanned PDFs searchable with professional server-side OCR. High accuracy text recognition for documents."
-      />
-      
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="ocr-pdf" size={48} />
-        </div>
-        <h1>OCR PDF</h1>
-        <p className="tool-page-subtitle">Make scanned documents selectable and searchable with professional server-side text recognition</p>
-        
-        {!checkingBackend && (
+    <ToolPageLayout
+      toolId="ocr-pdf"
+      title="OCR PDF"
+      description="Make scanned documents selectable and searchable with professional server-side text recognition"
+      headerContent={
+        <>
+          {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -206,7 +199,15 @@ export default function OcrPdf() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="OCR PDF Online Free — Searchable PDF Converter | DocForge" 
+        description="Make scanned PDFs searchable with professional server-side OCR. High accuracy text recognition for documents."
+      />
+      
+      
 
       {!result ? (
         <>
@@ -294,6 +295,6 @@ export default function OcrPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -156,20 +156,13 @@ export default function PdfToExcel() {
   };
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Convert PDF to Excel Online Free — PDF to XLSX | DocForge" 
-        description="Extract tables from PDF to structured Excel spreadsheets (.xlsx). Layout columns, cells, and numeric values preserved accurately."
-      />
-      
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="pdf-to-excel" size={48} />
-        </div>
-        <h1>PDF to Excel</h1>
-        <p className="tool-page-subtitle">Extract tables from PDF document pages and compile them into structured Excel spreadsheets</p>
-        
-        {!checkingBackend && (
+    <ToolPageLayout
+      toolId="pdf-to-excel"
+      title="PDF to Excel"
+      description="Extract tables from PDF document pages and compile them into structured Excel spreadsheets"
+      headerContent={
+        <>
+          {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -193,7 +186,15 @@ export default function PdfToExcel() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Convert PDF to Excel Online Free — PDF to XLSX | DocForge" 
+        description="Extract tables from PDF to structured Excel spreadsheets (.xlsx). Layout columns, cells, and numeric values preserved accurately."
+      />
+      
+      
 
       {!result ? (
         <>
@@ -264,6 +265,6 @@ export default function PdfToExcel() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

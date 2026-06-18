@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -163,20 +163,13 @@ export default function UnlockPdf() {
   };
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Unlock PDF Online Free — Remove PDF Password | DocForge" 
-        description="Decrypt password-protected PDF files instantly. Remove user restrictions, permission locks, and owner security details securely."
-      />
-      
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="unlock-pdf" size={48} />
-        </div>
-        <h1>Unlock PDF</h1>
-        <p className="tool-page-subtitle">Decrypt your secure PDF files and strip away all password protection requirements</p>
-        
-        {!checkingBackend && (
+    <ToolPageLayout
+      toolId="unlock-pdf"
+      title="Unlock PDF"
+      description="Decrypt your secure PDF files and strip away all password protection requirements"
+      headerContent={
+        <>
+          {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -200,7 +193,15 @@ export default function UnlockPdf() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Unlock PDF Online Free — Remove PDF Password | DocForge" 
+        description="Decrypt password-protected PDF files instantly. Remove user restrictions, permission locks, and owner security details securely."
+      />
+      
+      
 
       {!result ? (
         <>
@@ -316,6 +317,6 @@ export default function UnlockPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

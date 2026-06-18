@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -192,18 +192,16 @@ export default function PdfForms() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="pdf-forms"
+      title="PDF Forms Filler"
+      description="Fill interactive PDF text boxes, checkboxes, and select dropdown fields easily"
+    >
       <SEOHead 
         title="Fill PDF Forms Online Free — Edit Fillable PDFs | DocForge" 
         description="Fill and save interactive PDF form fields instantly in your browser. Client-side processing protects form privacy completely."
       />
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="pdf-forms" size={48} />
-        </div>
-        <h1>PDF Forms Filler</h1>
-        <p className="tool-page-subtitle">Fill interactive PDF text boxes, checkboxes, and select dropdown fields easily</p>
-      </div>
+      
 
       {!result ? (
         <>
@@ -457,6 +455,6 @@ export default function PdfForms() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

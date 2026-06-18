@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import { mergePdfs } from '../../engines/pdf/mergePdf';
@@ -34,14 +34,12 @@ export default function MergePdf() {
   const reset = () => { setFiles([]); setResult(null); setError(null); setProgress(0); };
 
   return (
-    <div className="tool-page">
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="merge-pdf" size={48} />
-        </div>
-        <h1>Merge PDFs</h1>
-        <p className="tool-page-subtitle">Combine multiple PDF files into one document</p>
-      </div>
+    <ToolPageLayout
+      toolId="merge-pdf"
+      title="Merge PDFs"
+      description="Combine multiple PDF files into one document"
+    >
+      
 
       {!result ? (
         <>
@@ -92,6 +90,6 @@ export default function MergePdf() {
           </div>
         </div>
       )}
-    </div>
+    </ToolPageLayout>
   );
 }

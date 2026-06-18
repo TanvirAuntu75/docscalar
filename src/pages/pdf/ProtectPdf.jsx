@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -179,20 +179,13 @@ export default function ProtectPdf() {
   const strength = getPasswordStrength();
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Protect PDF Online Free — Encrypt PDF with Password | DocForge" 
-        description="Secure your PDF document with AES-256 encryption. Set custom passwords and restrict printing, copying, and modifications."
-      />
-      
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="protect-pdf" size={48} />
-        </div>
-        <h1>Protect PDF</h1>
-        <p className="tool-page-subtitle">Encrypt your PDF document with a password to restrict access and permissions</p>
-        
-        {!checkingBackend && (
+    <ToolPageLayout
+      toolId="protect-pdf"
+      title="Protect PDF"
+      description="Encrypt your PDF document with a password to restrict access and permissions"
+      headerContent={
+        <>
+          {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -216,7 +209,15 @@ export default function ProtectPdf() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Protect PDF Online Free — Encrypt PDF with Password | DocForge" 
+        description="Secure your PDF document with AES-256 encryption. Set custom passwords and restrict printing, copying, and modifications."
+      />
+      
+      
 
       {!result ? (
         <>
@@ -382,6 +383,6 @@ export default function ProtectPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

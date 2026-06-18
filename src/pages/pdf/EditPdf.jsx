@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -334,19 +334,17 @@ export default function EditPdf() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="edit-pdf"
+      title="Edit PDF Document"
+      description="Draw pen annotations or place text callouts onto document pages visually"
+    >
       <SEOHead 
         title="Edit PDF Online Free — Annotate & Draw on PDF | DocForge" 
         description="Add freehand drawings, text notes, and comments to PDF pages online. 100% private client-side vector annotations injection."
       />
       
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="edit-pdf" size={48} />
-        </div>
-        <h1>Edit PDF Document</h1>
-        <p className="tool-page-subtitle">Draw pen annotations or place text callouts onto document pages visually</p>
-      </div>
+      
 
       {!result ? (
         <>
@@ -646,6 +644,6 @@ export default function EditPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

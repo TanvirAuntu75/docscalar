@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import { imagesToPdf } from '../../engines/pdf/imageToPdf';
@@ -34,14 +34,12 @@ export default function ImageToPdf() {
   const reset = () => { setFiles([]); setResult(null); setError(null); setProgress(0); };
 
   return (
-    <div className="tool-page">
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="image-to-pdf" size={48} />
-        </div>
-        <h1>Images to PDF</h1>
-        <p className="tool-page-subtitle">Combine multiple images into a single PDF document</p>
-      </div>
+    <ToolPageLayout
+      toolId="image-to-pdf"
+      title="Images to PDF"
+      description="Combine multiple images into a single PDF document"
+    >
+      
 
       {!result ? (
         <>
@@ -97,6 +95,6 @@ export default function ImageToPdf() {
           </div>
         </div>
       )}
-    </div>
+    </ToolPageLayout>
   );
 }

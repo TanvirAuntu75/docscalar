@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -174,18 +174,16 @@ export default function CropPdf() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="crop-pdf"
+      title="Crop PDF"
+      description="Crop page margins visually and apply new boundary sizes to your PDF document"
+    >
       <SEOHead 
         title="Crop PDF Pages Online Free (100% Client-Side) | DocForge" 
         description="Crop document margins visually in your browser. Fully private, adjusting page boundaries locally without uploading to server."
       />
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="crop-pdf" size={48} />
-        </div>
-        <h1>Crop PDF</h1>
-        <p className="tool-page-subtitle">Crop page margins visually and apply new boundary sizes to your PDF document</p>
-      </div>
+      
 
       {!result ? (
         <>
@@ -429,6 +427,6 @@ export default function CropPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

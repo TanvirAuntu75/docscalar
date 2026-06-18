@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -182,19 +182,17 @@ export default function ComparePdf() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="compare-pdf"
+      title="Compare PDF Revisions"
+      description="Visually compare two PDF document revisions side-by-side or using a swipe overlay"
+    >
       <SEOHead 
         title="Compare PDF Files Online Free — Visual PDF Diff | DocForge" 
         description="Compare two PDF documents side-by-side or with an overlay swipe slider. Easily spot changes and differences in text or drawing revisions."
       />
       
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="compare-pdf" size={48} />
-        </div>
-        <h1>Compare PDF Revisions</h1>
-        <p className="tool-page-subtitle">Visually compare two PDF document revisions side-by-side or using a swipe overlay</p>
-      </div>
+      
 
       {(!pdfA || !pdfB) ? (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
@@ -437,6 +435,6 @@ export default function ComparePdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

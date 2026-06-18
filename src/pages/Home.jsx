@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import ToolCard from '../components/ToolCard';
 import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts';
 import ToolIcon from '../components/ToolIcon';
@@ -15,7 +15,7 @@ import { docxToPdf } from '../engines/document/docxToPdf';
 import { textToPdf } from '../engines/document/textToPdf';
 import { compressPdf } from '../engines/pdf/compressPdf';
 import { rotatePdf } from '../engines/pdf/rotatePdf';
-import { pdfToImages } from '../engines/pdf/pdfToImage';
+import { pdfToImages, pdfToImagesStream } from '../engines/pdf/pdfToImage';
 import { mergePdfs } from '../engines/pdf/mergePdf';
 import { splitPdf } from '../engines/pdf/splitPdf';
 import { compressImage } from '../engines/image/compressImage';
@@ -73,6 +73,7 @@ const getEstimatedTime = (fileSize, progress) => {
 
 export default function Home() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { isAuthenticated, userEmail, userTier, proLicenseKey, isPro, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
@@ -87,6 +88,69 @@ export default function Home() {
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [toolsCategoryFilter, setToolsCategoryFilter] = useState('all');
+
+  // Handle category query parameters (e.g. ?category=pdf) to filter tools or switch tabs
+  useEffect(() => {
+    const category = searchParams.get('category');
+    if (category) {
+      if (category === 'pdf' || category === 'image' || category === 'utility') {
+        if (isAuthenticated) {
+          setActiveSidebarTab('converter');
+          setToolsCategoryFilter(category);
+        } else {
+          if (category === 'pdf') {
+            setActiveTab('organize-pdf');
+          } else {
+            setActiveTab(category);
+          }
+          // Scroll to guest tools directory section
+          setTimeout(() => {
+            const el = document.getElementById('features');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 100);
+        }
+      }
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams, isAuthenticated]);
+
+  const getActionTitle = (actionId) => {
+    const actionTitles = {
+      'compress-pdf': 'Compress PDF',
+      'merge-pdf': 'Merge PDF',
+      'split-pdf': 'Split PDF',
+      'pdf-to-image': 'PDF to Images',
+      'rotate-pdf': 'Rotate PDF',
+      'protect-pdf': 'Protect PDF',
+      'unlock-pdf': 'Unlock PDF',
+      'docx-to-pdf': 'DOCX to PDF',
+      'text-to-pdf': 'Text to PDF',
+      'image-compressor': 'Image Compressor',
+      'image-converter': 'Image Converter',
+      'image-resizer': 'Image Resizer',
+      'image-to-pdf': 'Images to PDF',
+      'ai-summarizer': 'Smart Reformatter',
+    };
+    return actionTitles[actionId] || actionId;
+  };
+
+  const handleQuickAccessAction = (action) => {
+    if (action === 'filter-pdf') {
+      setActiveSidebarTab('converter');
+      setToolsCategoryFilter('pdf');
+    } else if (action === 'filter-image') {
+      setActiveSidebarTab('converter');
+      setToolsCategoryFilter('image');
+    } else if (action === 'filter-convert') {
+      setActiveSidebarTab('converter');
+      setToolsCategoryFilter('convert');
+    } else if (action === 'tab-reformatter') {
+      setActiveSidebarTab('reformatter');
+    }
+  };
 
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [theme, setTheme] = useState(() => {
@@ -94,6 +158,10 @@ export default function Home() {
   });
   const [storageUsage, setStorageUsage] = useState({ used: '1.2 GB', quota: '50 GB', percent: 2 });
   const [confirmDialog, setConfirmDialog] = useState(null);
+  
+  // Upgrade Modal states
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [upgradeModalTarget, setUpgradeModalTarget] = useState(null);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -344,53 +412,52 @@ export default function Home() {
     let outputType = item.type;
 
     try {
-      if (action === 'DOCX to PDF' || action === 'DOCX to PDF (GPU Cloud)') {
+      if (action === 'docx-to-pdf' || action === 'DOCX to PDF' || action === 'DOCX to PDF (GPU Cloud)') {
         outputBlob = await docxToPdf(file, (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
         outputName = file.name.replace(/\.[^.]+$/, '') + '.pdf';
         outputType = 'application/pdf';
-      } else if (action === 'Text to PDF' || action === 'Text to PDF (GPU Cloud)') {
+      } else if (action === 'text-to-pdf' || action === 'Text to PDF' || action === 'Text to PDF (GPU Cloud)') {
         const text = await file.text();
         outputBlob = await textToPdf(text, { title: file.name }, (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
         outputName = file.name.replace(/\.[^.]+$/, '') + '.pdf';
         outputType = 'application/pdf';
-      } else if (action === 'Compress PDF' || action === 'Compress PDF (GPU Cloud)') {
+      } else if (action === 'compress-pdf' || action === 'Compress PDF' || action === 'Compress PDF (GPU Cloud)') {
         outputBlob = await compressPdf(file, { quality: 0.6 }, (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
         outputName = file.name.replace(/\.[^.]+$/, '') + '_compressed.pdf';
         outputType = 'application/pdf';
-      } else if (action === 'Rotate PDF' || action === 'Rotate PDF (GPU Cloud)') {
+      } else if (action === 'rotate-pdf' || action === 'Rotate PDF' || action === 'Rotate PDF (GPU Cloud)') {
         outputBlob = await rotatePdf(file, 90, (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
         outputName = file.name.replace(/\.[^.]+$/, '') + '_rotated.pdf';
         outputType = 'application/pdf';
-      } else if (action === 'PDF to Images' || action === 'PDF to Images (GPU Cloud)') {
-        const { blobs, names } = await pdfToImages(file, { format: 'png', quality: 0.92, scale: 2 }, (pct) => {
-          setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
-        });
-        if (blobs.length === 1) {
-          outputBlob = blobs[0];
-          outputName = names[0];
-          outputType = blobs[0].type;
-        } else {
-          const zip = new JSZip();
-          blobs.forEach((b, idx) => zip.file(names[idx], b));
-          outputBlob = await zip.generateAsync({ type: 'blob' });
-          outputName = file.name.replace(/\.[^.]+$/, '') + '-images.zip';
-          outputType = 'application/zip';
-        }
-      } else if (action === 'Merge PDFs' || action === 'Merge PDFs (GPU Cloud)') {
+      } else if (action === 'pdf-to-image' || action === 'PDF to Images' || action === 'PDF to Images (GPU Cloud)') {
+        // Stream pages into ZIP — worker enforces 200-page cap for batch queue
+        const zip = new JSZip();
+        await pdfToImagesStream(
+          file,
+          { format: 'jpeg', quality: 0.85, scale: 1.5, maxPages: 200 },
+          async ({ name, blob }) => { zip.file(name, blob); },
+          (pct) => {
+            setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
+          }
+        );
+        outputBlob = await zip.generateAsync({ type: 'blob' });
+        outputName = file.name.replace(/\.[^.]+$/, '') + '-images.zip';
+        outputType = 'application/zip';
+      } else if (action === 'merge-pdf' || action === 'Merge PDFs' || action === 'Merge PDFs (GPU Cloud)') {
         outputBlob = await mergePdfs([file], (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
         outputName = file.name.replace(/\.[^.]+$/, '') + '_merged.pdf';
         outputType = 'application/pdf';
-      } else if (action === 'Split PDF' || action === 'Split PDF (GPU Cloud)') {
+      } else if (action === 'split-pdf' || action === 'Split PDF' || action === 'Split PDF (GPU Cloud)') {
         const { blobs, names } = await splitPdf(file, 'all', '', (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
@@ -405,28 +472,28 @@ export default function Home() {
           outputName = file.name.replace(/\.[^.]+$/, '') + '-split.zip';
           outputType = 'application/zip';
         }
-      } else if (action === 'Image Compressor') {
+      } else if (action === 'image-compressor' || action === 'Image Compressor') {
         setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: 50 } : i));
         const result = await compressImage(file, 0.7);
         outputBlob = result.blob;
         outputName = result.name;
         outputType = result.blob.type;
         setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: 100 } : i));
-      } else if (action === 'Image Converter') {
+      } else if (action === 'image-converter' || action === 'Image Converter') {
         setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: 50 } : i));
         const result = await convertImageFormat(file, 'png', 0.92);
         outputBlob = result.blob;
         outputName = result.name;
         outputType = result.blob.type;
         setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: 100 } : i));
-      } else if (action === 'Image Resizer') {
+      } else if (action === 'image-resizer' || action === 'Image Resizer') {
         setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: 50 } : i));
         const result = await resizeImage(file, { mode: 'percentage', percentage: 50 });
         outputBlob = result.blob;
         outputName = result.name;
         outputType = result.blob.type;
         setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: 100 } : i));
-      } else if (action === 'Images to PDF') {
+      } else if (action === 'image-to-pdf' || action === 'Images to PDF') {
         outputBlob = await imagesToPdf([file], (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
@@ -598,6 +665,19 @@ export default function Home() {
     const actions = getActionsForFile(file.name);
     
     if (actions && actions.length > 0) {
+      // Size limits based on tier
+      const maxFileSize = userTier === 'pro'
+        ? 1024 * 1024 * 1024
+        : (isAuthenticated ? 100 * 1024 * 1024 : 10 * 1024 * 1024);
+      
+      const maxFileSizeStr = userTier === 'pro' ? '1GB' : (isAuthenticated ? '100MB' : '10MB');
+      const tierName = userTier === 'pro' ? 'Pro' : (isAuthenticated ? 'Free Account' : 'Guest Mode');
+
+      if (file.size > maxFileSize) {
+        showToast(`⚠️ File too large: ${file.name} (${formatSize(file.size)}). Max allowed is ${maxFileSizeStr} in ${tierName}.`);
+        return;
+      }
+
       setSelectedFile(file);
       setSuggestedTools(actions.map(a => {
         let path = `/${a.id}`;
@@ -623,6 +703,20 @@ export default function Home() {
 
   const handleToolSelect = (toolPath) => {
     setModalOpen(false);
+    // Find the tool by path to check tier access
+    const tool = TOOLS.find(t => t.path === toolPath);
+    if (tool) {
+      const minTier = tool.minTier || 'guest';
+      const isAuthorized = 
+        minTier === 'guest' || 
+        (minTier === 'free' && isAuthenticated) || 
+        (minTier === 'pro' && isPro);
+      if (!isAuthorized) {
+        setUpgradeModalTarget(tool);
+        setUpgradeModalOpen(true);
+        return;
+      }
+    }
     navigate(toolPath, { state: { initialFile: selectedFile } });
   };
 
@@ -651,19 +745,38 @@ export default function Home() {
 
     if (validFiles.length === 0) return;
 
+    // Filter files based on size limits per tier
+    const maxFileSize = userTier === 'pro'
+      ? 1024 * 1024 * 1024
+      : (isAuthenticated ? 100 * 1024 * 1024 : 10 * 1024 * 1024);
+    const maxFileSizeStr = userTier === 'pro' ? '1GB' : (isAuthenticated ? '100MB' : '10MB');
+    const tierName = userTier === 'pro' ? 'Pro' : (isAuthenticated ? 'Free Account' : 'Guest Mode');
+
+    const sizeFilteredFiles = validFiles.filter(file => {
+      if (file.size > maxFileSize) {
+        showToast(`⚠️ File too large: ${file.name} (${formatSize(file.size)}). Max allowed is ${maxFileSizeStr} in ${tierName}.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (sizeFilteredFiles.length === 0) return;
+
     // 2. Enforce limits on the remaining valid files
-    const limit = userTier === 'pro' ? 50 : 5;
+    const limit = userTier === 'pro' ? 50 : (isAuthenticated ? 5 : 1);
     const currentCount = batchQueue.length;
     const remainingSlots = Math.max(0, limit - currentCount);
 
-    let allowedFiles = validFiles;
-    if (validFiles.length > remainingSlots) {
+    let allowedFiles = sizeFilteredFiles;
+    if (sizeFilteredFiles.length > remainingSlots) {
       if (userTier === 'pro') {
         showToast('⚠️ Pro accounts are limited to 50 files per batch queue.');
-      } else {
+      } else if (isAuthenticated) {
         showToast('⚠️ Free accounts are limited to 5 files per batch queue. Upgrade to PRO for up to 50 files!');
+      } else {
+        showToast('⚠️ Guest mode is limited to 1 file in the batch queue. Create a free account to queue up to 5 files!');
       }
-      allowedFiles = validFiles.slice(0, remainingSlots);
+      allowedFiles = sizeFilteredFiles.slice(0, remainingSlots);
     }
 
     if (allowedFiles.length === 0) return;
@@ -742,21 +855,20 @@ export default function Home() {
           outputName = file.name.replace(/\.[^.]+$/, '') + '_rotated.pdf';
           outputType = 'application/pdf';
         } else if (action === 'PDF to Images') {
-          const { blobs, names } = await pdfToImages(file, { format: 'png', quality: 0.92, scale: 2 }, (pct) => {
-            setBatchProgress(pct);
-            setBatchQueue(prev => prev.map((item, idx) => idx === i ? { ...item, progress: pct } : item));
-          });
-          if (blobs.length === 1) {
-            outputBlob = blobs[0];
-            outputName = names[0];
-            outputType = blobs[0].type;
-          } else {
-            const zip = new JSZip();
-            blobs.forEach((b, idx) => zip.file(names[idx], b));
-            outputBlob = await zip.generateAsync({ type: 'blob' });
-            outputName = file.name.replace(/\.[^.]+$/, '') + '-images.zip';
-            outputType = 'application/zip';
-          }
+          // Stream pages into ZIP — worker enforces 200-page cap for batch queue
+          const zip = new JSZip();
+          await pdfToImagesStream(
+            file,
+            { format: 'jpeg', quality: 0.85, scale: 1.5, maxPages: 200 },
+            async ({ name, blob }) => { zip.file(name, blob); },
+            (pct) => {
+              setBatchProgress(pct);
+              setBatchQueue(prev => prev.map((item, idx) => idx === i ? { ...item, progress: pct } : item));
+            }
+          );
+          outputBlob = await zip.generateAsync({ type: 'blob' });
+          outputName = file.name.replace(/\.[^.]+$/, '') + '-images.zip';
+          outputType = 'application/zip';
         } else if (action === 'Merge PDFs') {
           outputBlob = await mergePdfs([file], (pct) => {
             setBatchProgress(pct);
@@ -902,13 +1014,25 @@ export default function Home() {
   // ⚡ Bolt: Wrapped filteredTools in useMemo to prevent recalculating the filter on every re-render.
   const filteredTools = useMemo(() => {
     return TOOLS.filter((tool) => {
-      const matchesTab = activeTab === 'all' || tool.category === activeTab;
+      const categoryToMatch = isAuthenticated ? toolsCategoryFilter : activeTab;
+      
+      let matchesTab = true;
+      if (categoryToMatch !== 'all') {
+        if (categoryToMatch === 'pdf') {
+          matchesTab = tool.category.endsWith('-pdf') || tool.category.startsWith('pdf-') || tool.category === 'edit-pdf';
+        } else if (categoryToMatch === 'convert') {
+          matchesTab = tool.category.startsWith('convert-');
+        } else {
+          matchesTab = tool.category === categoryToMatch;
+        }
+      }
+
       const matchesSearch =
         tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         tool.description.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesTab && matchesSearch;
     });
-  }, [activeTab, searchQuery]);
+  }, [isAuthenticated, activeTab, toolsCategoryFilter, searchQuery]);
 
   const isWorkspaceView = isAuthenticated;
 
@@ -978,9 +1102,9 @@ export default function Home() {
             ────────────────────────────────────────────────────────── */
         <>
           {/* LEFT SIDEBAR */}
-          <aside className="w-68 md:w-72 h-full bg-surface-container flex flex-col border-r border-outline-variant flex-shrink-0 text-left select-none p-5 overflow-y-auto">
+          <aside className="w-68 md:w-72 h-full bg-surface-container flex flex-col border-r border-outline-variant flex-shrink-0 text-left select-none py-3.5 px-4 overflow-hidden">
             {/* Logo Brand */}
-            <div className="flex items-center gap-3 mb-8 font-h2 text-xl font-bold tracking-tight select-none">
+            <div className="flex items-center gap-3 mb-4 font-h2 text-xl font-bold tracking-tight select-none">
               <svg className="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M19 14.5C19 14.5 21 12.5 21 10C21 7.5 19 7 19 7C19 7 19 4 13 4C7 4 7 7 7 7C7 7 3 7.5 3 10C3 12.5 5 14.5 5 14.5L3 19H21L19 14.5Z" fill="currentColor"/>
                 <path d="M8 19H16V20H8V19Z" fill="currentColor" opacity="0.8"/>
@@ -992,10 +1116,10 @@ export default function Home() {
             </div>
 
             {/* Sidebar Navigation */}
-            <nav className="flex-1 flex flex-col gap-5">
+            <nav className="flex flex-col gap-3">
               {/* WORKSPACE STUDIO SECTION */}
               <div className="flex flex-col gap-1">
-                <span className="font-label-mono text-[9px] text-outline uppercase tracking-wider px-4 mb-1 select-none font-bold">Workspace Studio</span>
+                <span className="font-label-mono text-[9px] text-outline uppercase tracking-wider px-3 mb-1 select-none font-bold">Workspace Studio</span>
                 {[
                   { id: 'workspace', label: 'Studio Workspace', icon: 'grid_view' },
                   { id: 'queue', label: 'Batch Queue', icon: 'queue', badge: workspaceQueue.length },
@@ -1009,20 +1133,20 @@ export default function Home() {
                         setOpenDropdownId(null);
                         setOpenMenuId(null);
                       }}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all font-body-md text-sm text-left ${
+                      className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg transition-all font-body-md text-sm text-left ${
                         isActive
                           ? 'bg-primary/10 text-primary font-bold shadow-[inset_0_0_12px_rgba(var(--color-primary-rgb),0.05)] border border-primary/20'
                           : 'text-on-surface-variant hover:text-on-background hover:bg-surface-container-high border border-transparent'
                       }`}
                     >
-                      <span className="flex items-center gap-3">
-                        <span className={`material-symbols-outlined text-[20px] ${isActive ? 'fill text-primary' : 'text-outline'}`}>
+                      <span className="flex items-center gap-2.5">
+                        <span className={`material-symbols-outlined text-[18px] ${isActive ? 'fill text-primary' : 'text-outline'}`}>
                           {item.icon}
                         </span>
                         <span>{item.label}</span>
                       </span>
                       {item.badge !== undefined && item.badge > 0 && (
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
                           isActive ? 'bg-primary text-white' : 'bg-surface-container-highest border border-outline-variant text-on-surface-variant'
                         }`}>
                           {item.badge}
@@ -1034,8 +1158,8 @@ export default function Home() {
               </div>
 
               {/* OFFLINE UTILITIES SECTION */}
-              <div className="flex flex-col gap-1 mt-6">
-                <span className="font-label-mono text-[9px] text-outline uppercase tracking-wider px-4 mb-1 select-none font-bold">Offline Utilities</span>
+              <div className="flex flex-col gap-1 mt-3.5">
+                <span className="font-label-mono text-[9px] text-outline uppercase tracking-wider px-3 mb-1 select-none font-bold">Offline Utilities</span>
                 {[
                   { id: 'converter', label: 'Tools Directory', icon: 'sync_alt' },
                   { id: 'reformatter', label: 'Reformatter', icon: 'history_edu' },
@@ -1050,14 +1174,14 @@ export default function Home() {
                         setOpenDropdownId(null);
                         setOpenMenuId(null);
                       }}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all font-body-md text-sm text-left ${
+                      className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg transition-all font-body-md text-sm text-left ${
                         isActive
                           ? 'bg-primary/10 text-primary font-bold shadow-[inset_0_0_12px_rgba(var(--color-primary-rgb),0.05)] border border-primary/20'
                           : 'text-on-surface-variant hover:text-on-background hover:bg-surface-container-high border border-transparent'
                       }`}
                     >
-                      <span className="flex items-center gap-3">
-                        <span className={`material-symbols-outlined text-[20px] ${isActive ? 'fill text-primary' : 'text-outline'}`}>
+                      <span className="flex items-center gap-2.5">
+                        <span className={`material-symbols-outlined text-[18px] ${isActive ? 'fill text-primary' : 'text-outline'}`}>
                           {item.icon}
                         </span>
                         <span>{item.label}</span>
@@ -1068,8 +1192,8 @@ export default function Home() {
               </div>
 
               {/* SYSTEM SECTION */}
-              <div className="flex flex-col gap-1 mt-6">
-                <span className="font-label-mono text-[9px] text-outline uppercase tracking-wider px-4 mb-1 select-none font-bold">System</span>
+              <div className="flex flex-col gap-1 mt-3.5">
+                <span className="font-label-mono text-[9px] text-outline uppercase tracking-wider px-3 mb-1 select-none font-bold">System</span>
                 {[
                   { id: 'settings', label: 'Preferences', icon: 'settings' },
                 ].map((item) => {
@@ -1082,14 +1206,14 @@ export default function Home() {
                         setOpenDropdownId(null);
                         setOpenMenuId(null);
                       }}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all font-body-md text-sm text-left ${
+                      className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg transition-all font-body-md text-sm text-left ${
                         isActive
                           ? 'bg-primary/10 text-primary font-bold shadow-[inset_0_0_12px_rgba(var(--color-primary-rgb),0.05)] border border-primary/20'
                           : 'text-on-surface-variant hover:text-on-background hover:bg-surface-container-high border border-transparent'
                       }`}
                     >
-                      <span className="flex items-center gap-3">
-                        <span className={`material-symbols-outlined text-[20px] ${isActive ? 'fill text-primary' : 'text-outline'}`}>
+                      <span className="flex items-center gap-2.5">
+                        <span className={`material-symbols-outlined text-[18px] ${isActive ? 'fill text-primary' : 'text-outline'}`}>
                           {item.icon}
                         </span>
                         <span>{item.label}</span>
@@ -1101,35 +1225,35 @@ export default function Home() {
             </nav>
 
             {/* Bottom Section */}
-            <div className="mt-8 flex flex-col gap-4">
+            <div className="mt-auto pt-3.5 flex flex-col gap-2.5">
               {/* Upgrade Promo / Pro Badge */}
               {userTier === 'pro' ? (
-                <div className="bg-gradient-to-br from-primary/10 to-accent/5 border border-primary/20 rounded-2xl p-4 flex items-center gap-3.5 select-none relative overflow-hidden group">
+                <div className="bg-gradient-to-br from-primary/10 to-accent/5 border border-primary/20 rounded-2xl p-2.5 flex items-center gap-2.5 select-none relative overflow-hidden group">
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary flex-shrink-0">
-                    <span className="material-symbols-outlined fill text-[22px]">workspace_premium</span>
+                  <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary flex-shrink-0">
+                    <span className="material-symbols-outlined fill text-[18px]">workspace_premium</span>
                   </div>
                   <div className="min-w-0">
-                    <div className="font-label-mono text-[9px] uppercase tracking-wider text-primary font-bold">PRO PLAN</div>
-                    <p className="font-body-sm text-[11px] text-on-surface-variant font-semibold truncate">Premium unlocked</p>
+                    <div className="font-label-mono text-[8px] uppercase tracking-wider text-primary font-bold">PRO PLAN</div>
+                    <p className="font-body-sm text-[10px] text-on-surface-variant font-semibold truncate">Premium unlocked</p>
                   </div>
                 </div>
               ) : (
-                <div className="bg-surface border border-primary/25 rounded-2xl p-4.5 shadow-sm relative overflow-hidden flex flex-col gap-3.5 text-left border-outline-variant/80">
-                  <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-primary/10 to-accent/5 rounded-bl-[40px] pointer-events-none"></div>
+                <div className="bg-surface border border-primary/25 rounded-2xl p-3 shadow-sm relative overflow-hidden flex flex-col gap-2.5 text-left border-outline-variant/80">
+                  <div className="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-primary/10 to-accent/5 rounded-bl-[40px] pointer-events-none"></div>
                   <div className="relative z-10">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="material-symbols-outlined text-primary text-[18px] fill">workspace_premium</span>
-                      <span className="font-label-mono text-[9px] uppercase tracking-wider text-[#9d4300] dark:text-[#ff7f1c] font-bold">PRO UPGRADE</span>
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <span className="material-symbols-outlined text-primary text-[15px] fill">workspace_premium</span>
+                      <span className="font-label-mono text-[8.5px] uppercase tracking-wider text-[#9d4300] dark:text-[#ff7f1c] font-bold">PRO UPGRADE</span>
                     </div>
-                    <h4 className="font-bold text-[11px] text-on-background leading-normal">Unlock Desktop Power</h4>
-                    <p className="font-body-sm text-[10px] text-on-surface-variant leading-normal mt-0.5 font-medium">
+                    <h4 className="font-bold text-[10.5px] text-on-background leading-none">Unlock Desktop Power</h4>
+                    <p className="font-body-sm text-[9.5px] text-on-surface-variant leading-tight mt-1 font-medium">
                       Get parallel batch tasks up to 50 files & WASM GPU Cloud speed.
                     </p>
                   </div>
                   <Link
                     to="/pricing"
-                    className="w-full btn-theme-primary py-2 rounded-xl font-button text-[11px] font-bold text-center shadow-sm flex items-center justify-center gap-1.5 relative z-10"
+                    className="w-full btn-theme-primary py-1.5 rounded-lg font-button text-[10px] font-bold text-center shadow-sm flex items-center justify-center gap-1 relative z-10"
                   >
                     Upgrade Now
                   </Link>
@@ -1137,18 +1261,18 @@ export default function Home() {
               )}
 
               {/* Local Storage Card */}
-              <div className="bg-surface-container-low border border-outline-variant rounded-2xl p-4 flex flex-col gap-2 select-none">
-                <div className="flex justify-between items-center text-xs font-semibold text-on-surface-variant">
-                  <span className="text-[11px]">Local Storage</span>
-                  <span className="text-[11px] font-bold text-on-background">{storageUsage.used} / {storageUsage.quota}</span>
+              <div className="bg-surface-container-low border border-outline-variant rounded-2xl p-2.5 flex flex-col gap-1.5 select-none">
+                <div className="flex justify-between items-center text-[10px] font-semibold text-on-surface-variant">
+                  <span className="text-[10.5px]">Local Storage</span>
+                  <span className="text-[10.5px] font-bold text-on-background">{storageUsage.used} / {storageUsage.quota}</span>
                 </div>
-                <div className="w-full h-1.5 bg-surface-container rounded-full overflow-hidden border border-outline-variant/50">
+                <div className="w-full h-1 bg-surface-container rounded-full overflow-hidden border border-outline-variant/50">
                   <div 
                     className="h-full bg-primary transition-all duration-300" 
                     style={{ width: `${storageUsage.percent}%` }} 
                   />
                 </div>
-                <div className="flex justify-between items-center text-[10px] text-outline">
+                <div className="flex justify-between items-center text-[9px] text-outline">
                   <span>Browser database</span>
                   <span className="font-bold text-on-background">{storageUsage.percent}%</span>
                 </div>
@@ -1158,76 +1282,57 @@ export default function Home() {
 
           {/* MAIN DASHBOARD CONTENT AREA */}
           <div className="flex-1 flex flex-col h-full overflow-hidden">
-            {/* Top Dashboard Header */}
-            <header className="h-20 border-b border-outline-variant flex items-center justify-between px-8 flex-shrink-0 select-none bg-surface-container-low/40 backdrop-blur-md relative z-30">
-              <div className="text-left">
-                <div className="flex items-center gap-2.5">
-                  <h1 className="font-display-hero text-xl font-bold text-on-background capitalize">
-                    {activeSidebarTab}
-                  </h1>
-                  {userTier === 'pro' ? (
-                    <span className="bg-primary/10 border border-primary/30 text-primary font-label-mono text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5 shadow-[0_0_8px_rgba(var(--color-primary-rgb),0.08)]">
-                      <span className="material-symbols-outlined text-[10px] fill">workspace_premium</span>
-                      Pro
-                    </span>
-                  ) : (
-                    <span className="bg-outline-variant/30 border border-outline text-outline font-label-mono text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5 select-none">
-                      Free
-                    </span>
-                  )}
-                </div>
-                <p className="font-body-sm text-[11px] text-on-surface-variant">
-                  Your offline-first document studio
-                </p>
+
+            {/* Workspace Header */}
+            <header className="h-[60px] border-b border-outline-variant flex items-center justify-between px-6 flex-shrink-0 select-none bg-surface/90 backdrop-blur-md relative z-30">
+              <div className="flex flex-col justify-center text-left min-w-0 flex-shrink-0">
+                <h1 className="font-bold text-[15px] text-on-background leading-tight">
+                  Welcome back, <span className="text-primary">{userEmail ? userEmail.split('@')[0] : 'there'}</span> ✏️
+                </h1>
+                <p className="text-[10px] text-on-surface-variant font-medium leading-none mt-0.5">Create. Convert. Perfect.</p>
               </div>
-
-              <div className="flex items-center gap-4">
-                {/* Offline Mode Status Pill */}
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-success/10 border border-success/30 rounded-full text-success font-label-mono text-[10px] font-bold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
-                  <span>Offline Mode</span>
+              {activeSidebarTab !== 'converter' && (
+                <div className="flex-1 max-w-[320px] mx-6">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-surface-container border border-outline-variant rounded-xl focus-within:border-primary transition-colors">
+                    <span className="material-symbols-outlined text-[16px] text-outline flex-shrink-0">search</span>
+                    <input
+                      type="text"
+                      placeholder="Search tools, files..."
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        if (activeSidebarTab !== 'converter' && e.target.value) {
+                          setActiveSidebarTab('converter');
+                        }
+                      }}
+                      className="bg-transparent border-none outline-none w-full text-xs text-on-background placeholder:text-outline font-medium"
+                    />
+                  </div>
                 </div>
-
-                {/* Theme Toggle Icon Button */}
-                <button 
-                  onClick={handleThemeToggle}
-                  className="w-9 h-9 rounded-xl border border-outline-variant hover:border-primary text-outline hover:text-primary flex items-center justify-center transition-all bg-surface hover:bg-surface-container-low"
-                  title="Toggle theme"
-                >
-                  <span className="material-symbols-outlined text-[18px]">
-                    {theme === 'dark' ? 'light_mode' : 'dark_mode'}
-                  </span>
+              )}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button className="w-8 h-8 rounded-xl border border-outline-variant hover:border-primary text-outline hover:text-primary flex items-center justify-center transition-all bg-surface relative" title="Notifications">
+                  <span className="material-symbols-outlined text-[18px]">notifications</span>
+                  <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-primary pointer-events-none"></span>
                 </button>
-
-                {/* User Dropdown Avatar */}
+                <button onClick={handleThemeToggle} className="w-8 h-8 rounded-xl border border-outline-variant hover:border-primary text-outline hover:text-primary flex items-center justify-center transition-all bg-surface" title="Toggle theme">
+                  <span className="material-symbols-outlined text-[18px]">{theme === 'dark' ? 'light_mode' : 'dark_mode'}</span>
+                </button>
                 <div className="relative">
-                  <button 
-                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                    className="flex items-center gap-2 p-1 hover:bg-surface-container rounded-full transition-all text-on-surface"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-[#FDBA74] flex items-center justify-center font-bold text-xs text-white shadow-sm ring-2 ring-primary/20 select-none">
+                  <button onClick={() => setProfileDropdownOpen(!profileDropdownOpen)} className="flex items-center gap-1 p-1 hover:bg-surface-container rounded-full transition-all">
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-primary to-[#FDBA74] flex items-center justify-center font-bold text-[11px] text-white shadow-sm ring-2 ring-primary/20 select-none">
                       {userEmail ? userEmail.charAt(0).toUpperCase() : 'D'}
                     </div>
-                    <span className="material-symbols-outlined text-[18px] text-outline">keyboard_arrow_down</span>
+                    <span className="material-symbols-outlined text-[16px] text-outline">keyboard_arrow_down</span>
                   </button>
                   {profileDropdownOpen && (
                     <div className="absolute top-full right-0 mt-1.5 bg-surface border border-outline-variant rounded-xl shadow-lg py-1.5 z-50 min-w-[180px] text-left">
-                      <div className="px-3 py-1.5 text-[10px] text-on-surface-variant font-medium border-b border-outline-variant/60 truncate max-w-[200px]">
-                        {userEmail}
-                      </div>
-                      <Link 
-                        to="/dashboard"
-                        className="w-full text-left px-3.5 py-2 text-xs text-on-surface hover:bg-surface-container font-semibold flex items-center gap-1.5 border-t border-outline-variant/60"
-                      >
-                        <span className="material-symbols-outlined text-[15px]">account_circle</span>
-                        My Account
+                      <div className="px-3 py-1.5 text-[10px] text-on-surface-variant font-medium border-b border-outline-variant/60 truncate max-w-[200px]">{userEmail}</div>
+                      <Link to="/dashboard" className="w-full text-left px-3.5 py-2 text-xs text-on-surface hover:bg-surface-container font-semibold flex items-center gap-1.5 border-t border-outline-variant/60">
+                        <span className="material-symbols-outlined text-[15px]">account_circle</span>My Account
                       </Link>
-                      <button 
-                        onClick={handleLogout}
-                        className="w-full text-left px-3.5 py-2 text-xs text-error hover:bg-error-container/10 font-bold border-t border-outline-variant/60 flex items-center gap-1.5"
-                      >
-                        <span className="material-symbols-outlined text-[15px]">logout</span>
-                        Sign Out
+                      <button onClick={handleLogout} className="w-full text-left px-3.5 py-2 text-xs text-error hover:bg-error-container/10 font-bold border-t border-outline-variant/60 flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[15px]">logout</span>Sign Out
                       </button>
                     </div>
                   )}
@@ -1235,87 +1340,61 @@ export default function Home() {
               </div>
             </header>
 
-            {/* Tab Views Scroll Area */}
-            <div className="flex-1 overflow-y-auto p-6 md:p-8 bg-background relative z-10">
-              
-              {/* tab === workspace or queue */}
+            {/* Tab Views */}
+            <div className="flex-1 overflow-y-auto bg-background relative z-10">
+
+              {/* WORKSPACE + QUEUE: two-column canvas */}
               {(activeSidebarTab === 'workspace' || activeSidebarTab === 'queue') && (
-                <div className="flex flex-col gap-6">
-                  {/* Always show drag & drop file uploader (collapsed if queue is active, or full) */}
-                  {activeSidebarTab === 'workspace' && (
-                    <div 
-                      onClick={() => workspaceInputRef.current?.click()}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={handleWorkspaceDrop}
-                      className="w-full bg-surface-container/30 border border-dashed border-outline-variant hover:border-primary rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer hover:shadow-glow-primary transition-all duration-300 relative group overflow-hidden select-none"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                      
-                      <div className="flex items-center gap-5 z-10 text-left">
-                        <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform duration-300">
-                          <span className="material-symbols-outlined text-[28px] fill">upload_file</span>
-                        </div>
-                        <div>
-                          <h3 className="font-h3 text-[17px] font-bold text-on-background mb-1">Drag & drop documents here</h3>
-                          <p className="font-body-sm text-xs text-on-surface-variant font-medium">Supports DOCX, PDF, TXT, MD and more</p>
-                        </div>
-                      </div>
+                <div className="flex gap-5 p-5 min-h-full">
 
-                      <div className="flex items-center gap-6 z-10 flex-shrink-0">
-                        <button 
-                          className="font-button text-xs bg-primary text-white hover:bg-primary-dark px-5 py-3 rounded-xl transition-all shadow-sm font-bold"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            workspaceInputRef.current?.click();
-                          }}
-                        >
-                        </button>
-                      </div>
-                      
-                      <input 
-                        type="file"
-                        ref={workspaceInputRef}
-                        onChange={handleWorkspaceFileSelect}
-                        multiple={true}
-                        className="hidden"
-                        accept=".pdf,.docx,.txt,image/*"
-                      />
-                    </div>
-                  )}
+                  {/* LEFT COLUMN */}
+                  <div className="flex-1 flex flex-col gap-4 min-w-0">
 
-                  {/* Workspace Queue Section */}
-                  <div className="flex flex-col gap-6">
-                    <div className="flex justify-between items-center pb-4 border-b border-outline-variant/60 flex-wrap gap-4">
-                      <div className="text-left">
-                        <div className="flex items-center gap-2.5">
-                          <h3 className="font-h3 text-[17px] font-bold text-on-background">Workspace Queue</h3>
-                          <span className="text-xs bg-surface-container border border-outline-variant font-bold text-on-surface-variant px-2.5 py-0.5 rounded-full">
-                            {workspaceQueue.length}
-                          </span>
+                    {/* GRADIENT HERO DROP ZONE */}
+                    {activeSidebarTab === 'workspace' && (
+                      <div
+                        onClick={() => workspaceInputRef.current?.click()}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={handleWorkspaceDrop}
+                        className="relative rounded-2xl overflow-hidden cursor-pointer select-none group flex-shrink-0"
+                        style={{ minHeight: '185px' }}
+                      >
+                        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, hsl(20,75%,75%) 0%, hsl(35,70%,78%) 35%, hsl(14,75%,80%) 65%, hsl(28,80%,82%) 100%)' }} />
+                        <div className="absolute inset-0 opacity-50" style={{ background: 'radial-gradient(ellipse 90% 70% at 50% 120%, hsl(40,85%,85%) 0%, transparent 65%)' }} />
+                        <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                        <div className="relative z-10 flex flex-col items-center justify-center gap-3 py-9 px-6 text-center">
+                          <div className="rounded-2xl bg-white/25 backdrop-blur-sm border border-white/40 flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-300" style={{ width: '52px', height: '52px' }}>
+                            <span className="material-symbols-outlined text-[26px] fill" style={{ color: 'var(--color-primary)' }}>upload_file</span>
+                          </div>
+                          <div>
+                            <p className="font-bold text-[15px] text-white drop-shadow-sm">Drop your documents anywhere</p>
+                            <p className="text-[11px] text-white/80 mt-0.5 font-medium">or click to upload</p>
+                            <p className="text-[10px] text-white/60 mt-0.5">Supports DOCX, PDF, TXT, MD &amp; more</p>
+                          </div>
+                          <button
+                            className="btn-theme-primary mt-1 px-7 py-2.5 rounded-xl font-bold text-[13px] shadow-lg active:scale-95 transition-all duration-200 hover:opacity-90"
+                            onClick={(e) => { e.stopPropagation(); workspaceInputRef.current?.click(); }}
+                          >Select Files</button>
                         </div>
-                        <p className="font-body-sm text-xs text-on-surface-variant mt-1 font-medium">
-                          Documents are processed locally and never leave your device.
-                        </p>
+                        <input type="file" ref={workspaceInputRef} onChange={handleWorkspaceFileSelect} multiple={true} className="hidden" accept=".pdf,.docx,.txt,image/*" />
                       </div>
-                      
-                      <div className="flex items-center gap-3">
-                        {workspaceQueue.length > 0 && (
-                          <button 
-                            onClick={() => setWorkspaceQueue([])}
-                            className="text-xs text-on-surface-variant hover:text-error border border-outline-variant hover:border-error px-3.5 py-2 rounded-xl transition-all font-semibold flex items-center gap-1.5 bg-surface hover:bg-error-container/10 shadow-sm"
-                          >
-                            <span className="material-symbols-outlined text-[15px]">delete</span>
-                            Clear Completed
-                          </button>
-                        )}
-                        
-                        <div className="relative">
-                          <select 
-                            value={queueFilter}
-                            onChange={(e) => setQueueFilter(e.target.value)}
-                            className="text-xs text-on-surface-variant border border-outline-variant bg-surface px-3.5 py-2 rounded-xl font-semibold focus:outline-none focus:border-primary cursor-pointer pr-8 appearance-none relative shadow-sm"
-                            style={{ backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238c7164' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 8px center', backgroundSize: '14px' }}
-                          >
+                    )}
+
+                    {/* QUEUE HEADER */}
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-bold text-[14px] text-on-background">Your Queue</h3>
+                          <span className="text-[10px] font-bold bg-surface-container border border-outline-variant text-on-surface-variant px-2 py-0.5 rounded-full">{workspaceQueue.length}</span>
+                          <span className="text-[10px] text-on-surface-variant font-medium hidden sm:inline">Processing locally &amp; securely</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {workspaceQueue.length > 0 && (
+                            <button onClick={() => setWorkspaceQueue([])} className="text-[11px] text-on-surface-variant hover:text-error border border-outline-variant hover:border-error px-2.5 py-1 rounded-lg transition-all font-semibold flex items-center gap-1">
+                              <span className="material-symbols-outlined text-[13px]">delete</span>Clear
+                            </button>
+                          )}
+                          <select value={queueFilter} onChange={(e) => setQueueFilter(e.target.value)} className="text-[11px] text-on-surface-variant border border-outline-variant bg-surface px-2.5 py-1.5 rounded-lg font-semibold focus:outline-none focus:border-primary cursor-pointer appearance-none pr-6 shadow-sm" style={{ backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238c7164' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 4px center', backgroundSize: '12px' }}>
                             <option value="all">All Tasks</option>
                             <option value="pending">Pending</option>
                             <option value="processing">Processing</option>
@@ -1324,8 +1403,6 @@ export default function Home() {
                           </select>
                         </div>
                       </div>
-                    </div>
-
                     {/* Active list cards */}
                     {workspaceQueue.filter(item => {
                       if (queueFilter === 'all') return true;
@@ -1392,7 +1469,7 @@ export default function Home() {
                               <div className="flex-shrink-0 md:w-48 text-left z-20">
                                 {item.status === 'Completed' || item.status === 'Processing' ? (
                                   <span className="px-3.5 py-2 bg-surface border border-outline-variant/60 rounded-xl text-xs font-semibold text-on-surface-variant select-none inline-block">
-                                    {item.selectedAction}
+                                    {getActionTitle(item.selectedAction)}
                                   </span>
                                 ) : (
                                   <div className="relative">
@@ -1401,7 +1478,7 @@ export default function Home() {
                                       onClick={() => setOpenDropdownId(openDropdownId === item.id ? null : item.id)}
                                       className="w-full px-3.5 py-2 border border-outline-variant hover:border-primary rounded-xl text-xs font-semibold bg-surface hover:bg-surface-container flex items-center justify-between gap-1.5 transition-all text-on-background shadow-sm"
                                     >
-                                      <span className="truncate">{item.selectedAction}</span>
+                                      <span className="truncate">{getActionTitle(item.selectedAction)}</span>
                                       {item.detectedActions.length > 1 && (
                                         <span className="material-symbols-outlined text-[16px] text-outline">keyboard_arrow_down</span>
                                       )}
@@ -1418,7 +1495,7 @@ export default function Home() {
                                             }}
                                             className="w-full text-left px-3.5 py-2 text-xs hover:bg-surface-container text-on-background font-semibold"
                                           >
-                                            {act}
+                                            {getActionTitle(act)}
                                           </button>
                                         ))}
                                       </div>
@@ -1550,13 +1627,87 @@ export default function Home() {
                         })}
                       </div>
                     )}
+                    </div>
                   </div>
+
+                  {/* RIGHT COLUMN: Quick Access + Pro Tip */}
+                  <div className="w-[210px] flex-shrink-0 flex flex-col gap-4">
+                    <div>
+                      <h3 className="font-bold text-[12px] text-on-background mb-3 uppercase tracking-wider">Quick Access</h3>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { label: 'PDF Tools',    icon: 'picture_as_pdf', action: 'filter-pdf' },
+                          { label: 'Image Tools',  icon: 'image',          action: 'filter-image' },
+                          { label: 'Convert',      icon: 'sync_alt',       action: 'filter-convert' },
+                          { label: 'Merge',        icon: 'merge',          path: '/merge-pdf' },
+                          { label: 'Compress',     icon: 'compress',       path: '/compress-pdf' },
+                          { label: 'Reformat',     icon: 'history_edu',    action: 'tab-reformatter' },
+                        ].map((item) => {
+                          const isAction = !!item.action;
+                          const Content = (
+                            <>
+                              <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center group-hover/qa:bg-primary/20 transition-colors">
+                                <span className="material-symbols-outlined text-[20px] fill text-primary">{item.icon}</span>
+                              </div>
+                              <span className="text-[10px] font-semibold text-on-surface-variant group-hover/qa:text-primary transition-colors leading-tight">{item.label}</span>
+                            </>
+                          );
+                          
+                          if (isAction) {
+                            return (
+                              <button
+                                key={item.label}
+                                onClick={() => handleQuickAccessAction(item.action)}
+                                className="w-full flex flex-col items-center gap-2 p-3 rounded-2xl border border-solid border-outline-variant bg-surface-container-low hover:border-primary hover:bg-primary/8 transition-all duration-200 group/qa text-center cursor-pointer"
+                              >
+                                {Content}
+                              </button>
+                            );
+                          }
+                          
+                          return (
+                            <Link
+                              key={item.label}
+                              to={item.path}
+                              className="flex flex-col items-center gap-2 p-3 rounded-2xl border border-solid border-outline-variant bg-surface-container-low hover:border-primary hover:bg-primary/8 transition-all duration-200 group/qa text-center cursor-pointer"
+                            >
+                              {Content}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {userTier !== 'pro' && (
+                      <div className="rounded-2xl border border-primary/25 bg-primary/5 p-4 flex flex-col gap-3">
+                        <div>
+                          <div className="text-[9px] font-bold text-primary uppercase tracking-widest mb-1">Pro Tip</div>
+                          <p className="text-[12px] font-bold text-on-background leading-snug">Batch Queue saves time</p>
+                          <p className="text-[10px] text-on-surface-variant mt-1 leading-relaxed">Process multiple files at once with one click</p>
+                        </div>
+                        <Link
+                          to="/pricing"
+                          className="w-full text-center py-2 px-3 rounded-xl font-bold text-[11px] bg-primary text-white hover:opacity-90 active:scale-95 transition-all shadow-sm"
+                        >Upgrade to Pro</Link>
+                      </div>
+                    )}
+                    {userTier === 'pro' && (
+                      <div className="rounded-2xl border border-primary/25 bg-primary/5 p-4 flex flex-col gap-2">
+                        <span className="material-symbols-outlined text-primary text-[22px] fill">workspace_premium</span>
+                        <p className="text-[12px] font-bold text-on-background">Pro Plan Active</p>
+                        <p className="text-[10px] text-on-surface-variant">All features unlocked</p>
+                      </div>
+                    )}
+                  </div>
+
+
                 </div>
               )}
 
+
               {/* tab === converter */}
               {activeSidebarTab === 'converter' && (
-                <div className="flex flex-col gap-6 text-left">
+                <div className="flex flex-col gap-6 text-left p-5 md:p-6 lg:p-8 min-h-full">
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                       <h2 className="font-h2 text-xl font-bold text-on-background">Tools Directory</h2>
@@ -1585,80 +1736,150 @@ export default function Home() {
                       )}
                     </div>
                   </div>
+                  {/* Category Filter Tabs */}
+                  <div className="flex flex-wrap gap-2 border-b border-outline-variant/30 pb-3">
+                    {[
+                      { id: 'all', label: 'All Tools', icon: 'grid_view' },
+                      { id: 'pdf', label: 'PDF Tools', icon: 'picture_as_pdf' },
+                      { id: 'image', label: 'Image Tools', icon: 'image' },
+                      { id: 'utility', label: 'Utilities', icon: 'build' },
+                    ].map((tab) => {
+                      const isActive = toolsCategoryFilter === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          onClick={() => setToolsCategoryFilter(tab.id)}
+                          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                            isActive
+                              ? 'bg-primary/10 border-primary/30 text-primary shadow-[0_2px_8px_rgba(var(--color-primary-rgb),0.04)]'
+                              : 'bg-surface border-outline-variant/60 text-on-surface-variant hover:text-on-background hover:bg-surface-container-high'
+                          }`}
+                        >
+                          <span className="material-symbols-outlined text-[15px]">{tab.icon}</span>
+                          {tab.label}
+                        </button>
+                      );
+                    })}
+                  </div>
 
                   {/* Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {filteredTools.map((tool) => (
-                      <div 
-                        key={tool.id}
-                        onClick={() => navigate(tool.path)}
-                        className="bg-surface-container-low border border-outline-variant hover:border-primary rounded-2xl p-5 cursor-pointer transition-all hover:-translate-y-0.5 flex flex-col text-left group shadow-sm"
-                      >
-                        <div className="w-10 h-10 flex items-center justify-center select-none mb-4">
-                          <ToolIcon id={tool.id} size={36} />
+                    {filteredTools.map((tool) => {
+                      const minTier = tool.minTier || 'guest';
+                      const isAuthorized = 
+                        minTier === 'guest' || 
+                        (minTier === 'free' && isAuthenticated) || 
+                        (minTier === 'pro' && isPro);
+                      
+                      return (
+                        <div 
+                          key={tool.id}
+                          onClick={() => {
+                            if (isAuthorized) {
+                              navigate(tool.path);
+                            } else {
+                              setUpgradeModalTarget(tool);
+                              setUpgradeModalOpen(true);
+                            }
+                          }}
+                          className="bg-surface-container-low border border-outline-variant hover:border-primary rounded-2xl p-5 cursor-pointer transition-all hover:-translate-y-0.5 flex flex-col text-left group shadow-sm relative overflow-hidden"
+                        >
+                          {!isAuthorized && (
+                            <div className="absolute top-3 right-3 flex items-center gap-1 bg-surface-container-high border border-outline-variant px-2 py-0.5 rounded-full select-none shadow-sm z-10">
+                              <span className="material-symbols-outlined text-outline text-[12px]">lock</span>
+                              <span className="font-label-mono text-[9px] text-outline font-bold uppercase tracking-wider">
+                                {minTier === 'pro' ? 'Pro' : 'Free'}
+                              </span>
+                            </div>
+                          )}
+                          <div className="w-10 h-10 flex items-center justify-center select-none mb-4">
+                            <ToolIcon id={tool.id} size={36} />
+                          </div>
+                          <h4 className="font-body-md text-sm font-bold text-on-background mb-1 group-hover:text-primary transition-colors">{tool.title}</h4>
+                          <p className="font-body-sm text-[11px] text-on-surface-variant line-clamp-2 leading-relaxed mb-4">{tool.description}</p>
+                          <div className="mt-auto flex justify-end text-outline group-hover:text-primary transition-colors">
+                            <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                          </div>
                         </div>
-                        <h4 className="font-body-md text-sm font-bold text-on-background mb-1 group-hover:text-primary transition-colors">{tool.title}</h4>
-                        <p className="font-body-sm text-[11px] text-on-surface-variant line-clamp-2 leading-relaxed mb-4">{tool.description}</p>
-                        <div className="mt-auto flex justify-end text-outline group-hover:text-primary transition-colors">
-                          <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
 
               {/* tab === reformatter */}
               {activeSidebarTab === 'reformatter' && (
-                <div className="flex flex-col gap-6 text-left">
-                  <div>
-                    <h2 className="font-h2 text-xl font-bold text-on-background">Smart Document Reformatter</h2>
-                    <p className="font-body-sm text-xs text-on-surface-variant">Standardize, clean, and format documents using pre-set styling criteria</p>
+                !isPro ? (
+                  <div className="flex items-center justify-center p-5 md:p-6 lg:p-8 min-h-[500px]">
+                    <div className="max-w-[500px] w-full p-8 bg-surface-container-low border border-outline-variant rounded-2xl shadow-sm text-center animate-in fade-in slide-in-from-bottom duration-300">
+                      <span className="material-symbols-outlined text-[48px] text-primary mb-4 select-none">
+                        history_edu
+                      </span>
+                      <h2 className="font-h2 text-lg font-bold text-on-background mb-3">
+                        Smart Document Reformatter
+                      </h2>
+                      <p className="font-body-sm text-xs text-on-surface-variant max-w-md mx-auto mb-6 leading-relaxed font-medium">
+                        Standardize, clean, and format document spacing, layouts, and typefaces instantly based on academic and corporate presets. This tool is exclusive to DocForge Pro.
+                      </p>
+                      <button
+                        onClick={() => navigate('/pricing')}
+                        className="font-button text-xs bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-lg transition-colors shadow-sm font-bold"
+                      >
+                        Upgrade to Pro
+                      </button>
+                    </div>
                   </div>
-                  
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 bg-surface-container-low border border-outline-variant rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
-                      <label className="font-label-mono text-[10px] text-outline uppercase tracking-wider font-bold">Input Document Text</label>
-                      <textarea 
-                        placeholder="Paste text here to reformat or select a document from the workspace..."
-                        className="w-full h-80 p-4 bg-surface border border-outline-variant rounded-xl text-xs text-on-background focus:outline-none focus:border-primary font-mono resize-none shadow-inner"
-                      />
-                      <div className="flex justify-between items-center flex-wrap gap-4 mt-2">
-                        <span className="text-[10px] text-outline">Character count: 0</span>
-                        <button className="bg-primary text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-colors shadow-sm">
-                          Apply formatting
-                        </button>
-                      </div>
+                ) : (
+                  <div className="flex flex-col gap-6 text-left p-5 md:p-6 lg:p-8 min-h-full">
+                    <div>
+                      <h2 className="font-h2 text-xl font-bold text-on-background">Smart Document Reformatter</h2>
+                      <p className="font-body-sm text-xs text-on-surface-variant">Standardize, clean, and format documents using pre-set styling criteria</p>
                     </div>
                     
-                    <div className="bg-surface-container-low border border-outline-variant rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
-                      <h3 className="font-body-md text-sm font-bold text-on-background">Reformat Presets</h3>
-                      <p className="font-body-sm text-[11px] text-on-surface-variant">Choose the target layout and structural styling system</p>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      <div className="lg:col-span-2 bg-surface-container-low border border-outline-variant rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
+                        <label className="font-label-mono text-[10px] text-outline uppercase tracking-wider font-bold">Input Document Text</label>
+                        <textarea 
+                          placeholder="Paste text here to reformat or select a document from the workspace..."
+                          className="w-full h-80 p-4 bg-surface border border-outline-variant rounded-xl text-xs text-on-background focus:outline-none focus:border-primary font-mono resize-none shadow-inner"
+                        />
+                        <div className="flex justify-between items-center flex-wrap gap-4 mt-2">
+                          <span className="text-[10px] text-outline">Character count: 0</span>
+                          <button className="bg-primary text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-colors shadow-sm">
+                            Apply formatting
+                          </button>
+                        </div>
+                      </div>
                       
-                      <div className="flex flex-col gap-2.5">
-                        {[
-                          { id: 'academic', title: 'Academic Layout', desc: 'APA/MLA standards, double space, Times New Roman' },
-                          { id: 'executive', title: 'Executive Report', desc: 'Modern professional design, high readability font' },
-                          { id: 'clean', title: 'Clean Markdown', desc: 'Standard headers, bullet lines, syntax formatting' },
-                          { id: 'creative', title: 'Creative Draft', desc: 'Relaxed margins, serif editorial typeface' }
-                        ].map((preset, idx) => (
-                          <label key={preset.id} className="p-3 border border-outline-variant hover:border-primary rounded-xl cursor-pointer flex gap-3 bg-surface hover:bg-surface-container-low transition-all shadow-sm">
-                            <input type="radio" name="preset" defaultChecked={idx === 0} className="mt-0.5 accent-primary" />
-                            <div className="min-w-0">
-                              <div className="font-body-md text-xs font-bold text-on-background">{preset.title}</div>
-                              <p className="font-body-sm text-[10px] text-on-surface-variant truncate font-medium">{preset.desc}</p>
-                            </div>
-                          </label>
-                        ))}
+                      <div className="bg-surface-container-low border border-outline-variant rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
+                        <h3 className="font-body-md text-sm font-bold text-on-background">Reformat Presets</h3>
+                        <p className="font-body-sm text-[11px] text-on-surface-variant">Choose the target layout and structural styling system</p>
+                        
+                        <div className="flex flex-col gap-2.5">
+                          {[
+                            { id: 'academic', title: 'Academic Layout', desc: 'APA/MLA standards, double space, Times New Roman' },
+                            { id: 'executive', title: 'Executive Report', desc: 'Modern professional design, high readability font' },
+                            { id: 'clean', title: 'Clean Markdown', desc: 'Standard headers, bullet lines, syntax formatting' },
+                            { id: 'creative', title: 'Creative Draft', desc: 'Relaxed margins, serif editorial typeface' }
+                          ].map((preset, idx) => (
+                            <label key={preset.id} className="p-3 border border-outline-variant hover:border-primary rounded-xl cursor-pointer flex gap-3 bg-surface hover:bg-surface-container-low transition-all shadow-sm">
+                              <input type="radio" name="preset" defaultChecked={idx === 0} className="mt-0.5 accent-primary" />
+                              <div className="min-w-0">
+                                <div className="font-body-md text-xs font-bold text-on-background">{preset.title}</div>
+                                <p className="font-body-sm text-[10px] text-on-surface-variant truncate font-medium">{preset.desc}</p>
+                              </div>
+                            </label>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )
               )}
 
               {/* tab === templates */}
               {activeSidebarTab === 'templates' && (
-                <div className="flex flex-col gap-6 text-left">
+                <div className="flex flex-col gap-6 text-left p-5 md:p-6 lg:p-8 min-h-full">
                   <div>
                     <h2 className="font-h2 text-xl font-bold text-on-background">Document Templates</h2>
                     <p className="font-body-sm text-xs text-on-surface-variant">Pre-formatted document designs for various use cases</p>
@@ -1666,29 +1887,49 @@ export default function Home() {
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
-                      { title: 'Project Proposal', type: 'DOCX', desc: 'Includes cover page, executive summary, and project details tables.' },
-                      { title: 'Professional Resume', type: 'PDF', desc: 'Modern two-column layout optimized for applicant tracking systems.' },
-                      { title: 'Meeting Minutes', type: 'TXT', desc: 'Standard corporate framework for recording agenda, notes, and tasks.' },
-                      { title: 'Technical Guide', type: 'MD', desc: 'Markdown layout with code blocks, tables, and nested checklists.' }
-                    ].map((tmpl, idx) => (
-                      <div key={idx} className="bg-surface-container-low border border-outline-variant rounded-2xl p-5 flex flex-col text-left hover:border-primary transition-all shadow-sm">
-                        <span className="font-label-mono text-[9px] font-bold px-2 py-0.5 bg-primary/10 text-primary rounded-full w-max mb-4">
-                          {tmpl.type} Template
-                        </span>
-                        <h4 className="font-body-md text-sm font-bold text-on-background mb-1.5">{tmpl.title}</h4>
-                        <p className="font-body-sm text-[11px] text-on-surface-variant leading-relaxed mb-6 font-medium">{tmpl.desc}</p>
-                        <button className="mt-auto bg-surface border border-outline-variant hover:border-primary hover:text-primary text-xs font-bold py-2.5 rounded-xl transition-all shadow-sm">
-                          Use Template
-                        </button>
-                      </div>
-                    ))}
+                      { title: 'Project Proposal', type: 'DOCX', desc: 'Includes cover page, executive summary, and project details tables.', minTier: 'free' },
+                      { title: 'Professional Resume', type: 'PDF', desc: 'Modern two-column layout optimized for applicant tracking systems (CV Builder).', minTier: 'pro' },
+                      { title: 'Meeting Minutes', type: 'TXT', desc: 'Standard corporate framework for recording agenda, notes, and tasks.', minTier: 'free' },
+                      { title: 'Technical Guide', type: 'MD', desc: 'Markdown layout with code blocks, tables, and nested checklists.', minTier: 'free' }
+                    ].map((tmpl, idx) => {
+                      const isTmplPro = tmpl.minTier === 'pro';
+                      const hasAccess = !isTmplPro || isPro;
+                      return (
+                        <div key={idx} className="bg-surface-container-low border border-outline-variant hover:border-primary rounded-2xl p-5 flex flex-col text-left transition-all hover:-translate-y-0.5 shadow-sm relative overflow-hidden group">
+                          {!hasAccess && (
+                            <div className="absolute top-3 right-3 flex items-center gap-1 bg-surface-container-high border border-outline-variant px-2 py-0.5 rounded-full select-none shadow-sm z-10">
+                              <span className="material-symbols-outlined text-outline text-[12px]">lock</span>
+                              <span className="font-label-mono text-[9px] text-outline font-bold uppercase tracking-wider">Pro</span>
+                            </div>
+                          )}
+                          <span className="font-label-mono text-[9px] font-bold px-2 py-0.5 bg-primary/10 text-primary rounded-full w-max mb-4">
+                            {tmpl.type} Template
+                          </span>
+                          <h4 className="font-body-md text-sm font-bold text-on-background mb-1.5">{tmpl.title}</h4>
+                          <p className="font-body-sm text-[11px] text-on-surface-variant leading-relaxed mb-6 font-medium">{tmpl.desc}</p>
+                          <button 
+                            onClick={() => {
+                              if (hasAccess) {
+                                showToast(`Loading template: ${tmpl.title}...`);
+                              } else {
+                                setUpgradeModalTarget({ title: 'CV Creator & Resume Templates', minTier: 'pro' });
+                                setUpgradeModalOpen(true);
+                              }
+                            }}
+                            className="mt-auto bg-surface border border-outline-variant hover:border-primary hover:text-primary text-xs font-bold py-2.5 rounded-xl transition-all shadow-sm"
+                          >
+                            Use Template
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
 
               {/* tab === settings */}
               {activeSidebarTab === 'settings' && (
-                <div className="flex flex-col gap-6 text-left max-w-2xl">
+                <div className="flex flex-col gap-6 text-left max-w-2xl p-5 md:p-6 lg:p-8 min-h-full">
                   <div>
                     <h2 className="font-h2 text-xl font-bold text-on-background">Workspace Settings</h2>
                     <p className="font-body-sm text-xs text-on-surface-variant">Configure your local workspace parameters</p>
@@ -2257,6 +2498,67 @@ export default function Home() {
               >
                 Confirm
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {upgradeModalOpen && upgradeModalTarget && (
+        <div className="fixed inset-0 bg-on-background/25 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 animate-[fadeIn_0.2s_ease-out]">
+          <div className="bg-surface border border-outline-variant rounded-2xl p-8 max-w-md w-full shadow-2xl relative text-left flex flex-col gap-5 animate-in fade-in zoom-in-95 duration-200">
+            {/* Close */}
+            <button 
+              onClick={() => setUpgradeModalOpen(false)}
+              className="absolute top-4 right-4 text-on-surface-variant hover:text-on-background flex items-center justify-center p-1 select-none"
+              title="Close modal"
+            >
+              <span className="material-symbols-outlined text-[18px]">close</span>
+            </button>
+
+            <div className="flex items-center gap-3 pb-3 border-b border-outline-variant">
+              <span className="material-symbols-outlined text-primary text-[24px]">
+                {upgradeModalTarget.minTier === 'pro' ? 'workspace_premium' : 'account_circle'}
+              </span>
+              <span className="font-h3 text-base font-bold text-on-background">
+                {upgradeModalTarget.minTier === 'pro' ? 'Unlock DocForge Pro' : 'Free Account Required'}
+              </span>
+            </div>
+
+            <p className="font-body-md text-xs text-on-surface-variant leading-relaxed">
+              {upgradeModalTarget.minTier === 'pro' 
+                ? `The "${upgradeModalTarget.title}" tool requires a DocForge Pro subscription. Upgrade to access all 38 local/AI utilities, unlimited file queue limits, and larger sizes.`
+                : `The "${upgradeModalTarget.title}" tool is free to use but requires a registered account to manage local files and preferences.`
+              }
+            </p>
+
+            <div className="flex justify-end gap-3 mt-2">
+              <button
+                onClick={() => setUpgradeModalOpen(false)}
+                className="px-4 py-2 rounded-lg border border-outline-variant hover:bg-surface-container-low text-xs font-semibold text-on-surface transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              {upgradeModalTarget.minTier === 'pro' ? (
+                <button
+                  onClick={() => {
+                    setUpgradeModalOpen(false);
+                    navigate('/pricing');
+                  }}
+                  className="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-xs font-bold transition-colors shadow-sm"
+                >
+                  View Pro Plans
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setUpgradeModalOpen(false);
+                    navigate('/signup');
+                  }}
+                  className="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-xs font-bold transition-colors shadow-sm"
+                >
+                  Create Account
+                </button>
+              )}
             </div>
           </div>
         </div>

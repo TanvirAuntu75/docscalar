@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -157,20 +157,13 @@ export default function ExcelToPdf() {
   };
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Convert Excel to PDF Online Free — XLS to PDF | DocForge" 
-        description="Convert Microsoft Excel spreadsheets (.xlsx, .xls) to PDF layout formats instantly. Accurate grids formatting and formula calculations."
-      />
-      
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="excel-to-pdf" size={48} />
-        </div>
-        <h1>Excel to PDF</h1>
-        <p className="tool-page-subtitle">Convert Microsoft Excel (.xlsx, .xls) spreadsheets to high-quality PDF documents</p>
-        
-        {!checkingBackend && (
+    <ToolPageLayout
+      toolId="excel-to-pdf"
+      title="Excel to PDF"
+      description="Convert Microsoft Excel (.xlsx, .xls) spreadsheets to high-quality PDF documents"
+      headerContent={
+        <>
+          {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -194,7 +187,15 @@ export default function ExcelToPdf() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Convert Excel to PDF Online Free — XLS to PDF | DocForge" 
+        description="Convert Microsoft Excel spreadsheets (.xlsx, .xls) to PDF layout formats instantly. Accurate grids formatting and formula calculations."
+      />
+      
+      
 
       {!result ? (
         <>
@@ -265,6 +266,6 @@ export default function ExcelToPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

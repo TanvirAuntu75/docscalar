@@ -1,6 +1,9 @@
 /* Web Worker for PDF and Image Conversion Operations */
 import { PDFDocument, degrees } from 'pdf-lib';
 import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 // Set up event listener for the worker
 self.onmessage = async (e) => {
@@ -51,6 +54,14 @@ self.onmessage = async (e) => {
         };
         transferables = blobs.map(b => b.arrayBuffer);
         break;
+      }
+      case 'pdfToImagesStream': {
+        // Streaming mode — pages are sent one-by-one, no giant array ever built
+        const { arrayBuffer, options } = payload;
+        await handlePdfToImagesStream(arrayBuffer, options);
+        // Final success signal (no result payload needed — pages already sent)
+        self.postMessage({ type: 'success', result: { done: true } });
+        return; // skip the generic postMessage below
       }
       case 'compressPdf': {
         const { arrayBuffer, options } = payload;
@@ -212,6 +223,10 @@ async function handlePdfToImages(arrayBuffer, options) {
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer, disableWorker: true }).promise;
   const totalPages = pdf.numPages;
   
+  if (totalPages > 100) {
+    throw new Error(`This PDF contains ${totalPages.toLocaleString()} pages. In-browser conversion to images is limited to 100 pages to prevent memory crashes. Please split the PDF into smaller parts first.`);
+  }
+  
   const blobs = [];
   const names = [];
   
@@ -245,6 +260,10 @@ async function handleCompressPdf(arrayBuffer, options) {
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer, disableWorker: true }).promise;
   const totalPages = pdf.numPages;
   
+  if (totalPages > 100) {
+    throw new Error(`This PDF contains ${totalPages.toLocaleString()} pages. In-browser compression is limited to 100 pages to prevent memory crashes. Please split the PDF into smaller parts first.`);
+  }
+  
   const newDoc = await PDFDocument.create();
   
   for (let i = 1; i <= totalPages; i++) {
@@ -269,4 +288,60 @@ async function handleCompressPdf(arrayBuffer, options) {
   pdf.destroy();
   const pdfBytes = await newDoc.save();
   return pdfBytes.buffer;
+}
+
+// 7. Streaming PDF to Images — renders and streams one page at a time
+// Active memory stays ~constant regardless of total page count
+async function handlePdfToImagesStream(arrayBuffer, options) {
+  const { format = 'png', quality = 0.92, scale = 2, maxPages = null } = options;
+  const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png';
+  const ext = format === 'jpeg' ? 'jpg' : 'png';
+
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer, disableWorker: true }).promise;
+  const totalPages = pdf.numPages;
+
+  // Enforce page cap (e.g. batch queue passes maxPages: 200)
+  if (maxPages !== null && totalPages > maxPages) {
+    pdf.destroy();
+    throw new Error(
+      `This PDF has ${totalPages.toLocaleString()} pages. ` +
+      `The batch queue supports up to ${maxPages} pages (ZIP output). ` +
+      `For large PDFs, use the dedicated PDF to Images tool — it saves pages directly to a folder with no size limit.`
+    );
+  }
+
+  // Send the total count first so the main thread can prepare the progress bar
+  self.postMessage({ type: 'pageCount', totalPages });
+
+  for (let i = 1; i <= totalPages; i++) {
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({ scale });
+
+    const canvas = new OffscreenCanvas(viewport.width, viewport.height);
+    const ctx = canvas.getContext('2d');
+    await page.render({ canvasContext: ctx, viewport }).promise;
+
+    const blob = await canvas.convertToBlob({ type: mimeType, quality });
+    const buffer = await blob.arrayBuffer();
+
+    // Transfer the buffer — zero-copy move, worker no longer holds it
+    self.postMessage(
+      {
+        type: 'page',
+        pageIndex: i,
+        totalPages,
+        name: `page-${i}.${ext}`,
+        mimeType: blob.type,
+        buffer,
+        progress: Math.round((i / totalPages) * 100),
+      },
+      [buffer]   // transferable — releases buffer from worker memory immediately
+    );
+
+    // Explicitly release canvas memory before next iteration
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    page.cleanup();
+  }
+
+  pdf.destroy();
 }

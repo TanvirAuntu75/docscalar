@@ -117,49 +117,101 @@ export default function Pricing() {
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-xl max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-xl max-w-6xl mx-auto items-stretch">
           
-          {/* Free Tier Card */}
+          {/* Guest Mode Card */}
           <div className="bg-surface-container border border-outline-variant rounded-2xl p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow duration-300 min-h-[500px] text-left">
             <div>
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <h3 className="font-h3 text-h3 font-semibold text-on-background mb-1">Standard Utility</h3>
-                  <p className="font-body-sm text-sm text-on-surface-variant">For quick, private, individual document tasks.</p>
+                  <h3 className="font-h3 text-h3 font-semibold text-on-background mb-1">Guest Mode</h3>
+                  <p className="font-body-sm text-sm text-on-surface-variant">For immediate, one-off document conversions.</p>
                 </div>
               </div>
               
               <div className="flex items-baseline gap-1 border-b border-outline-variant pb-6 mb-6">
                 <span className="font-display-hero text-[56px] text-on-background">$0</span>
-                <span className="font-label-mono text-label-mono text-outline uppercase">Always Free</span>
+                <span className="font-label-mono text-label-mono text-outline uppercase">No Account</span>
               </div>
 
               <ul className="flex flex-col gap-3.5 mb-8">
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
-                  <span className="material-symbols-outlined text-primary text-[20px] select-none fill">check_circle</span>
-                  100% private in browser processing
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  Local in-browser conversion
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
-                  <span className="material-symbols-outlined text-primary text-[20px] select-none fill">check_circle</span>
-                  Access to all 13 standard conversion tools
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  10 basic offline tools
                 </li>
-                <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
-                  <span className="material-symbols-outlined text-primary text-[20px] select-none fill">check_circle</span>
-                  No registration or account required
+                <li className="flex items-center gap-3 font-body-md text-sm text-on-surface-variant opacity-85">
+                  <span className="material-symbols-outlined text-outline/40 text-[20px] select-none">remove</span>
+                  10 MB file size limit
                 </li>
-                <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
-                  <span className="material-symbols-outlined text-primary text-[20px] select-none fill">check_circle</span>
-                  Max file size up to 100MB
+                <li className="flex items-center gap-3 font-body-md text-sm text-on-surface-variant opacity-80">
+                  <span className="material-symbols-outlined text-outline/40 text-[20px] select-none">remove</span>
+                  No batch queue
                 </li>
               </ul>
             </div>
 
             <button
               onClick={() => navigate('/')}
-              className="w-full font-button text-button bg-surface-container text-on-background py-3.5 rounded-lg hover:bg-surface-container-high active:bg-surface-dim transition-colors border border-outline-variant"
+              className="w-full font-button text-button bg-surface-container text-on-background py-3.5 rounded-lg hover:bg-surface-container-high active:bg-surface-dim transition-colors border border-outline-variant text-center"
             >
-              Start Converting
+              Use Guest Mode
             </button>
+          </div>
+
+          {/* Standard Free Tier Card */}
+          <div className="bg-surface-container border border-outline-variant rounded-2xl p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow duration-300 min-h-[500px] text-left">
+            <div>
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h3 className="font-h3 text-h3 font-semibold text-on-background mb-1">Standard Utility</h3>
+                  <p className="font-body-sm text-sm text-on-surface-variant">For regular offline document workflows.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-baseline gap-1 border-b border-outline-variant pb-6 mb-6">
+                <span className="font-display-hero text-[56px] text-on-background">$0</span>
+                <span className="font-label-mono text-label-mono text-outline uppercase">Free Account</span>
+              </div>
+
+              <ul className="flex flex-col gap-3.5 mb-8">
+                <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  Local in-browser conversion
+                </li>
+                <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  31 standard tools & basic templates
+                </li>
+                <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  100 MB file size limit
+                </li>
+                <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  5-file batch queue
+                </li>
+              </ul>
+            </div>
+
+            {isAuthenticated ? (
+              <button
+                disabled
+                className="w-full font-button text-button bg-surface-container-high text-on-surface-variant py-3.5 rounded-lg border border-outline-variant cursor-default text-center opacity-70"
+              >
+                Current Plan
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate('/signup')}
+                className="w-full font-button text-button bg-surface-container text-on-background py-3.5 rounded-lg hover:bg-surface-container-high active:bg-surface-dim transition-colors border border-outline-variant text-center"
+              >
+                Create Free Account
+              </button>
+            )}
           </div>
 
           {/* Pro Tier Card */}
@@ -173,7 +225,7 @@ export default function Pricing() {
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <h3 className="font-h3 text-h3 font-semibold text-on-background mb-1">DocForge Pro</h3>
-                  <p className="font-body-sm text-sm text-on-surface-variant">For high-volume document surgery and automations.</p>
+                  <p className="font-body-sm text-sm text-on-surface-variant">For power users and high-volume batch processing.</p>
                 </div>
               </div>
               
@@ -183,25 +235,25 @@ export default function Pricing() {
               </div>
 
               <ul className="flex flex-col gap-3.5 mb-8">
-                <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
-                  <span className="material-symbols-outlined text-primary text-[20px] select-none fill">check_circle</span>
-                  Everything in Free tier
+                <li className="flex items-center gap-3 font-body-md text-sm text-on-background font-semibold text-primary">
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  Everything in Standard
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
-                  <span className="material-symbols-outlined text-primary text-[20px] select-none fill">check_circle</span>
-                  Bulk file queue & parallel processing
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  50-file batch queue
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
-                  <span className="material-symbols-outlined text-primary text-[20px] select-none fill">check_circle</span>
-                  Advanced local Smart Reformatter engine
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  Smart Reformatter & AI Summarizer
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
-                  <span className="material-symbols-outlined text-primary text-[20px] select-none fill">check_circle</span>
-                  File sizes up to 1GB
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  AI Translation & CV Builder
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
-                  <span className="material-symbols-outlined text-primary text-[20px] select-none fill">check_circle</span>
-                  Priority support & custom tools on-demand
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  1 GB file size limit & All 38 tools
                 </li>
               </ul>
             </div>
@@ -230,11 +282,161 @@ export default function Pricing() {
         </div>
 
         {/* Security strip below cards */}
-        <div className="mt-16 text-center">
+        <div className="mt-12 text-center">
           <p className="font-body-md text-sm text-on-surface-variant flex items-center justify-center gap-2">
             <span className="material-symbols-outlined text-primary text-[18px]">verified_user</span>
             All payment details are handled securely. Local processing remains fully active offline.
           </p>
+        </div>
+
+        {/* Comparison Section (AI Benchmarks Style) */}
+        <div className="mt-28">
+          <div className="text-center mb-10">
+            <h2 className="font-h2 text-h2 text-on-background mb-3">Feature Comparison</h2>
+            <p className="font-body-md text-on-surface-variant max-w-lg mx-auto">
+              Compare capabilities and technical specifications across all three operating modes.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto border border-outline-variant rounded-2xl bg-surface-container shadow-sm max-w-5xl mx-auto">
+            <table className="w-full border-collapse text-left text-sm min-w-[700px]">
+              <thead>
+                <tr className="bg-surface-container-high border-b border-outline-variant">
+                  <th className="py-5 px-6 font-semibold text-on-background w-[34%]">Features & Specs</th>
+                  <th className="py-5 px-6 font-semibold text-on-background text-center w-[22%]">Guest Mode</th>
+                  <th className="py-5 px-6 font-semibold text-on-background text-center w-[22%]">Standard Utility</th>
+                  <th className="py-5 px-6 font-semibold text-on-background text-center w-[22%]">DocForge Pro</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/30">
+                {/* Section 1: Capabilities & Limits */}
+                <tr className="bg-surface-container-highest/30">
+                  <td colSpan="4" className="font-label-mono text-xs uppercase tracking-wider text-on-surface-variant font-bold py-3.5 px-6">
+                    Capabilities & Limits
+                  </td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Max file size limit</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant">10 MB</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant font-medium">100 MB</td>
+                  <td className="py-4 px-6 text-center text-on-background font-semibold">1 GB</td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Batch queue limit</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant">5 files</td>
+                  <td className="py-4 px-6 text-center text-on-background font-semibold">50 files</td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Local execution</td>
+                  <td className="py-4 px-6 text-center">
+                    <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  </td>
+                  <td className="py-4 px-6 text-center">
+                    <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  </td>
+                  <td className="py-4 px-6 text-center">
+                    <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  </td>
+                </tr>
+
+                {/* Section 2: AI & Conversion Engines */}
+                <tr className="bg-surface-container-highest/30">
+                  <td colSpan="4" className="font-label-mono text-xs uppercase tracking-wider text-on-surface-variant font-bold py-3.5 px-6">
+                    AI & Conversion Engines
+                  </td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Conversion tools</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant">Basic (10)</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant">Standard (31)</td>
+                  <td className="py-4 px-6 text-center text-on-background font-medium">All (38)</td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Smart Reformatter</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center">
+                    <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">OCR text extraction</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center">
+                    <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">AI summarizer & translation</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center">
+                    <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  </td>
+                </tr>
+
+                {/* Section 3: Workspace & Sync */}
+                <tr className="bg-surface-container-highest/30">
+                  <td colSpan="4" className="font-label-mono text-xs uppercase tracking-wider text-on-surface-variant font-bold py-3.5 px-6">
+                    Workspace & Sync
+                  </td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Offline history cache</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center">
+                    <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  </td>
+                  <td className="py-4 px-6 text-center">
+                    <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Custom layouts</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant">Basic</td>
+                  <td className="py-4 px-6 text-center text-on-background font-medium">Full</td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Document templates & CV Builder</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant">Basic (3)</td>
+                  <td className="py-4 px-6 text-center text-on-background font-medium">Full (incl. CV Builder)</td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Settings backup</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center">
+                    <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  </td>
+                </tr>
+
+                {/* Section 4: Support */}
+                <tr className="bg-surface-container-highest/30">
+                  <td colSpan="4" className="font-label-mono text-xs uppercase tracking-wider text-on-surface-variant font-bold py-3.5 px-6">
+                    Support
+                  </td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Support channels</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant">Community</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant">Email</td>
+                  <td className="py-4 px-6 text-center text-on-background font-medium">24/7 Priority</td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Custom tool requests</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center">
+                    <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
       </div>

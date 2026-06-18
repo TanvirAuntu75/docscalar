@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -191,20 +191,13 @@ export default function DocxToPdf() {
   };
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Convert DOCX to PDF Online Free (100% Local)" 
-        description="Convert Word documents (.docx) to PDF format instantly in your browser. Fully private, no server upload required. Your documents stay safe."
-      />
-      
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="docx-to-pdf" size={48} />
-        </div>
-        <h1>Word to PDF Converter</h1>
-        <p className="tool-page-subtitle">Convert Microsoft Word (.docx) files to high-quality PDF documents</p>
-        
-        {/* Backend Connectivity Status Badge */}
+    <ToolPageLayout
+      toolId="docx-to-pdf"
+      title="Word to PDF Converter"
+      description="Convert Microsoft Word (.docx) files to high-quality PDF documents"
+      headerContent={
+        <>
+          {/* Backend Connectivity Status Badge */}
         {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
@@ -229,7 +222,15 @@ export default function DocxToPdf() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Convert DOCX to PDF Online Free (100% Local)" 
+        description="Convert Word documents (.docx) to PDF format instantly in your browser. Fully private, no server upload required. Your documents stay safe."
+      />
+      
+      
 
       {!result ? (
         <>
@@ -302,6 +303,6 @@ export default function DocxToPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

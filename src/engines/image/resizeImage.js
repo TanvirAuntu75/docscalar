@@ -38,6 +38,9 @@ export async function resizeImage(file, options = {}) {
   const mime = mimeMap[ext] || 'image/png';
 
   const blob = await new Promise((r) => canvas.toBlob(r, mime, 0.92));
+  if (!blob) {
+    throw new Error('Failed to generate image. The dimensions may exceed browser limits or memory capacity.');
+  }
   const baseName = file.name.replace(/\.[^.]+$/, '');
   return { blob, name: `${baseName}-${newW}x${newH}.${ext}` };
 }

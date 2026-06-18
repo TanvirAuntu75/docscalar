@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
@@ -115,18 +115,16 @@ export default function SplitPdf() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="split-pdf"
+      title="Split PDF"
+      description="Extract pages or split a PDF into multiple files"
+    >
       <SEOHead 
         title="Split PDF Pages Online Free (Extract PDF Pages)" 
         description="Split PDF files online free of charge. Extract specific page ranges or split every page into a separate PDF. 100% private."
       />
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="split-pdf" size={48} />
-        </div>
-        <h1>Split PDF</h1>
-        <p className="tool-page-subtitle">Extract pages or split a PDF into multiple files</p>
-      </div>
+      
 
       {!result ? (
         <>
@@ -195,6 +193,6 @@ export default function SplitPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

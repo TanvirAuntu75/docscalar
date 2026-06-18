@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
@@ -101,18 +101,16 @@ export default function TextToPdf() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="text-to-pdf"
+      title="Text to PDF Converter"
+      description="Convert raw text, notes, or uploaded txt files into formatted PDF documents"
+    >
       <SEOHead 
         title="Convert TXT to PDF Online Free (Text to PDF)" 
         description="Convert plain text files (.txt) or custom text notes to styled PDF documents. 100% free local conversion."
       />
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="text-to-pdf" size={48} />
-        </div>
-        <h1>Text to PDF Converter</h1>
-        <p className="tool-page-subtitle">Convert raw text, notes, or uploaded txt files into formatted PDF documents</p>
-      </div>
+      
 
       {!result ? (
         <>
@@ -256,6 +254,6 @@ export default function TextToPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

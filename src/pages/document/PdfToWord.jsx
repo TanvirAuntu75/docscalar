@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -156,20 +156,13 @@ export default function PdfToWord() {
   };
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Convert PDF to Word Online Free — PDF to DOCX | DocForge" 
-        description="Reconstruct PDF document formatting into fully editable Microsoft Word (.docx) files. Complete layout structure preservation."
-      />
-      
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="pdf-to-word" size={48} />
-        </div>
-        <h1>PDF to Word</h1>
-        <p className="tool-page-subtitle">Reconstruct PDF document formatting and structures into fully editable Microsoft Word documents</p>
-        
-        {!checkingBackend && (
+    <ToolPageLayout
+      toolId="pdf-to-word"
+      title="PDF to Word"
+      description="Reconstruct PDF document formatting and structures into fully editable Microsoft Word documents"
+      headerContent={
+        <>
+          {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -193,7 +186,15 @@ export default function PdfToWord() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Convert PDF to Word Online Free — PDF to DOCX | DocForge" 
+        description="Reconstruct PDF document formatting into fully editable Microsoft Word (.docx) files. Complete layout structure preservation."
+      />
+      
+      
 
       {!result ? (
         <>
@@ -264,6 +265,6 @@ export default function PdfToWord() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

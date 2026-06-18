@@ -7,6 +7,7 @@ const AUTH_ACTIONS = {
   LOGOUT: 'LOGOUT',
   SET_TIER: 'SET_TIER',
   HYDRATE: 'HYDRATE',
+  UPDATE_EMAIL: 'UPDATE_EMAIL',
 };
 
 function authReducer(state, action) {
@@ -70,6 +71,15 @@ function authReducer(state, action) {
       return newState;
     }
 
+    case AUTH_ACTIONS.UPDATE_EMAIL: {
+      const newState = {
+        ...state,
+        userEmail: action.payload.email,
+      };
+      localStorage.setItem('userEmail', newState.userEmail);
+      return newState;
+    }
+
     default:
       return state;
   }
@@ -118,12 +128,20 @@ export function AuthProvider({ children }) {
     });
   };
 
+  const updateEmail = (email) => {
+    dispatch({
+      type: AUTH_ACTIONS.UPDATE_EMAIL,
+      payload: { email },
+    });
+  };
+
   const value = {
     ...state,
     isPro: state.isAuthenticated && state.userTier === 'pro',
     login,
     logout,
     setTier,
+    updateEmail,
   };
 
   return (

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -156,20 +156,13 @@ export default function PdfToPdfa() {
   };
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Convert PDF to PDF/A Online Free — ISO Standard | DocForge" 
-        description="Convert standard PDF files to ISO standardized archiving profiles (PDF/A). Ensure long-term preservation and compliance."
-      />
-      
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="pdf-to-pdfa" size={48} />
-        </div>
-        <h1>PDF to PDF/A</h1>
-        <p className="tool-page-subtitle">Convert PDF documents into ISO standardized PDF/A format for long-term digital archiving</p>
-        
-        {!checkingBackend && (
+    <ToolPageLayout
+      toolId="pdf-to-pdfa"
+      title="PDF to PDF/A"
+      description="Convert PDF documents into ISO standardized PDF/A format for long-term digital archiving"
+      headerContent={
+        <>
+          {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -193,7 +186,15 @@ export default function PdfToPdfa() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Convert PDF to PDF/A Online Free — ISO Standard | DocForge" 
+        description="Convert standard PDF files to ISO standardized archiving profiles (PDF/A). Ensure long-term preservation and compliance."
+      />
+      
+      
 
       {!result ? (
         <>
@@ -264,6 +265,6 @@ export default function PdfToPdfa() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

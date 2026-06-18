@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -85,18 +85,16 @@ export default function ImageCompressor() {
   const { percent: totalPercent, saved: totalSaved } = calculateTotalSavings();
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="image-compressor"
+      title="Image Compressor"
+      description="Reduce image file size with customizable quality settings"
+    >
       <SEOHead 
         title="Compress Image Online Free: Reduce Image File Size" 
         description="Compress JPG, PNG, and WebP images online for free. Adjust quality to reduce image size instantly without uploading files to a server."
       />
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="image-compressor" size={48} />
-        </div>
-        <h1>Image Compressor</h1>
-        <p className="tool-page-subtitle">Reduce image file size with customizable quality settings</p>
-      </div>
+      
 
       {!result ? (
         <>
@@ -183,6 +181,6 @@ export default function ImageCompressor() {
       )}
       
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

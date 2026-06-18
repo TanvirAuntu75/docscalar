@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -157,20 +157,13 @@ export default function PowerpointToPdf() {
   };
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Convert PowerPoint to PDF Online Free — PPT to PDF | DocForge" 
-        description="Convert Microsoft PowerPoint presentations (.pptx, .ppt) to PDF format instantly. High fidelity layouts, shapes and slides alignment."
-      />
-      
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="powerpoint-to-pdf" size={48} />
-        </div>
-        <h1>PowerPoint to PDF</h1>
-        <p className="tool-page-subtitle">Convert Microsoft PowerPoint (.pptx, .ppt) presentation slides to high-quality PDF documents</p>
-        
-        {!checkingBackend && (
+    <ToolPageLayout
+      toolId="powerpoint-to-pdf"
+      title="PowerPoint to PDF"
+      description="Convert Microsoft PowerPoint (.pptx, .ppt) presentation slides to high-quality PDF documents"
+      headerContent={
+        <>
+          {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -194,7 +187,15 @@ export default function PowerpointToPdf() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Convert PowerPoint to PDF Online Free — PPT to PDF | DocForge" 
+        description="Convert Microsoft PowerPoint presentations (.pptx, .ppt) to PDF format instantly. High fidelity layouts, shapes and slides alignment."
+      />
+      
+      
 
       {!result ? (
         <>
@@ -265,6 +266,6 @@ export default function PowerpointToPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

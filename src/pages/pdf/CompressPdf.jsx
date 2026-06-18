@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -196,20 +196,13 @@ export default function CompressPdf() {
   const savings = result ? Math.round((1 - result.newSize / result.originalSize) * 100) : 0;
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Compress PDF Online Free — Reduce PDF Size | DocForge" 
-        description="Reduce PDF file size while maintaining readability. Ghostscript/PyMuPDF server optimization and client-side fallback."
-      />
-
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="compress-pdf" size={48} />
-        </div>
-        <h1>Compress PDF</h1>
-        <p className="tool-page-subtitle">Reduce PDF file size while maintaining vectors, searchability, and text layers</p>
-        
-        {!checkingBackend && (
+    <ToolPageLayout
+      toolId="compress-pdf"
+      title="Compress PDF"
+      description="Reduce PDF file size while maintaining vectors, searchability, and text layers"
+      headerContent={
+        <>
+          {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -233,7 +226,15 @@ export default function CompressPdf() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Compress PDF Online Free — Reduce PDF Size | DocForge" 
+        description="Reduce PDF file size while maintaining readability. Ghostscript/PyMuPDF server optimization and client-side fallback."
+      />
+
+      
 
       {!result ? (
         <>
@@ -303,6 +304,6 @@ export default function CompressPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -156,20 +156,13 @@ export default function PdfToPowerpoint() {
   };
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Convert PDF to PowerPoint Online Free — PDF to PPTX | DocForge" 
-        description="Convert PDF presentations into editable PowerPoint slides (.pptx). Vector graphics, layouts, and page proportions preserved."
-      />
-      
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="pdf-to-powerpoint" size={48} />
-        </div>
-        <h1>PDF to PowerPoint</h1>
-        <p className="tool-page-subtitle">Convert PDF document pages and layouts into PowerPoint presentation slides</p>
-        
-        {!checkingBackend && (
+    <ToolPageLayout
+      toolId="pdf-to-powerpoint"
+      title="PDF to PowerPoint"
+      description="Convert PDF document pages and layouts into PowerPoint presentation slides"
+      headerContent={
+        <>
+          {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -193,7 +186,15 @@ export default function PdfToPowerpoint() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Convert PDF to PowerPoint Online Free — PDF to PPTX | DocForge" 
+        description="Convert PDF presentations into editable PowerPoint slides (.pptx). Vector graphics, layouts, and page proportions preserved."
+      />
+      
+      
 
       {!result ? (
         <>
@@ -264,6 +265,6 @@ export default function PdfToPowerpoint() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

@@ -71,6 +71,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: true,
     implemented: true,
+    minTier: 'guest',
   },
   {
     id: 'split-pdf',
@@ -84,6 +85,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'guest',
   },
   {
     id: 'remove-pages',
@@ -97,6 +99,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'extract-pages',
@@ -110,6 +113,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'organize-pdf',
@@ -123,6 +127,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'scan-to-pdf',
@@ -136,6 +141,7 @@ export const TOOLS = [
     accept: 'image/*',
     multiple: true,
     implemented: true,
+    minTier: 'free',
   },
 
   // ── Optimize PDF ──────────────────────────────────
@@ -151,6 +157,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'repair-pdf',
@@ -164,6 +171,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'pro',
   },
   {
     id: 'ocr-pdf',
@@ -177,6 +185,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'pro',
   },
 
   // ── Convert to PDF ────────────────────────────────
@@ -192,6 +201,7 @@ export const TOOLS = [
     accept: 'image/*',
     multiple: true,
     implemented: true,
+    minTier: 'guest',
   },
   {
     id: 'docx-to-pdf',
@@ -205,6 +215,7 @@ export const TOOLS = [
     accept: '.docx',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'powerpoint-to-pdf',
@@ -218,6 +229,7 @@ export const TOOLS = [
     accept: '.pptx,.ppt',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'excel-to-pdf',
@@ -231,6 +243,7 @@ export const TOOLS = [
     accept: '.xlsx,.xls',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'html-to-pdf',
@@ -244,6 +257,7 @@ export const TOOLS = [
     accept: '.html',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
 
   // ── Convert from PDF ──────────────────────────────
@@ -259,6 +273,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'guest',
   },
   {
     id: 'pdf-to-word',
@@ -272,6 +287,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'pdf-to-powerpoint',
@@ -285,6 +301,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'pdf-to-excel',
@@ -298,6 +315,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'pdf-to-pdfa',
@@ -311,6 +329,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
 
   // ── Edit PDF ──────────────────────────────────────
@@ -326,6 +345,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'guest',
   },
   {
     id: 'add-page-numbers',
@@ -339,6 +359,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'add-watermark',
@@ -352,6 +373,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'crop-pdf',
@@ -365,6 +387,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'edit-pdf',
@@ -378,6 +401,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'pdf-forms',
@@ -391,6 +415,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
 
   // ── PDF Security ──────────────────────────────────
@@ -406,6 +431,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'unlock-pdf',
@@ -419,6 +445,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'free',
   },
   {
     id: 'sign-pdf',
@@ -432,6 +459,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'pro',
   },
   {
     id: 'redact-pdf',
@@ -445,6 +473,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'pro',
   },
   {
     id: 'compare-pdf',
@@ -458,6 +487,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: true,
     implemented: true,
+    minTier: 'free',
   },
 
   // ── PDF Intelligence ──────────────────────────────
@@ -473,6 +503,7 @@ export const TOOLS = [
     accept: '.txt,.docx,.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'pro',
   },
   {
     id: 'translate-pdf',
@@ -486,6 +517,7 @@ export const TOOLS = [
     accept: '.txt,.docx,.pdf',
     multiple: false,
     implemented: true,
+    minTier: 'pro',
   },
 
   // ── Image Tools ───────────────────────────────────
@@ -501,6 +533,7 @@ export const TOOLS = [
     accept: 'image/*',
     multiple: true,
     implemented: true,
+    minTier: 'guest',
   },
   {
     id: 'image-compressor',
@@ -514,6 +547,7 @@ export const TOOLS = [
     accept: 'image/*',
     multiple: true,
     implemented: true,
+    minTier: 'guest',
   },
   {
     id: 'image-resizer',
@@ -527,6 +561,7 @@ export const TOOLS = [
     accept: 'image/*',
     multiple: true,
     implemented: true,
+    minTier: 'guest',
   },
 
   // ── Utility Tools ──────────────────────────────────
@@ -542,10 +577,11 @@ export const TOOLS = [
     accept: null,
     multiple: true,
     implemented: true,
+    minTier: 'pro',
   },
   {
     id: 'text-to-pdf',
-    category: 'utility',
+    category: 'convert-to-pdf',
     title: 'Text to PDF',
     description: 'Convert plain text files to structured formatted PDF papers',
     icon: '📝',
@@ -555,6 +591,7 @@ export const TOOLS = [
     accept: '.txt',
     multiple: false,
     implemented: true,
+    minTier: 'guest',
   },
   {
     id: 'qr-generator',
@@ -568,6 +605,7 @@ export const TOOLS = [
     accept: null,
     multiple: false,
     implemented: true,
+    minTier: 'guest',
   },
 ];
 

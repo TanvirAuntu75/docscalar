@@ -86,14 +86,17 @@ function PageSkeleton() {
 }
 
 export default function App() {
-  const { isPro } = useAuth();
-  const mainPadding = isPro ? 'pt-[72px]' : 'pt-[88px]';
+  const { isPro, isAuthenticated } = useAuth();
+  const location = useLocation();
+  const isWorkspace = isAuthenticated && location.pathname === '/';
+  const hideFooter = isWorkspace || location.pathname === '/dashboard';
+  const mainPadding = isWorkspace ? 'pt-0' : (isPro ? 'pt-[72px]' : 'pt-[88px]');
 
   return (
     <>
       <div className="app-bg-mesh" />
       <ScrollToTop />
-      <Header />
+      {!isWorkspace && <Header />}
       <main className={`main-content ${mainPadding}`}>
         <ErrorBoundary>
           <Suspense fallback={<PageSkeleton />}>
@@ -170,7 +173,7 @@ export default function App() {
           </Suspense>
         </ErrorBoundary>
       </main>
-      <Footer />
+      {!hideFooter && <Footer />}
     </>
   )
 }

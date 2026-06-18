@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import SEOHead from '../../components/SEOHead';
@@ -220,19 +220,17 @@ export default function ScanToPdf() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="scan-to-pdf"
+      title="Scan to PDF"
+      description="Capture documents via webcam/phone camera and compile them into a PDF"
+    >
       <SEOHead 
         title="Scan to PDF Online Free — Camera Scanner | DocForge" 
         description="Capture documents with your device camera or upload photos, rotate slides, and bundle them into a clean A4 PDF file client-side."
       />
       
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="scan-to-pdf" size={48} />
-        </div>
-        <h1>Scan to PDF</h1>
-        <p className="tool-page-subtitle">Capture documents via webcam/phone camera and compile them into a PDF</p>
-      </div>
+      
 
       {!result ? (
         <>
@@ -537,6 +535,6 @@ export default function ScanToPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

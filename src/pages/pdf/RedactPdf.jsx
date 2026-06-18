@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -365,20 +365,13 @@ export default function RedactPdf() {
   };
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Redact PDF Online Free — Secure Text Stripping | DocForge" 
-        description="Securely mask and sanitize PDF pages. Draw boxes to permanently delete text bytes and content layers underneath, protecting sensitive data."
-      />
-
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="redact-pdf" size={48} />
-        </div>
-        <h1>Redact PDF</h1>
-        <p className="tool-page-subtitle">Permanently strip text and graphics under your selection to securely sanitize files</p>
-        
-        {!checkingBackend && (
+    <ToolPageLayout
+      toolId="redact-pdf"
+      title="Redact PDF"
+      description="Permanently strip text and graphics under your selection to securely sanitize files"
+      headerContent={
+        <>
+          {!checkingBackend && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -402,7 +395,15 @@ export default function RedactPdf() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Redact PDF Online Free — Secure Text Stripping | DocForge" 
+        description="Securely mask and sanitize PDF pages. Draw boxes to permanently delete text bytes and content layers underneath, protecting sensitive data."
+      />
+
+      
 
       {!result ? (
         <>
@@ -564,6 +565,6 @@ export default function RedactPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

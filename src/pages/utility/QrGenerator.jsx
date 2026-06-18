@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -67,18 +67,16 @@ export default function QrGenerator() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="qr-generator"
+      title="QR Code Generator"
+      description="Create customizable, high-resolution QR codes for URLs, text, and contact info"
+    >
       <SEOHead 
         title="Free QR Code Generator Online (Custom QR Codes)" 
         description="Generate custom QR codes online for free. Adjust size, foreground/background colors, and error correction levels instantly."
       />
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="qr-generator" size={48} />
-        </div>
-        <h1>QR Code Generator</h1>
-        <p className="tool-page-subtitle">Create customizable, high-resolution QR codes for URLs, text, and contact info</p>
-      </div>
+      
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', maxWidth: '900px', margin: '0 auto', alignItems: 'start' }} className="responsive-grid">
         <div className="options-panel" style={{ margin: 0 }}>
@@ -208,6 +206,6 @@ export default function QrGenerator() {
           }
         }
       `}</style>
-    </div>
+    </ToolPageLayout>
   );
 }

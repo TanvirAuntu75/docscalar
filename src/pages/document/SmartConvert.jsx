@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { apiFetch } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -148,20 +148,13 @@ export default function SmartConvert() {
   };
 
   return (
-    <div className="tool-page">
-      <SEOHead 
-        title="Smart Document Reformatter: Offline Layout & Formatting Engine" 
-        description="Enhance, summarize, and translate documents for free using a local formatting rules engine. 100% private, offline processing."
-      />
-      
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="ai-summarizer" size={48} />
-        </div>
-        <h1>Smart Reformatter</h1>
-        <p className="tool-page-subtitle">Refine document formatting, translate languages, or generate summaries using local rules engine</p>
-
-        {!checkingServer && (
+    <ToolPageLayout
+      toolId="ai-summarizer"
+      title="Smart Reformatter"
+      description="Refine document formatting, translate languages, or generate summaries using local rules engine"
+      headerContent={
+        <>
+          {!checkingServer && (
           <div style={{ marginTop: '1rem' }}>
             <span style={{
               display: 'inline-flex',
@@ -185,7 +178,15 @@ export default function SmartConvert() {
             </span>
           </div>
         )}
-      </div>
+        </>
+      }
+    >
+      <SEOHead 
+        title="Smart Document Reformatter: Offline Layout & Formatting Engine" 
+        description="Enhance, summarize, and translate documents for free using a local formatting rules engine. 100% private, offline processing."
+      />
+      
+      
 
       {!result ? (
         <>
@@ -303,6 +304,6 @@ export default function SmartConvert() {
           }
         }
       `}</style>
-    </div>
+    </ToolPageLayout>
   );
 }

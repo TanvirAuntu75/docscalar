@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -109,6 +109,14 @@ export default function RemovePages() {
     );
   };
 
+  const handleSelectAll = () => {
+    setSelectedIndices(Array.from({ length: totalPages }, (_, i) => i));
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedIndices([]);
+  };
+
   const handleRemove = async () => {
     if (!files.length) return;
     if (selectedIndices.length === 0) {
@@ -160,144 +168,175 @@ export default function RemovePages() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="remove-pages"
+      title="Remove PDF Pages"
+      description="Select and delete unwanted pages from your PDF document"
+    >
       <SEOHead 
         title="Remove Pages from PDF Online Free (100% Client-Side) | DocForge" 
         description="Select and delete specific pages from your PDF file instantly in your browser. Fully private, no server upload required."
       />
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="remove-pages" size={48} />
-        </div>
-        <h1>Remove PDF Pages</h1>
-        <p className="tool-page-subtitle">Select and delete unwanted pages from your PDF document</p>
-      </div>
+      
 
       {!result ? (
         <>
-          <FileDropzone accept=".pdf" multiple={false} files={files} setFiles={setFiles} />
-
-          {files.length > 0 && !processing && thumbnails.length > 0 && (
-            <div className="options-panel animate-[fadeIn_0.22s_ease-out]">
-              <div className="options-title" style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', width: '100%' }}>
-                <span>Select pages to delete</span>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                  Selected: {selectedIndices.length} / {totalPages} pages
-                </span>
-              </div>
-
-              {/* PDF Page Previews Grid */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
-                gap: '1.25rem',
-                maxHeight: '450px',
-                overflowY: 'auto',
-                marginTop: '1.25rem',
-                padding: '0.5rem',
-                borderRadius: '8px',
-                background: 'var(--bg-secondary)',
-                border: '1px solid var(--border-subtle)'
-              }} className="no-scrollbar">
-                {thumbnails.map((pageNum, idx) => {
-                  const isSelected = selectedIndices.includes(idx);
-                  return (
-                    <div
-                      key={pageNum}
-                      onClick={() => togglePageSelection(idx)}
-                      style={{
-                        position: 'relative',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        padding: '0.75rem',
-                        borderRadius: '12px',
-                        background: isSelected ? 'rgba(239, 68, 68, 0.08)' : 'var(--bg-primary)',
-                        border: `2px solid ${isSelected ? 'var(--color-danger)' : 'var(--border-subtle)'}`,
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        userSelect: 'none'
-                      }}
-                      className="group"
-                    >
-                      {/* Selection Overlay */}
-                      {isSelected && (
-                        <div style={{
-                          position: 'absolute',
-                          top: '-8px',
-                          right: '-8px',
-                          width: '22px',
-                          height: '22px',
-                          borderRadius: '50%',
-                          background: 'var(--color-danger)',
-                          color: 'white',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          zIndex: 10
-                        }}>
-                          <span className="material-symbols-outlined text-[12px] font-bold" style={{ color: 'white' }}>close</span>
-                        </div>
-                      )}
-                      
-                      <div style={{ display: 'flex', justifyContent: 'center', minHeight: '130px', alignItems: 'center' }}>
-                        <canvas
-                          ref={el => canvasRefs.current[idx] = el}
-                          style={{
-                            maxWidth: '100%',
-                            maxHeight: '120px',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                            borderRadius: '4px',
-                            opacity: isSelected ? 0.45 : 1,
-                            transition: 'opacity 0.2s'
-                          }}
-                        />
-                      </div>
-                      
-                      <span style={{ 
-                        marginTop: '0.75rem', 
-                        fontSize: '0.75rem', 
-                        fontWeight: '600', 
-                        color: isSelected ? 'var(--color-danger)' : 'var(--text-secondary)'
-                      }}>
-                        Page {pageNum}
-                      </span>
+          {files.length === 0 ? (
+            <FileDropzone accept=".pdf" multiple={false} files={files} setFiles={setFiles} />
+          ) : (
+            <>
+              {/* LEFT COLUMN: Page Previews Workspace */}
+              {!processing && thumbnails.length > 0 && (
+                <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-y-auto">
+                  <div className="workspace-canvas w-full">
+                    {/* PDF Page Previews Grid */}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
+                      gap: '1.25rem',
+                      padding: '1.5rem',
+                      borderRadius: '16px',
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border-subtle)'
+                    }}>
+                      {thumbnails.map((pageNum, idx) => {
+                        const isSelected = selectedIndices.includes(idx);
+                        return (
+                          <div
+                            key={pageNum}
+                            onClick={() => togglePageSelection(idx)}
+                            style={{
+                              position: 'relative',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              padding: '0.75rem',
+                              borderRadius: '12px',
+                              background: isSelected ? 'rgba(239, 68, 68, 0.08)' : 'var(--bg-primary)',
+                              border: `2px solid ${isSelected ? 'var(--color-danger)' : 'var(--border-subtle)'}`,
+                              cursor: 'pointer',
+                              transition: 'all 0.2s',
+                              userSelect: 'none'
+                            }}
+                            className="group"
+                          >
+                            {/* Selection Overlay */}
+                            {isSelected && (
+                              <div style={{
+                                position: 'absolute',
+                                top: '-8px',
+                                right: '-8px',
+                                width: '22px',
+                                height: '22px',
+                                borderRadius: '50%',
+                                background: 'var(--color-danger)',
+                                color: 'white',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: 10
+                              }}>
+                                <span className="material-symbols-outlined text-[12px] font-bold" style={{ color: 'white' }}>close</span>
+                              </div>
+                            )}
+                            
+                            <div style={{ display: 'flex', justifyContent: 'center', minHeight: '130px', alignItems: 'center' }}>
+                              <canvas
+                                ref={el => canvasRefs.current[idx] = el}
+                                style={{
+                                  maxWidth: '100%',
+                                  maxHeight: '120px',
+                                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                                  borderRadius: '4px',
+                                  opacity: isSelected ? 0.45 : 1,
+                                  transition: 'opacity 0.2s'
+                                }}
+                              />
+                            </div>
+                            
+                            <span style={{ 
+                              marginTop: '0.75rem', 
+                              fontSize: '0.75rem', 
+                              fontWeight: '600', 
+                              color: isSelected ? 'var(--color-danger)' : 'var(--text-secondary)'
+                            }}>
+                              Page {pageNum}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {processing && (
-            <div className="progress-container">
-              <div className="progress-bar">
-                <div 
-                  className="progress-fill" 
-                  style={{ width: `${progress}%` }} 
-                />
-              </div>
-              <p className="progress-status">Processing PDF pages... {progress}%</p>
-            </div>
-          )}
-
-          {error && <p style={{ color: 'var(--color-danger)', textAlign: 'center', marginTop: '1rem' }}>{error}</p>}
-
-          <div className="action-bar">
-            <button 
-              className="btn btn-primary btn-lg flex items-center justify-center gap-2" 
-              onClick={handleRemove} 
-              disabled={!files.length || processing || selectedIndices.length === 0}
-            >
-              {processing && (
-                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+                  </div>
+                </div>
               )}
-              <span>{processing ? 'Removing...' : 'Remove Selected Pages'}</span>
-            </button>
-          </div>
+
+              {/* RIGHT COLUMN: Sidebar Options Panel */}
+              {!processing && thumbnails.length > 0 && (
+                <div className="options-panel animate-[fadeIn_0.22s_ease-out]">
+                  <div className="options-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                    <span>Deletion Settings</span>
+                  </div>
+                  <div style={{ fontSize: '0.9rem', marginBottom: '1.25rem', color: 'var(--text-secondary)' }}>
+                    Selected to delete: <strong style={{ color: 'var(--color-danger)' }}>{selectedIndices.length}</strong> of {totalPages} pages
+                  </div>
+
+                  {/* Bulk Selection Actions */}
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                    <button 
+                      onClick={handleSelectAll} 
+                      className="btn btn-secondary flex-1" 
+                      style={{ padding: '0.5rem', fontSize: '0.85rem', borderRadius: '8px' }}
+                    >
+                      Select All
+                    </button>
+                    <button 
+                      onClick={handleDeselectAll} 
+                      className="btn btn-secondary flex-1" 
+                      style={{ padding: '0.5rem', fontSize: '0.85rem', borderRadius: '8px' }}
+                    >
+                      Clear All
+                    </button>
+                  </div>
+                  
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                    Click on the pages in the workspace area on the left to select which pages to delete.
+                  </div>
+                </div>
+              )}
+
+              {/* Progress bar inside sidebar */}
+              {processing && (
+                <div className="progress-container">
+                  <div className="progress-bar">
+                    <div 
+                      className="progress-fill" 
+                      style={{ width: `${progress}%` }} 
+                    />
+                  </div>
+                  <p className="progress-status">Processing PDF pages... {progress}%</p>
+                </div>
+              )}
+
+              {error && <p style={{ color: 'var(--color-danger)', textAlign: 'center', marginTop: '1rem' }}>{error}</p>}
+
+              {/* Action bar inside sidebar */}
+              <div className="action-bar">
+                <button 
+                  className="btn btn-primary btn-lg flex items-center justify-center gap-2" 
+                  onClick={handleRemove} 
+                  disabled={processing || selectedIndices.length === 0}
+                >
+                  {processing && (
+                    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  )}
+                  <span>{processing ? 'Removing...' : 'Remove Selected Pages'}</span>
+                </button>
+              </div>
+            </>
+          )}
         </>
       ) : (
         <div className="result-area animate-[fadeIn_0.22s_ease-out]">
@@ -323,6 +362,6 @@ export default function RemovePages() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

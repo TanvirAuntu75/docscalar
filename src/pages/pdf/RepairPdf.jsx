@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
@@ -60,18 +60,16 @@ export default function RepairPdf() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="repair-pdf"
+      title="Repair PDF"
+      description="Fix damaged or unreadable PDF documents by reconstructing their cross-reference index tables"
+    >
       <SEOHead 
         title="Repair PDF Online Free — Fix Corrupted PDFs | DocForge" 
         description="Fix corrupted, damaged, or unreadable PDF structures. Rebuild cross-reference tables and recover document objects client-side."
       />
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="repair-pdf" size={48} />
-        </div>
-        <h1>Repair PDF</h1>
-        <p className="tool-page-subtitle">Fix damaged or unreadable PDF documents by reconstructing their cross-reference index tables</p>
-      </div>
+      
 
       {!result ? (
         <>
@@ -141,6 +139,6 @@ export default function RepairPdf() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }

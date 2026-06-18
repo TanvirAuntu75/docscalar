@@ -587,6 +587,14 @@ input, select, textarea {
   animation: fadeInUp 0.45s var(--transition-slow);
 }
 
+/* Hide redundant trust badges, subtitle, breadcrumbs, and related tools when a file is loaded in the workspace */
+.tool-page:has(.options-panel) .trust-bar,
+.tool-page:has(.options-panel) .tool-page-subtitle,
+.tool-page:has(.options-panel) .breadcrumb,
+.tool-page:has(.options-panel) .related-tools {
+  display: none !important;
+}
+
 @media (min-width: 1024px) {
   /* Use premium split workspace-sidebar layout when options are present */
   .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) {
@@ -596,10 +604,18 @@ input, select, textarea {
     gap: 0;
     max-width: 100% !important;
     width: 100vw;
-    height: calc(100vh - 76px); /* subtract header height */
+    height: calc(100vh - 88px); /* default to match free header padding */
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden;
+  }
+
+  /* Dynamically adjust height depending on Pro vs Free header padding */
+  main.pt-\[72px\] .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) {
+    height: calc(100vh - 72px) !important;
+  }
+  main.pt-\[88px\] .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) {
+    height: calc(100vh - 88px) !important;
   }
 
   /* Left column: Workspace area (containing the dropzone/canvas wrapper) */
@@ -696,7 +712,7 @@ input, select, textarea {
 
 .tool-page-header {
   text-align: center;
-  margin-bottom: var(--space-3xl);
+  margin-bottom: var(--space-xl);
   position: relative;
 }
 
@@ -1781,3 +1797,14 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .dropzone-empty ~ p {
   display: none !important;
 }
+
+/* Prevent main window scrolling when split workspace is active */
+body:has(.options-panel):has(.dropzone, .workspace-canvas) {
+  overflow: hidden !important;
+  height: 100vh !important;
+}
+
+body:has(.options-panel):has(.dropzone, .workspace-canvas) footer {
+  display: none !important;
+}
+

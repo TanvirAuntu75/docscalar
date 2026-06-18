@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ToolIcon from '../../components/ToolIcon';
+import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
@@ -118,18 +118,16 @@ export default function AddPageNumbers() {
   };
 
   return (
-    <div className="tool-page">
+    <ToolPageLayout
+      toolId="add-page-numbers"
+      title="Add Page Numbers"
+      description="Draw customized page numbers dynamically on document headers or footers"
+    >
       <SEOHead 
         title="Add Page Numbers to PDF Online Free (100% Client-Side) | DocForge" 
         description="Add headers or footers with page numbering tags to your PDF file instantly in your browser. Complete styling and configuration options."
       />
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id="add-page-numbers" size={48} />
-        </div>
-        <h1>Add Page Numbers</h1>
-        <p className="tool-page-subtitle">Draw customized page numbers dynamically on document headers or footers</p>
-      </div>
+      
 
       {!result ? (
         <>
@@ -396,6 +394,6 @@ export default function AddPageNumbers() {
       )}
 
       <AdPlaceholder format="leaderboard" />
-    </div>
+    </ToolPageLayout>
   );
 }
