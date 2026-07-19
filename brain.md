@@ -236,7 +236,14 @@ workspace-root/
 
 ## 4. Recently Created or Edited Features (Memory)
 
-### A. Localhost Dev Server Resource Optimization (TSK-233)
+### A. Workspace Footer Cleanup & AI Pro Feature Gate Fix (TSK-234)
+- **Problem**: In-session logged-in users visiting tool pages like `/ai-translator` were confused by seeing a massive, full-screen viewport `h-screen` landing-page marketing footer with three.js particles that asked them to "Start Free Now" (as if their session was ignored). In addition, because `ToolPageLayout` did not correctly destructure and enforce the `minTier` override prop, free logged-in accounts bypassed the Pro gate, loading empty layouts or desktop download funnels directly instead of showing the correct premium subscription block. Lastly, when attempting to push code modifications, git commits were bloated with massive tauri build binaries (`src-tauri/target/`, `src-tauri/*.exe`) exceeding GitHub's 100MB file limit.
+- **Solution**:
+  1. Updated [`Footer.jsx`](file:///c:/Users/Tanvir%20Alam/Downloads/New%20folder%20upscaled/src/components/Footer.jsx) to conditionally render as a clean, compact single-row footer on all non-landing routes. Added session checking to dynamically change the home page CTA button to "Go to Workspace" when the user is logged in.
+  2. Patched [`ToolPageLayout.jsx`](file:///c:/Users/Tanvir%20Alam/Downloads/New%20folder%20upscaled/src/components/ToolPageLayout.jsx) to correctly parse and enforce the explicit `minTier` parameter, safely gating unpaid users with the premium subscription card.
+  3. Configures git exclusions in [`.gitignore`](file:///c:/Users/Tanvir%20Alam/Downloads/New%20folder%20upscaled/.gitignore) to ignore all target compiled binaries, Tauri wix-bin, and PyInstaller executable packages. This reduced commit sizes from 3,374 files down to 327 files, allowing quick push success.
+
+### B. Localhost Dev Server Resource Optimization (TSK-233)
 - **Problem**: When running `npm run dev` or starting Vite on localhost, the Node.js process would spike CPU usage (18%+) and consume 650MB+ of memory. This was caused by Node's file system watcher recursively scanning the entire root directory, including the massive Python virtual environment (`.venv`), binary models (`public/models`), and dependency trees (`node_modules`), tracking thousands of files.
 - **Solution**:
   1. Configured custom file watch exclusions in [`vite.config.js`](file:///c:/Users/Tanvir%20Alam/Downloads/New%20folder%20upscaled/vite.config.js) under `server.watch.ignored`.
