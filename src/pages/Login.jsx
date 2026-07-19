@@ -3,6 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SEOHead from '../components/SEOHead';
 
+import { BACKEND_URL } from '../utils/api';
+
+
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -10,8 +13,6 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-
-  const BACKEND_URL = 'http://localhost:8000';
 
   const handleLogin = async (e) => {
     e.preventDefault();

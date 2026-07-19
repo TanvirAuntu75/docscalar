@@ -43,3 +43,14 @@ backend/uploads/
 backend/output/
 backend/test_output/
 venv/
+.venv/
+backend/models/
+public/models/
+*.zip
+docforge-studio/
+build/
+src-tauri/target/
+src-tauri/binaries/
+src-tauri/wix-bin/
+src-tauri/*.exe
+src-tauri/docforge-backend-*

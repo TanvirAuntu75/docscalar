@@ -27,6 +27,7 @@ import re
 import gc
 import unicodedata
 import logging
+import threading
 
 logger = logging.getLogger(__name__)
 
@@ -86,6 +87,46 @@ TEXT_TABLE_SETTINGS = {
 }
 
 
+@dataclass
+class PDFToExcelConfig:
+    """Configuration options for the PDF-to-Excel engine."""
+    enable_layout_detection: bool = True
+    device: str = "cpu"
+
+
+# Lazy loading cache for PaddleOCR LayoutDetection model
+_layout_detector = None
+_layout_detector_lock = threading.Lock()
+
+def get_layout_detector(device: str = "cpu"):
+    """Lazily load the LayoutDetection model in a thread-safe manner using ONNX Runtime."""
+    global _layout_detector
+    if _layout_detector is None:
+        with _layout_detector_lock:
+            if _layout_detector is None:
+                from paddleocr import LayoutDetection
+                logger.info("Initializing PaddleOCR LayoutDetection model on %s...", device)
+                # engine='onnxruntime' is used for fast CPU execution and stability
+                _layout_detector = LayoutDetection(device=device, engine='onnxruntime')
+    return _layout_detector
+
+
+# Lazy loading cache for PaddleOCR TableStructureRecognition model
+_table_detector = None
+_table_detector_lock = threading.Lock()
+
+def get_table_detector(device: str = "cpu"):
+    """Lazily load the TableStructureRecognition model in a thread-safe manner using ONNX Runtime."""
+    global _table_detector
+    if _table_detector is None:
+        with _table_detector_lock:
+            if _table_detector is None:
+                from paddleocr import TableStructureRecognition
+                logger.info("Initializing PaddleOCR TableStructureRecognition model on %s...", device)
+                _table_detector = TableStructureRecognition(device=device, engine='onnxruntime')
+    return _table_detector
+
+
 # ============================================================================
 # Data Structures
 # ============================================================================
@@ -129,6 +170,7 @@ class TableGroup:
     col_widths: list = field(default_factory=list)   # PDF-point widths per column
     source_pages: list = field(default_factory=list)
     col_count: int = 0
+    merges: list = field(default_factory=list)       # list[tuple[int, int, int, int]]
 
 
 @dataclass
@@ -188,7 +230,323 @@ class PageScanner:
                      char["text"] = '★'
 
     @staticmethod
-    def scan_page(page) -> PageScan:
+    def _fix_rotated_text(chars: list):
+        """Detect vertically oriented text that pdfplumber extracts backwards, and reverse it."""
+        rotated_groups = []
+        current_group = []
+        
+        for c in chars:
+            m = c.get("matrix")
+            is_rot = m and len(m) >= 4 and m[1] > 0.01 and m[2] < -0.01
+            if is_rot:
+                if current_group:
+                    last_c = current_group[-1]
+                    if abs(c["x0"] - last_c["x0"]) < 5.0 and abs(c["top"] - last_c["bottom"]) < 15.0:
+                        current_group.append(c)
+                    else:
+                        rotated_groups.append(current_group)
+                        current_group = [c]
+                else:
+                    current_group = [c]
+            else:
+                if current_group:
+                    rotated_groups.append(current_group)
+                    current_group = []
+        if current_group:
+            rotated_groups.append(current_group)
+            
+        for gp in rotated_groups:
+            if len(gp) > 1:
+                gp_sorted = sorted(gp, key=lambda x: x["top"])
+                original_texts = [c["text"] for c in gp_sorted]
+                reversed_texts = list(reversed(original_texts))
+                for c, rev_t in zip(gp_sorted, reversed_texts):
+                    c["text"] = rev_t
+
+    @staticmethod
+    def _extract_tables_via_layout(page, pdf_path: str, config: PDFToExcelConfig) -> list | None:
+        """
+        Segment the page into individual tables using PaddleOCR's LayoutDetection model,
+        then run table extraction on each cropped area.
+        """
+        import fitz
+        import cv2
+        import numpy as np
+        import tempfile
+        import os
+
+        temp_img_path = None
+        try:
+            # Render the specific PDF page to a high-resolution image using fitz (PyMuPDF)
+            doc = fitz.open(pdf_path)
+            if page.page_number - 1 >= len(doc):
+                logger.warning("Page number %d out of bounds for PDF %s", page.page_number, pdf_path)
+                return None
+            fitz_page = doc.load_page(page.page_number - 1)
+            pix = fitz_page.get_pixmap(dpi=150)
+            
+            # Convert fitz pixmap to numpy array
+            img_data = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.h, pix.w, pix.n)
+            if pix.n == 4:
+                img = cv2.cvtColor(img_data, cv2.COLOR_RGBA2BGR)
+            elif pix.n == 3:
+                img = cv2.cvtColor(img_data, cv2.COLOR_RGB2BGR)
+            else:
+                img = cv2.cvtColor(img_data, cv2.COLOR_GRAY2BGR)
+            
+            doc.close()
+
+            # Write to a temporary file for prediction
+            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
+                temp_img_path = temp_file.name
+            
+            cv2.imwrite(temp_img_path, img)
+
+            # Predict layout
+            detector = get_layout_detector(config.device)
+            res = detector.predict(temp_img_path)
+            
+            if not res or 'boxes' not in res[0]:
+                logger.info("No layout boxes detected on page %d", page.page_number)
+                return None
+                
+            boxes = res[0]['boxes']
+            table_boxes = [box for box in boxes if box.get('label') == 'table']
+            
+            if not table_boxes:
+                logger.info("No table layout boxes detected on page %d", page.page_number)
+                return None
+                
+            logger.info("Detected %d tables on page %d via layout detection", len(table_boxes), page.page_number)
+            
+            # Sort table boxes vertically (by top coordinate) to preserve reading/rendering order
+            table_boxes = sorted(table_boxes, key=lambda b: float(b['coordinate'][1]))
+            
+            pdf_w = float(page.width)
+            pdf_h = float(page.height)
+            img_h, img_w = img.shape[:2]
+            
+            scale_x = pdf_w / float(img_w)
+            scale_y = pdf_h / float(img_h)
+            
+            all_tables = []
+            for i, box in enumerate(table_boxes):
+                coord = box['coordinate']
+                # Scale with 5pt padding to avoid cutting borders/cells, clamped to page boundaries
+                x0 = max(0.0, float(coord[0]) * scale_x - 5.0)
+                top = max(0.0, float(coord[1]) * scale_y - 5.0)
+                x1 = min(pdf_w, float(coord[2]) * scale_x + 5.0)
+                bottom = min(pdf_h, float(coord[3]) * scale_y + 5.0)
+                
+                logger.debug("Table %d bbox on page %d: (%.2f, %.2f, %.2f, %.2f)", 
+                             i + 1, page.page_number, x0, top, x1, bottom)
+                
+                structure_success = False
+                try:
+                    tx0 = max(0, int(coord[0]) - 5)
+                    ty0 = max(0, int(coord[1]) - 5)
+                    tx1 = min(img_w, int(coord[2]) + 5)
+                    ty1 = min(img_h, int(coord[3]) + 5)
+                    
+                    if tx1 > tx0 and ty1 > ty0:
+                        cropped_img = img[ty0:ty1, tx0:tx1]
+                        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_table_file:
+                            table_img_path = temp_table_file.name
+                        try:
+                            cv2.imwrite(table_img_path, cropped_img)
+                            
+                            table_rec = get_table_detector(config.device)
+                            res_table = table_rec.predict(table_img_path)
+                            
+                            if res_table and 'structure' in res_table[0] and 'bbox' in res_table[0]:
+                                r = res_table[0]
+                                structure_tokens = r['structure']
+                                bboxes = r['bbox']
+                                
+                                grid = {}
+                                occupied = set()
+                                curr_row = -1
+                                curr_col = 0
+                                bbox_idx = 0
+                                
+                                token_idx = 0
+                                while token_idx < len(structure_tokens):
+                                    t = structure_tokens[token_idx]
+                                    if t == '<tr>':
+                                        curr_row += 1
+                                        curr_col = 0
+                                        token_idx += 1
+                                    elif t == '</tr>':
+                                        token_idx += 1
+                                    elif t == '<td></td>':
+                                        rowspan = 1
+                                        colspan = 1
+                                        token_idx += 1
+                                        
+                                        while (curr_row, curr_col) in occupied:
+                                            curr_col += 1
+                                            
+                                        cell_bbox = None
+                                        if bbox_idx < len(bboxes):
+                                            raw_b = bboxes[bbox_idx]
+                                            xs = [raw_b[0], raw_b[2], raw_b[4], raw_b[6]]
+                                            ys = [raw_b[1], raw_b[3], raw_b[5], raw_b[7]]
+                                            cell_bbox = (min(xs), min(ys), max(xs), max(ys))
+                                            bbox_idx += 1
+                                            
+                                        grid[(curr_row, curr_col)] = {
+                                            'bbox': cell_bbox,
+                                            'rowspan': rowspan,
+                                            'colspan': colspan
+                                        }
+                                        occupied.add((curr_row, curr_col))
+                                        curr_col += 1
+                                    elif t.startswith('<td'):
+                                        rowspan = 1
+                                        colspan = 1
+                                        attr_tokens = []
+                                        token_idx += 1
+                                        
+                                        while token_idx < len(structure_tokens) and structure_tokens[token_idx] != '>':
+                                            attr_tokens.append(structure_tokens[token_idx])
+                                            token_idx += 1
+                                            
+                                        if token_idx < len(structure_tokens) and structure_tokens[token_idx] == '>':
+                                            token_idx += 1
+                                            
+                                        if token_idx < len(structure_tokens) and structure_tokens[token_idx] == '</td>':
+                                            token_idx += 1
+                                            
+                                        attr_str = "".join(attr_tokens)
+                                        r_match = re.search(r'rowspan="(\d+)"', attr_str)
+                                        if r_match:
+                                            rowspan = int(r_match.group(1))
+                                        c_match = re.search(r'colspan="(\d+)"', attr_str)
+                                        if c_match:
+                                            colspan = int(c_match.group(1))
+                                            
+                                        while (curr_row, curr_col) in occupied:
+                                            curr_col += 1
+                                            
+                                        cell_bbox = None
+                                        if bbox_idx < len(bboxes):
+                                            raw_b = bboxes[bbox_idx]
+                                            xs = [raw_b[0], raw_b[2], raw_b[4], raw_b[6]]
+                                            ys = [raw_b[1], raw_b[3], raw_b[5], raw_b[7]]
+                                            cell_bbox = (min(xs), min(ys), max(xs), max(ys))
+                                            bbox_idx += 1
+                                            
+                                        grid[(curr_row, curr_col)] = {
+                                            'bbox': cell_bbox,
+                                            'rowspan': rowspan,
+                                            'colspan': colspan
+                                        }
+                                        
+                                        for dr in range(rowspan):
+                                            for dc in range(colspan):
+                                                occupied.add((curr_row + dr, curr_col + dc))
+                                        curr_col += colspan
+                                    else:
+                                        token_idx += 1
+                                
+                                if occupied:
+                                    row_count = max(r for r, c in occupied) + 1
+                                    col_count = max(c for r, c in occupied) + 1
+                                    
+                                    pdf_tx0 = tx0 * scale_x
+                                    pdf_ty0 = ty0 * scale_y
+                                    page_words = page.extract_words()
+                                    
+                                    rows_data = []
+                                    merges = []
+                                    
+                                    for r in range(row_count):
+                                        row_cells = []
+                                        for c in range(col_count):
+                                            cell = grid.get((r, c))
+                                            if cell:
+                                                cb = cell['bbox']
+                                                cell_text = ""
+                                                if cb:
+                                                    cx0_abs = pdf_tx0 + cb[0] * scale_x - 1.5
+                                                    cy0_abs = pdf_ty0 + cb[1] * scale_y
+                                                    cx1_abs = pdf_tx0 + cb[2] * scale_x + 1.5
+                                                    cy1_abs = pdf_ty0 + cb[3] * scale_y
+                                                    
+                                                    cx0_abs = max(0.0, min(cx0_abs, pdf_w))
+                                                    cy0_abs = max(0.0, min(cy0_abs, pdf_h))
+                                                    cx1_abs = max(0.0, min(cx1_abs, pdf_w))
+                                                    cy1_abs = max(0.0, min(cy1_abs, pdf_h))
+                                                    
+                                                    if cx1_abs > cx0_abs and cy1_abs > cy0_abs:
+                                                        cell_words = [
+                                                            w for w in page_words
+                                                            if cy0_abs <= (w['top'] + w['bottom']) / 2.0 <= cy1_abs
+                                                            and cx0_abs <= (w['x0'] + w['x1']) / 2.0 <= cx1_abs
+                                                        ]
+                                                        cell_words = sorted(cell_words, key=lambda w: w['x0'])
+                                                        cell_text = " ".join(w['text'] for w in cell_words).strip()
+                                                
+                                                row_cells.append(cell_text)
+                                                if cell['rowspan'] > 1 or cell['colspan'] > 1:
+                                                    merges.append((r, c, r + cell['rowspan'] - 1, c + cell['colspan'] - 1))
+                                            else:
+                                                row_cells.append(None)
+                                        rows_data.append(row_cells)
+                                    
+                                    col_widths = [0.0] * col_count
+                                    for c in range(col_count):
+                                        widths_c = []
+                                        for r in range(row_count):
+                                            cell = grid.get((r, c))
+                                            if cell and cell['colspan'] == 1 and cell['bbox']:
+                                                cb = cell['bbox']
+                                                w_pt = (cb[2] - cb[0]) * scale_x
+                                                widths_c.append(w_pt)
+                                        if widths_c:
+                                            col_widths[c] = sum(widths_c) / len(widths_c)
+                                        else:
+                                            col_widths[c] = 72.0
+                                            
+                                    rows_data = PageScanner._repair_split_headers(rows_data)
+                                    rows_data = PageScanner._fix_header_rowspan(rows_data)
+                                    
+                                    all_tables.append({
+                                        "bbox": (x0, top, x1, bottom),
+                                        "rows": rows_data,
+                                        "col_count": col_count,
+                                        "col_widths": col_widths,
+                                        "extracted_title": None,
+                                        "merges": merges
+                                    })
+                                    structure_success = True
+                                    logger.info("Successfully extracted table %d on page %d using TableStructureRecognition", i + 1, page.page_number)
+                        finally:
+                            if os.path.exists(table_img_path):
+                                os.unlink(table_img_path)
+                except Exception as ex:
+                    logger.exception("Failed TableStructureRecognition for table %d on page %d, falling back to heuristic", i + 1, page.page_number)
+                
+                if not structure_success:
+                    cropped_page = page.crop((x0, top, x1, bottom))
+                    tables_data = PageScanner._extract_tables_with_fallback(cropped_page)
+                    if tables_data:
+                        all_tables.extend(tables_data)
+            
+            return all_tables if all_tables else None
+
+        except Exception as e:
+            logger.exception("Error in layout-based table extraction on page %d", page.page_number)
+            return None
+        finally:
+            if temp_img_path and os.path.exists(temp_img_path):
+                try:
+                    os.unlink(temp_img_path)
+                except Exception as e:
+                    logger.warning("Could not delete temporary image file %s: %s", temp_img_path, str(e))
+
+    @staticmethod
+    def scan_page(page, pdf_path: str | None = None, config: PDFToExcelConfig | None = None) -> PageScan:
         """Harvest every element from a single page without any analysis."""
         page_num = page.page_number  # 1-indexed by pdfplumber
         width = float(page.width)
@@ -203,6 +561,7 @@ class PageScanner:
 
         # Intercept and fix bad glyphs BEFORE pdfplumber word/table extraction uses them
         PageScanner._fix_glyphs(chars)
+        PageScanner._fix_rotated_text(chars)
 
         if is_blank or is_image_only:
             return PageScan(
@@ -219,8 +578,14 @@ class PageScanner:
             extra_attrs=["fontname", "size"],
         )
 
-        # Tables — with fallback strategy chain
-        tables_data = PageScanner._extract_tables_with_fallback(page)
+        # Tables — with layout detection first, fallback to strategy chain
+        tables_data = None
+        if config and config.enable_layout_detection and pdf_path:
+            tables_data = PageScanner._extract_tables_via_layout(page, pdf_path, config)
+            
+        if tables_data is None:
+            # Fallback/default strategy chain
+            tables_data = PageScanner._extract_tables_with_fallback(page)
 
         return PageScan(
             page_num=page_num, width=width, height=height,
@@ -236,7 +601,7 @@ class PageScanner:
 
     @staticmethod
     def _filter_nested_tables(tables: list) -> list:
-        """Remove any table that is fully enclosed within another table's bbox."""
+        """Remove any table that is fully enclosed within another table's bbox, unless parent is a note container."""
         valid_tables = []
         for i, t1 in enumerate(tables):
             is_nested = False
@@ -254,6 +619,10 @@ class PageScanner:
                                 is_nested = True
                                 break
                         else:
+                            # If outer table is just a single-row note container box, preserve inner table
+                            rows_t2 = len(t2.extract() or [])
+                            if rows_t2 <= 1:
+                                continue
                             is_nested = True
                             break
             if not is_nested:
@@ -298,10 +667,12 @@ class PageScanner:
 
                 # Single-col table: try vertical=text, horizontal=lines on crop
                 bbox = t.bbox   # (x0, top, x1, bottom)
-                # Expand vertically to capture header text above first line
+                # Expand vertically to capture header text above first line.
+                # Use the root page to crop from, preventing crop-on-crop boundary errors.
+                root_page = page.parent_page if hasattr(page, "parent_page") else page
                 crop_top = max(0, bbox[1] - 30)
-                crop_bottom = min(page.height, bbox[3] + 5)
-                cropped = page.crop((0, crop_top, page.width, crop_bottom))
+                crop_bottom = min(root_page.height, bbox[3] + 5)
+                cropped = root_page.crop((0, crop_top, root_page.width, crop_bottom))
 
                 # Try lines-based rows, text-based columns
                 t_hyb = cropped.find_tables(table_settings={
@@ -773,6 +1144,7 @@ class StructuralAnalyzer:
                         col_widths=tdata.get("col_widths", []),
                         source_pages=[page.page_num],
                         col_count=tdata["col_count"],
+                        merges=tdata.get("merges", []),
                     )
 
                     # Use the title promoted by _package_tables (title-row pattern)
@@ -843,14 +1215,31 @@ class CrossPageStitcher:
             if CrossPageStitcher._is_continuation(prev, curr):
                 # Determine which rows to append
                 rows_to_add = curr.data_rows
+                header_repeated = False
                 if curr.header_row and CrossPageStitcher._is_repeated_header(
                     prev.header_row, curr.header_row
                 ):
-                    pass  # header is a repeat — only add data rows
+                    header_repeated = True
                 else:
                     # "header" is actually data in a continuation
                     if curr.header_row:
                         rows_to_add = [curr.header_row] + rows_to_add
+
+                # Adjust and merge table merges
+                if curr.merges:
+                    if header_repeated:
+                        # Shift merges that are completely in the data rows (start_row >= len(curr.header_row)).
+                        offset = (len(prev.header_row) + len(prev.data_rows)) - len(curr.header_row)
+                        for m in curr.merges:
+                            start_r, start_c, end_r, end_c = m
+                            if start_r >= len(curr.header_row):
+                                prev.merges.append((start_r + offset, start_c, end_r + offset, end_c))
+                    else:
+                        # Shift all merges in curr
+                        offset = len(prev.header_row) + len(prev.data_rows)
+                        for m in curr.merges:
+                            start_r, start_c, end_r, end_c = m
+                            prev.merges.append((start_r + offset, start_c, end_r + offset, end_c))
 
                 prev.data_rows.extend(rows_to_add)
                 prev.source_pages.extend(curr.source_pages)
@@ -1139,7 +1528,7 @@ class ExcelRenderer:
     # ------------------------------------------------------------------
 
     def render(self, doc: DocumentStructure, output_path: Path):
-        """Render the complete document into multiple Excel worksheets."""
+        """Render the complete document into a single Excel worksheet."""
         wb = openpyxl.Workbook()
 
         # Remove the default sheet created by openpyxl
@@ -1171,43 +1560,67 @@ class ExcelRenderer:
             used_names.add(name)
             return name
 
-        used_sheet_names = set()
+        # Determine a single clean sheet name
+        first_section_title = None
+        for section in doc.sections:
+            if section.tables and section.title:
+                first_section_title = section.title
+                break
+        
+        if not first_section_title and doc.orphan_tables:
+            for tg in doc.orphan_tables:
+                if tg.title:
+                    first_section_title = tg.title
+                    break
+        
+        if not first_section_title:
+            first_section_title = output_path.stem
 
-        # Render each section as its own worksheet
+        sheet_title = clean_sheet_name(first_section_title, set())
+        ws = wb.create_sheet(title=sheet_title)
+        
+        current_row = 1
+
+        # Render all sections onto the single worksheet
         for section in doc.sections:
             if not section.tables:
                 continue
 
-            sheet_title = clean_sheet_name(section.title or f"Section {len(used_sheet_names)+1}", used_sheet_names)
-            ws = wb.create_sheet(title=sheet_title)
+            # If we already wrote some tables/sections, leave a gap
+            if current_row > 1:
+                current_row += 3
 
-            current_row = 1
             written = self._write_section(ws, section, start_row=current_row)
+            current_row += written
             has_content = True
 
-        # Render orphan tables into a separate "Orphans" sheet, or individual sheets
+        # Render orphan tables onto the same worksheet
         if doc.orphan_tables:
-            ws_orphans = wb.create_sheet(title=clean_sheet_name("Orphan Tables", used_sheet_names))
-            current_row = 1
+            if current_row > 1:
+                current_row += 3
             
             for i, tg in enumerate(doc.orphan_tables):
                 label = tg.title or f"Table {i + 1}"
 
                 # Write a simple title for the orphan table
-                title_cell = ws_orphans.cell(row=current_row, column=1, value=label)
+                title_cell = ws.cell(row=current_row, column=1, value=label)
                 title_cell.font = self._font_section
                 current_row += 2
 
-                written = self._write_table(ws_orphans, tg, start_row=current_row, freeze=(i==0))
+                # Freeze panes only if it starts at row 1
+                freeze_pane = (current_row - 2 == 1)
+                written = self._write_table(ws, tg, start_row=current_row, freeze=freeze_pane)
                 current_row += written + 3
             has_content = True
 
         # Absolute fallback if no content
         if not has_content:
-            ws = wb.create_sheet(title="Extracted Data")
-            ws['A1'] = "No tables were detected in this PDF document."
-            ws['A1'].font = self._font_message
-            ws.column_dimensions['A'].width = 50
+            ws_fallback = wb.create_sheet(title="Extracted Data")
+            ws_fallback['A1'] = "No tables were detected in this PDF document."
+            ws_fallback['A1'].font = self._font_message
+            ws_fallback.column_dimensions['A'].width = 50
+            if sheet_title in wb.sheetnames:
+                wb.remove(wb[sheet_title])
 
         # Activate the first sheet
         if wb.sheetnames:
@@ -1330,13 +1743,40 @@ class ExcelRenderer:
 
             row += 1
 
+        # ---- Merge cells ----
+        if hasattr(tg, 'merges') and tg.merges:
+            max_r_idx = len(header) + len(data) - 1
+            max_c_idx = col_count - 1
+            for start_r, start_c, end_r, end_c in tg.merges:
+                # Clamp coordinates to actual written table size
+                s_r = min(start_r, max_r_idx)
+                e_r = min(end_r, max_r_idx)
+                s_c = min(start_c, max_c_idx)
+                e_c = min(end_c, max_c_idx)
+                
+                # Only merge if it spans more than a single cell
+                if e_r > s_r or e_c > s_c:
+                    try:
+                        ws.merge_cells(
+                            start_row=start_row + s_r,
+                            start_column=1 + s_c,
+                            end_row=start_row + e_r,
+                            end_column=1 + e_c
+                        )
+                    except Exception as e:
+                        logger.warning("Failed to merge cells (%d,%d) to (%d,%d): %s", 
+                                       start_row + s_r, 1 + s_c, start_row + e_r, 1 + e_c, e)
+
         # ---- Auto-fit column widths ----
         for ci in range(col_count):
             letter = get_column_letter(ci + 1)
-            ws.column_dimensions[letter].width = max(
+            new_w = max(
                 min(col_widths[ci] * 1.2 + 2, MAX_COL_WIDTH),
                 MIN_COL_WIDTH,
             )
+            current_w = ws.column_dimensions[letter].width
+            if current_w is None or new_w > current_w:
+                ws.column_dimensions[letter].width = new_w
 
         return row - start_row
 
@@ -1347,6 +1787,9 @@ class ExcelRenderer:
 
 class SmartPDFToExcelConverter:
     """Orchestrates the six-phase pipeline."""
+
+    def __init__(self, config: PDFToExcelConfig | None = None):
+        self.config = config or PDFToExcelConfig()
 
     def convert(self, input_path: str) -> ConversionResult:
         try:
@@ -1360,6 +1803,24 @@ class SmartPDFToExcelConverter:
 
             output_path = config.OUTPUT_DIR / f"{input_file.stem}.xlsx"
 
+            # Check if any page is scanned/image-only
+            needs_ocr = False
+            with pdfplumber.open(input_file) as pdf:
+                for page in pdf.pages:
+                    if len(page.chars) == 0 and len(page.images) > 0:
+                        needs_ocr = True
+                        break
+
+            if needs_ocr:
+                logger.info("Scanned/image-only pages detected. Running OCR pre-processing first...")
+                from backend.services.ocr import run_ocr_on_pdf
+                ocr_res = run_ocr_on_pdf(str(input_file))
+                if ocr_res.success:
+                    input_file = Path(ocr_res.output_path)
+                    logger.info("OCR pre-processing successful. Parsing tables from OCR'ed searchable PDF: %s", input_file)
+                else:
+                    logger.warning("OCR pre-processing failed: %s. Continuing with original PDF.", ocr_res.error_message)
+
             with pdfplumber.open(input_file) as pdf:
                 meta = pdf.metadata or {}
                 total = len(pdf.pages)
@@ -1368,7 +1829,7 @@ class SmartPDFToExcelConverter:
                 logger.info("Phase 1/6: Scanning %d pages...", total)
                 scans: list[PageScan] = []
                 for page in pdf.pages:
-                    scans.append(PageScanner.scan_page(page))
+                    scans.append(PageScanner.scan_page(page, pdf_path=str(input_file), config=self.config))
                     page.flush_cache()
                 gc.collect()
 

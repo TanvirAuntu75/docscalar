@@ -5,8 +5,11 @@ from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
 Base = declarative_base()
 
-# Use DATABASE_URL from env if available (e.g. Railway/Supabase), fallback to local SQLite
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./docforge.db")
+from backend.config import DB_DIR
+
+# Use DATABASE_URL from env if available (e.g. Railway/Supabase), fallback to local SQLite in sandbox directory
+default_db_path = f"sqlite:///{DB_DIR / 'docforge.db'}"
+DATABASE_URL = os.getenv("DATABASE_URL", default_db_path)
 
 # SQLite needs separate check for threading in multi-threaded environments
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
@@ -55,6 +58,13 @@ class Subscription(Base):
     expires_at = Column(DateTime, nullable=True)
     
     user = relationship("User", back_populates="subscription")
+
+class ProtectedFile(Base):
+    __tablename__ = "protected_files"
+    
+    file_hash = Column(String(64), primary_key=True, index=True)
+    password = Column(String(255), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 def init_db():
     Base.metadata.create_all(bind=engine)

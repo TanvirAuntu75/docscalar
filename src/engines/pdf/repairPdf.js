@@ -2,7 +2,7 @@ import { PDFDocument } from 'pdf-lib';
 
 /**
  * Re-indexes a corrupted PDF document's cross-reference table (XREF).
- * Re-serializes object streams client-side to output a clean compliant file.
+ * Re-serializes object streams Client Side to output a clean compliant file.
  * @param {File} file - The corrupted PDF file.
  * @param {function} onProgress - Progress callback.
  * @returns {Promise<Blob>} The repaired PDF.

@@ -133,7 +133,8 @@ export default function ScanToPdf() {
   // Render image to canvas to bake the rotation before saving
   const bakeImageRotation = (dataUrl, rotation) => {
     return new Promise((resolve) => {
-      if (rotation === 0) {
+      const autoEnhance = localStorage.getItem('autoEnhanceEnabled') !== 'false';
+      if (rotation === 0 && !autoEnhance) {
         resolve(dataUrl);
         return;
       }
@@ -151,11 +152,16 @@ export default function ScanToPdf() {
           canvas.height = img.height;
         }
 
+        if (autoEnhance) {
+          // High-end document scan filter: boosts contrast and clears paper background shadows
+          ctx.filter = 'contrast(1.25) brightness(1.05) saturate(0.95)';
+        }
+
         ctx.translate(canvas.width / 2, canvas.height / 2);
         ctx.rotate((rotation * Math.PI) / 180);
         ctx.drawImage(img, -img.width / 2, -img.height / 2);
 
-        resolve(canvas.toDataURL('image/jpeg', 0.9));
+        resolve(canvas.toDataURL('image/jpeg', 0.92));
       };
       img.src = dataUrl;
     });
@@ -223,11 +229,10 @@ export default function ScanToPdf() {
     <ToolPageLayout
       toolId="scan-to-pdf"
       title="Scan to PDF"
-      description="Capture documents via webcam/phone camera and compile them into a PDF"
-    >
+      description="Capture documents via webcam/phone camera and compile them into a PDF">
       <SEOHead 
         title="Scan to PDF Online Free — Camera Scanner | DocForge" 
-        description="Capture documents with your device camera or upload photos, rotate slides, and bundle them into a clean A4 PDF file client-side."
+        description="Capture documents with your device camera or upload photos, rotate slides, and bundle them into a clean A4 PDF file Client Side."
       />
       
       

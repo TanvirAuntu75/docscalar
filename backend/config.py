@@ -16,13 +16,28 @@ if sys.platform == "win32":
 
 
 # Base Paths
-BASE_DIR = Path(__file__).resolve().parent
-UPLOAD_DIR = BASE_DIR / "uploads"
-OUTPUT_DIR = BASE_DIR / "output"
+IS_PACKAGED = getattr(sys, 'frozen', False)
+IS_DESKTOP_MODE = os.getenv("DOCFORGE_DESKTOP", "false").lower() == "true"
+
+if IS_PACKAGED or IS_DESKTOP_MODE:
+    # Resolve to AppData/Local/DocForge
+    app_data_dir = Path(os.getenv("LOCALAPPDATA", os.path.expanduser("~"))) / "DocForge"
+    UPLOAD_DIR = app_data_dir / "uploads"
+    OUTPUT_DIR = app_data_dir / "output"
+    DB_DIR = app_data_dir / "database"
+    BIN_DIR = app_data_dir / "bin"
+else:
+    BASE_DIR = Path(__file__).resolve().parent
+    UPLOAD_DIR = BASE_DIR / "uploads"
+    OUTPUT_DIR = BASE_DIR / "output"
+    DB_DIR = BASE_DIR
+    BIN_DIR = BASE_DIR / "bin"
 
 # Create directories if they don't exist
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+DB_DIR.mkdir(parents=True, exist_ok=True)
+BIN_DIR.mkdir(parents=True, exist_ok=True)
 
 # Server Config
 PORT = int(os.getenv("PORT", 8000))
@@ -40,9 +55,17 @@ R2_BUCKET_NAME = os.getenv("R2_BUCKET_NAME", "docforge-shares")
 
 # Anthropic Claude API Key (for SmartConvert AI features)
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+# Google Gemini API Key (for cloud LLM canvas intent planning)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 
 # LibreOffice Path Auto-detection
 def detect_libreoffice_path():
+    # If in packaged/desktop mode, check the local AppData bin folder first
+    if IS_PACKAGED or IS_DESKTOP_MODE:
+        bundled_path = BIN_DIR / "LibreOffice" / "program" / "soffice.exe"
+        if bundled_path.exists():
+            return str(bundled_path)
+
     # Check default Windows locations
     windows_paths = [
         r"C:\Program Files\LibreOffice\program\soffice.exe",

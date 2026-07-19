@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
-import { apiFetch } from '../../utils/api';
+import { apiFetch, uploadFileSecure, BACKEND_URL} from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
@@ -8,8 +8,6 @@ import AdPlaceholder from '../../components/AdPlaceholder';
 import { saveFile } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import { useJobPoller } from '../../hooks/useJobPoller';
-
-const BACKEND_URL = 'http://localhost:8000';
 
 export default function ProtectPdf() {
   const [files, setFiles] = useState([]);
@@ -93,20 +91,8 @@ export default function ProtectPdf() {
         throw new Error('Connection to security server is inactive. This tool requires a live backend.');
       }
 
-      // Step 1: Upload file to FastAPI uploads folder
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      const uploadRes = await apiFetch(`${BACKEND_URL}/api/upload`, {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!uploadRes.ok) {
-        throw new Error('Upload to security server failed.');
-      }
-
-      const uploadData = await uploadRes.json();
+      // Step 1: Upload file (uses chunked upload if large and premium)
+      const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
       if (!uploadData.success) {
         throw new Error(uploadData.detail || 'Upload failed');
       }
@@ -205,13 +191,22 @@ export default function ProtectPdf() {
                 borderRadius: '50%',
                 background: backendActive ? 'var(--color-success)' : 'var(--color-danger)'
               }} />
-              {backendActive ? 'Security Engine Active (AES-256)' : 'Security Engine Offline'}
+              {backendActive ? 'Security Engine Active (AES-256)' : 'Security Engine Client Side'}
             </span>
           </div>
         )}
         </>
       }
-    >
+      files={files}
+      onFileSwitch={(idx) => {
+        setFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      }}>
       <SEOHead 
         title="Protect PDF Online Free — Encrypt PDF with Password | DocForge" 
         description="Secure your PDF document with AES-256 encryption. Set custom passwords and restrict printing, copying, and modifications."

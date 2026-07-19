@@ -7,25 +7,25 @@ import ToolIcon from '../../components/ToolIcon';
 // Predefined planned technical stacks for each roadmap tool
 const TECHNICAL_STACKS = {
   'remove-pages': {
-    library: 'pdf-lib (Client-Side)',
+    library: 'pdf-lib (Client Side)',
     desc: 'Uses HTML5 file slicing and pdf-lib page array deletions. Runs 100% in-browser with zero server uploads.',
     difficulty: 'Low',
     progress: 80,
   },
   'extract-pages': {
-    library: 'pdf-lib (Client-Side)',
-    desc: 'Extracts selective page arrays into a new document stream. Runs 100% client-side.',
+    library: 'pdf-lib (Client Side)',
+    desc: 'Extracts selective page arrays into a new document stream. Runs 100% Client Side.',
     difficulty: 'Low',
     progress: 85,
   },
   'organize-pdf': {
-    library: 'pdf-lib + pdf.js (Client-Side)',
+    library: 'pdf-lib + pdf.js (Client Side)',
     desc: 'Interactive drag-and-drop page reordering workspace using Mozilla pdf.js page rendering and HTML5 canvas layers.',
     difficulty: 'Medium',
     progress: 60,
   },
   'scan-to-pdf': {
-    library: 'WebRTC Camera API + jsPDF (Client-Side)',
+    library: 'WebRTC Camera API + jsPDF (Client Side)',
     desc: 'Accesses local video streams to capture paper documents, applies perspective cropping, and compiles images to PDF.',
     difficulty: 'Medium',
     progress: 40,
@@ -38,7 +38,7 @@ const TECHNICAL_STACKS = {
   },
   'ocr-pdf': {
     library: 'Tesseract.js (Client) / pytesseract (Backend)',
-    desc: 'Recognizes text inside scanned images. Employs local WebAssembly engines for client-side processing.',
+    desc: 'Recognizes text inside scanned images. Employs local WebAssembly engines for Client Side processing.',
     difficulty: 'High',
     progress: 50,
   },
@@ -85,37 +85,37 @@ const TECHNICAL_STACKS = {
     progress: 70,
   },
   'add-page-numbers': {
-    library: 'pdf-lib (Client-Side)',
+    library: 'pdf-lib (Client Side)',
     desc: 'Draws dynamic text overlays onto footer margins with options for font alignment and page offsets.',
     difficulty: 'Medium',
     progress: 55,
   },
   'add-watermark': {
-    library: 'pdf-lib (Client-Side)',
+    library: 'pdf-lib (Client Side)',
     desc: 'Stamps text or image files onto page graphics contexts using blending modes and custom opacity sliders.',
     difficulty: 'Medium',
     progress: 65,
   },
   'crop-pdf': {
-    library: 'pdf-lib (Client-Side)',
+    library: 'pdf-lib (Client Side)',
     desc: 'Re-defines mediaBox and cropBox properties of PDF pages to crop canvas margins locally.',
     difficulty: 'Medium',
     progress: 45,
   },
   'edit-pdf': {
-    library: 'Canvas Annotator + pdf-lib (Client-Side)',
+    library: 'Canvas Annotator + pdf-lib (Client Side)',
     desc: 'Draws vector overlays, text callouts, shapes, and comments on top of PDF document pages.',
     difficulty: 'High',
     progress: 20,
   },
   'pdf-forms': {
-    library: 'pdf-lib interactive forms (Client-Side)',
+    library: 'pdf-lib interactive forms (Client Side)',
     desc: 'Detects text inputs, check boxes, radio options, and lets users fill or flatten form fields locally.',
     difficulty: 'Medium',
     progress: 50,
   },
   'sign-pdf': {
-    library: 'HTML Canvas Signature + pdf-lib (Client-Side)',
+    library: 'HTML Canvas Signature + pdf-lib (Client Side)',
     desc: 'Captures hand-drawn signatures, exports them as transparent images, and stamps them on pages.',
     difficulty: 'Medium',
     progress: 35,
@@ -127,7 +127,7 @@ const TECHNICAL_STACKS = {
     progress: 25,
   },
   'compare-pdf': {
-    library: 'pdfjs-dist + PixelMatch (Client-Side)',
+    library: 'pdfjs-dist + PixelMatch (Client Side)',
     desc: 'Renders revisions as side-by-side images and calculates pixel diffs to highlight modifications.',
     difficulty: 'High',
     progress: 15,
@@ -314,7 +314,7 @@ export default function ComingSoon({ toolId: propToolId }) {
                   />
                   <button
                     type="submit"
-                    className="w-full font-button text-xs bg-primary-container text-white py-2.5 rounded-lg hover:bg-[#FDBA74] active:bg-[#C2410C] transition-colors shadow-sm"
+                    className="w-full font-button text-xs bg-primary-container text-on-primary-container py-2.5 rounded-lg hover:opacity-90 active:scale-95 transition-all shadow-sm"
                   >
                     Subscribe to Live Release
                   </button>
@@ -326,7 +326,7 @@ export default function ComingSoon({ toolId: propToolId }) {
             <div className="p-4 bg-surface-container-low border border-outline-variant rounded-xl flex items-center gap-3 select-none">
               <span className="material-symbols-outlined text-primary text-[20px] fill">shield</span>
               <span className="font-body-sm text-[11px] text-on-surface-variant leading-tight">
-                Our strict **privacy-first** guidelines apply to all roadmap items. Files never leak.
+                Our strict **Privacy First** guidelines apply to all roadmap items. Files never leak.
               </span>
             </div>
 

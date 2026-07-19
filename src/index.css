@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital,wght@0,400;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital,wght@0,400;1,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -45,61 +45,74 @@
     transform: translateY(-4px);
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    DocForge Design System V3 — Lumina Doc Dark Theme
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── CSS Custom Properties (Design Tokens) ────────────────────────────────── */
 :root {
-  /* Modern HSL tailored colors for Warm Precision (Light Theme) */
-  --color-primary: #9d4300;
-  --color-primary-rgb: 157, 67, 0;
-  --color-primary-light: #f97316;
-  --color-primary-dark: #582200;
-  --color-accent: #f97316;
-  --color-accent-light: #ffb690;
-  --color-success: #006e2d;
-  --color-success-light: #2cb055;
-  --color-warning: #f59e0b;
-  --color-danger: #ba1a1a;
+  /* Modern HSL tailored colors for Premium Slate (Light Theme) */
+  --color-primary: #4f46e5;         /* Premium Indigo */
+  --color-primary-rgb: 79, 70, 229;
+  --color-primary-light: #6366f1;
+  --color-primary-dark: #3730a3;
+  --color-primary-container: #4f46e5;
+  --color-on-primary-container: #ffffff;
+  --color-accent: #10b981;          /* Emerald Green */
+  --color-accent-rgb: 16, 185, 129;
+  --color-accent-light: #34d399;
+  --color-success: #059669;
+  --color-success-light: #34d399;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
 
-  /* Warm Precision Cream/Ink Backgrounds & Cards */
-  --bg-primary: #FAF8F4;
-  --bg-primary-rgb: 250, 248, 244;
-  --bg-secondary: #fdf9f2;
-  --bg-secondary-rgb: 253, 249, 242;
-  --bg-tertiary: #f1ede6;
-  --bg-card: #f7f3ec;
-  --bg-card-hover: #ece8e1;
-  --bg-glass: rgba(250, 248, 244, 0.85);
-  --bg-glass-strong: rgba(250, 248, 244, 0.95);
-  --bg-input: #ffffff;
+  /* Crisp Slate Backgrounds & Cards */
+  --bg-primary: #f8fafc;            /* slate-50 */
+  --bg-primary-rgb: 248, 250, 252;
+  --bg-secondary: #ffffff;          /* white */
+  --bg-secondary-rgb: 255, 255, 255;
+  --bg-tertiary: #f1f5f9;           /* slate-100 */
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-glass-strong: rgba(255, 255, 255, 0.95);
+  --bg-input: #f8fafc;
 
-  /* Premium Editorial Typography */
-  --text-primary: #1c1c18;
-  --text-secondary: #584237;
-  --text-tertiary: #8c7164;
+  /* Premium Typography */
+  --text-primary: #0f172a;          /* slate-900 */
+  --text-secondary: #475569;        /* slate-600 */
+  --text-tertiary: #64748b;         /* slate-500 */
   --text-inverse: #ffffff;
 
-  /* Organic/Tactile Borders */
-  --border-subtle: rgba(140, 113, 100, 0.15);
-  --border-medium: #e0c0b1;
-  --border-strong: #8c7164;
+  /* Professional/Clean Borders */
+  --border-subtle: rgba(15, 23, 42, 0.06);
+  --border-medium: #cbd5e1;         /* slate-300 */
+  --border-strong: #94a3b8;         /* slate-400 */
 
-  /* Deep Glowing Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 8px 24px rgba(140, 113, 100, 0.1);
-  --shadow-lg: 0 16px 48px rgba(140, 113, 100, 0.15);
-  --shadow-glow-primary: 0 0 25px rgba(249, 115, 22, 0.06);
-  --shadow-glow-accent: 0 0 25px rgba(249, 115, 22, 0.06);
-  --shadow-glow-success: 0 0 25px rgba(44, 176, 85, 0.06);
+  /* Drop Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  --shadow-glow-primary: 0 0 25px rgba(79, 70, 229, 0.06);
+  --shadow-glow-accent: 0 0 25px rgba(16, 185, 129, 0.06);
+  --shadow-glow-success: 0 0 25px rgba(5, 150, 105, 0.06);
 
   /* Radiant Gradients */
-  --gradient-primary: linear-gradient(135deg, #9d4300 0%, #f97316 100%);
-  --gradient-primary-glow: linear-gradient(135deg, rgba(157, 67, 0, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%);
-  --gradient-card: linear-gradient(135deg, #f7f3ec 0%, #f1ede6 100%);
-  --gradient-mesh: radial-gradient(at 10% 20%, rgba(249, 115, 22, 0.02) 0%, transparent 60%),
-                   radial-gradient(at 90% 80%, rgba(157, 67, 0, 0.01) 0%, transparent 60%);
+  --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #10b981 100%);
+  --gradient-primary-glow: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%);
+  --gradient-card: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --gradient-mesh: radial-gradient(at 10% 20%, rgba(79, 70, 229, 0.02) 0%, transparent 60%),
+                   radial-gradient(at 90% 80%, rgba(16, 185, 129, 0.01) 0%, transparent 60%);
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -120,8 +133,8 @@
 
   /* Fonts */
   --font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-family-headings: 'Inter', system-ui, sans-serif;
-  --font-family-display: 'Instrument Serif', serif;
+  --font-family-headings: 'Space Grotesk', system-ui, sans-serif;
+  --font-family-display: 'Space Grotesk', sans-serif;
 
   /* Transitions */
   --transition-fast: 0.12s cubic-bezier(0.4, 0, 0.2, 1);
@@ -129,71 +142,77 @@
   --transition-slow: 0.38s cubic-bezier(0.16, 1, 0.3, 1);
 
   --max-width: 1240px;
-  --header-height: 76px;
+  --header-height: 88px;
 
   /* Helper styling variables */
-  --bg-grid-color: rgba(0, 0, 0, 0.02);
-  --bg-pattern-dot: rgba(0, 0, 0, 0.02);
-  --logo-text-gradient: linear-gradient(135deg, #1c1c18 0%, #584237 100%);
+  --bg-grid-color: rgba(15, 23, 42, 0.02);
+  --bg-pattern-dot: rgba(15, 23, 42, 0.02);
+  --logo-text-gradient: linear-gradient(135deg, #0f172a 0%, #475569 100%);
 }
 
 .dark {
-  /* Modern HSL tailored colors for Lumina Doc (Dark Theme) */
-  --color-primary: #42f761;
-  --color-primary-rgb: 66, 247, 97;
-  --color-primary-light: #6fff7b;
-  --color-primary-dark: #00390c;
-  --color-accent: #ff7f1c;
-  --color-accent-light: #ffb68b;
-  --color-success: #00d948;
-  --color-success-light: #25e452;
+  /* Modern HSL tailored colors for Lumina Obsidian (Dark Theme) */
+  --color-primary: #10b981;         /* Vibrant Emerald */
+  --color-primary-rgb: 16, 185, 129;
+  --color-primary-light: #34d399;
+  --color-primary-dark: #064e3b;
+  --color-primary-container: #10b981;
+  --color-on-primary-container: #0b0f19;
+  --color-accent: #06b6d4;          /* Vibrant Cyan */
+  --color-accent-rgb: 6, 182, 212;
+  --color-accent-light: #67e8f9;
+  --color-success: #10b981;
+  --color-success-light: #34d399;
   --color-warning: #f59e0b;
-  --color-danger: #ba1a1a;
+  --color-danger: #ef4444;
 
-  /* Lumina Doc Deep Black/Grey Backgrounds & Cards */
-  --bg-primary: #131313;
-  --bg-primary-rgb: 19, 19, 19;
-  --bg-secondary: #1c1b1b;
-  --bg-secondary-rgb: 28, 27, 27;
-  --bg-tertiary: #0e0e0e;
-  --bg-card: #201f1f;
-  --bg-card-hover: #2a2a2a;
-  --bg-glass: rgba(19, 19, 19, 0.85);
-  --bg-glass-strong: rgba(19, 19, 19, 0.95);
-  --bg-input: #1c1b1b;
+  /* Obsidian Deep Black/Grey Backgrounds & Cards */
+  --bg-primary: #0b0f19;            /* Deep Obsidian */
+  --bg-primary-rgb: 11, 15, 25;
+  --bg-secondary: #111827;          /* Slate 900 */
+  --bg-secondary-rgb: 17, 24, 39;
+  --bg-tertiary: #070a13;
+  --bg-card: #1f2937;               /* Slate 800 */
+  --bg-card-hover: #374151;         /* Slate 700 */
+  --bg-glass: rgba(11, 15, 25, 0.8);
+  --bg-glass-strong: rgba(11, 15, 25, 0.95);
+  --bg-input: #111827;
 
   /* Premium High-Contrast Typography */
-  --text-primary: #e5e2e1;
-  --text-secondary: #bbcbb5;
-  --text-tertiary: #859581;
-  --text-inverse: #131313;
+  --text-primary: #f3f4f6;          /* Gray 100 */
+  --text-secondary: #9ca3af;        /* Gray 400 */
+  --text-tertiary: #6b7280;         /* Gray 500 */
+  --text-inverse: #0b0f19;
 
   /* Organic/Tactile Borders */
   --border-subtle: rgba(255, 255, 255, 0.05);
-  --border-medium: #3c4b3a;
-  --border-strong: #859581;
+  --border-medium: #374151;
+  --border-strong: #4b5563;
 
   /* Deep Glowing Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
-  --shadow-glow-primary: 0 0 25px rgba(66, 247, 97, 0.08);
-  --shadow-glow-accent: 0 0 25px rgba(255, 127, 28, 0.08);
-  --shadow-glow-success: 0 0 25px rgba(0, 217, 72, 0.08);
+  --shadow-glow-primary: 0 0 25px rgba(16, 185, 129, 0.08);
+  --shadow-glow-accent: 0 0 25px rgba(6, 182, 212, 0.08);
+  --shadow-glow-success: 0 0 25px rgba(16, 185, 129, 0.08);
 
   /* Radiant Gradients */
-  --gradient-primary: linear-gradient(135deg, #00d948 0%, #ff7f1c 100%);
-  --gradient-primary-glow: linear-gradient(135deg, rgba(66, 247, 97, 0.15) 0%, rgba(255, 127, 28, 0.15) 100%);
-  --gradient-card: linear-gradient(135deg, #201f1f 0%, #1c1b1b 100%);
-  --gradient-mesh: radial-gradient(at 10% 20%, rgba(66, 247, 97, 0.02) 0%, transparent 60%),
-                   radial-gradient(at 90% 80%, rgba(255, 127, 28, 0.01) 0%, transparent 60%);
+  --gradient-primary: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  --gradient-primary-glow: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%);
+  --gradient-card: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  --gradient-mesh: radial-gradient(at 10% 20%, rgba(16, 185, 129, 0.03) 0%, transparent 60%),
+                   radial-gradient(at 90% 80%, rgba(6, 182, 212, 0.02) 0%, transparent 60%);
 
   /* Fonts */
-  --font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
-  --font-family-headings: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-family-headings: 'Space Grotesk', system-ui, sans-serif;
 
   --max-width: 1240px;
   --header-height: 76px;
+  --bg-grid-color: rgba(255, 255, 255, 0.04);
+  --bg-pattern-dot: rgba(255, 255, 255, 0.04);
+  --logo-text-gradient: linear-gradient(135deg, #ffffff 0%, #9ca3af 100%);
 }
 
 /* ── Reset & Base ─────────────────────────────────────────────────────────── */
@@ -219,7 +238,7 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;
   position: relative;
 }
 
@@ -275,10 +294,11 @@ input, select, textarea {
   filter: blur(100px);
 }
 
-/* ── Header ───────────────────────────────────────────────────────────────── */
 .header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
   height: var(--header-height);
   display: flex;
@@ -583,9 +603,387 @@ input, select, textarea {
 .tool-page {
   max-width: 960px;
   margin: 0 auto;
-  padding: var(--space-3xl) var(--space-xl) var(--space-4xl);
+  padding: var(--space-md) var(--space-xl) var(--space-2xl);
   animation: fadeInUp 0.45s var(--transition-slow);
 }
+
+/* ── Resume Builder: full-viewport-width override ─────────────────────────────
+   The CV builder uses a sticky two-panel layout that needs to fill the screen.
+   Override the default 960px max-width and reduce padding so the grid expands. */
+.tool-page:has(.resume-builder-page) {
+  max-width: 100%;
+  padding: 0 !important;
+}
+
+/* Compact the header and hide trust/subtitle/related on resume builder */
+.tool-page:has(.resume-builder-page) .trust-bar,
+.tool-page:has(.resume-builder-page) .tool-page-subtitle,
+.tool-page:has(.resume-builder-page) .tool-page-header,
+.tool-page:has(.resume-builder-page) .related-tools {
+  display: none !important;
+}
+
+/* Make the two-panel grid stretch to full available width */
+.resume-builder-page {
+  width: 100%;
+}
+
+/* ─── CV BUILDER WIZARD STYLING ─── */
+
+/* Color Picker Swatches */
+.cv-color-swatches {
+  display: flex;
+  justify-content: center;
+  gap: 0.85rem;
+  margin: 1.25rem 0 2rem 0;
+}
+.cv-color-swatch {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+.cv-color-swatch:hover {
+  transform: scale(1.15);
+}
+.cv-color-swatch.active {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px var(--color-primary);
+  transform: scale(1.1);
+}
+.cv-color-swatch.active::after {
+  content: "check";
+  font-family: "Material Symbols Outlined";
+  font-size: 18px;
+  color: #ffffff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Progress Steps Indicator */
+.cv-wizard-steps {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+.cv-step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+.cv-step-line {
+  height: 2px;
+  width: 50px;
+  background: var(--border-medium);
+  transition: all 0.3s ease;
+}
+.cv-step-circle.active {
+  background: var(--gradient-primary);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 0 10px rgba(157, 67, 0, 0.3);
+}
+.cv-step-circle.completed {
+  background: var(--color-success);
+  color: #fff;
+  border-color: transparent;
+}
+.cv-step-line.completed {
+  background: var(--color-success);
+}
+
+/* Template Gallery Grid */
+.cv-template-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+@media (min-width: 600px) {
+  .cv-template-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .cv-template-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Outer card shell — looks like a floating sheet with soft shadow */
+.cv-template-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid rgba(0, 0, 0, 0.12); /* Visible crisp light border */
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+.dark .cv-template-card {
+  border-color: rgba(255, 255, 255, 0.12); /* Crisp dark border */
+}
+.cv-template-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.16);
+  border-color: var(--color-primary);
+}
+
+/* The wrapper goes edge-to-edge without padding */
+.cv-template-preview-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1.4142; /* Pure A4 aspect ratio */
+  overflow: hidden;
+  position: relative;
+  background: #ffffff;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  container-type: inline-size;
+}
+
+/* We do not need any artificial inner backing sheets */
+.cv-template-preview-wrapper::before {
+  display: none;
+}
+
+/* The iframe fits edge-to-edge and scales exactly */
+.cv-template-preview-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 794px !important;
+  max-width: none !important;
+  height: 1123px !important;
+  max-height: none !important;
+  border: none;
+  pointer-events: none;
+  background: #ffffff;
+  transform-origin: top left;
+  transform: scale(calc(100cqw / 794)); /* Exact edge-to-edge scaling */
+  z-index: 1;
+}
+
+/* Card Hover Overlay */
+.cv-template-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 10, 40, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 10;
+}
+.cv-template-card:hover .cv-template-overlay {
+  opacity: 1;
+}
+.cv-template-card-label {
+  background: var(--bg-card);
+  border-top: 1px solid rgba(0, 0, 0, 0.12); /* Crisp visible horizontal divider line */
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 750;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 6;
+  flex-shrink: 0;
+}
+.dark .cv-template-card-label {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Template Card Badges */
+.cv-template-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: rgba(20,20,40,0.85);
+  color: #e2e8f0;
+  border: 1px solid rgba(255,255,255,0.15);
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  z-index: 4;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  backdrop-filter: blur(4px);
+}
+
+/* Big Start Mode Cards */
+.cv-start-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  max-width: 780px;
+  margin: 3rem auto;
+}
+.cv-start-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  border-radius: 16px;
+  padding: 2.25rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.cv-start-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-lg);
+  background: rgba(157, 67, 0, 0.04);
+}
+.cv-start-card .material-symbols-outlined {
+  font-size: 44px;
+  color: var(--color-primary);
+}
+.cv-start-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.cv-start-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Horizontal Wizard Tabs */
+.cv-wizard-tabs {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border-medium);
+  background: var(--bg-secondary);
+  border-radius: 12px 12px 0 0;
+  margin-top: 1rem;
+  scrollbar-width: none;
+}
+.cv-wizard-tabs::-webkit-scrollbar {
+  display: none;
+}
+.cv-wizard-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.85rem 1.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 2.5px solid transparent;
+  transition: all 0.2s ease;
+}
+.cv-wizard-tab:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.02);
+}
+.cv-wizard-tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 700;
+}
+.cv-wizard-tab-number {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-tertiary);
+}
+.cv-wizard-tab.active .cv-wizard-tab-number {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: transparent;
+}
+.cv-wizard-tab.completed .cv-wizard-tab-number {
+  background: var(--color-success);
+  color: #fff;
+  border-color: transparent;
+}
+.cv-wizard-tab.completed .cv-wizard-tab-number::before {
+  content: "✓";
+}
+
+/* Live editor preview — paper floating on canvas like Canva/FlowCV */
+.cv-preview-paper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #0f1117;
+  border-radius: 10px;
+  padding: 24px 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 0;
+  height: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.12) transparent;
+}
+.cv-preview-paper::-webkit-scrollbar {
+  width: 6px;
+}
+.cv-preview-paper::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+}
+/* The white A4 sheet inside the dark canvas */
+.cv-preview-paper iframe {
+  width: 100%;
+  max-width: 700px;
+  aspect-ratio: 1 / 1.4142;
+  border: none;
+  display: block;
+  background: #fff;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.4),
+    0 12px 40px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.06);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
 
 /* Hide redundant trust badges, subtitle, breadcrumbs, and related tools when a file is loaded in the workspace */
 .tool-page:has(.options-panel) .trust-bar,
@@ -643,11 +1041,11 @@ input, select, textarea {
   .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .tool-page-header {
     grid-column: 2;
     grid-row: 1;
-    margin: 0;
-    padding: var(--space-xl) var(--space-xl) var(--space-md);
-    text-align: left;
-    border-bottom: 1px solid var(--border-subtle);
-    background: var(--bg-surface-container);
+    margin: 0 !important;
+    padding: var(--space-2xl) var(--space-xl) var(--space-sm) !important;
+    text-align: left !important;
+    background: var(--bg-surface-container) !important;
+    border-bottom: none !important;
   }
 
   .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .tool-page-header h1 {
@@ -669,9 +1067,13 @@ input, select, textarea {
   .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .options-panel {
     grid-column: 2;
     grid-row: 2;
-    margin: 0;
-    padding: var(--space-xl);
-    background: var(--bg-surface-container);
+    margin: 0 !important;
+    padding: 0 var(--space-xl) var(--space-xl) !important;
+    background: var(--bg-surface-container) !important;
+    border: none !important;
+    border-radius: 0 !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
     height: 100%;
     overflow-y: auto;
   }
@@ -680,11 +1082,11 @@ input, select, textarea {
   .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .action-bar {
     grid-column: 2;
     grid-row: 3;
-    margin: 0;
-    padding: var(--space-xl);
-    background: var(--bg-surface-container);
-    border-top: 1px solid var(--border-subtle);
-    box-shadow: none;
+    margin: 0 !important;
+    padding: var(--space-xl) !important;
+    background: var(--bg-surface-container) !important;
+    box-shadow: none !important;
+    border-top: none !important;
   }
 
   .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .action-bar .btn {
@@ -712,7 +1114,7 @@ input, select, textarea {
 
 .tool-page-header {
   text-align: center;
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-sm);
   position: relative;
 }
 
@@ -732,23 +1134,23 @@ input, select, textarea {
 }
 
 .tool-page-icon {
-  width: 60px;
-  height: 60px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-  margin: 0 auto var(--space-lg);
+  font-size: 22px;
+  margin: 0 auto var(--space-sm);
   box-shadow: var(--shadow-sm);
 }
 
 .tool-page h1 {
   font-family: var(--font-family-headings);
-  font-size: 2.25rem;
+  font-size: 1.85rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-xs);
   color: var(--text-primary);
 }
 
@@ -1238,6 +1640,29 @@ input[type="range"]::-webkit-slider-thumb:hover {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes floatingBarSlideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Tool Picker Overlay: scale in entrance */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -1864,4 +2289,423 @@ body:has(.options-panel):has(.dropzone, .workspace-canvas) {
 body:has(.options-panel):has(.dropzone, .workspace-canvas) footer {
   display: none !important;
 }
+
+/* Hide scrollbars but keep functionality */
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* ==========================================================================
+   STITCH CANVAS PREMIUM CUSTOM STYLES (LIQUID GLASS THEME)
+   ========================================================================== */
+
+.stitch-dot-grid {
+  position: relative;
+  background-image: 
+    radial-gradient(rgba(232, 103, 43, 0.22) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+  background-color: transparent !important;
+}
+
+.dark .stitch-dot-grid {
+  background-image: 
+    radial-gradient(rgba(232, 103, 43, 0.16) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+}
+
+.stitch-dot-grid-glow {
+  background-image: radial-gradient(rgba(232, 103, 43, 0.8) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.dark .stitch-dot-grid-glow {
+  background-image: radial-gradient(rgba(232, 103, 43, 0.85) 1.2px, transparent 1.2px);
+}
+
+.stitch-node {
+  background: var(--bg-glass) !important;
+  backdrop-filter: blur(24px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.2) !important;
+  border: 1px solid var(--border-subtle) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05) !important;
+  transition: border-color 0.3s, box-shadow 0.3s, background 0.3s, transform 0.15s ease-out;
+}
+
+.dark .stitch-node {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+}
+
+.stitch-node:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-color: rgba(var(--color-primary-rgb), 0.3) !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08), 0 0 25px rgba(var(--color-primary-rgb), 0.08) !important;
+}
+
+.dark .stitch-node:hover {
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45), 0 0 25px rgba(var(--color-primary-rgb), 0.12) !important;
+}
+
+.stitch-node.is-dragging {
+  transition: none !important;
+}
+
+.stitch-node-selected {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.2), 0 20px 48px rgba(0, 0, 0, 0.12), 0 0 30px rgba(var(--color-primary-rgb), 0.15) !important;
+}
+
+.dark .stitch-node-selected {
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.25), 0 20px 48px rgba(0, 0, 0, 0.5), 0 0 35px rgba(var(--color-primary-rgb), 0.25) !important;
+}
+
+@keyframes studioCablePulse {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -32;
+  }
+}
+
+.stitch-cable-active {
+  stroke-dasharray: 8, 8;
+  animation: studioCablePulse 1s linear infinite;
+}
+
+/* Glassmorphic overlay widget panels */
+.glass-widget {
+  background: var(--bg-glass) !important;
+  backdrop-filter: blur(24px) saturate(1.3) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.3) !important;
+  border: 1px solid var(--border-subtle) !important;
+  box-shadow: var(--shadow-md) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.glass-widget:hover {
+  border-color: rgba(var(--color-primary-rgb), 0.2) !important;
+  box-shadow: var(--shadow-lg), 0 0 20px rgba(var(--color-primary-rgb), 0.05) !important;
+}
+
+/* Port connections glow */
+.port-dot-active {
+  box-shadow: 0 0 12px var(--color-primary);
+}
+
+/* Sidebar Responsive Layout rules */
+.aside-sidebar {
+  width: 288px;
+  opacity: 1;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-right-width: 1px;
+  transform: translateX(0);
+}
+
+.aside-sidebar.collapsed {
+  width: 0 !important;
+  opacity: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  border-right-width: 0 !important;
+  transform: translateX(-100%) !important;
+}
+
+@media (min-width: 1024px) {
+  .aside-sidebar {
+    box-shadow: none !important;
+  }
+  .aside-sidebar.collapsed {
+    transform: translateX(0) !important;
+  }
+}
+
+/* Canvas Dropdown Menu entrance animation */
+@keyframes menuDropDownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-dropdown {
+  animation: menuDropDownIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top left;
+}
+
+/* Hide scrollbars globally while preserving scroll functionality */
+::-webkit-scrollbar {
+  display: none !important;
+}
+html, body {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Landing Page v2 — Premium Animation System
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Moving Border / Border Beam (rotating conic-gradient div) ─────────────── */
+@keyframes spin-border-div {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ── Infinite Marquee ─────────────────────────────────────────────────────── */
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+.animate-marquee-left {
+  animation: marquee-left var(--marquee-speed, 30s) linear infinite;
+  width: max-content;
+}
+
+.animate-marquee-right {
+  animation: marquee-right var(--marquee-speed, 30s) linear infinite;
+  width: max-content;
+}
+
+/* ── Shimmer Gradient (for ShimmerCard border glow) ────────────────────────── */
+@keyframes shimmer-gradient {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── Pulse Glow ─────────────────────────────────────────────────────────────── */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(66, 247, 97, 0.15); }
+  50%       { box-shadow: 0 0 28px rgba(66, 247, 97, 0.35); }
+}
+
+/* ── Float Up/Down ──────────────────────────────────────────────────────────── */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+/* ── Breathing Orb ──────────────────────────────────────────────────────────── */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.12); }
+}
+
+/* ── SVG Dash Draw ──────────────────────────────────────────────────────────── */
+@keyframes dash-draw {
+  from { stroke-dashoffset: 200; opacity: 0; }
+  to   { stroke-dashoffset: 0;   opacity: 0.7; }
+}
+
+/* ── Particle Rise ──────────────────────────────────────────────────────────── */
+@keyframes particle-rise {
+  0%   { transform: translateY(0px); opacity: 0.2; }
+  50%  { opacity: 0.6; }
+  100% { transform: translateY(-40px); opacity: 0; }
+}
+
+/* ── Pro Card Glow Pulse (visible in both light & dark mode) ─────────────── */
+@keyframes pro-glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1.5px rgba(66,247,97,0.55),
+      0 0 20px rgba(66,247,97,0.15),
+      0 8px 32px rgba(0,0,0,0.18);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px rgba(66,247,97,0.85),
+      0 0 40px rgba(66,247,97,0.35),
+      0 12px 48px rgba(66,247,97,0.12),
+      0 8px 32px rgba(0,0,0,0.18);
+  }
+}
+
+/* ── Hero dot grid — works in both themes ───────────────────────────────── */
+.hero-dot-grid {
+  background-image: radial-gradient(rgba(100,100,100,0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hero-dot-grid {
+    background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+  }
+}
+
+.dark .hero-dot-grid {
+  background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+}
+
+/* highlight.js custom dark theme styling overrides for DocForge code previews */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: transparent !important;
+  color: #abb2bf;
+}
+.hljs-comment,
+.hljs-quote {
+  color: #5c6370;
+  font-style: italic;
+}
+.hljs-doctag,
+.hljs-keyword,
+.hljs-formula {
+  color: #c678dd;
+}
+.hljs-section,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-subst {
+  color: #e06c75;
+}
+.hljs-literal {
+  color: #56b6c2;
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+  color: #98c379;
+}
+.hljs-built_in,
+.hljs-class .hljs-title {
+  color: #e6c07b;
+}
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-id,
+.hljs-selector-attr,
+.hljs-id,
+.hljs-number {
+  color: #d19a66;
+}
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-type,
+.hljs-title {
+  color: #61afef;
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* ── docx-preview Custom CSS Overrides ───────────────────────────────────── */
+/* Remove unstyled grey/black page-break dividers and wrapper background bounds */
+.docx-wrapper {
+  background: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.docx {
+  background: white !important;
+  color: black !important;
+  box-shadow: none !important;
+  margin-bottom: var(--space-lg) !important;
+  border: none !important;
+}
+
+/* Hide or clean page-break elements rendered as dark blocks */
+.docx-preview-wrap section, 
+.docx-wrapper section {
+  margin-bottom: var(--space-md) !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.docx-wrapper header, 
+.docx-wrapper footer {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Theme-aware dropdown option styles */
+.theme-select option {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Ensure browser-native dropdown does not collide with text contrast rules */
+.theme-select {
+  color-scheme: dark;
+}
+.light .theme-select {
+  color-scheme: light;
+}
+
+/* ── Document Viewer Apple Spring Animations ───────────────────────────────── */
+@keyframes appleSpringIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.94) translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.apple-spring-item {
+  animation: appleSpringIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes dropdownFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.dropdown-fade-in {
+  animation: dropdownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Optimize all text smoothing globally for Document Viewer */
+.hljs, 
+.docx-wrapper, 
+.textLayer, 
+pre, 
+table {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+
 

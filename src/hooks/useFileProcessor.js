@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
+let activeSetFiles = null;
+
+export function getActiveSetFiles() {
+  return activeSetFiles;
+}
+
 /**
  * Custom hook to manage file processing state, progress, errors, and results
  * with built-in memory leak protection for Object URLs.
@@ -10,10 +16,23 @@ export default function useFileProcessor() {
   const [files, setFiles] = useState([]);
 
   useEffect(() => {
-    if (location.state && location.state.initialFile) {
-      setFiles([location.state.initialFile]);
-      // Clean up router state so refreshing doesn't duplicate the action
-      window.history.replaceState({}, document.title);
+    activeSetFiles = setFiles;
+    return () => {
+      if (activeSetFiles === setFiles) {
+        activeSetFiles = null;
+      }
+    };
+  }, [setFiles]);
+
+  useEffect(() => {
+    if (location.state) {
+      if (location.state.initialFiles) {
+        setFiles(location.state.initialFiles);
+        window.history.replaceState({}, document.title);
+      } else if (location.state.initialFile) {
+        setFiles([location.state.initialFile]);
+        window.history.replaceState({}, document.title);
+      }
     }
   }, [location]);
 

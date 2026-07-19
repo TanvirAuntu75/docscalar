@@ -57,7 +57,7 @@ export default function NotFound() {
 
         <Link
           to="/"
-          className="font-button text-button bg-primary-container text-white px-8 py-3.5 rounded-lg hover:bg-[#FDBA74] active:bg-[#C2410C] transition-colors shadow-sm inline-flex items-center gap-2"
+          className="font-button text-button bg-primary-container text-on-primary-container px-8 py-3.5 rounded-lg hover:opacity-90 active:scale-95 transition-all shadow-sm inline-flex items-center gap-2"
         >
           <span className="material-symbols-outlined text-[18px]">home</span>
           Back to Home Page

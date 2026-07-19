@@ -31,6 +31,11 @@ export async function convertImageFormat(file, targetFormat = 'png', quality = 0
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
+  const autoEnhance = localStorage.getItem('autoEnhanceEnabled') !== 'false';
+  if (autoEnhance) {
+    ctx.filter = 'contrast(1.25) brightness(1.05) saturate(0.95)';
+  }
+
   ctx.drawImage(bitmap, 0, 0);
 
   const blob = await new Promise((r) => canvas.toBlob(r, mime, quality));

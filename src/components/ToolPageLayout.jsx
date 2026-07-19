@@ -1,23 +1,29 @@
 import { useAuth } from '../context/AuthContext';
-import { getToolById } from '../utils/constants';
+import { getToolById, formatFileSize } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
-import Breadcrumb from './Breadcrumb';
 import TrustBar from './TrustBar';
 import RelatedTools from './RelatedTools';
 import ToolIcon from './ToolIcon';
+import { getActiveSetFiles } from '../hooks/useFileProcessor';
 
 export default function ToolPageLayout({ 
   toolId, 
   title, 
   description,
   headerContent,
+  files = [],
+  onFileSwitch,
+  suppressSwitcher = false,
+  hideHeader = false,
+  hideRelatedTools = false,
+  minTier: propMinTier,
   children 
 }) {
   const { isAuthenticated, userTier } = useAuth();
   const navigate = useNavigate();
   
   const tool = getToolById(toolId);
-  const minTier = tool?.minTier || 'guest';
+  const minTier = propMinTier || tool?.minTier || 'guest';
   
   // A user is authorized if the tool is guest-level,
   // or if they have a free account and the tool is free-level,
@@ -27,19 +33,60 @@ export default function ToolPageLayout({
     (minTier === 'free' && isAuthenticated) || 
     (minTier === 'pro' && isAuthenticated && userTier === 'pro');
 
+  const activeSetFiles = getActiveSetFiles();
+  const handleFileSwitch = suppressSwitcher 
+    ? null 
+    : (onFileSwitch || (activeSetFiles ? (idx) => {
+        activeSetFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      } : null));
+
   return (
     <div className="tool-page w-full animate-in fade-in duration-500">
-      <Breadcrumb toolId={toolId} />
       
-      <div className="tool-page-header group">
-        <div className="tool-page-icon select-none flex items-center justify-center">
-          <ToolIcon id={toolId} size={48} />
+      {!hideHeader && (
+        <div className="tool-page-header group">
+          <div className="tool-page-icon select-none flex items-center justify-center">
+            <ToolIcon id={toolId} size={48} />
+          </div>
+          <h1 className="text-on-background">{title}</h1>
+          <p className="tool-page-subtitle">{description}</p>
+          <TrustBar />
+          {headerContent}
         </div>
-        <h1 className="text-on-background">{title}</h1>
-        <p className="tool-page-subtitle">{description}</p>
-        <TrustBar />
-        {headerContent}
-      </div>
+      )}
+
+      {isAuthorized && files.length > 1 && handleFileSwitch && (
+        <div className="max-w-[1200px] mx-auto mb-6 px-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-surface-container border border-outline-variant rounded-2xl shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-[20px] text-primary">filter_none</span>
+              <span className="text-xs font-bold text-on-background">
+                Working on {files.length} loaded documents. Switch active file to process:
+              </span>
+            </div>
+            <select
+              value={0}
+              onChange={(e) => {
+                const idx = parseInt(e.target.value);
+                if (handleFileSwitch) handleFileSwitch(idx);
+              }}
+              className="w-full sm:w-auto text-xs font-semibold p-2.5 px-3 rounded-xl border border-outline-variant bg-surface text-on-background focus:border-primary focus:outline-none cursor-pointer"
+            >
+              {files.map((f, idx) => (
+                <option key={idx} value={idx}>
+                  {idx === 0 ? '👉 ' : ''}{f.name} ({formatFileSize(f.size)})
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
 
       {isAuthorized ? (
         children
@@ -67,10 +114,10 @@ export default function ToolPageLayout({
                   View Pro Plans
                 </button>
                 <button
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate('/workspace')}
                   className="font-button text-xs bg-surface-container border border-outline-variant hover:bg-surface-container-high text-on-background px-5 py-2.5 rounded-lg transition-colors font-semibold"
                 >
-                  Back to Dashboard
+                  Back to Workspace
                 </button>
               </>
             ) : (
@@ -93,7 +140,7 @@ export default function ToolPageLayout({
         </div>
       )}
 
-      <RelatedTools currentToolId={toolId} />
+      {!hideRelatedTools && <RelatedTools currentToolId={toolId} />}
     </div>
   );
 }

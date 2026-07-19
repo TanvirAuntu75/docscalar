@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
-import { apiFetch } from '../../utils/api';
+import { apiFetch, uploadFileSecure, BACKEND_URL} from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
@@ -9,8 +9,6 @@ import { docxToPdf } from '../../engines/document/docxToPdf';
 import { saveFile } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import { useJobPoller } from '../../hooks/useJobPoller';
-
-const BACKEND_URL = 'http://localhost:8000';
 
 export default function DocxToPdf() {
   const [files, setFiles] = useState([]);
@@ -85,19 +83,7 @@ export default function DocxToPdf() {
     if (backendActive) {
       try {
         // Step 1: Upload file to FastAPI backend
-        const formData = new FormData();
-        formData.append('file', file);
-        
-        const uploadRes = await apiFetch(`${BACKEND_URL}/api/upload`, {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!uploadRes.ok) {
-          throw new Error('Upload to conversion server failed.');
-        }
-
-        const uploadData = await uploadRes.json();
+        const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
         if (!uploadData.success) {
           throw new Error(uploadData.detail || 'Upload failed');
         }
@@ -125,11 +111,11 @@ export default function DocxToPdf() {
       } catch (err) {
         setProcessing(false);
         setError(err.message || 'Server connection error. Falling back to local conversion...');
-        // Fallback to client-side immediately on failure
+        // Fallback to Client Side immediately on failure
         runClientSideFallback(file);
       }
     } else {
-      // Offline client-side conversion fallback
+      // Client Side Client Side conversion fallback
       runClientSideFallback(file);
     }
   };
@@ -218,13 +204,22 @@ export default function DocxToPdf() {
                 borderRadius: '50%',
                 background: backendActive ? 'var(--color-success)' : 'var(--color-warning)'
               }} />
-              {backendActive ? 'LibreOffice Engine Active' : 'Offline Engine Active (formatting may shift)'}
+              {backendActive ? 'LibreOffice Engine Active' : 'Local Engine Active (formatting may shift)'}
             </span>
           </div>
         )}
         </>
       }
-    >
+      files={files}
+      onFileSwitch={(idx) => {
+        setFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      }}>
       <SEOHead 
         title="Convert DOCX to PDF Online Free (100% Local)" 
         description="Convert Word documents (.docx) to PDF format instantly in your browser. Fully private, no server upload required. Your documents stay safe."
@@ -276,7 +271,7 @@ export default function DocxToPdf() {
           </div>
 
           <div style={{ maxWidth: '600px', margin: '2rem auto', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-subtle)', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-            🔒 <strong>100% Private Local Conversion:</strong> If offline, your file is converted entirely inside your browser. If online, it's processed on a secure, temporary server container and deleted automatically after 30 minutes.
+            🔒 <strong>100% Private Local Conversion:</strong> If Client Side, your file is converted entirely inside your browser. If online, it's processed on a secure, temporary server container and deleted automatically after 30 minutes.
           </div>
         </>
       ) : (

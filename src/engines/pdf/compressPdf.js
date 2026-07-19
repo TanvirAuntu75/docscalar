@@ -9,13 +9,18 @@ import ConversionWorker from '../../workers/pdf.worker.js?worker';
  * @returns {Promise<Blob>}
  */
 export async function compressPdf(file, options = {}, onProgress) {
+  const actualOptions = { ...options };
+  if (actualOptions.autoEnhance === undefined) {
+    actualOptions.autoEnhance = localStorage.getItem('autoEnhanceEnabled') !== 'false';
+  }
+
   return new Promise((resolve, reject) => {
     const worker = new ConversionWorker();
 
     file.arrayBuffer().then((arrayBuffer) => {
       worker.postMessage({
         type: 'compressPdf',
-        payload: { arrayBuffer, options }
+        payload: { arrayBuffer, options: actualOptions }
       }, [arrayBuffer]);
     }).catch(reject);
 

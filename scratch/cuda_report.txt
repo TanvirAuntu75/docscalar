@@ -1,0 +1,14 @@
+Interpreter: C:\Python314\python.exe
+Exit Code: 0
+Stdout: 2.11.0+cpu False
+Stderr: 
+----------------------------------------
+Interpreter: C:\Users\Tanvir Alam\AppData\Local\Programs\Python\Python311\python.exe -> Failed to run: Command '['C:\\Users\\Tanvir Alam\\AppData\\Local\\Programs\\Python\\Python311\\python.exe', '-c', 'import torch; print(torch.__version__, torch.cuda.is_available())']' timed out after 5 seconds
+----------------------------------------
+Interpreter: C:\Users\Tanvir Alam\AppData\Local\Python\bin\python.exe -> Failed to run: Command '['C:\\Users\\Tanvir Alam\\AppData\\Local\\Python\\bin\\python.exe', '-c', 'import torch; print(torch.__version__, torch.cuda.is_available())']' timed out after 5 seconds
+----------------------------------------
+Interpreter: python
+Exit Code: 0
+Stdout: 2.11.0+cpu False
+Stderr: 
+----------------------------------------

@@ -3,11 +3,32 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  optimizeDeps: {
+    entries: ['index.html'],
+  },
+  resolve: {
+    alias: {
+      'animejs': 'animejs/lib/anime.es.js',
+    },
+  },
+  server: {
+    cors: true,
+    watch: {
+      ignored: [
+        '**/node_modules/**',
+        '**/.venv/**',
+        '**/public/models/**',
+        '**/dist/**',
+        '**/.git/**'
+      ]
+    }
+  },
   worker: {
     format: 'es',
   },
   build: {
     target: 'es2020',
+    emptyOutDir: false,
     rollupOptions: {
       output: {
         manualChunks: {

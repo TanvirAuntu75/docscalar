@@ -160,10 +160,19 @@ export default function AddWatermark() {
       toolId="add-watermark"
       title="Add Watermark"
       description="Overlay customizable text or images onto your PDF document pages"
-    >
+      files={files}
+      onFileSwitch={(idx) => {
+        setFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      }}>
       <SEOHead 
-        title="Add Watermark to PDF Online Free (100% Client-Side) | DocForge" 
-        description="Overlay custom text or image watermarks onto PDF pages. Choose font sizes, opacity, rotation, and alignment positions offline."
+        title="Add Watermark to PDF Online Free (100% Client Side) | DocForge" 
+        description="Overlay custom text or image watermarks onto PDF pages. Choose font sizes, opacity, rotation, and alignment positions Client Side."
       />
       
 

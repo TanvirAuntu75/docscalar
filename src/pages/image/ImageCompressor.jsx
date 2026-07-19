@@ -89,7 +89,7 @@ export default function ImageCompressor() {
       toolId="image-compressor"
       title="Image Compressor"
       description="Reduce image file size with customizable quality settings"
-    >
+      suppressSwitcher={true}>
       <SEOHead 
         title="Compress Image Online Free: Reduce Image File Size" 
         description="Compress JPG, PNG, and WebP images online for free. Adjust quality to reduce image size instantly without uploading files to a server."

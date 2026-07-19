@@ -141,7 +141,7 @@ export default function Pricing() {
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  10 basic offline tools
+                  10 basic Local Compute tools
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-surface-variant opacity-85">
                   <span className="material-symbols-outlined text-outline/40 text-[20px] select-none">remove</span>
@@ -168,7 +168,7 @@ export default function Pricing() {
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <h3 className="font-h3 text-h3 font-semibold text-on-background mb-1">Standard Utility</h3>
-                  <p className="font-body-sm text-sm text-on-surface-variant">For regular offline document workflows.</p>
+                  <p className="font-body-sm text-sm text-on-surface-variant">For regular Client Side document workflows.</p>
                 </div>
               </div>
               
@@ -245,7 +245,7 @@ export default function Pricing() {
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  Smart Reformatter & AI Summarizer
+                  AI Summarizer & Text Tools
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
@@ -285,7 +285,7 @@ export default function Pricing() {
         <div className="mt-12 text-center">
           <p className="font-body-md text-sm text-on-surface-variant flex items-center justify-center gap-2">
             <span className="material-symbols-outlined text-primary text-[18px]">verified_user</span>
-            All payment details are handled securely. Local processing remains fully active offline.
+            All payment details are handled securely. Local processing remains fully active Client Side.
           </p>
         </div>
 
@@ -353,14 +353,6 @@ export default function Pricing() {
                   <td className="py-4 px-6 text-center text-on-background font-medium">All (38)</td>
                 </tr>
                 <tr className="hover:bg-surface-container-high/40 transition-colors">
-                  <td className="py-4 px-6 font-medium text-on-background">Smart Reformatter</td>
-                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
-                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
-                  <td className="py-4 px-6 text-center">
-                    <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  </td>
-                </tr>
-                <tr className="hover:bg-surface-container-high/40 transition-colors">
                   <td className="py-4 px-6 font-medium text-on-background">OCR text extraction</td>
                   <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
                   <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
@@ -384,7 +376,7 @@ export default function Pricing() {
                   </td>
                 </tr>
                 <tr className="hover:bg-surface-container-high/40 transition-colors">
-                  <td className="py-4 px-6 font-medium text-on-background">Offline history cache</td>
+                  <td className="py-4 px-6 font-medium text-on-background">Local browser history cache</td>
                   <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
                   <td className="py-4 px-6 text-center">
                     <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
@@ -577,7 +569,7 @@ export default function Pricing() {
 
                 {/* Footer Safe Note */}
                 <span className="text-[11px] text-on-surface-variant/60 text-center leading-relaxed mt-2 select-none">
-                  🔒 Encrypted connection. DocForge is local and offline first. This mock transaction completes entirely inside your browser.
+                  🔒 Encrypted connection. DocForge is local and Client Side first. This mock transaction completes entirely inside your browser.
                 </span>
 
               </form>

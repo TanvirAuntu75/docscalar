@@ -31,8 +31,24 @@ def convert_html_to_pdf(input_path: str) -> ConversionResult:
         print(f"[HTML_TO_PDF] File size: {file_size_mb:.2f} MB. Calculated timeout: {dynamic_timeout_ms / 1000:.1f}s")
 
         with sync_playwright() as p:
-            # Launch Chromium in headless mode
-            browser = p.chromium.launch(headless=True)
+            # Launch Chromium, prioritizing system Chrome or Edge to ensure all system fonts render correctly
+            browser = None
+            for channel in ["chrome", "msedge", None]:
+                try:
+                    # Pass --no-sandbox to avoid permission blocks on Windows font folders
+                    args = ["--no-sandbox", "--disable-setuid-sandbox"]
+                    if channel:
+                        browser = p.chromium.launch(headless=True, channel=channel, args=args)
+                    else:
+                        browser = p.chromium.launch(headless=True, args=args)
+                    if browser:
+                        break
+                except Exception as launch_err:
+                    print(f"[HTML_TO_PDF] Failed to launch Chromium with channel '{channel}': {launch_err}")
+            
+            if not browser:
+                return ConversionResult(success=False, error_message="Could not launch Chromium browser")
+                
             try:
                 page = browser.new_page()
                 page.set_default_timeout(dynamic_timeout_ms)
@@ -82,6 +98,8 @@ def convert_html_to_pdf(input_path: str) -> ConversionResult:
 
                 # Inject global print CSS overrides to control page breaks and prevent cut elements
                 page.add_style_tag(content="""
+                    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;600;800&family=Sora:wght@400;600;800&display=swap');
+                    
                     @media print {
                         .card, .warning, .success, .code, tr, td, th, li, pre, blockquote {
                             break-inside: avoid !important;

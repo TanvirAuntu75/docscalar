@@ -41,6 +41,21 @@ def get_current_user_optional(
     credentials: HTTPAuthorizationCredentials = Depends(security_bearer),
     db: Session = Depends(get_db)
 ) -> User:
+    from backend.config import IS_DESKTOP_MODE, IS_PACKAGED
+    if IS_DESKTOP_MODE or IS_PACKAGED:
+        local_user = db.query(User).filter(User.email == "local@docforge.internal").first()
+        if not local_user:
+            local_user = User(
+                id="desktop-local-user-id",
+                email="local@docforge.internal",
+                password_hash="local-dummy",
+                tier="pro"
+            )
+            db.add(local_user)
+            db.commit()
+            db.refresh(local_user)
+        return local_user
+
     if not credentials:
         return None
     token = credentials.credentials

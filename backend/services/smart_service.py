@@ -7,7 +7,7 @@ from backend import config
 
 def extract_text(file_path: Path) -> str:
     """
-    Extract raw text from .txt and .docx files.
+    Extract raw text from .txt, .docx, and .pdf files.
     """
     ext = file_path.suffix.lower()
     
@@ -20,6 +20,19 @@ def extract_text(file_path: Path) -> str:
         paragraphs = [p.text for p in doc.paragraphs]
         return "\n".join(paragraphs)
         
+    elif ext == ".pdf":
+        import pdfplumber
+        try:
+            with pdfplumber.open(file_path) as pdf:
+                pages_text = []
+                for page in pdf.pages:
+                    page_text = page.extract_text()
+                    if page_text:
+                        pages_text.append(page_text)
+                return "\n\n".join(pages_text)
+        except Exception as e:
+            raise ValueError(f"Failed to extract text from PDF: {str(e)}")
+            
     else:
         raise ValueError(f"Text extraction is not supported for {ext} files.")
 
@@ -73,11 +86,11 @@ def convert_text_to_pdf_reportlab(text: str, base_file_path: Path) -> Conversion
     except Exception as e:
         return ConversionResult(success=False, error_message=f"Direct PDF compilation failed: {str(e)}")
 
-async def process_smart_convert(input_path: str, mode: str) -> ConversionResult:
+async def process_smart_convert(input_path: str, mode: str, target_language: str = None) -> ConversionResult:
     """
     Pipeline: 
       1. Extract text from uploaded document
-      2. Process text with local Gemma-3-4B LLM model (summarize, clean, translate)
+      2. Process text with local Gemma-3-4B/Qwen LLM model (summarize, clean, translate)
       3. Write enhanced text to a temp output document
       4. Convert output document to PDF using LibreOffice (or ReportLab if LibreOffice is missing)
     """
@@ -91,8 +104,8 @@ async def process_smart_convert(input_path: str, mode: str) -> ConversionResult:
         if not text.strip():
             return ConversionResult(success=False, error_message="Document appears to be empty")
 
-        # Step 2: Get AI response from local Gemma 3
-        enhanced_text = await generate_ai_enhancement(text, mode)
+        # Step 2: Get AI response from local model
+        enhanced_text = await generate_ai_enhancement(text, mode, target_language)
         if enhanced_text.startswith("Error:") or enhanced_text.startswith("AI Processing failed:"):
             return ConversionResult(success=False, error_message=enhanced_text)
 

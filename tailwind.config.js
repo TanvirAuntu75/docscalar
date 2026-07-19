@@ -10,6 +10,8 @@ export default {
       colors: {
         "background": "var(--bg-primary)",
         "on-background": "var(--text-primary)",
+        "glass": "var(--bg-glass)",
+        "glass-strong": "var(--bg-glass-strong)",
         "primary": "var(--color-primary)",
         "on-primary": "var(--color-on-primary)",
         "primary-container": "var(--color-primary-container)",
@@ -43,6 +45,12 @@ export default {
         "surface-container": "var(--bg-card)",
         "surface-container-high": "var(--bg-card-hover)",
         "surface-container-highest": "var(--bg-card-hover)",
+        brand: {
+          primary: '#B35A00',
+          bg: '#F8F5F1',
+          text: '#111111',
+          secondary: '#6B6B6B',
+        }
       },
       borderRadius: {
         "DEFAULT": "0.25rem",
@@ -66,6 +74,7 @@ export default {
         "gutter": "24px"
       },
       fontFamily: {
+        "display": ["var(--font-family-display)", "sans-serif"],
         "display-hero": ["var(--font-family-display)", "sans-serif"],
         "display-hero-mobile": ["var(--font-family-display)", "sans-serif"],
         "h1": ["var(--font-family-headings)", "sans-serif"],

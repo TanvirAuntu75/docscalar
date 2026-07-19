@@ -1,4 +1,6 @@
+from typing import Optional
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request, Depends
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 from fastapi.responses import FileResponse
@@ -30,9 +32,18 @@ from backend.services.pdf_to_pdfa import convert_pdf_to_pdfa
 from backend.services.redaction import redact_pdf
 from backend.services.ocr import run_ocr_on_pdf
 from backend.services.compression import compress_pdf
+from backend.services.split import split_pdf
+from backend.services.edit_pdf import edit_pdf_backend
+from backend.services.digital_sign import sign_pdf
+from backend.services.url_to_pdf import convert_url_to_pdf
 from backend.database import init_db, get_db, User, JobHistory
 from backend.auth import hash_password, verify_password, create_access_token, get_current_user, get_current_user_optional
 from backend.billing import router as billing_router
+from backend.services.installer import (
+    verify_dependencies_installed,
+    get_install_status,
+    start_install_dependencies
+)
 import json
 import uvicorn
 
@@ -45,14 +56,16 @@ if SENTRY_DSN:
         profiles_sample_rate=1.0,
     )
 
-# Initialize Rate Limiter
-limiter = Limiter(key_func=get_remote_address)
+# Initialize Rate Limiter (disabled for local development to prevent rate-limit blocks)
+limiter = Limiter(key_func=get_remote_address, enabled=False)
 
 app = FastAPI(
     title="DocForge API Server",
     description="Hybrid conversion backend using headless LibreOffice and advanced document parsing.",
     version="1.0.0"
 )
+
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # Register rate limit handler
 app.state.limiter = limiter
@@ -64,6 +77,8 @@ MAX_REQUEST_BODY_BYTES = 210 * 1024 * 1024  # 210 MB
 
 class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
+        if request.url.path == "/api/upload/chunk":
+            return await call_next(request)
         content_length = request.headers.get("content-length")
         if content_length and int(content_length) > MAX_REQUEST_BODY_BYTES:
             return Response(
@@ -128,7 +143,8 @@ ALLOWED_MIME_TYPES = {
     "image/webp",
     "image/bmp",
     "image/gif",
-    "application/zip"
+    "application/zip",
+    "application/octet-stream"
 }
 
 # Ceiling size configurations
@@ -146,6 +162,52 @@ FREE_LIMITS = {
     "webp": 40 * 1024 * 1024, "bmp": 40 * 1024 * 1024, "gif": 40 * 1024 * 1024,
     "zip": 100 * 1024 * 1024,
 }
+
+# Semantic Intent Command Router endpoint
+class CommandRequest(BaseModel):
+    query: str
+
+@app.post("/api/canvas/command")
+async def canvas_semantic_command(request: CommandRequest):
+    try:
+        from backend.services.router_service import match_semantic_intent
+        action_id, score = match_semantic_intent(request.query)
+        return {
+            "success": True,
+            "actionId": action_id,
+            "confidence": score
+        }
+    except Exception as e:
+        import logging
+        logging.getLogger("uvicorn.error").error(f"Semantic command router error: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+class AgentPlanRequest(BaseModel):
+    query: str
+    files: list[str]
+
+@app.post("/api/canvas/agent-plan")
+async def canvas_agent_plan(request: AgentPlanRequest):
+    try:
+        from backend.services.canvas_agent import generate_llm_plan, generate_heuristic_plan
+        is_llm, steps = await generate_llm_plan(request.query, request.files)
+        if not is_llm:
+            steps = generate_heuristic_plan(request.query, request.files)
+        return {
+            "success": True,
+            "steps": steps,
+            "engine": "llm" if is_llm else "heuristic"
+        }
+    except Exception as e:
+        import logging
+        logging.getLogger("uvicorn.error").error(f"Canvas Agent Plan error: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
 # Core Endpoint: Upload File
 @app.post("/api/upload")
@@ -237,6 +299,84 @@ async def upload_file(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
 
+# Core Endpoint: Upload File in Chunks (Premium Only)
+@app.post("/api/upload/chunk")
+@limiter.limit("30/minute")
+async def upload_file_chunk(
+    request: Request,
+    file: UploadFile = File(...),
+    upload_id: str = Form(...),
+    chunk_index: int = Form(...),
+    total_chunks: int = Form(...),
+    filename: str = Form(...),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Accepts sequential file chunk uploads from Premium (Pro) users.
+    Saves chunks to a temporary file on disk and renames it to final on completion.
+    """
+    # 1. Premium Check
+    if current_user.tier != "pro":
+        raise HTTPException(
+            status_code=403,
+            detail="Chunked uploading is a Premium feature. Please upgrade your account to process large files."
+        )
+
+    # 2. Input Validation & Sanitization
+    if not re.match(r"^[0-9a-fA-F-]{36}$", upload_id):
+        raise HTTPException(status_code=400, detail="Invalid upload_id format.")
+
+    raw_filename = Path(filename).name
+    sanitized_filename = re.sub(r"[^a-zA-Z0-9_.-]", "_", raw_filename)
+    
+    ext = Path(sanitized_filename).suffix.lower()
+    if ext not in ALLOWED_EXTENSIONS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file extension: {ext}."
+        )
+
+    try:
+        # 3. Create target directory
+        upload_folder = config.UPLOAD_DIR / upload_id
+        upload_folder.mkdir(parents=True, exist_ok=True)
+        
+        temp_file_path = upload_folder / f"{sanitized_filename}.part"
+        
+        # 4. Append chunk directly to temp file
+        with open(temp_file_path, "ab") as buffer:
+            while True:
+                chunk_data = await file.read(64 * 1024)
+                if not chunk_data:
+                    break
+                buffer.write(chunk_data)
+
+        # 5. Check if final chunk has arrived
+        if chunk_index == total_chunks - 1:
+            final_file_path = upload_folder / sanitized_filename
+            if temp_file_path.exists():
+                os.rename(temp_file_path, final_file_path)
+            
+            final_size = final_file_path.stat().st_size
+            return {
+                "success": True,
+                "completed": True,
+                "file_id": upload_id,
+                "filename": sanitized_filename,
+                "size_bytes": final_size
+            }
+
+        return {
+            "success": True,
+            "completed": False,
+            "chunk_index": chunk_index
+        }
+
+    except Exception as e:
+        # Clean up temp file/folder on failure
+        shutil.rmtree(config.UPLOAD_DIR / upload_id, ignore_errors=True)
+        raise HTTPException(status_code=500, detail=f"Chunk upload failed: {str(e)}")
+
 # Core Endpoint: Queue Conversion Job
 @app.post("/api/convert")
 @limiter.limit("5/minute")
@@ -285,10 +425,11 @@ async def smart_convert_file(
     file_id: str = Form(...),
     filename: str = Form(...),
     mode: str = Form(...), # 'summarize' | 'clean' | 'translate'
+    target_language: str = Form(None),
     current_user: User = Depends(get_current_user_optional)
 ):
     """
-    Queue an AI document formatting, summarization, or translation job using local Gemma-3-4B model.
+    Queue an AI document formatting, summarization, or translation job using local model.
     """
     # Verify input file exists
     upload_folder = config.UPLOAD_DIR / file_id
@@ -301,7 +442,8 @@ async def smart_convert_file(
     job_id = enqueue_job(
         process_smart_convert,
         str(input_path),
-        mode
+        mode,
+        target_language
     )
     
     return {
@@ -309,6 +451,22 @@ async def smart_convert_file(
         "job_id": job_id,
         "status": "queued"
     }
+
+@app.post("/api/smart-convert/direct")
+@limiter.limit("30/minute")
+async def smart_convert_direct(
+    request: Request,
+    text: str = Form(...),
+    mode: str = Form(...),
+    target_language: str = Form(None)
+):
+    """
+    Directly run AI generation (summarize, clean, translate) on a text string.
+    Returns the generated result immediately (no queue) for fast interactive calls.
+    """
+    from backend.services.ai_service import generate_ai_enhancement
+    result = await generate_ai_enhancement(text, mode, target_language)
+    return {"success": True, "result": result}
 
 # Core Endpoint: Poll Job Status
 @app.get("/api/job/{job_id}/status")
@@ -362,6 +520,42 @@ async def download_converted_file(job_id: str, filename: str):
         media_type="application/octet-stream"
     )
 
+# Core Endpoint: Edit PDF (apply drawings, shapes, and font-preserving text-edit redactions)
+@app.post("/api/edit-pdf")
+@limiter.limit("5/minute")
+async def edit_pdf_endpoint(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    annotations_json: str = Form(...),
+    current_user: User = Depends(get_current_user_optional)
+):
+    """
+    Queue an edit PDF job to apply vectors, annotations, and text replacements.
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+    
+    if not input_path.exists():
+        raise HTTPException(status_code=404, detail="Uploaded file not found or expired")
+        
+    try:
+        annotations = json.loads(annotations_json)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid annotations JSON format")
+        
+    job_id = enqueue_job(
+        edit_pdf_backend,
+        str(input_path),
+        annotations
+    )
+    
+    return {
+        "success": True,
+        "job_id": job_id,
+        "status": "queued"
+    }
+
 @app.post("/api/security/protect")
 @limiter.limit("10/minute")
 async def security_protect_file(
@@ -399,17 +593,89 @@ async def security_protect_file(
         "status": "queued"
     }
 
+@app.post("/api/pdf/digitally-sign")
+@limiter.limit("5/minute")
+async def api_digitally_sign_pdf(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    certificate: Optional[UploadFile] = File(None),
+    passphrase: Optional[str] = Form(None),
+    common_name: Optional[str] = Form(None),
+    email: Optional[str] = Form(None),
+    page_index: Optional[int] = Form(0),
+    x1: Optional[float] = Form(0.0),
+    y1: Optional[float] = Form(0.0),
+    x2: Optional[float] = Form(0.0),
+    y2: Optional[float] = Form(0.0),
+    signature_image: Optional[UploadFile] = File(None),
+    current_user: User = Depends(get_current_user_optional)
+):
+    """
+    Queue a job to digitally sign a PDF with a PKCS12 certificate or an autogenerated seal.
+    Can also stamp a visible cryptographic stamp overlay at the selected coordinate space.
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+    
+    if not input_path.exists():
+        raise HTTPException(status_code=404, detail="Uploaded file not found or expired")
+        
+    pfx_bytes_hex = ""
+    passphrase_val = passphrase or ""
+    
+    if certificate:
+        cert_bytes = await certificate.read()
+        pfx_bytes_hex = cert_bytes.hex()
+    else:
+        cn = common_name or "DocForge Trust Seal"
+        em = email or "security@docforge.com"
+        try:
+            from backend.services.digital_sign import generate_self_signed_pfx
+            pfx_bytes = generate_self_signed_pfx(email=em, common_name=cn)
+            pfx_bytes_hex = pfx_bytes.hex()
+            passphrase_val = "docforge"
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to generate self-signed key: {str(e)}")
+            
+    sig_image_hex = ""
+    if signature_image:
+        sig_bytes = await signature_image.read()
+        sig_image_hex = sig_bytes.hex()
+        
+    job_id = enqueue_job(
+        sign_pdf,
+        str(input_path),
+        pfx_bytes_hex,
+        passphrase_val,
+        page_index,
+        x1,
+        y1,
+        x2,
+        y2,
+        sig_image_hex
+    )
+    
+    return {
+        "success": True,
+        "job_id": job_id,
+        "status": "queued"
+    }
+
 @app.post("/api/security/unlock")
 @limiter.limit("10/minute")
 async def security_unlock_file(
     request: Request,
     file_id: str = Form(...),
     filename: str = Form(...),
-    password: str = Form(...),
+    password: Optional[str] = Form(default=None),
     current_user: User = Depends(get_current_user_optional)
 ):
     """
     Queue a PDF password unlocking/decryption job.
+    Password is optional — the backend will attempt auto-recovery from
+    the protected_files table and fall back to an empty password before
+    returning PASSWORD_REQUIRED to the client.
     """
     upload_folder = config.UPLOAD_DIR / file_id
     input_path = upload_folder / filename
@@ -417,11 +683,11 @@ async def security_unlock_file(
     if not input_path.exists():
         raise HTTPException(status_code=404, detail="Uploaded file not found or expired")
 
-    # Queue the PyMuPDF unlock job
+    # Queue the PyMuPDF unlock job (password may be None / empty)
     job_id = enqueue_job(
         unlock_pdf,
         str(input_path),
-        password
+        password or ""
     )
     
     return {
@@ -435,7 +701,8 @@ async def security_unlock_file(
 async def api_pdf_to_word(
     request: Request,
     file_id: str = Form(...),
-    filename: str = Form(...)
+    filename: str = Form(...),
+    safe_mode: bool = Form(False)
 ):
     """
     Queue a job to convert PDF to DOCX format using pdf2docx.
@@ -449,7 +716,8 @@ async def api_pdf_to_word(
     # Queue the pdf2docx job
     job_id = enqueue_job(
         convert_pdf_to_docx,
-        str(input_path)
+        str(input_path),
+        safe_mode=safe_mode
     )
     
     return {
@@ -635,6 +903,99 @@ async def api_compress_pdf(
         "status": "queued"
     }
 
+@app.post("/api/convert/url-to-pdf")
+@limiter.limit("5/minute")
+async def api_url_to_pdf(
+    request: Request,
+    url: str = Form(...),
+    format: str = Form("A4"),
+    landscape: str = Form("false"),
+    print_background: str = Form("true"),
+    margin_type: str = Form("default"),
+    current_user: User = Depends(get_current_user_optional)
+):
+    """
+    Queue a job to convert an online website URL link to a PDF.
+    """
+    is_landscape = landscape.lower() == "true"
+    is_print_bg = print_background.lower() == "true"
+    
+    job_id = enqueue_job(
+        convert_url_to_pdf,
+        url,
+        format,
+        is_landscape,
+        is_print_bg,
+        margin_type
+    )
+    
+    return {
+        "success": True,
+        "job_id": job_id,
+        "status": "queued"
+    }
+
+@app.post("/api/convert/split-pdf")
+@limiter.limit("5/minute")
+async def api_split_pdf(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    mode: str = Form("all"),
+    range: str = Form(""),
+    extra_params: str = Form("{}"),
+    current_user: User = Depends(get_current_user_optional)
+):
+    """
+    Queue a job to perform high-speed server-side PDF splitting (pikepdf).
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+    
+    if not input_path.exists():
+        raise HTTPException(status_code=404, detail="Uploaded file not found or expired")
+
+    job_id = enqueue_job(
+        split_pdf,
+        str(input_path),
+        mode,
+        range,
+        extra_params
+    )
+    
+    return {
+        "success": True,
+        "job_id": job_id,
+        "status": "queued"
+    }
+
+@app.post("/api/convert/ocr-image")
+@limiter.limit("5/minute")
+async def api_ocr_image(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    current_user: User = Depends(get_current_user_optional)
+):
+    """
+    Perform high-fidelity server-side OCR on an uploaded image.
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+    
+    if not input_path.exists():
+        raise HTTPException(status_code=404, detail="Uploaded file not found or expired")
+        
+    try:
+        from backend.services.ocr_engine import RobustOCREngine
+        engine = RobustOCREngine()
+        # Default to paddleocr for high quality structure and layout preservation
+        result = engine.process(str(input_path), engine_name="paddleocr")
+        return result
+    except Exception as e:
+        logger.exception("OCR Image processing failed")
+        raise HTTPException(status_code=500, detail=f"OCR processing failed: {str(e)}")
+
 # Metadata endpoint: Available LibreOffice conversions
 @app.get("/api/meta/conversions")
 async def get_supported_conversions():
@@ -654,11 +1015,14 @@ def signup(request: Request, payload: AuthSchema, db: Session = Depends(get_db))
     if user:
         raise HTTPException(status_code=400, detail="An account with this email already exists.")
     
+    from backend.config import IS_DESKTOP_MODE, IS_PACKAGED
+    tier_val = "pro" if (IS_DESKTOP_MODE or IS_PACKAGED) else "free"
+    
     new_user = User(
         id=str(uuid.uuid4()),
         email=payload.email,
         password_hash=hash_password(payload.password),
-        tier="free"
+        tier=tier_val
     )
     db.add(new_user)
     db.commit()
@@ -670,9 +1034,26 @@ def signup(request: Request, payload: AuthSchema, db: Session = Depends(get_db))
 @app.post("/api/auth/login")
 @limiter.limit("5/minute")
 def login(request: Request, payload: AuthSchema, db: Session = Depends(get_db)):
+    from backend.config import IS_DESKTOP_MODE, IS_PACKAGED
+    
     user = db.query(User).filter(User.email == payload.email).first()
-    if not user or not verify_password(payload.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Incorrect email or password.")
+    if not user:
+        if IS_DESKTOP_MODE or IS_PACKAGED:
+            # Auto-register local desktop users as Pro
+            user = User(
+                id=str(uuid.uuid4()),
+                email=payload.email,
+                password_hash=hash_password(payload.password),
+                tier="pro"
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        else:
+            raise HTTPException(status_code=401, detail="Incorrect email or password.")
+    else:
+        if not verify_password(payload.password, user.password_hash):
+            raise HTTPException(status_code=401, detail="Incorrect email or password.")
         
     token = create_access_token({"user_id": user.id, "email": user.email})
     return {"access_token": token, "token_type": "bearer", "tier": user.tier}
@@ -688,12 +1069,37 @@ def delete_account(current_user: User = Depends(get_current_user), db: Session =
     db.commit()
     return {"success": True, "message": "Your account has been permanently deleted."}
 
-# Server entry run command
+@app.get("/api/bootstrap/status")
+async def get_bootstrap_status():
+    """Returns status of whether portable dependencies (LibreOffice and OCR models) are installed."""
+    if not config.IS_DESKTOP_MODE and not config.IS_PACKAGED:
+        return {"installed": True, "status": "ready"}
+        
+    installed = verify_dependencies_installed()
+    status = get_install_status()
+    
+    return {
+        "installed": installed,
+        "status": status["status"],
+        "step": status["step"],
+        "percent": status["percent"],
+        "speed_mb": status["speed_mb"],
+        "error": status["error"]
+    }
+
+@app.post("/api/bootstrap/install")
+async def trigger_bootstrap_install():
+    """Triggers the background download and installation of dependencies."""
+    started = start_install_dependencies()
+    return {"started": started}
+
 if __name__ == "__main__":
+    # Pass the app object directly to uvicorn to avoid import resolution issues in packaged PyInstaller envs
     uvicorn.run(
-        "backend.main:app", 
+        app, 
         host=config.HOST, 
         port=config.PORT, 
-        reload=True
+        reload=False
     )
+
 

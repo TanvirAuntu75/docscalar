@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -186,7 +186,7 @@ export default function ComparePdf() {
       toolId="compare-pdf"
       title="Compare PDF Revisions"
       description="Visually compare two PDF document revisions side-by-side or using a swipe overlay"
-    >
+      suppressSwitcher={true}>
       <SEOHead 
         title="Compare PDF Files Online Free — Visual PDF Diff | DocForge" 
         description="Compare two PDF documents side-by-side or with an overlay swipe slider. Easily spot changes and differences in text or drawing revisions."

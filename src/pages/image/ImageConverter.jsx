@@ -71,7 +71,7 @@ export default function ImageConverter() {
       toolId="image-converter"
       title="Image Converter"
       description="Convert between PNG, JPG, WEBP, and BMP formats"
-    >
+      suppressSwitcher={true}>
       
 
       {!result ? (

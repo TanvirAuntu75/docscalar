@@ -59,14 +59,19 @@ export async function addWatermark(file, options, onProgress) {
       let x = (width - textWidth) / 2;
       let y = (height - textHeight) / 2;
 
-      if (position === 'top-left') {
-        x = margin; y = height - margin - textHeight;
-      } else if (position === 'top-right') {
-        x = width - margin - textWidth; y = height - margin - textHeight;
-      } else if (position === 'bottom-left') {
-        x = margin; y = margin;
-      } else if (position === 'bottom-right') {
-        x = width - margin - textWidth; y = margin;
+      if (options.xPercent !== undefined && options.yPercent !== undefined) {
+        x = options.xPercent * width - textWidth / 2;
+        y = (1 - options.yPercent) * height - textHeight / 2;
+      } else {
+        if (position === 'top-left') {
+          x = margin; y = height - margin - textHeight;
+        } else if (position === 'top-right') {
+          x = width - margin - textWidth; y = height - margin - textHeight;
+        } else if (position === 'bottom-left') {
+          x = margin; y = margin;
+        } else if (position === 'bottom-right') {
+          x = width - margin - textWidth; y = margin;
+        }
       }
 
       page.drawText(safeText, {
@@ -88,14 +93,19 @@ export async function addWatermark(file, options, onProgress) {
       let x = (width - displayWidth) / 2;
       let y = (height - displayHeight) / 2;
 
-      if (position === 'top-left') {
-        x = margin; y = height - margin - displayHeight;
-      } else if (position === 'top-right') {
-        x = width - margin - displayWidth; y = height - margin - displayHeight;
-      } else if (position === 'bottom-left') {
-        x = margin; y = margin;
-      } else if (position === 'bottom-right') {
-        x = width - margin - displayWidth; y = margin;
+      if (options.xPercent !== undefined && options.yPercent !== undefined) {
+        x = options.xPercent * width - displayWidth / 2;
+        y = (1 - options.yPercent) * height - displayHeight / 2;
+      } else {
+        if (position === 'top-left') {
+          x = margin; y = height - margin - displayHeight;
+        } else if (position === 'top-right') {
+          x = width - margin - displayWidth; y = height - margin - displayHeight;
+        } else if (position === 'bottom-left') {
+          x = margin; y = margin;
+        } else if (position === 'bottom-right') {
+          x = width - margin - displayWidth; y = margin;
+        }
       }
 
       page.drawImage(embeddedImage, {

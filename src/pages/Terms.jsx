@@ -33,9 +33,9 @@ export default function Terms() {
               To ensure system stability and fair resource allocation for all users, we enforce the following restrictions:
             </p>
             <ul className="list-disc pl-6 flex flex-col gap-1.5">
-              <li><strong>Server-Side File Size Limit:</strong> Files uploaded for server-side processing (such as OCR, PDF to Word, or Repair) are subject to a strict hard limit of **500MB** per file. Any uploads exceeding this size will be automatically rejected.</li>
+              <li><strong>Server Side File Size Limit:</strong> Files uploaded for Server Side processing (such as OCR, PDF to Word, or Repair) are subject to a strict hard limit of **500MB** per file. Any uploads exceeding this size will be automatically rejected.</li>
               <li><strong>Fair Use:</strong> You may not use automated scripts, bots, or scrapers to perform batch conversions that degrade the Service's performance for other users.</li>
-              <li><strong>No Client-Side Limits:</strong> Conversions occurring 100% locally in your browser (e.g. Merge, Split, Page Rotation) have no file size ceiling, subject only to your device's memory limits.</li>
+              <li><strong>No Client Side Limits:</strong> Conversions occurring 100% locally in your browser (e.g. Merge, Split, Page Rotation) have no file size ceiling, subject only to your device's memory limits.</li>
             </ul>
           </section>
 
@@ -64,7 +64,7 @@ export default function Terms() {
           <section className="flex flex-col gap-2">
             <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">5. Disclaimer of Warranties</h2>
             <p>
-              Except as provided under applicable local laws (including the NZ Consumer Guarantees Act), the Service is provided "as is" and "as available" without warranties of any kind. We do not guarantee that document layouts will be reconstructed with 100% accuracy, or that server-side jobs will never experience delays.
+              Except as provided under applicable local laws (including the NZ Consumer Guarantees Act), the Service is provided "as is" and "as available" without warranties of any kind. We do not guarantee that document layouts will be reconstructed with 100% accuracy, or that Server Side jobs will never experience delays.
             </p>
           </section>
 

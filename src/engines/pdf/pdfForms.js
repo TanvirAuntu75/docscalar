@@ -1,4 +1,13 @@
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, rgb } from 'pdf-lib';
+
+const hexToRgb = (hex) => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '#ffffff');
+  return result ? rgb(
+    parseInt(result[1], 16) / 255,
+    parseInt(result[2], 16) / 255,
+    parseInt(result[3], 16) / 255
+  ) : rgb(1, 1, 1);
+};
 
 /**
  * Scan a PDF file and extract all interactive form fields.
@@ -107,7 +116,7 @@ export async function getFormFields(file) {
  * @param {function} onProgress - Progress callback.
  * @returns {Promise<Blob>} The filled PDF.
  */
-export async function fillFormFields(file, fieldValues, onProgress) {
+export async function fillFormFields(file, fieldValues, onProgress, flatten = false) {
   if (onProgress) onProgress(15);
   const arrayBuffer = await file.arrayBuffer();
   if (onProgress) onProgress(35);
@@ -139,6 +148,141 @@ export async function fillFormFields(file, fieldValues, onProgress) {
   });
 
   if (onProgress) onProgress(80);
+  if (flatten) {
+    try {
+      form.flatten();
+    } catch (e) {
+      console.warn('Failed to flatten PDF forms:', e);
+    }
+  }
+  const savedBytes = await pdfDoc.save();
+  if (onProgress) onProgress(100);
+
+  return new Blob([savedBytes], { type: 'application/pdf' });
+}
+
+export async function compileFormWithNewFields(file, createdFields, fieldValues, onProgress, flatten = false) {
+  if (onProgress) onProgress(10);
+  const arrayBuffer = await file.arrayBuffer();
+  if (onProgress) onProgress(30);
+  
+  const pdfDoc = await PDFDocument.load(arrayBuffer);
+  if (onProgress) onProgress(50);
+
+  const form = pdfDoc.getForm();
+  const pages = pdfDoc.getPages();
+
+  // Create new fields
+  createdFields.forEach((fieldDef) => {
+    const pageIndex = fieldDef.pageIndex ?? 0;
+    if (pageIndex < 0 || pageIndex >= pages.length) return;
+    const page = pages[pageIndex];
+    const { width, height } = page.getSize();
+
+    const rect = fieldDef.rect;
+    const minX = Math.min(rect.startXPercent, rect.endXPercent);
+    const maxX = Math.max(rect.startXPercent, rect.endXPercent);
+    const minY = Math.min(rect.startYPercent, rect.endYPercent);
+    const maxY = Math.max(rect.startYPercent, rect.endYPercent);
+
+    const pdfX = width * minX;
+    const pdfY = height * (1 - maxY);
+    const pdfWidth = width * (maxX - minX);
+    const pdfHeight = height * (maxY - minY);
+
+    try {
+      let formField;
+      if (fieldDef.type === 'checkbox') {
+        formField = form.createCheckBox(fieldDef.name);
+        formField.addToPage(page, {
+          x: pdfX,
+          y: pdfY,
+          width: pdfWidth,
+          height: pdfHeight
+        });
+      } else if (fieldDef.type === 'select') {
+        formField = form.createDropdown(fieldDef.name);
+        if (fieldDef.options && Array.isArray(fieldDef.options)) {
+          formField.setOptions(fieldDef.options);
+        }
+        formField.addToPage(page, {
+          x: pdfX,
+          y: pdfY,
+          width: pdfWidth,
+          height: pdfHeight
+        });
+      } else if (fieldDef.type === 'radio') {
+        // PDF-lib: radio groups can span multiple widgets under the same field name
+        try {
+          formField = form.getRadioGroup(fieldDef.name);
+        } catch (e) {
+          formField = form.createRadioGroup(fieldDef.name);
+        }
+        formField.addOptionToPage(fieldDef.value, page, {
+          x: pdfX,
+          y: pdfY,
+          width: pdfWidth,
+          height: pdfHeight
+        });
+      } else {
+        formField = form.createTextField(fieldDef.name);
+        formField.addToPage(page, {
+          x: pdfX,
+          y: pdfY,
+          width: pdfWidth,
+          height: pdfHeight
+        });
+      }
+
+      // Apply styling parameters if defined on the custom field
+      if (formField) {
+        if (fieldDef.backgroundColor) {
+          formField.setBackgroundColor(hexToRgb(fieldDef.backgroundColor));
+        }
+        if (fieldDef.borderColor) {
+          formField.setBorderColor(hexToRgb(fieldDef.borderColor));
+        }
+        if (fieldDef.borderWidth !== undefined) {
+          formField.setBorderWidth(fieldDef.borderWidth);
+        }
+      }
+    } catch (err) {
+      console.warn(`Failed to create form field "${fieldDef.name}":`, err);
+    }
+  });
+
+  if (onProgress) onProgress(70);
+
+  // Fill all fields (both original and newly created ones)
+  Object.entries(fieldValues).forEach(([name, val]) => {
+    try {
+      const field = form.getField(name);
+      if (!field) return;
+
+      if (typeof field.setText === 'function') {
+        field.setText(String(val || ''));
+      } else if (typeof field.check === 'function' && typeof field.uncheck === 'function') {
+        if (val === true || val === 'true') {
+          field.check();
+        } else {
+          field.uncheck();
+        }
+      } else if (typeof field.select === 'function') {
+        field.select(val);
+      }
+    } catch (err) {
+      console.warn(`Failed to fill form field "${name}":`, err);
+    }
+  });
+
+  if (onProgress) onProgress(90);
+  if (flatten) {
+    try {
+      form.flatten();
+    } catch (e) {
+      console.warn('Failed to flatten PDF forms:', e);
+    }
+  }
   const savedBytes = await pdfDoc.save();
   if (onProgress) onProgress(100);
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { apiFetch } from '../utils/api';
 
 /**
@@ -14,20 +14,22 @@ export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
   
   const pollIntervalRef = useRef(null);
   const startTimeRef = useRef(null);
+  const consecutiveFailuresRef = useRef(0);
 
-  const startPolling = (id) => {
+  const startPolling = useCallback((id) => {
     setJobId(id);
     setStatus('queued');
     setProgress(10);
     setError(null);
     setResult(null);
     startTimeRef.current = Date.now();
-  };
+    consecutiveFailuresRef.current = 0;
+  }, []);
 
   useEffect(() => {
     if (!jobId) return;
 
-    const MAX_POLL_TIME = 5 * 60 * 1000; // 5 minutes max duration
+    const MAX_POLL_TIME = 15 * 60 * 1000; // 15 minutes max duration for large scanned documents
 
     const pollJob = async () => {
       // Check for timeout
@@ -45,6 +47,7 @@ export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
         }
         
         const data = await response.json();
+        consecutiveFailuresRef.current = 0; // reset on successful fetch
         
         if (data.status === 'finished') {
           clearInterval(pollIntervalRef.current);
@@ -66,9 +69,12 @@ export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
           setProgress(25);
         }
       } catch (err) {
-        clearInterval(pollIntervalRef.current);
-        setStatus('failed');
-        setError(err.message || 'Network error occurred while polling status');
+        consecutiveFailuresRef.current += 1;
+        if (consecutiveFailuresRef.current >= 5) {
+          clearInterval(pollIntervalRef.current);
+          setStatus('failed');
+          setError('Network connection lost. The server is unreachable after multiple attempts.');
+        }
       }
     };
 
@@ -83,13 +89,14 @@ export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
     };
   }, [jobId, apiBaseUrl]);
 
-  const resetPoller = () => {
+  const resetPoller = useCallback(() => {
     setJobId(null);
     setStatus('idle');
     setProgress(0);
     setResult(null);
     setError(null);
-  };
+    consecutiveFailuresRef.current = 0;
+  }, []);
 
   return {
     jobId,

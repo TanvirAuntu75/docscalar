@@ -9,7 +9,7 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3")
 
 LM_STUDIO_URL = os.getenv("LM_STUDIO_URL", "http://localhost:1234/v1/chat/completions")
 
-async def generate_ai_enhancement(text: str, mode: str) -> str:
+async def generate_ai_enhancement(text: str, mode: str, target_lang: str = None) -> str:
     """
     Generate document transformations using the local Google Gemma-3-4B model.
     Auto-detects active local servers:
@@ -40,7 +40,15 @@ async def generate_ai_enhancement(text: str, mode: str) -> str:
         )
     }
 
-    system_prompt = prompts.get(mode, prompts["clean"])
+    if mode == "translate" and target_lang:
+        system_prompt = (
+            f"You are a professional translator. Translate the following text strictly into {target_lang}. "
+            "IMPORTANT: Output ONLY the translated text. Do NOT include any introduction, conversational preamble, "
+            "explanations, or closing remarks. Start directly with the translation:\n\n"
+        )
+    else:
+        system_prompt = prompts.get(mode, prompts["clean"])
+        
     full_prompt = f"{system_prompt}{text}"
 
     # Step 1: Try LM Studio (Standard GGUF runner for desktop)
@@ -64,10 +72,32 @@ async def generate_ai_enhancement(text: str, mode: str) -> str:
         # LM Studio is offline, proceed to check Ollama
         pass
 
-    # Step 2: Try Ollama (runs imported gemma3)
+    # Step 2: Try Ollama (runs dynamic model or fallback)
     try:
+        active_model = OLLAMA_MODEL
+        try:
+            async with httpx.AsyncClient(timeout=1.0) as client:
+                res_tags = await client.get("http://localhost:11434/api/tags")
+                if res_tags.status_code == 200:
+                    models_data = res_tags.json().get("models", [])
+                    downloaded_models = [m.get("name") for m in models_data]
+                    if downloaded_models:
+                        found = False
+                        for pref in ["qwen3", "qwen2.5", "qwen", "gemma3", "gemma"]:
+                            for m in downloaded_models:
+                                if pref in m.lower():
+                                    active_model = m
+                                    found = True
+                                    break
+                            if found:
+                                break
+                        if not found:
+                            active_model = downloaded_models[0]
+        except Exception:
+            pass
+
         payload = {
-            "model": OLLAMA_MODEL,
+            "model": active_model,
             "prompt": full_prompt,
             "stream": False,
             "options": {
@@ -79,7 +109,7 @@ async def generate_ai_enhancement(text: str, mode: str) -> str:
             response = await client.post(OLLAMA_URL, json=payload)
             if response.status_code == 200:
                 data = response.json()
-                return data.get("response", "Error: Empty response from local Ollama Gemma-3-4B.")
+                return data.get("response", f"Error: Empty response from local Ollama model {active_model}.")
     except (httpx.ConnectError, httpx.ConnectTimeout):
         # Ollama is also offline
         pass

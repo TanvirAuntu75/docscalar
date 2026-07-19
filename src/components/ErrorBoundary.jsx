@@ -13,11 +13,27 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // You can also log the error to an error reporting service
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+
+    // Self-healing: if it is a ChunkLoadError (common when updates are deployed),
+    // automatically reload the page once to pull the new version.
+    const isChunkError = 
+      error && 
+      (error.name === 'ChunkLoadError' || 
+       /chunk|dynamically imported module|failed to fetch/i.test(error.message || ''));
+       
+    if (isChunkError) {
+      const hasReloaded = sessionStorage.getItem('chunk_error_reload');
+      if (!hasReloaded) {
+        sessionStorage.setItem('chunk_error_reload', 'true');
+        console.warn('[ErrorBoundary] ChunkLoadError detected. Attempting self-healing page reload...');
+        window.location.reload();
+      }
+    }
   }
 
   handleReset = () => {
+    sessionStorage.removeItem('chunk_error_reload');
     this.setState({ hasError: false, error: null });
     // Force redirect to clear any bad state in the URL or history
     window.location.href = '/';

@@ -1,7 +1,8 @@
-// DocForge Local IndexedDB Utility for Offline-First Data Storage
+// DocForge Local IndexedDB Utility for Local First Data Storage
 const DB_NAME = 'docforge_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2; // Upgraded version to support canvas layout saving
 const STORE_NAME = 'file_history';
+const CANVAS_STORE_NAME = 'canvas_state';
 
 export function openDB() {
   return new Promise((resolve, reject) => {
@@ -11,6 +12,9 @@ export function openDB() {
       const db = e.target.result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains(CANVAS_STORE_NAME)) {
+        db.createObjectStore(CANVAS_STORE_NAME, { keyPath: 'key' });
       }
     };
 
@@ -158,5 +162,52 @@ export async function clearFiles() {
   } catch (err) {
     console.error(err);
     throw err;
+  }
+}
+
+export async function saveCanvasState(state) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(CANVAS_STORE_NAME, 'readwrite');
+      const store = transaction.objectStore(CANVAS_STORE_NAME);
+      const request = store.put({ key: 'current', state, date: new Date().toISOString() });
+      request.onsuccess = () => resolve();
+      request.onerror = (e) => reject('Failed to save canvas state: ' + e.target.error);
+    });
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
+export async function loadCanvasState() {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(CANVAS_STORE_NAME, 'readonly');
+      const store = transaction.objectStore(CANVAS_STORE_NAME);
+      const request = store.get('current');
+      request.onsuccess = () => resolve(request.result ? request.result.state : null);
+      request.onerror = (e) => reject('Failed to load canvas state: ' + e.target.error);
+    });
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
+export async function clearCanvasState() {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(CANVAS_STORE_NAME, 'readwrite');
+      const store = transaction.objectStore(CANVAS_STORE_NAME);
+      const request = store.delete('current');
+      request.onsuccess = () => resolve();
+      request.onerror = (e) => reject('Failed to clear canvas state: ' + e.target.error);
+    });
+  } catch (err) {
+    console.error(err);
   }
 }

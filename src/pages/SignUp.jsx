@@ -3,6 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SEOHead from '../components/SEOHead';
 
+import { BACKEND_URL } from '../utils/api';
+
+
 function getPasswordStrength(password) {
   if (!password) return { label: '', color: '', width: '0%' };
 
@@ -30,8 +33,6 @@ export default function SignUp() {
   const [error, setError] = useState('');
 
   const strength = useMemo(() => getPasswordStrength(password), [password]);
-
-  const BACKEND_URL = 'http://localhost:8000';
 
   const handleSignUp = async (e) => {
     e.preventDefault();

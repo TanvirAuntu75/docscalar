@@ -23,17 +23,17 @@ export default function Privacy() {
             <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">1. Introduction & Local-First Commitment</h2>
             <p>
               Welcome to DocForge ("we", "our", "us"). We are committed to protecting your personal data and privacy. 
-              Our primary design principle is **privacy-first**:
+              Our primary design principle is **Privacy First**:
             </p>
             <blockquote className="border-l-4 border-primary pl-4 py-1 my-2 bg-surface-container-low/50 rounded-r-lg font-medium text-on-surface">
-              Whenever possible, your documents are processed 100% locally in your browser using client-side WebAssembly, Javascript, and canvas engines. This means your files never leave your device.
+              Whenever possible, your documents are processed 100% locally in your browser using Client Side WebAssembly, Javascript, and canvas engines. This means your files never leave your device.
             </blockquote>
           </section>
 
           <section className="flex flex-col gap-2">
-            <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">2. Server-Side Processing & Data Retention</h2>
+            <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">2. Server Side Processing & Data Retention</h2>
             <p>
-              For tools that require significant server-side resources (such as OCR, PDF to Word layout reconstruction, or PDF repair), your files are transmitted securely via HTTPS to our isolated workers.
+              For tools that require significant Server Side resources (such as OCR, PDF to Word layout reconstruction, or PDF repair), your files are transmitted securely via HTTPS to our isolated workers.
             </p>
             <ul className="list-disc pl-6 flex flex-col gap-1.5">
               <li><strong>Immediate Deletion:</strong> Files are stored in encrypted temporary folders on the worker server, processed, and immediately deleted upon completion or failure of the task.</li>

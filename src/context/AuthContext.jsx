@@ -85,32 +85,37 @@ function authReducer(state, action) {
   }
 }
 
-const initialState = {
-  isAuthenticated: false,
-  userEmail: '',
-  userTier: 'free',
-  proLicenseKey: '',
-  accessToken: '',
-};
-
-export function AuthProvider({ children }) {
-  const [state, dispatch] = useReducer(authReducer, initialState);
-
-  // Hydrate from localStorage on mount
-  useEffect(() => {
+const getInitialState = () => {
+  try {
     const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     const userEmail = localStorage.getItem('userEmail') || '';
     const userTier = localStorage.getItem('userTier') || 'free';
     const proLicenseKey = localStorage.getItem('proLicenseKey') || '';
     const accessToken = localStorage.getItem('accessToken') || '';
+    return {
+      isAuthenticated,
+      userEmail,
+      userTier,
+      proLicenseKey,
+      accessToken,
+    };
+  } catch (e) {
+    return {
+      isAuthenticated: false,
+      userEmail: '',
+      userTier: 'free',
+      proLicenseKey: '',
+      accessToken: '',
+    };
+  }
+};
 
-    dispatch({
-      type: AUTH_ACTIONS.HYDRATE,
-      payload: { isAuthenticated, userEmail, userTier, proLicenseKey, accessToken },
-    });
-  }, []);
+const initialState = getInitialState();
 
-  const login = ({ email, tier = 'free', proLicenseKey = '', accessToken = '' }) => {
+export function AuthProvider({ children }) {
+  const [state, dispatch] = useReducer(authReducer, initialState);
+
+  const login = ({ email, tier, proLicenseKey, accessToken }) => {
     dispatch({
       type: AUTH_ACTIONS.LOGIN,
       payload: { email, tier, proLicenseKey, accessToken },

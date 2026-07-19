@@ -28,20 +28,24 @@ export async function addPageNumbers(file, options, onProgress) {
   const pages = pdfDoc.getPages();
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   
-  const format = options.format || 'Page {page} of {total}';
+  const format = options.format || options.formatStr || 'Page {page} of {total}';
   const position = options.position || 'footer-center';
   const fontSize = parseInt(options.fontSize || 10);
   const startNumber = parseInt(options.startNumber || 1);
   const colorVals = hexToRgb(options.color || '#000000');
   const margin = 36; // spacing offset from page borders
 
-  const totalPages = pages.length;
+  const totalPages = options.ptopTotalPages || pages.length;
 
   pages.forEach((page, idx) => {
     const { width, height } = page.getSize();
-    const currentPageNumber = idx + startNumber;
+    const originalPageIndex = (options.ptopPageIndices && options.ptopPageIndices[idx] !== undefined) 
+      ? options.ptopPageIndices[idx] 
+      : idx;
+    const currentPageNumber = originalPageIndex + startNumber;
     const textStr = format
       .replace('{page}', String(currentPageNumber))
+      .replace('{n}', String(currentPageNumber))
       .replace('{total}', String(totalPages - 1 + startNumber)); // total page offset adjustment
 
     const safeTextStr = cleanTextForWinAnsi(textStr, font);

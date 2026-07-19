@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
-import { apiFetch } from '../../utils/api';
+import { apiFetch, uploadFileSecure, BACKEND_URL} from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
@@ -8,8 +8,7 @@ import AdPlaceholder from '../../components/AdPlaceholder';
 import { saveFile } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import { useJobPoller } from '../../hooks/useJobPoller';
-
-const BACKEND_URL = 'http://localhost:8000';
+import { excelToPdf } from '../../engines/document/excelToPdf';
 
 export default function ExcelToPdf() {
   const [files, setFiles] = useState([]);
@@ -82,26 +81,13 @@ export default function ExcelToPdf() {
 
     try {
       if (!backendActive) {
-        throw new Error('Connection to conversion server is inactive. Converting Excel spreadsheets requires a running backend.');
+        throw new Error('Connection to conversion server is inactive. Falling back to local conversion...');
       }
-
-      // Step 1: Upload file to FastAPI backend
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      const uploadRes = await apiFetch(`${BACKEND_URL}/api/upload`, {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!uploadRes.ok) {
-        throw new Error('Upload to conversion server failed.');
-      }
-
-      const uploadData = await uploadRes.json();
-      if (!uploadData.success) {
-        throw new Error(uploadData.detail || 'Upload failed');
-      }
+        // Step 1: Upload file (uses chunked upload if large and premium)
+        const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
+        if (!uploadData.success) {
+          throw new Error(uploadData.detail || 'Upload failed');
+        }
 
       setProgress(40);
 
@@ -127,24 +113,55 @@ export default function ExcelToPdf() {
 
     } catch (err) {
       setProcessing(false);
-      setError(err.message || 'An error occurred during conversion.');
+      setError(err.message || 'Server connection error. Falling back to local conversion...');
+      runClientSideFallback(file);
+    }
+  };
+
+  const runClientSideFallback = async (file) => {
+    setProcessing(true);
+    setProgress(20);
+    try {
+      const pdfBlob = await excelToPdf(file, (pct) => {
+        setProgress(pct);
+      });
+      const originalName = file.name.replace(/\.[^.]+$/, '');
+      const finalName = `${originalName}.pdf`;
+      setResult({
+        isUrl: false,
+        blob: pdfBlob,
+        name: finalName
+      });
+      try {
+        await saveFile(finalName, pdfBlob.size, 'application/pdf', 'EXCEL to PDF', pdfBlob);
+      } catch (dbErr) {
+        console.error('Failed to save file to local workspace:', dbErr);
+      }
+    } catch (err) {
+      setError(err.message || 'Conversion failed. Please try a different Excel file.');
+    } finally {
+      setProcessing(false);
     }
   };
 
   const downloadFile = async () => {
     if (!result) return;
-    try {
-      const res = await fetch(result.downloadUrl);
-      if (!res.ok) throw new Error('Download failed');
-      const blob = await res.blob();
-      saveAs(blob, result.name);
-    } catch (err) {
-      const link = document.createElement('a');
-      link.href = result.downloadUrl;
-      link.setAttribute('download', result.name);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    if (result.blob) {
+      saveAs(result.blob, result.name);
+    } else if (result.downloadUrl) {
+      try {
+        const res = await fetch(result.downloadUrl);
+        if (!res.ok) throw new Error('Download failed');
+        const blob = await res.blob();
+        saveAs(blob, result.name);
+      } catch (err) {
+        const link = document.createElement('a');
+        link.href = result.downloadUrl;
+        link.setAttribute('download', result.name);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     }
   };
 
@@ -183,13 +200,22 @@ export default function ExcelToPdf() {
                 borderRadius: '50%',
                 background: backendActive ? 'var(--color-success)' : 'var(--color-warning)'
               }} />
-              {backendActive ? 'LibreOffice Engine Active' : 'Conversion Server Offline'}
+              {backendActive ? 'LibreOffice Engine Active' : 'Conversion Server Disconnected'}
             </span>
           </div>
         )}
         </>
       }
-    >
+      files={files}
+      onFileSwitch={(idx) => {
+        setFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      }}>
       <SEOHead 
         title="Convert Excel to PDF Online Free — XLS to PDF | DocForge" 
         description="Convert Microsoft Excel spreadsheets (.xlsx, .xls) to PDF layout formats instantly. Accurate grids formatting and formula calculations."
@@ -220,7 +246,7 @@ export default function ExcelToPdf() {
                   style={{ width: `${progress}%` }} 
                 />
               </div>
-              <p className="progress-status">Converting sheet grids via LibreOffice... {progress}%</p>
+              <p className="progress-status">{backendActive ? 'Converting sheet grids via LibreOffice...' : 'Converting sheet grids locally...'} {progress}%</p>
             </div>
           )}
 
@@ -230,7 +256,7 @@ export default function ExcelToPdf() {
             <button 
               className="btn btn-primary btn-lg flex items-center justify-center gap-2" 
               onClick={handleConvert} 
-              disabled={!files.length || processing || !backendActive}
+              disabled={!files.length || processing}
             >
               {processing && (
                 <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

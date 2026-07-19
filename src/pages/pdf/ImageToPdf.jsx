@@ -38,7 +38,7 @@ export default function ImageToPdf() {
       toolId="image-to-pdf"
       title="Images to PDF"
       description="Combine multiple images into a single PDF document"
-    >
+      suppressSwitcher={true}>
       
 
       {!result ? (

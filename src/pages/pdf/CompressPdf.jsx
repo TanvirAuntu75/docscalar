@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
-import { apiFetch } from '../../utils/api';
+import { apiFetch, uploadFileSecure, BACKEND_URL} from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
@@ -10,8 +10,6 @@ import { formatFileSize } from '../../utils/constants';
 import { saveFile } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import { useJobPoller } from '../../hooks/useJobPoller';
-
-const BACKEND_URL = 'http://localhost:8000';
 
 export default function CompressPdf() {
   const [files, setFiles] = useState([]);
@@ -100,20 +98,8 @@ export default function CompressPdf() {
 
     if (backendActive) {
       try {
-        // Step 1: Upload file to FastAPI backend
-        const formData = new FormData();
-        formData.append('file', file);
-        
-        const uploadRes = await apiFetch(`${BACKEND_URL}/api/upload`, {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!uploadRes.ok) {
-          throw new Error('Upload to conversion server failed.');
-        }
-
-        const uploadData = await uploadRes.json();
+        // Step 1: Upload file (uses chunked upload if large and premium)
+        const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
         if (!uploadData.success) {
           throw new Error(uploadData.detail || 'Upload failed');
         }
@@ -141,12 +127,12 @@ export default function CompressPdf() {
         poller.startPolling(convertData.job_id);
 
       } catch (err) {
-        console.warn('Backend compression failed, falling back to client-side:', err);
-        setError('Server compression failed. Running client-side compression...');
+        console.warn('Backend compression failed, falling back to Client Side:', err);
+        setError('Server compression failed. Running Client Side compression...');
         runLocalCompression(file);
       }
     } else {
-      // Local client-side compression fallback
+      // Local Client Side compression fallback
       runLocalCompression(file);
     }
   };
@@ -222,16 +208,25 @@ export default function CompressPdf() {
                 borderRadius: '50%',
                 background: backendActive ? 'var(--color-success)' : 'var(--color-warning)'
               }} />
-              {backendActive ? 'Ghostscript Engine Active (Vector Preservation)' : 'Client-Side Fallback Active (Raster Lossy)'}
+              {backendActive ? 'Ghostscript Engine Active (Vector Preservation)' : 'Client Side Fallback Active (Raster Lossy)'}
             </span>
           </div>
         )}
         </>
       }
-    >
+      files={files}
+      onFileSwitch={(idx) => {
+        setFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      }}>
       <SEOHead 
         title="Compress PDF Online Free — Reduce PDF Size | DocForge" 
-        description="Reduce PDF file size while maintaining readability. Ghostscript/PyMuPDF server optimization and client-side fallback."
+        description="Reduce PDF file size while maintaining readability. Ghostscript/PyMuPDF server optimization and Client Side fallback."
       />
 
       

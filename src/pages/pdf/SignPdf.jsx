@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -10,6 +10,10 @@ import useFileProcessor from '../../hooks/useFileProcessor';
 import { signPdf } from '../../engines/pdf/signPdf';
 import { saveFile } from '../../utils/db';
 import { saveAs } from 'file-saver';
+import { useJobPoller } from '../../hooks/useJobPoller';
+import { apiFetch, uploadFileSecure } from '../../utils/api';
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -27,6 +31,50 @@ export default function SignPdf() {
     setError,
     reset
   } = useFileProcessor();
+
+  const poller = useJobPoller(BACKEND_URL);
+  const [backendActive, setBackendActive] = useState(false);
+
+  // Check backend active status
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const res = await apiFetch(`${BACKEND_URL}/api/meta/conversions`, { signal: AbortSignal.timeout(2000) });
+        setBackendActive(res.ok);
+      } catch { setBackendActive(false); }
+    };
+    check();
+  }, []);
+
+  // Handle poller results for digital signature job
+  useEffect(() => {
+    if (poller.status === 'finished' && poller.result) {
+      setProcessing(false);
+      setProgress(100);
+      
+      const finalName = files[0].name.replace(/\.[^.]+$/, '') + '_signed.pdf';
+      apiFetch(poller.result.downloadUrl)
+        .then(r => r.blob())
+        .then(async (blob) => {
+          setResult({
+            blob: blob,
+            name: finalName
+          });
+          
+          try {
+            await saveFile(finalName, blob.size, 'application/pdf', 'Sign PDF', blob);
+          } catch (dbErr) {
+            console.error('Failed to save signed file locally:', dbErr);
+          }
+        })
+        .catch((err) => {
+          setError('Failed to fetch signed PDF from backend.');
+        });
+    } else if (poller.status === 'failed') {
+      setProcessing(false);
+      setError(poller.error || 'Digital signing failed.');
+    }
+  }, [poller.status, poller.result, poller.error]);
 
   const [totalPages, setTotalPages] = useState(0);
   const [activePageIndex, setActivePageIndex] = useState(0);
@@ -51,6 +99,13 @@ export default function SignPdf() {
   const [yPercent, setYPercent] = useState(0.5); // Center relative Y (0.0 to 1.0)
   const [widthPercent, setWidthPercent] = useState(0.25); // Scale of PDF page width
   const [sigAspectRatio, setSigAspectRatio] = useState(2.5); // Width/Height
+  
+  // Cryptographic X.509 Seal states
+  const [cryptographicSeal, setCryptographicSeal] = useState(false);
+  const [certFile, setCertFile] = useState(null);
+  const [certPassphrase, setCertPassphrase] = useState('');
+  const [certCommonName, setCertCommonName] = useState('');
+  const [certEmail, setCertEmail] = useState('');
 
   const pageContainerRef = useRef(null);
   const pdfCanvasRef = useRef(null);
@@ -322,6 +377,73 @@ export default function SignPdf() {
     setResult(null);
 
     try {
+      const finalName = files[0].name.replace(/\.[^.]+$/, '') + '_signed.pdf';
+      
+      if (cryptographicSeal) {
+        if (!backendActive) {
+          throw new Error('Backend server is not active. Cryptographic seal requires the FastAPI backend running. Start it with run_project.bat.');
+        }
+
+        // Calculate visual stamp coordinates in PDF points (origin is bottom-left)
+        let visual_x1 = 0, visual_y1 = 0, visual_x2 = 0, visual_y2 = 0;
+        if (pdfCanvasRef.current) {
+          const pageW = pdfCanvasRef.current.width;
+          const pageH = pdfCanvasRef.current.height;
+          
+          const w_pt = pageW * widthPercent;
+          const h_pt = w_pt / sigAspectRatio;
+          const x_center = pageW * xPercent;
+          const y_center = pageH * (1 - yPercent); // bottom-up conversion
+          
+          visual_x1 = Math.max(0, x_center - w_pt / 2);
+          visual_x2 = Math.min(pageW, x_center + w_pt / 2);
+          visual_y1 = Math.max(0, y_center - h_pt / 2);
+          visual_y2 = Math.min(pageH, y_center + h_pt / 2);
+        }
+
+        setProgress(20);
+        const uploadRes = await uploadFileSecure(BACKEND_URL, files[0], (p) => setProgress(20 + p * 0.3));
+        if (!uploadRes.success) {
+          throw new Error(uploadRes.detail || 'Failed to upload document to security server');
+        }
+        
+        setProgress(60);
+        const formData = new FormData();
+        formData.append('file_id', uploadRes.file_id || uploadRes.fileId);
+        formData.append('filename', files[0].name);
+        
+        formData.append('page_index', String(activePageIndex));
+        formData.append('x1', String(visual_x1));
+        formData.append('y1', String(visual_y1));
+        formData.append('x2', String(visual_x2));
+        formData.append('y2', String(visual_y2));
+        formData.append('signature_image', signatureBlob, 'signature.png');
+        
+        if (certFile) {
+          formData.append('certificate', certFile);
+          formData.append('passphrase', certPassphrase);
+        } else {
+          if (certCommonName) formData.append('common_name', certCommonName);
+          if (certEmail) formData.append('email', certEmail);
+        }
+        
+        const signRes = await apiFetch(`${BACKEND_URL}/api/pdf/digitally-sign`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!signRes.ok) {
+          const detail = await signRes.json().catch(() => ({ detail: 'Signing request failed' }));
+          throw new Error(detail.detail || 'Signing request failed');
+        }
+        
+        const signData = await signRes.json();
+        setProgress(75);
+        poller.start(signData.job_id);
+        return;
+      }
+
+      // Client Side visual stamp local fallback
       const options = {
         signaturePngBlob: signatureBlob,
         pageIndex: activePageIndex,
@@ -331,8 +453,7 @@ export default function SignPdf() {
       };
 
       const outputBlob = await signPdf(files[0], options, setProgress);
-      const finalName = files[0].name.replace(/\.[^.]+$/, '') + '_signed.pdf';
-      
+
       setResult({
         blob: outputBlob,
         name: finalName
@@ -348,7 +469,9 @@ export default function SignPdf() {
     } catch (err) {
       setError(err.message || 'Signature placement failed.');
     } finally {
-      setProcessing(false);
+      if (!cryptographicSeal) {
+        setProcessing(false);
+      }
     }
   };
 
@@ -375,10 +498,19 @@ export default function SignPdf() {
       toolId="sign-pdf"
       title="Sign PDF"
       description="Electronically sign your PDF document by drawing, typing, or uploading a signature"
-    >
+      files={files}
+      onFileSwitch={(idx) => {
+        setFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      }}>
       <SEOHead 
         title="Sign PDF Online Free — Place Signature on PDF | DocForge" 
-        description="Create your electronic signature (draw, type, or upload) and visually place it on any page of your PDF file completely client-side."
+        description="Create your electronic signature (draw, type, or upload) and visually place it on any page of your PDF file completely Client Side."
       />
       
       
@@ -585,6 +717,120 @@ export default function SignPdf() {
                       />
                     </div>
                   )}
+
+                  {/* Cryptographic Seal Settings */}
+                  <div style={{
+                    marginTop: '0.5rem',
+                    background: 'var(--bg-secondary)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: '8px',
+                    padding: '0.85rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.6rem'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <input 
+                        type="checkbox"
+                        id="cryptographic-seal-toggle"
+                        checked={cryptographicSeal}
+                        onChange={(e) => setCryptographicSeal(e.target.checked)}
+                        style={{ cursor: 'pointer', width: '15px', height: '15px' }}
+                      />
+                      <label htmlFor="cryptographic-seal-toggle" style={{ fontSize: '0.78rem', fontWeight: '700', color: 'var(--text-primary)', cursor: 'pointer', userSelect: 'none', margin: 0 }}>
+                        🔒 Add Cryptographic X.509 Seal
+                      </label>
+                    </div>
+
+                    {cryptographicSeal && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem', marginTop: '0.35rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.65rem' }}>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginBottom: '0.2rem' }}>
+                          Upload custom PKCS#12 (.p12/.pfx) cert, or leave empty to use DocForge Trust Seal.
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                          <label style={{ fontSize: '0.72rem', fontWeight: '600', color: 'var(--text-secondary)' }}>Certificate File (.p12 / .pfx)</label>
+                          <input 
+                            type="file"
+                            accept=".p12,.pfx"
+                            onChange={(e) => setCertFile(e.target.files?.[0] || null)}
+                            style={{ 
+                              width: '100%',
+                              fontSize: '0.72rem',
+                              background: 'var(--bg-primary)',
+                              border: '1px solid var(--border-subtle)',
+                              padding: '0.25rem',
+                              borderRadius: '4px',
+                              color: 'var(--text-primary)'
+                            }}
+                          />
+                        </div>
+
+                        {certFile ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                            <label style={{ fontSize: '0.72rem', fontWeight: '600', color: 'var(--text-secondary)' }}>Certificate Passphrase</label>
+                            <input 
+                              type="password"
+                              placeholder="Enter passphrase"
+                              value={certPassphrase}
+                              onChange={(e) => setCertPassphrase(e.target.value)}
+                              style={{ 
+                                width: '100%',
+                                padding: '0.35rem 0.5rem',
+                                fontSize: '0.75rem',
+                                background: 'var(--bg-primary)',
+                                border: '1px solid var(--border-subtle)',
+                                borderRadius: '4px',
+                                color: 'var(--text-primary)',
+                                outline: 'none'
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                              <label style={{ fontSize: '0.72rem', fontWeight: '600', color: 'var(--text-secondary)' }}>Common Name</label>
+                              <input 
+                                type="text"
+                                placeholder="DocForge Trust Seal"
+                                value={certCommonName}
+                                onChange={(e) => setCertCommonName(e.target.value)}
+                                style={{ 
+                                  width: '100%',
+                                  padding: '0.35rem 0.5rem',
+                                  fontSize: '0.75rem',
+                                  background: 'var(--bg-primary)',
+                                  border: '1px solid var(--border-subtle)',
+                                  borderRadius: '4px',
+                                  color: 'var(--text-primary)',
+                                  outline: 'none'
+                                }}
+                              />
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                              <label style={{ fontSize: '0.72rem', fontWeight: '600', color: 'var(--text-secondary)' }}>Email Address</label>
+                              <input 
+                                type="email"
+                                placeholder="security@docforge.com"
+                                value={certEmail}
+                                onChange={(e) => setCertEmail(e.target.value)}
+                                style={{ 
+                                  width: '100%',
+                                  padding: '0.35rem 0.5rem',
+                                  fontSize: '0.75rem',
+                                  background: 'var(--bg-primary)',
+                                  border: '1px solid var(--border-subtle)',
+                                  borderRadius: '4px',
+                                  color: 'var(--text-primary)',
+                                  outline: 'none'
+                                }}
+                              />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Column 2: Visual Placement & Page Selector */}

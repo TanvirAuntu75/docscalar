@@ -122,9 +122,18 @@ export default function AddPageNumbers() {
       toolId="add-page-numbers"
       title="Add Page Numbers"
       description="Draw customized page numbers dynamically on document headers or footers"
-    >
+      files={files}
+      onFileSwitch={(idx) => {
+        setFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      }}>
       <SEOHead 
-        title="Add Page Numbers to PDF Online Free (100% Client-Side) | DocForge" 
+        title="Add Page Numbers to PDF Online Free (100% Client Side) | DocForge" 
         description="Add headers or footers with page numbering tags to your PDF file instantly in your browser. Complete styling and configuration options."
       />
       

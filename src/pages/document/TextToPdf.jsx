@@ -105,7 +105,16 @@ export default function TextToPdf() {
       toolId="text-to-pdf"
       title="Text to PDF Converter"
       description="Convert raw text, notes, or uploaded txt files into formatted PDF documents"
-    >
+      files={files}
+      onFileSwitch={(idx) => {
+        setFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      }}>
       <SEOHead 
         title="Convert TXT to PDF Online Free (Text to PDF)" 
         description="Convert plain text files (.txt) or custom text notes to styled PDF documents. 100% free local conversion."

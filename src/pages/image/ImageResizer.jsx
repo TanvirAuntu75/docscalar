@@ -219,7 +219,7 @@ export default function ImageResizer() {
       toolId="image-resizer"
       title="Image Resizer"
       description="Resize multiple images to exact dimensions or relative percentage"
-    >
+      suppressSwitcher={true}>
       <SEOHead 
         title="Resize Image Online Free (Change Image Dimensions)" 
         description="Resize images online free of charge. Resize by percentage or exact pixel dimensions (width/height) with aspect ratio locking. 100% private."

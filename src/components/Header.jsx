@@ -1,8 +1,11 @@
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { CATEGORIES, TOOLS, getToolsByCategory } from '../utils/constants';
 import ToolIcon from './ToolIcon';
+import { categoryIcons } from '../utils/iconMap';
 
 const renderToolIcon = (tool, size = '16px') => {
   if (!tool.icon) return null;
@@ -29,21 +32,26 @@ const pdfCategories = [
   {
     id: 'optimize',
     title: 'Optimize PDF',
-    subtitle: 'Compress, repair, and run server-side OCR',
+    subtitle: 'Compress, repair, and run Server Side OCR',
     icon: 'compress',
     iconColor: 'hsl(220, 90%, 60%)',
     tools: getToolsByCategory('optimize-pdf')
   },
   {
-    id: 'convert',
-    title: 'Convert PDF',
-    subtitle: 'Convert between PDF, Word, Excel, JPG, and HTML',
-    icon: 'sync_alt',
+    id: 'convert-to',
+    title: 'Convert to PDF',
+    subtitle: 'Office, HTML, images, and text to PDF',
+    icon: 'arrow_upward',
     iconColor: 'hsl(142, 72%, 40%)',
-    tools: [
-      ...getToolsByCategory('convert-to-pdf'),
-      ...getToolsByCategory('convert-from-pdf')
-    ]
+    tools: getToolsByCategory('convert-to-pdf')
+  },
+  {
+    id: 'convert-from',
+    title: 'Convert from PDF',
+    subtitle: 'PDF to Office, images, and archiving',
+    icon: 'arrow_downward',
+    iconColor: 'hsl(142, 72%, 40%)',
+    tools: getToolsByCategory('convert-from-pdf')
   },
   {
     id: 'security-ai',
@@ -61,6 +69,57 @@ const pdfCategories = [
 const imageAndUtilityTools = [
   ...TOOLS.filter(t => t.category === 'image' || t.category === 'utility')
 ];
+const dropdownVariants = {
+  hidden: { opacity: 0, y: 12, scale: 0.96 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 24,
+      staggerChildren: 0.05,
+      delayChildren: 0.02
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    y: 8, 
+    scale: 0.97,
+    transition: {
+      duration: 0.15,
+      ease: "easeOut"
+    }
+  }
+};
+
+const columnVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 260,
+      damping: 22,
+      staggerChildren: 0.03
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 25
+    }
+  }
+};
 
 export default function Header() {
   const navigate = useNavigate();
@@ -75,8 +134,17 @@ export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [timeoutId, setTimeoutId] = useState(null);
   const [expandedCategory, setExpandedCategory] = useState(null);
-  const [activeTab, setActiveTab] = useState('organize');
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+  const imageTools = imageAndUtilityTools.filter(t => t.category === 'image');
+  const utilityTools = imageAndUtilityTools.filter(t => t.category === 'utility');
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleMouseEnter = (menu) => {
     if (timeoutId) clearTimeout(timeoutId);
@@ -143,7 +211,11 @@ export default function Header() {
   const handleCtaClick = () => {
     setMobileMenuOpen(false);
     if (isAuthenticated) {
-      navigate('/dashboard');
+      if (!isPro) {
+        navigate('/pricing');
+      } else {
+        navigate('/workspace');
+      }
     } else {
       navigate('/signup');
     }
@@ -183,14 +255,41 @@ export default function Header() {
   ];
 
   return (
-    <nav className={isPro 
-      ? "bg-background/60 backdrop-blur-xl sticky top-0 left-0 w-full border-b border-outline-variant/30 shadow-sm z-50 transition-all duration-200"
-      : "bg-surface-container-low/80 backdrop-blur-xl fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-32px)] max-w-container-max rounded-full border border-outline-variant/30 shadow-lg z-50 transition-all duration-200"
-    }>
-      <div className={isPro 
-        ? "flex justify-between items-center gap-4 lg:gap-8 px-8 py-4 max-w-container-max mx-auto relative"
-        : "flex justify-between items-center gap-4 lg:gap-8 px-6 py-3 relative"
-      }>
+    <div className="fixed top-5 left-0 w-full z-50 flex justify-center px-6 pointer-events-none">
+      <motion.nav
+        initial={{ y: -70, opacity: 0 }}
+        animate={{ 
+          y: 0, 
+          opacity: 1,
+          borderColor: ["var(--border-subtle)", "rgba(var(--color-primary-rgb), 0.25)", "var(--border-subtle)"],
+          boxShadow: scrolled
+            ? [
+                "0 20px 40px -15px rgba(0, 0, 0, 0.05), 0 0 0 1px var(--border-subtle)",
+                "0 20px 40px -15px rgba(0, 0, 0, 0.1), 0 0 16px 2px rgba(var(--color-primary-rgb), 0.08)",
+                "0 20px 40px -15px rgba(0, 0, 0, 0.05), 0 0 0 1px var(--border-subtle)"
+              ]
+            : [
+                "0 10px 25px -10px rgba(0, 0, 0, 0.02), 0 0 0 1px var(--border-subtle)",
+                "0 10px 25px -10px rgba(0, 0, 0, 0.04), 0 0 10px 1px rgba(var(--color-primary-rgb), 0.04)",
+                "0 10px 25px -10px rgba(0, 0, 0, 0.02), 0 0 0 1px var(--border-subtle)"
+              ]
+        }}
+        transition={{
+          y: { type: "spring", stiffness: 100, damping: 16 },
+          opacity: { duration: 0.6 },
+          borderColor: { duration: 3.5, repeat: Infinity, ease: "easeInOut" },
+          boxShadow: { duration: 3.5, repeat: Infinity, ease: "easeInOut" }
+        }}
+        className="pointer-events-auto w-full max-w-[1380px] rounded-full border transition-colors duration-300"
+        style={{
+          background: scrolled
+            ? "var(--bg-glass-strong, rgba(250,248,244,0.97))"
+            : "var(--bg-glass, rgba(250,248,244,0.85))",
+          backdropFilter: "blur(24px) saturate(1.4)",
+          WebkitBackdropFilter: "blur(24px) saturate(1.4)",
+        }}
+      >
+        <div className="flex justify-between items-center gap-4 lg:gap-8 px-8 py-3.5 relative">
         {/* Logo & Brand */}
         <div className="flex items-center gap-4 flex-shrink-0">
           <div 
@@ -211,18 +310,82 @@ export default function Header() {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex items-center gap-6 font-body-md text-body-md">
+        <div className="hidden lg:flex items-center gap-2 font-body-md text-body-md font-medium">
           {/* Workspace / Home link */}
           <Link 
-            className={`font-semibold pb-0.5 transition-colors ${location.pathname === '/' ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`} 
-            to="/"
+            className={`relative px-4 py-2 transition-colors ${
+              (location.pathname === '/' || location.pathname === '/workspace') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'
+            }`} 
+            to={isAuthenticated ? '/workspace' : '/'}
+            style={{ whiteSpace: 'nowrap' }}
           >
-            {isAuthenticated ? 'Workspace' : 'Home'}
+            <span className="relative z-10">{isAuthenticated ? 'Workspace' : 'Home'}</span>
+            {(location.pathname === '/' || location.pathname === '/workspace') && (
+                <motion.div
+                  layoutId="header-active-line"
+                  className="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-7 h-[3px] rounded-full bg-primary"
+                  initial={false}
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+            )}
+          </Link>
+
+          {/* Canvas link */}
+          {isAuthenticated && (
+            <Link 
+              className={`relative px-4 py-2 transition-colors ${location.pathname === '/canvas' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
+              to="/canvas"
+              style={{ whiteSpace: 'nowrap' }}
+            >
+              <span className="relative z-10">Canvas</span>
+              {location.pathname === '/canvas' && (
+                  <motion.div
+                    layoutId="header-active-line"
+                    className="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-7 h-[3px] rounded-full bg-primary"
+                    initial={false}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+              )}
+            </Link>
+          )}
+
+          {/* CV Builder link */}
+          <Link 
+            className={`relative px-4 py-2 transition-colors ${location.pathname === '/resume-builder' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
+            to="/resume-builder"
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            <span className="relative z-10">CV Builder</span>
+            {location.pathname === '/resume-builder' && (
+                <motion.div
+                  layoutId="header-active-line"
+                  className="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-7 h-[3px] rounded-full bg-primary"
+                  initial={false}
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+            )}
+          </Link>
+
+          {/* Document Viewer link */}
+          <Link 
+            className={`relative px-4 py-2 transition-colors ${location.pathname === '/document-viewer' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
+            to="/document-viewer"
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            <span className="relative z-10">Document Viewer</span>
+            {location.pathname === '/document-viewer' && (
+                <motion.div
+                  layoutId="header-active-line"
+                  className="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-7 h-[3px] rounded-full bg-primary"
+                  initial={false}
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+            )}
           </Link>
 
           {/* PDF Tools Interactive Dropdown Trigger */}
           <div 
-            className="relative py-2"
+            className=""
             onMouseEnter={() => handleMouseEnter('pdf-tools')}
             onMouseLeave={handleMouseLeave}
           >
@@ -231,87 +394,89 @@ export default function Header() {
                 setActiveDropdown(null);
                 navigate('/?category=pdf');
               }}
-              className="flex items-center gap-1 font-semibold text-on-surface-variant hover:text-primary transition-colors cursor-pointer select-none"
+              className={`relative flex items-center gap-1 px-4 py-2 transition-colors cursor-pointer select-none bg-transparent border-none ${
+                activeDropdown === 'pdf-tools' || location.search.includes('category=pdf') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'
+              }`}
+              style={{ whiteSpace: 'nowrap' }}
             >
-              PDF Tools
-              <span className={`material-symbols-outlined text-[18px] transition-transform duration-200 ${activeDropdown === 'pdf-tools' ? 'rotate-180 text-primary' : ''}`}>
+              <span className="relative z-10">PDF Tools</span>
+              <span className={`material-symbols-outlined relative z-10 text-[18px] transition-transform duration-200 ${activeDropdown === 'pdf-tools' ? 'rotate-180 text-primary' : ''}`}>
                 keyboard_arrow_down
               </span>
+              {(activeDropdown === 'pdf-tools' || location.search.includes('category=pdf')) && (
+                  <motion.div
+                    layoutId="header-active-line"
+                    className="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-7 h-[3px] rounded-full bg-primary"
+                    initial={false}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+              )}
             </button>
             
             {/* Tabbed Mega Menu Dropdown */}
-            <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-1 w-[760px] transition-all duration-200 ${
-              activeDropdown === 'pdf-tools' 
-                ? 'opacity-100 translate-y-0 visible scale-100' 
-                : 'opacity-0 translate-y-2 invisible scale-95 pointer-events-none'
-            } z-50`}>
-              <div 
-                className="bg-surface border border-outline-variant/30 rounded-2xl shadow-2xl mt-2 overflow-hidden flex h-[400px]"
-                onMouseEnter={() => handleMouseEnter('pdf-tools')}
-                onMouseLeave={handleMouseLeave}
-              >
-                {/* Left Categories Sidebar */}
-                <div className="w-[300px] flex flex-col gap-1.5 p-4 border-r border-outline-variant/20 bg-surface-container-low/20">
-                  {pdfCategories.map((cat) => (
-                    <div
-                      key={cat.id}
-                      onMouseEnter={() => setActiveTab(cat.id)}
-                      className={`flex items-start gap-3.5 p-3 rounded-xl cursor-pointer transition-all duration-200 ${
-                        activeTab === cat.id
-                          ? 'bg-primary/10 border border-primary/20 text-primary shadow-[0_4px_16px_rgba(249,115,22,0.06)]'
-                          : 'hover:bg-surface-container-high/40 border border-transparent text-on-surface-variant'
-                      }`}
-                    >
-                      <span className="material-symbols-outlined text-[20px] mt-0.5" style={{ color: cat.iconColor }}>
-                        {cat.icon}
-                      </span>
-                      <div className="text-left min-w-0">
-                        <h4 className={`text-xs font-bold leading-tight ${activeTab === cat.id ? 'text-primary' : 'text-on-background'}`}>
-                          {cat.title}
-                        </h4>
-                        <p className="text-[10px] text-on-surface-variant/70 leading-normal mt-0.5 truncate">
-                          {cat.subtitle}
-                        </p>
+              <AnimatePresence>
+                {activeDropdown === 'pdf-tools' && (
+                  <motion.div
+                    variants={dropdownVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    onMouseEnter={() => handleMouseEnter('pdf-tools')}
+                    onMouseLeave={handleMouseLeave}
+                    className="absolute top-full left-0 right-0 mx-auto mt-2 w-[calc(100vw-48px)] max-w-[1300px] z-50 pointer-events-auto"
+                  >
+                    <div className="bg-surface border border-outline-variant/30 rounded-3xl p-6 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.12)]">
+                      <div className="grid grid-cols-5 gap-6">
+                        {pdfCategories.map((cat) => {
+                          const Icon = categoryIcons[cat.id];
+                          return (
+                            <motion.div 
+                              key={cat.id} 
+                              variants={columnVariants}
+                              className="flex flex-col gap-4 text-left"
+                            >
+                              {/* Column Header */}
+                              <div className="flex items-center gap-2 border-b border-outline-variant/15 pb-2">
+                                <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-primary/10 text-primary">
+                                  {Icon && <Icon className="w-4 h-4" />}
+                                </div>
+                                <h4 className="text-xs font-bold tracking-wide uppercase text-on-background select-none">
+                                  {cat.title}
+                                </h4>
+                              </div>
+
+                              {/* Column Tools List */}
+                              <div className="flex flex-col gap-1">
+                                {cat.tools.map((tool) => {
+                                  return (
+                                    <motion.div key={tool.id} variants={itemVariants}>
+                                      <Link
+                                        to={tool.path}
+                                        onClick={() => setActiveDropdown(null)}
+                                        className="flex items-center gap-3.5 px-3 py-2 rounded-2xl hover:bg-primary/5 border border-transparent hover:border-primary/10 transition-all duration-200 group relative overflow-hidden"
+                                      >
+                                        <ToolIcon id={tool.id} size={40} />
+                                        <span className="text-xs font-semibold text-on-background group-hover:text-primary transition-colors truncate">
+                                          {tool.title}
+                                        </span>
+                                      </Link>
+                                    </motion.div>
+                                  );
+                                })}
+                              </div>
+                            </motion.div>
+                          );
+                        })}
                       </div>
                     </div>
-                  ))}
-                </div>
-
-                {/* Right Tools Panel */}
-                <div className="flex-1 p-5 overflow-y-auto bg-surface-container-low/30 flex flex-col gap-4 text-left">
-                  <div className="text-[11px] font-bold text-outline uppercase tracking-wider border-b border-outline-variant/20 pb-1.5 select-none">
-                    {pdfCategories.find(c => c.id === activeTab)?.title} Tools
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    {pdfCategories.find(c => c.id === activeTab)?.tools.map((tool) => (
-                      <Link
-                        key={tool.id}
-                        to={tool.path}
-                        onClick={() => setActiveDropdown(null)}
-                        className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-primary/5 hover:text-primary border border-transparent hover:border-primary/10 transition-all duration-200 group group/item"
-                      >
-                        <div className="w-8 h-8 flex items-center justify-center flex-shrink-0 select-none">
-                          <ToolIcon id={tool.id} size={28} />
-                        </div>
-                        <div className="text-left min-w-0">
-                          <h5 className="text-xs font-bold text-on-background group-hover/item:text-primary transition-colors leading-tight">
-                            {tool.title}
-                          </h5>
-                          <p className="text-[10px] text-on-surface-variant/75 truncate mt-0.5 leading-normal">
-                            {tool.description}
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
 
           {/* Image & Utilities Dropdown Trigger */}
           <div 
-            className="relative py-2"
+            className=""
             onMouseEnter={() => handleMouseEnter('image-utilities')}
             onMouseLeave={handleMouseLeave}
           >
@@ -320,71 +485,120 @@ export default function Header() {
                 setActiveDropdown(null);
                 navigate('/?category=image');
               }}
-              className="flex items-center gap-1 font-semibold text-on-surface-variant hover:text-primary transition-colors cursor-pointer select-none"
+              className={`relative flex items-center gap-1 px-4 py-2 transition-colors cursor-pointer select-none bg-transparent border-none ${
+                activeDropdown === 'image-utilities' || location.search.includes('category=image') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'
+              }`}
+              style={{ whiteSpace: 'nowrap' }}
             >
-              Image & Utilities
-              <span className={`material-symbols-outlined text-[18px] transition-transform duration-200 ${activeDropdown === 'image-utilities' ? 'rotate-180 text-primary' : ''}`}>
+              <span className="relative z-10">Image & Utilities</span>
+              <span className={`material-symbols-outlined relative z-10 text-[18px] transition-transform duration-200 ${activeDropdown === 'image-utilities' ? 'rotate-180 text-primary' : ''}`}>
                 keyboard_arrow_down
               </span>
+              {(activeDropdown === 'image-utilities' || location.search.includes('category=image')) && (
+                  <motion.div
+                    layoutId="header-active-line"
+                    className="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-7 h-[3px] rounded-full bg-primary"
+                    initial={false}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+              )}
             </button>
 
-            {/* Image & Utilities Dropdown Menu */}
-            <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-1 w-[380px] transition-all duration-200 ${
-              activeDropdown === 'image-utilities' 
-                ? 'opacity-100 translate-y-0 visible scale-100' 
-                : 'opacity-0 translate-y-2 invisible scale-95 pointer-events-none'
-            } z-50`}>
-              <div 
-                className="bg-surface border border-outline-variant/30 rounded-2xl p-4 shadow-2xl mt-2 flex flex-col gap-3"
-                onMouseEnter={() => handleMouseEnter('image-utilities')}
-                onMouseLeave={handleMouseLeave}
-              >
-                <div className="text-[11px] font-bold text-outline uppercase tracking-wider border-b border-outline-variant/20 pb-1.5 select-none">
-                  Image & Utility Tools
-                </div>
-                <div className="flex flex-col gap-1">
-                  {imageAndUtilityTools.map((tool) => (
-                    <Link
-                      key={tool.id}
-                      to={tool.path}
-                      onClick={() => setActiveDropdown(null)}
-                      className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-primary/5 hover:text-primary border border-transparent hover:border-primary/10 transition-all duration-200 group group/item"
-                    >
-                      <div className="w-8 h-8 flex items-center justify-center flex-shrink-0 select-none">
-                        <ToolIcon id={tool.id} size={28} />
-                      </div>
-                      <div className="text-left min-w-0">
-                        <h5 className="text-xs font-bold text-on-background group-hover/item:text-primary transition-colors leading-tight">
-                          {tool.title}
-                        </h5>
-                        <p className="text-[10px] text-on-surface-variant/75 truncate mt-0.5 leading-normal">
-                          {tool.description}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+              <AnimatePresence>
+                {activeDropdown === 'image-utilities' && (
+                  <motion.div
+                    variants={dropdownVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    onMouseEnter={() => handleMouseEnter('image-utilities')}
+                    onMouseLeave={handleMouseLeave}
+                    className="absolute top-full left-0 right-0 mx-auto mt-2 w-[calc(100vw-48px)] max-w-[600px] z-50 pointer-events-auto"
+                  >
+                    <div className="bg-surface border border-outline-variant/30 rounded-3xl p-6 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.12)]">
+                      <div className="grid grid-cols-2 gap-6">
+                        {/* Column 1: Image Tools */}
+                        <motion.div variants={columnVariants} className="flex flex-col gap-4 text-left">
+                          <div className="flex items-center gap-2 border-b border-outline-variant/15 pb-2">
+                            <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-primary/10 text-primary">
+                              <ImageIcon className="w-4 h-4" />
+                            </div>
+                            <h4 className="text-xs font-bold tracking-wide uppercase text-on-background select-none">
+                              Image Tools
+                            </h4>
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            {imageTools.map((tool) => {
+                              return (
+                                <motion.div key={tool.id} variants={itemVariants}>
+                                  <Link
+                                    to={tool.path}
+                                    onClick={() => setActiveDropdown(null)}
+                                    className="flex items-center gap-3.5 px-3 py-2 rounded-2xl hover:bg-primary/5 border border-transparent hover:border-primary/10 transition-all duration-200 group relative overflow-hidden"
+                                  >
+                                    <ToolIcon id={tool.id} size={40} />
+                                    <span className="text-xs font-semibold text-on-background group-hover:text-primary transition-colors truncate">
+                                      {tool.title}
+                                    </span>
+                                  </Link>
+                                </motion.div>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
 
-          {/* Pricing / Dashboard link */}
-          {isAuthenticated && (
-            <Link 
-              className={`font-semibold pb-0.5 transition-colors ${location.pathname === '/dashboard' ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`} 
-              to="/dashboard"
-            >
-              Dashboard
-            </Link>
-          )}
-          {(!isAuthenticated || !isPro) && (
-            <Link 
-              className={`font-semibold pb-0.5 transition-colors ${location.pathname === '/pricing' ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`} 
-              to="/pricing"
-            >
-              Pricing
-            </Link>
-          )}
+                        {/* Column 2: Utility Tools */}
+                        <motion.div variants={columnVariants} className="flex flex-col gap-4 text-left">
+                          <div className="flex items-center gap-2 border-b border-outline-variant/15 pb-2">
+                            <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-primary/10 text-primary">
+                              <Wrench className="w-4 h-4" />
+                            </div>
+                            <h4 className="text-xs font-bold tracking-wide uppercase text-on-background select-none">
+                              Utilities
+                            </h4>
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            {utilityTools.map((tool) => {
+                              return (
+                                <motion.div key={tool.id} variants={itemVariants}>
+                                  <Link
+                                    to={tool.path}
+                                    onClick={() => setActiveDropdown(null)}
+                                    className="flex items-center gap-3.5 px-3 py-2.5 rounded-2xl hover:bg-primary/5 border border-transparent hover:border-primary/10 transition-all duration-200 group relative overflow-hidden"
+                                  >
+                                    <ToolIcon id={tool.id} size={40} />
+                                    <span className="text-xs font-semibold text-on-background group-hover:text-primary transition-colors truncate">
+                                      {tool.title}
+                                    </span>
+                                  </Link>
+                                </motion.div>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+          {/* Pricing link */}
+          <Link 
+            className={`relative px-4 py-2 transition-colors ${location.pathname === '/pricing' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
+            to="/pricing"
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            <span className="relative z-10">Pricing</span>
+            {location.pathname === '/pricing' && (
+                <motion.div
+                  layoutId="header-active-line"
+                  className="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-7 h-[3px] rounded-full bg-primary"
+                  initial={false}
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+            )}
+          </Link>
         </div>
 
         {/* Mobile Hamburger */}
@@ -460,23 +674,14 @@ export default function Header() {
                       </div>
                     </div>
 
-                    {/* Links */}
                     <div className="py-1">
                       <Link
-                        to="/"
+                        to="/workspace"
                         onClick={() => setProfileDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all"
                       >
                         <span className="material-symbols-outlined text-[16px]">grid_view</span>
                         Studio Workspace
-                      </Link>
-                      <Link
-                        to="/dashboard"
-                        onClick={() => setProfileDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all"
-                      >
-                        <span className="material-symbols-outlined text-[16px]">dashboard</span>
-                        Dashboard
                       </Link>
                     </div>
 
@@ -519,22 +724,35 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="lg:hidden bg-surface/95 backdrop-blur-xl border-t border-outline-variant/30 px-6 py-4 flex flex-col gap-3 rounded-b-2xl shadow-lg animate-in slide-in-from-top-2 max-h-[calc(100vh-120px)] overflow-y-auto">
           <Link 
-            className={`font-semibold py-2 transition-colors ${location.pathname === '/' ? 'text-primary' : 'text-on-surface-variant'}`} 
-            to="/"
+            className={`font-semibold py-2 transition-colors ${
+              (location.pathname === '/' || location.pathname === '/workspace') ? 'text-primary' : 'text-on-surface-variant'
+            }`} 
+            to={isAuthenticated ? '/workspace' : '/'}
             onClick={() => setMobileMenuOpen(false)}
           >
             {isAuthenticated ? 'Workspace' : 'Home'}
           </Link>
 
+          {/* Canvas link */}
           {isAuthenticated && (
             <Link 
-              className={`font-semibold py-2 transition-colors ${location.pathname === '/dashboard' ? 'text-primary' : 'text-on-surface-variant'}`} 
-              to="/dashboard"
+              className={`font-semibold py-2 transition-colors ${location.pathname === '/canvas' ? 'text-primary' : 'text-on-surface-variant'}`} 
+              to="/canvas"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Dashboard
+              Canvas
             </Link>
           )}
+
+          <Link 
+            className={`font-semibold py-2 transition-colors ${location.pathname === '/resume-builder' ? 'text-primary' : 'text-on-surface-variant'}`} 
+            to="/resume-builder"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            CV Builder
+          </Link>
+
+
 
           {(!isAuthenticated || !isPro) && (
             <Link 
@@ -624,7 +842,7 @@ export default function Header() {
                 </div>
                 {!isPro && (
                   <button 
-                    className="font-button text-button bg-primary-container text-white px-5 py-2.5 rounded-lg hover:bg-[#FDBA74] transition-colors shadow-sm flex items-center justify-center gap-1 w-full"
+                    className="font-button text-button bg-primary-container text-on-primary-container px-5 py-2.5 rounded-lg hover:opacity-90 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1 w-full"
                     onClick={handleCtaClick}
                   >
                     Go Pro <span className="text-[14px]">→</span>
@@ -648,7 +866,7 @@ export default function Header() {
                   Log In
                 </Link>
                 <button 
-                  className="font-button text-button bg-primary-container text-white px-5 py-2.5 rounded-lg hover:bg-[#FDBA74] transition-colors shadow-sm flex items-center justify-center gap-1 w-full"
+                  className="font-button text-button bg-primary-container text-on-primary-container px-5 py-2.5 rounded-lg hover:opacity-90 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1 w-full"
                   onClick={handleCtaClick}
                 >
                   Start Free <span className="text-[14px]">→</span>
@@ -658,6 +876,7 @@ export default function Header() {
           </div>
         </div>
       )}
-    </nav>
+      </motion.nav>
+  </div>
   );
 }

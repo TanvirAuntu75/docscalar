@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import FileUploadZone from '../../components/FileUploadZone';
+import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import { TOOLS } from '../../utils/constants';
 
@@ -49,34 +49,25 @@ export default function ConversionPipeline() {
   };
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <SEOHead
-        title="Conversion Pipeline | DocForge"
-        description="Chain multiple conversion and editing tools into an automated workflow."
+    <div className="tool-page max-w-[1200px] mx-auto py-12 px-4">
+      <SEOHead 
+        title="Automated PDF Conversion Workflows & Chaining — DocForge"
+        description="Chain multiple document operations (Merge, Compress, Rotate) and convert files in sequence automatically using DocForge Workflows."
       />
-
-      <div className="max-w-5xl mx-auto space-y-12">
-        <div className="text-center space-y-4">
-          <motion.div
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-12">
+          <motion.h1 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center justify-center p-3 rounded-2xl bg-primary/20 text-primary mb-2"
+            className="text-4xl font-extrabold text-white mb-4"
           >
-            <span className="material-symbols-outlined text-4xl">account_tree</span>
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
+            Conversion Workflows
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight"
-          >
-            Conversion Pipeline
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg text-white/60 max-w-2xl mx-auto"
+            className="text-lg text-white/60"
           >
             Create automated workflows by chaining multiple document and image operations together.
           </motion.p>
@@ -95,7 +86,7 @@ export default function ConversionPipeline() {
               Input Files
             </h2>
             {files.length === 0 ? (
-              <FileUploadZone onFilesSelected={handleFilesSelected} multiple={true} />
+              <FileDropzone setFiles={handleFilesSelected} multiple={true} />
             ) : (
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between p-4 rounded-xl bg-surface-container-low border border-outline-variant">

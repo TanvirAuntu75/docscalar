@@ -64,10 +64,10 @@ export default function RepairPdf() {
       toolId="repair-pdf"
       title="Repair PDF"
       description="Fix damaged or unreadable PDF documents by reconstructing their cross-reference index tables"
-    >
+      suppressSwitcher={true}>
       <SEOHead 
         title="Repair PDF Online Free — Fix Corrupted PDFs | DocForge" 
-        description="Fix corrupted, damaged, or unreadable PDF structures. Rebuild cross-reference tables and recover document objects client-side."
+        description="Fix corrupted, damaged, or unreadable PDF structures. Rebuild cross-reference tables and recover document objects Client Side."
       />
       
 

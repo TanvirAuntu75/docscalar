@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
-import { apiFetch } from '../../utils/api';
+import { apiFetch, uploadFileSecure, BACKEND_URL} from '../../utils/api';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
@@ -8,8 +8,6 @@ import AdPlaceholder from '../../components/AdPlaceholder';
 import { saveFile } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import { useJobPoller } from '../../hooks/useJobPoller';
-
-const BACKEND_URL = 'http://localhost:8000';
 
 export default function PdfToWord() {
   const [files, setFiles] = useState([]);
@@ -84,24 +82,11 @@ export default function PdfToWord() {
       if (!backendActive) {
         throw new Error('Connection to conversion server is inactive. Reconstructing PDF layouts requires a running backend.');
       }
-
-      // Step 1: Upload file to FastAPI backend
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      const uploadRes = await apiFetch(`${BACKEND_URL}/api/upload`, {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!uploadRes.ok) {
-        throw new Error('Upload to conversion server failed.');
-      }
-
-      const uploadData = await uploadRes.json();
-      if (!uploadData.success) {
-        throw new Error(uploadData.detail || 'Upload failed');
-      }
+        // Step 1: Upload file (uses chunked upload if large and premium)
+        const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
+        if (!uploadData.success) {
+          throw new Error(uploadData.detail || 'Upload failed');
+        }
 
       setProgress(40);
 
@@ -182,13 +167,22 @@ export default function PdfToWord() {
                 borderRadius: '50%',
                 background: backendActive ? 'var(--color-success)' : 'var(--color-warning)'
               }} />
-              {backendActive ? 'pdf2docx Engine Active' : 'Conversion Server Offline'}
+              {backendActive ? 'pdf2docx Engine Active' : 'Conversion Server Disconnected'}
             </span>
           </div>
         )}
         </>
       }
-    >
+      files={files}
+      onFileSwitch={(idx) => {
+        setFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      }}>
       <SEOHead 
         title="Convert PDF to Word Online Free — PDF to DOCX | DocForge" 
         description="Reconstruct PDF document formatting into fully editable Microsoft Word (.docx) files. Complete layout structure preservation."
@@ -222,6 +216,7 @@ export default function PdfToWord() {
               <p className="progress-status">Analyzing layout structure & converting... {progress}%</p>
             </div>
           )}
+
 
           {error && <p style={{ color: 'var(--color-danger)', textAlign: 'center', marginTop: '1rem' }}>{error}</p>}
           

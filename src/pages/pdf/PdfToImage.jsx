@@ -171,7 +171,16 @@ export default function PdfToImage() {
       toolId="pdf-to-image"
       title="PDF to Images"
       description="Convert each PDF page to high-quality PNG or JPG images"
-    >
+      files={files}
+      onFileSwitch={(idx) => {
+        setFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      }}>
       <SEOHead
         title="Convert PDF to Image Online Free (High Quality Pages)"
         description="Convert PDF pages to high-quality PNG or JPG images instantly in your browser. 100% private, no file uploads to servers."

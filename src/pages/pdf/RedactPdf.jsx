@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
-import { apiFetch } from '../../utils/api';
+import { apiFetch, uploadFileSecure, BACKEND_URL} from '../../utils/api';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -12,8 +12,6 @@ import { saveAs } from 'file-saver';
 import { useJobPoller } from '../../hooks/useJobPoller';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-
-const BACKEND_URL = 'http://localhost:8000';
 
 export default function RedactPdf() {
   const [files, setFiles] = useState([]);
@@ -288,20 +286,8 @@ export default function RedactPdf() {
         throw new Error('Connection to security server is inactive. Secure text purging requires a running backend.');
       }
 
-      // Step 1: Upload file to FastAPI backend
-      const formData = new FormData();
-      formData.append('file', files[0]);
-      
-      const uploadRes = await apiFetch(`${BACKEND_URL}/api/upload`, {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!uploadRes.ok) {
-        throw new Error('Upload to conversion server failed.');
-      }
-
-      const uploadData = await uploadRes.json();
+      // Step 1: Upload file (uses chunked upload if large and premium)
+      const uploadData = await uploadFileSecure(BACKEND_URL, files[0], setProgress);
       if (!uploadData.success) {
         throw new Error(uploadData.detail || 'Upload failed');
       }
@@ -391,13 +377,22 @@ export default function RedactPdf() {
                 borderRadius: '50%',
                 background: backendActive ? 'var(--color-success)' : 'var(--color-warning)'
               }} />
-              {backendActive ? 'Security Engine Active' : 'Conversion Server Offline'}
+              {backendActive ? 'Security Engine Active' : 'Conversion Server Disconnected'}
             </span>
           </div>
         )}
         </>
       }
-    >
+      files={files}
+      onFileSwitch={(idx) => {
+        setFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      }}>
       <SEOHead 
         title="Redact PDF Online Free — Secure Text Stripping | DocForge" 
         description="Securely mask and sanitize PDF pages. Draw boxes to permanently delete text bytes and content layers underneath, protecting sensitive data."

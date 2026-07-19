@@ -19,6 +19,18 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
   );
 
   useEffect(() => {
+    if (location.state && setFiles) {
+      if (location.state.initialFiles) {
+        setFiles(location.state.initialFiles);
+        window.history.replaceState({}, document.title);
+      } else if (location.state.initialFile) {
+        setFiles([location.state.initialFile]);
+        window.history.replaceState({}, document.title);
+      }
+    }
+  }, [location, setFiles]);
+
+  useEffect(() => {
     if (toast) {
       const timer = setTimeout(() => setToast(null), 5000);
       return () => clearTimeout(timer);
@@ -56,7 +68,7 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
     let arr = Array.from(newFiles);
 
     // Validate files against accept criteria
-    if (accept) {
+    if (accept && accept !== '*') {
       const rules = accept.split(',').map((rule) => rule.trim().toLowerCase());
       arr = arr.filter((file) => {
         const name = file.name.toLowerCase();
@@ -81,12 +93,12 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
       }
     }
 
-    // Client-side memory validation alert for large files
+    // Client Side memory validation alert for large files
     const largeFiles = arr.filter((file) => file.size > 30 * 1024 * 1024);
     if (largeFiles.length > 0) {
       setToast({
         type: 'warning',
-        message: 'Large file(s) detected (over 30MB). Processing large files client-side may slow down or freeze your browser tab.'
+        message: 'Large file(s) detected (over 30MB). Processing large files Client Side may slow down or freeze your browser tab.'
       });
     }
 
@@ -227,25 +239,25 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
       icon: 'upload_file',
       maxSize: '200MB',
       badges: [
-        { icon: 'shield_lock', label: 'Client-Side Processing' },
+        { icon: 'shield_lock', label: 'Client Side Processing' },
         { icon: 'cloud_off', label: 'No File Upload' },
         { icon: 'verified_user', label: '100% Secure' }
       ],
       steps: [
         { title: 'Upload File', desc: 'Select or drag your file to get started.' },
         { title: 'Configure Options', desc: 'Adjust settings to tailor the processing.' },
-        { title: 'Process', desc: 'Our offline converter processes the file instantly.' },
+        { title: 'Process', desc: 'Our Client Side converter processes the file instantly.' },
         { title: 'Download', desc: 'Save your optimized file to your device.' }
       ],
       tips: [
         'Large files may take a few seconds to process locally.',
         'Ensure the file is not corrupted or password-protected.',
-        'Close other browser tabs for optimal client-side speed.',
+        'Close other browser tabs for optimal Client Side speed.',
         'Your documents are private and never touch our servers.'
       ],
       cards: [
         { icon: 'bolt', title: 'Lightning Fast', desc: 'Process and convert files in milliseconds.' },
-        { icon: 'offline_pin', title: 'Offline First', desc: 'No internet connection? No problem. Works locally.' },
+        { icon: 'offline_pin', title: 'Client Side First', desc: 'No internet connection? No problem. Works locally.' },
         { icon: 'high_quality', title: 'Zero Quality Loss', desc: 'Smart algorithms keep document styles and text crisp.' },
         { icon: 'security', title: '100% Private', desc: 'Your data stays secure on your machine.' }
       ]
@@ -264,6 +276,10 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
 
     const category = activeTool.category;
     const toolId = activeTool.id;
+
+    if (toolId === 'document-viewer') {
+      return defaultMeta;
+    }
 
     if (category === 'image' || toolId === 'image-to-pdf' || toolId === 'scan-to-pdf') {
       // image-to-pdf and scan-to-pdf: images go in, limit is 40MB
@@ -289,7 +305,7 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
       icon: 'compress',
       maxSize: '200MB',
       badges: [
-        { icon: 'verified_user', label: 'Client-Side Processing' },
+        { icon: 'verified_user', label: 'Client Side Processing' },
         { icon: 'lock', label: 'No File Upload' },
         { icon: 'shield', label: '100% Secure' }
       ],
@@ -333,7 +349,7 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
       maxSize: '40MB',
       badges: [
         { icon: 'photo_camera', label: 'In-Browser Compression' },
-        { icon: 'cloud_off', label: 'Offline Enabled' },
+        { icon: 'cloud_off', label: 'Client Side Enabled' },
         { icon: 'verified_user', label: '100% Private' }
       ],
       steps: [
@@ -368,7 +384,7 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
       maxSize,
       badges: isHtmlTool ? [
         { icon: 'description', label: 'Smart Layout Parsing' },
-        { icon: 'cloud_upload', label: 'Server-Side Rendering' },
+        { icon: 'cloud_upload', label: 'Server Side Rendering' },
         { icon: 'verified_user', label: '100% Secure' }
       ] : [
         { icon: 'description', label: 'Smart Layout Parsing' },
@@ -470,16 +486,7 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
         ) : (
           /* Upgraded premium landing layout */
           <div className="animate-[fadeIn_0.25s_ease-out] w-full max-w-5xl mx-auto">
-            {/* dynamic badges strip */}
-            <div className="upload-badges-row select-none">
-              {meta.badges.map((badge, idx) => (
-                <div key={idx} className="upload-badge-item">
-                  <span className="material-symbols-outlined">{badge.icon}</span>
-                  <span>{badge.label}</span>
-                </div>
-              ))}
-            </div>
-
+            
             {/* upgraded dropzone container */}
             <div
               className={`dropzone-upgraded-container cursor-pointer select-none group ${dragOver ? 'drag-active' : ''}`}
@@ -598,7 +605,7 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
         )
       ) : (
         /* 3. Upgraded Workspace Canvas Queue */
-        <div className="workspace-canvas relative flex-1 flex flex-col items-center min-h-[380px] w-full p-8 bg-surface/30 dark:bg-[#1c1b1b]/30 rounded-3xl border border-outline-variant/40 dark:border-zinc-800/80 shadow-[inset_0_2px_8px_rgba(0,0,0,0.01)]">
+        <div className="workspace-canvas relative flex-1 flex flex-col items-center min-h-[380px] w-full pt-3 pb-8 px-8 bg-surface/30 dark:bg-[#1c1b1b]/30 rounded-3xl border border-outline-variant/40 dark:border-zinc-800/80 shadow-[inset_0_2px_8px_rgba(0,0,0,0.01)]">
           {/* Workspace Header Panel */}
           <div className="w-full max-w-4xl flex items-center justify-between mb-8 pb-4 border-b border-outline-variant/30 dark:border-zinc-800/40 select-none">
             <div className="flex items-center gap-2.5">

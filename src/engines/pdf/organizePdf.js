@@ -1,36 +1,46 @@
 import { PDFDocument, degrees } from 'pdf-lib';
 
 /**
- * Reorder and rotate pages of a PDF document client-side.
- * @param {File} file - The uploaded PDF file.
- * @param {object[]} pageConfigs - Configs array: { originalIndex: number, rotation: number }
+ * Reorder and rotate pages of one or more PDF documents Client Side.
+ * @param {File[]} files - The uploaded PDF files array.
+ * @param {object[]} pageConfigs - Configs array: { fileIndex: number, originalIndex: number, rotation: number }
  * @param {function} onProgress - Progress reporting callback.
  * @returns {Promise<Blob>} The processed PDF blob.
  */
-export async function organizePdf(file, pageConfigs, onProgress) {
+export async function organizePdf(files, pageConfigs, onProgress) {
   if (onProgress) onProgress(10);
-  const bytes = await file.arrayBuffer();
-  if (onProgress) onProgress(35);
   
-  const pdfDoc = await PDFDocument.load(bytes);
-  if (onProgress) onProgress(55);
+  // Load all source PDFs
+  const pdfDocs = await Promise.all(files.map(async (f) => {
+    const bytes = await f.arrayBuffer();
+    return await PDFDocument.load(bytes);
+  }));
+  
+  if (onProgress) onProgress(40);
   
   const newPdfDoc = await PDFDocument.create();
-  const indices = pageConfigs.map(cfg => cfg.originalIndex);
   
-  const copiedPages = await newPdfDoc.copyPages(pdfDoc, indices);
-  
-  copiedPages.forEach((page, idx) => {
-    const targetRotation = pageConfigs[idx].rotation || 0;
+  // Process pages one by one to support inter-leaving from different files
+  for (let i = 0; i < pageConfigs.length; i++) {
+    const config = pageConfigs[i];
+    const sourceDoc = pdfDocs[config.fileIndex];
+    
+    // Copy the single page
+    const [copiedPage] = await newPdfDoc.copyPages(sourceDoc, [config.originalIndex]);
+    
+    // Apply rotation
+    const targetRotation = config.rotation || 0;
     if (targetRotation !== 0) {
-      const currentRotation = page.getRotation().angle;
-      page.setRotation(degrees(currentRotation + targetRotation));
+      const currentRotation = copiedPage.getRotation().angle;
+      copiedPage.setRotation(degrees(currentRotation + targetRotation));
     }
-    newPdfDoc.addPage(page);
+    
+    newPdfDoc.addPage(copiedPage);
+    
     if (onProgress) {
-      onProgress(Math.round(55 + ((idx + 1) / copiedPages.length) * 40));
+      onProgress(Math.round(40 + ((i + 1) / pageConfigs.length) * 55));
     }
-  });
+  }
   
   const savedBytes = await newPdfDoc.save();
   if (onProgress) onProgress(100);

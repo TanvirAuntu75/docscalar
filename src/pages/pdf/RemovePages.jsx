@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -172,9 +172,18 @@ export default function RemovePages() {
       toolId="remove-pages"
       title="Remove PDF Pages"
       description="Select and delete unwanted pages from your PDF document"
-    >
+      files={files}
+      onFileSwitch={(idx) => {
+        setFiles(prev => {
+          if (idx < 0 || idx >= prev.length) return prev;
+          const next = [...prev];
+          const [item] = next.splice(idx, 1);
+          next.unshift(item);
+          return next;
+        });
+      }}>
       <SEOHead 
-        title="Remove Pages from PDF Online Free (100% Client-Side) | DocForge" 
+        title="Remove Pages from PDF Online Free (100% Client Side) | DocForge" 
         description="Select and delete specific pages from your PDF file instantly in your browser. Fully private, no server upload required."
       />
       

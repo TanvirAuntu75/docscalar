@@ -38,8 +38,8 @@ try:
 except Exception:
     USE_REDIS = False
     task_queue = None
-    # ThreadPool fallback for development
-    thread_pool = ThreadPoolExecutor(max_workers=4)
+    # ThreadPool fallback for development (multi-worker parallel processing)
+    thread_pool = ThreadPoolExecutor(max_workers=3)
     # Simple in-memory database to store job status
     in_memory_jobs = {}
     in_memory_jobs_lock = threading.Lock()
