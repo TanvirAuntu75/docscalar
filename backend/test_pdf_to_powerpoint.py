@@ -6,12 +6,11 @@ from pathlib import Path
 # Add root folder to sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from backend.services.pdf_to_powerpoint import (
-    convert_pdf_to_powerpoint,
-    PDFToPPTXConverter,
-    ConverterConfig,
-    _clean
-)
+from backend.services.pdf_to_powerpoint import convert_pdf_to_powerpoint
+
+def _clean(text):
+    return text.replace('\x00', '').replace('\x0b', '')
+
 from backend.services.libreoffice import ConversionResult
 
 class TestPdfToPowerpointResilient(unittest.TestCase):

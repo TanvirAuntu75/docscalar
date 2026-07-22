@@ -2451,6 +2451,14 @@ export default function StitchCanvas({
       });
     }
 
+    // Declare variables used in catch/finally outside try
+    const actionId = op.toolId;
+    const abortController = new AbortController();
+    let isTimeoutAborted = false;
+    let timeoutId = null;
+    let timerInterval = null;
+    let mainFile = null;
+
     try {
       // --- Circular Dependency Detection ---
       const visited = _visitedSet || new Set();
@@ -2463,16 +2471,12 @@ export default function StitchCanvas({
     visited.add(opId);
 
     // --- Setup AbortController for timeout/cancellation ---
-    const abortController = new AbortController();
     activeAbortControllers.current[opId] = abortController;
 
-    let isTimeoutAborted = false;
-    const timeoutId = setTimeout(() => {
+    timeoutId = setTimeout(() => {
       isTimeoutAborted = true;
       abortController.abort();
     }, EXECUTION_TIMEOUT_MS);
-
-    const actionId = op.toolId;
 
     let isIncrementalMerge = false;
     let incrementalBaseFile = null;
