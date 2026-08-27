@@ -1,14 +1,44 @@
-export function generateAdoraDiagonalHtml(data, themeColor = '#0284c7', themeFont = 'Inter', sectionOrder = ['summary','experience','education','skills','projects','certifications'], themeLayout = 'single', pageMargin = 0, lineSpacing = 1.45) {
-  const accent = themeColor === 'default' || themeColor === '#2c3549' ? '#0284c7' : themeColor;
-  const secondaryAccent = '#1e3a8a';
+// ═══════════════════════════════════════════════════════════════════════════════
+// 15. ADORA DIAGONAL — Modern Cyan Geometric Diagonal Split (Refined & Flawless)
+// ═══════════════════════════════════════════════════════════════════════════════
 
-  const expHtml = data.experience.map(e => `
-    <div class="timeline-item">
-      <div class="timeline-year">(${e.start.split(' ')[1] || e.start} – ${e.end.split(' ')[1] || e.end})</div>
-      <div class="timeline-role">${e.role.toUpperCase()}</div>
-      <div class="timeline-company">${e.company}</div>
-      ${e.highlights && e.highlights.length ? `<ul class="timeline-desc">${e.highlights.map(h => `<li>${h}</li>`).join('')}</ul>` : ''}
-    </div>`).join('');
+export function generateAdoraDiagonalHtml(
+  data,
+  themeColor = '#0284c7',
+  themeFont = 'Inter',
+  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
+  themeLayout = 'single',
+  pageMargin = 0,
+  lineSpacing = 1.45
+) {
+  const accent = themeColor === 'default' || !themeColor ? '#0284c7' : themeColor;
+  const secondaryAccent = '#0f172a';
+  const fontFam = themeFont === 'Playfair Display' ? "'Playfair Display', Georgia, serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : "'Inter', -apple-system, sans-serif";
+
+  const expHtml = data.experience && data.experience.length ? `
+    <div class="timeline-group">
+      <div class="section-title-wrap">
+        <h2>Experience</h2>
+      </div>
+      <div class="timeline-line-wrap">
+        ${data.experience.map(e => `
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="item-header">
+              <span class="timeline-role">${e.role}</span>
+              <span class="timeline-year">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+            </div>
+            <div class="timeline-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+            ${e.highlights && e.highlights.filter(Boolean).length ? `
+              <ul class="timeline-desc">
+                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+              </ul>
+            ` : ''}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  ` : '';
 
   const eduHtml = data.education && data.education.length ? `
     <div class="timeline-group">
@@ -18,9 +48,12 @@ export function generateAdoraDiagonalHtml(data, themeColor = '#0284c7', themeFon
       <div class="timeline-line-wrap">
         ${data.education.map(e => `
           <div class="timeline-item">
-            <div class="timeline-year">(${e.start.split(' ')[1] || e.start} – ${e.end.split(' ')[1] || e.end})</div>
-            <div class="timeline-role">${e.school.toUpperCase()}</div>
-            <div class="timeline-company">${e.degree}${e.note ? ` (GPA: ${e.note})` : ''}</div>
+            <div class="timeline-dot"></div>
+            <div class="item-header">
+              <span class="timeline-role">${e.degree}</span>
+              <span class="timeline-year">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+            </div>
+            <div class="timeline-company">${e.school}${e.note ? ` · ${e.note}` : ''}</div>
           </div>
         `).join('')}
       </div>
@@ -32,14 +65,29 @@ export function generateAdoraDiagonalHtml(data, themeColor = '#0284c7', themeFon
       <div class="section-title-wrap">
         <h2>Projects</h2>
       </div>
-      <div class="timeline-line-wrap" style="padding-bottom: 0;">
+      <div class="timeline-line-wrap">
         ${data.projects.map(p => `
-          <div style="margin-bottom: 10px;">
-            <div style="font-weight: 700; font-size: 9.5pt; color: #1e293b;">${p.name}</div>
-            <div style="font-size: 8.5pt; color: #475569; margin-top: 1px;">${p.description}</div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="item-header">
+              <span class="timeline-role">${p.name}</span>
+              ${p.url ? `<span class="timeline-year"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
+            </div>
+            ${p.description ? `<div style="font-size: 8.5pt; color: #475569; margin-top: 2px;">${p.description}</div>` : ''}
           </div>
         `).join('')}
       </div>
+    </div>
+  ` : '';
+
+  const certHtml = data.certifications && data.certifications.length ? `
+    <div class="sidebar-section">
+      <div class="sidebar-title-wrap">
+        <h3>Certifications</h3>
+      </div>
+      <ul class="cert-list" style="margin-top: 8px;">
+        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+      </ul>
     </div>
   ` : '';
 
@@ -48,10 +96,12 @@ export function generateAdoraDiagonalHtml(data, themeColor = '#0284c7', themeFon
       <div class="sidebar-title-wrap">
         <h3>Contact</h3>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+      <div class="contact-list">
         ${data.phone ? `<div class="contact-row"><span>${data.phone}</span></div>` : ''}
-        ${data.email ? `<div class="contact-row"><span style="word-break: break-all;">${data.email}</span></div>` : ''}
+        ${data.email ? `<div class="contact-row"><a href="mailto:${data.email}" style="color: inherit; text-decoration: none; word-break: break-all;">${data.email}</a></div>` : ''}
         ${data.location ? `<div class="contact-row"><span>${data.location}</span></div>` : ''}
+        ${data.linkedin ? `<div class="contact-row"><a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${data.website ? `<div class="contact-row"><a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
       </div>
     </div>
   `;
@@ -61,18 +111,23 @@ export function generateAdoraDiagonalHtml(data, themeColor = '#0284c7', themeFon
       <div class="sidebar-title-wrap">
         <h3>Skills</h3>
       </div>
-      <ul class="bullet-list" style="margin-top: 10px;">
-        ${data.skills.map((s, idx) => {
+      <div class="skills-grid" style="margin-top: 8px;">
+        ${data.skills.map((s) => {
           let name = s;
-          let levelText = ['Expert', 'Advanced', 'Intermediate'][idx % 3];
+          let levelText = '';
           if (s.includes(' - ')) {
             const parts = s.split(' - ');
             name = parts[0];
             levelText = parts[1];
           }
-          return `<li>• ${name} (${levelText})</li>`;
+          return `
+            <div class="skill-item">
+              <span>• ${name}</span>
+              ${levelText ? `<span style="color: #64748b; font-size: 7.8pt;">${levelText}</span>` : ''}
+            </div>
+          `;
         }).join('')}
-      </ul>
+      </div>
     </div>
   ` : '';
 
@@ -80,281 +135,260 @@ export function generateAdoraDiagonalHtml(data, themeColor = '#0284c7', themeFon
   const langHtml = langSection && langSection.items?.length ? `
     <div class="sidebar-section">
       <div class="sidebar-title-wrap">
-        <h3>Language</h3>
+        <h3>${langSection.title || 'Languages'}</h3>
       </div>
-      <ul class="bullet-list" style="margin-top: 10px;">
-        ${langSection.items.map(i => `<li>• ${i.title}${i.value ? ` (${i.value})` : ''}</li>`).join('')}
-      </ul>
+      <div class="skills-grid" style="margin-top: 8px;">
+        ${langSection.items.map(i => `
+          <div class="skill-item">
+            <span>• ${i.title}</span>
+            ${i.value ? `<span style="color: #64748b; font-size: 7.8pt;">${i.value}</span>` : ''}
+          </div>
+        `).join('')}
+      </div>
     </div>
   ` : '';
 
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<style>
-  @page { margin: 0; size: A4; }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: #fff; color: #1e293b; -webkit-print-color-adjust: exact; }
-  
-  #main-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 297mm;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  /* Geometric Wave Background Accents at Top & Bottom */
-  .geometric-header {
-    height: 190px;
-    background: #fff;
-    position: relative;
-    padding-left: 200px;
-    padding-top: 45px;
-    overflow: hidden;
-  }
-  .wave-accent {
-    position: absolute;
-    top: -95px;
-    right: -45px;
-    width: 480px;
-    height: 280px;
-    background: linear-gradient(135deg, ${accent}, ${secondaryAccent});
-    border-radius: 40% 60% 30% 70% / 60% 30% 70% 40%;
-    transform: rotate(-12deg);
-    z-index: 1;
-  }
-  .wave-accent-dark {
-    position: absolute;
-    top: -75px;
-    right: -30px;
-    width: 495px;
-    height: 285px;
-    background: #111827;
-    border-radius: 35% 65% 40% 60% / 55% 45% 55% 45%;
-    transform: rotate(-15deg);
-    z-index: 0;
-  }
-  .wave-footer {
-    position: absolute;
-    bottom: -100px;
-    left: -100px;
-    width: 400px;
-    height: 150px;
-    background: linear-gradient(135deg, ${accent}, ${secondaryAccent});
-    border-radius: 50% 50% 0 0;
-    transform: rotate(5deg);
-    opacity: 0.85;
-    z-index: 0;
-  }
-  
-  /* Large avatar overlapping header and waves */
-  .avatar-container {
-    position: absolute;
-    left: 45px;
-    top: 30px;
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    border: 4.5px solid #fff;
-    overflow: hidden;
-    z-index: 10;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  }
-  .avatar {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .header-info-wrap {
-    position: relative;
-    z-index: 5;
-  }
-  .header-info-wrap h1 {
-    font-size: 28pt;
-    font-weight: 900;
-    color: #1e3a8a;
-    letter-spacing: -0.5px;
-    line-height: 1.05;
-    text-transform: uppercase;
-  }
-  .header-info-wrap .role {
-    font-size: 11pt;
-    font-weight: 600;
-    color: #64748b;
-    margin-top: 4px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  
-  /* Dynamic Grid */
-  .body-grid {
-    display: flex;
-    flex: 1;
-    z-index: 1;
-  }
-  
-  /* Sidebar */
-  .sidebar {
-    width: 33%;
-    background: #e9ecf0;
-    color: #1e293b;
-    padding: 30px 20px;
-    font-size: 8.5pt;
-  }
-  .sidebar-section {
-    margin-bottom: 25px;
-  }
-  .sidebar-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-bottom: 1.5px solid rgba(0, 0, 0, 0.15);
-    padding-bottom: 5px;
-  }
-  .sidebar-section h3 {
-    font-size: 10pt;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .contact-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #475569;
-  }
-  .bullet-list {
-    list-style: none;
-    padding: 0;
-  }
-  .bullet-list li {
-    margin-bottom: 5px;
-    color: #475569;
-  }
-  
-  /* Main Content Area */
-  .main-content {
-    width: 67%;
-    padding: 40px 35px;
-    background: #fff;
-  }
-  .timeline-group {
-    margin-bottom: 25px;
-  }
-  .section-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 15px;
-  }
-  .section-icon {
-    font-size: 14pt;
-  }
-  .timeline-group h2 {
-    font-size: 12pt;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #1e3a8a;
-  }
-  .timeline-line-wrap {
-    position: relative;
-    padding-left: 20px;
-    border-left: 2px solid #e2e8f0;
-    margin-left: 8px;
-  }
-  .timeline-item {
-    position: relative;
-    margin-bottom: 18px;
-  }
-  .timeline-item::before {
-    content: "";
-    position: absolute;
-    left: -24px;
-    top: 5px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: ${accent};
-  }
-  .timeline-year {
-    font-size: 9pt;
-    font-weight: 700;
-    color: #64748b;
-  }
-  .timeline-role {
-    font-weight: 800;
-    font-size: 9.5pt;
-    color: #1e293b;
-    margin-top: 1px;
-  }
-  .timeline-company {
-    font-size: 8.5pt;
-    font-weight: 600;
-    color: #475569;
-    margin-top: 1px;
-  }
-  .timeline-desc {
-    padding-left: 14px;
-    font-size: 8.5pt;
-    color: #475569;
-    line-height: 1.45;
-    margin-top: 4px;
-  }
-</style></head><body>
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    @page { margin: 0; size: A4; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      font-family: ${fontFam};
+      background: #ffffff;
+      color: #1e293b;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    #main-container {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Clean Geometric Header */
+    .header-band {
+      background: linear-gradient(135deg, ${secondaryAccent} 0%, ${accent} 100%);
+      color: #ffffff;
+      padding: ${35 + pageMargin}px 40px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .avatar {
+      width: 105px;
+      height: 105px;
+      border-radius: 50%;
+      border: 3.5px solid #ffffff;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .header-text h1 {
+      font-size: 26pt;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      line-height: 1.05;
+      text-transform: uppercase;
+    }
+    .header-text .role {
+      font-size: 10.5pt;
+      font-weight: 600;
+      color: #e0f2fe;
+      margin-top: 4px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    
+    /* Content Columns */
+    .body-grid {
+      display: flex;
+      flex: 1;
+    }
+    .sidebar {
+      width: 32%;
+      background: #f1f5f9;
+      color: #1e293b;
+      padding: ${30 + pageMargin}px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      border-right: 1.5px solid #e2e8f0;
+    }
+    .main-content {
+      width: 68%;
+      padding: ${35 + pageMargin}px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .sidebar-section {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .sidebar-title-wrap h3 {
+      font-size: 9.5pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: ${accent};
+      border-bottom: 1.5px solid #cbd5e1;
+      padding-bottom: 4px;
+    }
+    .contact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 8px;
+    }
+    .contact-row {
+      font-size: 8.3pt;
+      color: #475569;
+      word-break: break-all;
+    }
+    .skills-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .skill-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 8.3pt;
+      color: #334155;
+    }
+    .cert-list {
+      padding-left: 16px;
+      font-size: 8.3pt;
+      color: #475569;
+    }
+    .cert-list li {
+      margin-bottom: 3px;
+    }
+    
+    .timeline-group {
+      break-inside: auto;
+    }
+    .section-title-wrap h2 {
+      font-size: 10.5pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #0f172a;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+    .summary-text {
+      font-size: 9pt;
+      color: #475569;
+      line-height: ${lineSpacing};
+      text-align: justify;
+    }
+    .timeline-line-wrap {
+      border-left: 2px solid #e2e8f0;
+      margin-left: 6px;
+      padding-left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .timeline-item {
+      position: relative;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -21px;
+      top: 5px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid ${accent};
+    }
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .timeline-role {
+      font-weight: 700;
+      font-size: 9.5pt;
+      color: #0f172a;
+    }
+    .timeline-year {
+      font-size: 8.2pt;
+      font-weight: 600;
+      color: #64748b;
+      font-variant-numeric: tabular-nums;
+    }
+    .timeline-company {
+      font-size: 8.8pt;
+      color: #475569;
+      font-weight: 600;
+      margin-top: 1px;
+      margin-bottom: 3px;
+    }
+    .timeline-desc {
+      padding-left: 16px;
+      font-size: 8.8pt;
+      color: #475569;
+      line-height: ${lineSpacing};
+    }
+    .timeline-desc li {
+      margin-bottom: 2px;
+      text-align: justify;
+    }
+  </style>
+</head>
+<body>
 <div id="main-container">
-  <div class="geometric-header">
-    <div class="wave-accent-dark"></div>
-    <div class="wave-accent"></div>
-    <div class="avatar-container">
-      <img class="avatar" src="${data.photoUrl || '/images/candidates/candidate_15.jpg'}" alt="photo" />
-    </div>
-    <div class="header-info-wrap">
-      <h1>${data.name}</h1>
+  <div class="header-band">
+    ${data.photoUrl ? `<img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />` : ''}
+    <div class="header-text">
+      <h1>${data.name || 'Candidate Name'}</h1>
       ${data.title ? `<div class="role">${data.title}</div>` : ''}
     </div>
   </div>
   
   <div class="body-grid">
     <div class="sidebar">
-      ${data.summary ? `
-        <div class="sidebar-section">
-          <div class="sidebar-title-wrap">
-            <h3>About Me</h3>
-          </div>
-          <div style="margin-top: 10px; line-height: 1.45; color: #475569;">${data.summary}</div>
-        </div>
-      ` : ''}
-      
       ${contactHtml}
       ${skillsHtml}
       ${langHtml}
+      ${certHtml}
     </div>
     
     <div class="main-content">
-      ${data.education && data.education.length ? eduHtml : ''}
-      
-      ${data.experience && data.experience.length ? `
+      ${data.summary ? `
         <div class="timeline-group">
-        <div class="section-title-wrap">
-          <h2>Experience</h2>
-        </div>
-          <div class="timeline-line-wrap">
-            ${expHtml}
+          <div class="section-title-wrap">
+            <h2>About Me</h2>
           </div>
+          <div class="summary-text">${data.summary}</div>
         </div>
       ` : ''}
       
+      ${expHtml}
+      ${eduHtml}
       ${projHtml}
     </div>
   </div>
-  
-  <div class="wave-footer"></div>
 </div>
-</body></html>`;
+</body>
+</html>`;
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// 16. OLIVIA WILSON MINIMAL — Elegant White Timeline Split Layout (100% Match)
-// ═══════════════════════════════════════════════════════════════════════════════

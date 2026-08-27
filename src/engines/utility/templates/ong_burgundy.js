@@ -1,258 +1,390 @@
-export function generateOngBurgundyHtml(data, themeColor = '#802b3e', themeFont = 'Inter', sectionOrder = ['summary','experience','education','skills','projects','certifications'], themeLayout = 'single', pageMargin = 0, lineSpacing = 1.45) {
-  const accent = themeColor === 'default' || themeColor === '#0f3b7d' ? '#802b3e' : themeColor;
+// ═══════════════════════════════════════════════════════════════════════════════
+// 12. ONG BURGUNDY — Rich Burgundy Top Band & Clean Split (Refined & Flawless)
+// ═══════════════════════════════════════════════════════════════════════════════
 
-  const expHtml = data.experience.map(e => `
-    <div style="margin-bottom: 16px;">
-      <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 9.2pt; color: #1e293b;">
-        <span>${e.company} | ${e.role}</span>
-        <span style="font-weight: 500; font-style: italic; color: #64748b;">${e.start} – ${e.end}</span>
+export function generateOngBurgundyHtml(
+  data,
+  themeColor = '#802b3e',
+  themeFont = 'Inter',
+  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
+  themeLayout = 'single',
+  pageMargin = 0,
+  lineSpacing = 1.45
+) {
+  const accent = themeColor === 'default' || !themeColor ? '#802b3e' : themeColor;
+  const fontFam = themeFont === 'Playfair Display' ? "'Playfair Display', Georgia, serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : "'Inter', -apple-system, sans-serif";
+
+  const expHtml = data.experience && data.experience.length ? `
+    <section class="main-section">
+      <h3 class="section-title">Work Experience</h3>
+      <div class="accent-line"></div>
+      <div class="entries-list">
+        ${data.experience.map(e => `
+          <div class="entry-item">
+            <div class="entry-header">
+              <span class="entry-role">${e.role}</span>
+              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+            </div>
+            <div class="entry-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+            ${e.highlights && e.highlights.filter(Boolean).length ? `
+              <ul class="entry-highlights">
+                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+              </ul>
+            ` : ''}
+          </div>
+        `).join('')}
       </div>
-      ${e.highlights && e.highlights.length ? `<ul style="padding-left: 14px; font-size: 8.5pt; color: #475569; line-height: 1.45; margin-top: 6px;">${e.highlights.map(h => `<li style="margin-bottom: 2px;">• ${h}</li>`).join('')}</ul>` : ''}
-    </div>`).join('');
+    </section>
+  ` : '';
 
   const eduHtml = data.education && data.education.length ? `
     <div class="sidebar-section">
-      <h3>Education Background</h3>
+      <h3>Education</h3>
       <div class="sidebar-line"></div>
-      ${data.education.map(e => `
-        <div style="margin-bottom: 12px; font-size: 8.2pt; color: #475569;">
-          <div style="font-weight: 700; color: #1e293b;">${e.school}</div>
-          <div style="font-style: italic; margin-top: 1px;">${e.degree}</div>
-          <div style="color: #64748b; margin-top: 1px;">Completed in ${e.end}</div>
-        </div>
-      `).join('')}
+      <div class="edu-list">
+        ${data.education.map(e => `
+          <div class="edu-item">
+            <div class="edu-degree">${e.degree}</div>
+            <div class="edu-school">${e.school}</div>
+            <div class="edu-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
+            ${e.note ? `<div class="edu-note">${e.note}</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
     </div>
   ` : '';
 
   const skillsHtml = data.skills && data.skills.length ? `
     <div class="sidebar-section">
-      <h3>Hard Skills</h3>
+      <h3>Expertise</h3>
       <div class="sidebar-line"></div>
-      <ul class="bullet-list">
-        ${data.skills.map((s, idx) => {
+      <div class="skills-grid">
+        ${data.skills.map((s) => {
           let name = s;
-          let levelText = ['Expert', 'Advanced', 'Intermediate'][idx % 3];
+          let levelText = '';
           if (s.includes(' - ')) {
             const parts = s.split(' - ');
             name = parts[0];
             levelText = parts[1];
           }
-          return `<li>• ${name} (${levelText})</li>`;
+          return `
+            <div class="skill-item">
+              <span>• ${name}</span>
+              ${levelText ? `<span class="skill-level">${levelText}</span>` : ''}
+            </div>
+          `;
         }).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  const projHtml = data.projects && data.projects.length ? `
+    <section class="main-section">
+      <h3 class="section-title">Projects & Achievements</h3>
+      <div class="accent-line"></div>
+      <div class="entries-list">
+        ${data.projects.map(p => `
+          <div class="entry-item">
+            <div class="entry-header">
+              <span class="entry-role">${p.name}</span>
+              ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
+            </div>
+            ${p.description ? `<div class="entry-desc">${p.description}</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    </section>
+  ` : '';
+
+  const certHtml = data.certifications && data.certifications.length ? `
+    <div class="sidebar-section">
+      <h3>Certifications</h3>
+      <div class="sidebar-line"></div>
+      <ul class="cert-list">
+        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
       </ul>
     </div>
   ` : '';
 
-  const achievementsHtml = data.projects && data.projects.length ? `
-    <div style="margin-top: 20px;">
-      <h3 style="font-size: 10pt; font-weight: 800; text-transform: uppercase; color: ${accent}; margin-bottom: 4px;">Achievements</h3>
-      <div style="border-bottom: 1.5px solid ${accent}; margin-bottom: 12px; width: 45px;"></div>
-      ${data.projects.map(p => `
-        <div style="margin-bottom: 10px; font-size: 8.5pt; color: #475569; line-height: 1.4;">
-          <strong>${p.name}</strong> – ${p.description}
-        </div>
-      `).join('')}
+  const contactHtml = `
+    <div class="sidebar-section">
+      <h3>Contact</h3>
+      <div class="sidebar-line"></div>
+      <div class="contact-list">
+        ${data.phone ? `<div class="contact-row"><span class="c-label">Phone:</span><span>${data.phone}</span></div>` : ''}
+        ${data.email ? `<div class="contact-row"><span class="c-label">Email:</span><a href="mailto:${data.email}" style="color: inherit; text-decoration: none; word-break: break-all;">${data.email}</a></div>` : ''}
+        ${data.location ? `<div class="contact-row"><span class="c-label">Address:</span><span>${data.location}</span></div>` : ''}
+        ${data.linkedin ? `<div class="contact-row"><span class="c-label">LinkedIn:</span><a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${data.website ? `<div class="contact-row"><span class="c-label">Website:</span><a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
+      </div>
     </div>
-  ` : '';
+  `;
 
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<style>
-  @page { margin: 0; size: A4; }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: #fff; color: #374151; -webkit-print-color-adjust: exact; }
-  
-  #main-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 297mm;
-  }
-  
-  /* Header block */
-  .header-band {
-    background: ${accent};
-    height: 140px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding-left: 36%;
-    padding-right: 30px;
-  }
-  .header-name-wrap h1 {
-    font-size: 28pt;
-    font-weight: 900;
-    color: #fff;
-    line-height: 1.05;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-  .header-name-wrap .role {
-    font-size: 11pt;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.75);
-    margin-top: 4px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  
-  /* Circular avatar overlap */
-  .avatar-container {
-    position: absolute;
-    left: 45px;
-    top: 20px;
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    border: 3.5px solid #fff;
-    overflow: hidden;
-    z-index: 10;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.12);
-  }
-  .avatar {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  /* Body grid split */
-  .body-grid {
-    display: flex;
-    flex: 1;
-  }
-  
-  /* Sidebar column */
-  .sidebar {
-    width: 33%;
-    background: #fff;
-    border-right: 1.5px solid #f1f5f9;
-    padding: 55px 22px 30px 22px;
-    font-size: 8.5pt;
-  }
-  .sidebar-section {
-    margin-bottom: 25px;
-  }
-  .sidebar-section h3 {
-    font-size: 9.5pt;
-    font-weight: 800;
-    text-transform: capitalize;
-    color: ${accent};
-    margin-bottom: 4px;
-  }
-  .sidebar-line {
-    border-bottom: 1.5px solid ${accent};
-    width: 45px;
-    margin-bottom: 12px;
-  }
-  
-  .contact-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 8.2pt;
-    color: #475569;
-  }
-  .contact-row {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 8px;
-  }
-  .contact-row span:first-child {
-    font-weight: 700;
-    color: #374151;
-  }
-  .bullet-list {
-    list-style: none;
-    padding: 0;
-  }
-  .bullet-list li {
-    margin-bottom: 5px;
-    color: #475569;
-  }
-  
-  /* Main Content Column */
-  .main-content {
-    width: 67%;
-    padding: 40px 35px;
-    background: #fff;
-  }
-  .main-section {
-    margin-bottom: 22px;
-  }
-  .main-section h3 {
-    font-size: 10pt;
-    font-weight: 800;
-    text-transform: capitalize;
-    color: ${accent};
-    margin-bottom: 4px;
-  }
-  .main-line {
-    border-bottom: 1.5px solid ${accent};
-    margin-bottom: 14px;
-    width: 45px;
-  }
-</style></head><body>
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    @page { margin: 0; size: A4; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      font-family: ${fontFam};
+      background: #ffffff;
+      color: #374151;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    #main-container {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Top Burgundy Header */
+    .header-band {
+      background: ${accent};
+      color: #ffffff;
+      padding: ${35 + pageMargin}px 40px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .avatar {
+      width: 105px;
+      height: 105px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .header-text h1 {
+      font-size: 26pt;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.05;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .header-text .role {
+      font-size: 10.5pt;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 4px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    
+    /* Main Layout */
+    .content-wrap {
+      display: flex;
+      padding: ${32 + pageMargin}px 36px;
+      flex: 1;
+      gap: 36px;
+    }
+    .main-col {
+      width: 65%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .sidebar-col {
+      width: 35%;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    
+    .main-section {
+      break-inside: auto;
+    }
+    .section-title {
+      font-size: 10.5pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: ${accent};
+      letter-spacing: 1px;
+      margin-bottom: 3px;
+    }
+    .accent-line {
+      border-bottom: 2px solid ${accent};
+      width: 40px;
+      margin-bottom: 12px;
+    }
+    .summary-text {
+      font-size: 9pt;
+      color: #475569;
+      line-height: ${lineSpacing};
+      text-align: justify;
+    }
+    
+    .entries-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .entry-item {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .entry-role {
+      font-weight: 700;
+      font-size: 9.5pt;
+      color: #1e293b;
+    }
+    .entry-date {
+      font-size: 8.3pt;
+      color: #64748b;
+      font-style: italic;
+      font-variant-numeric: tabular-nums;
+    }
+    .entry-company {
+      font-size: 8.8pt;
+      color: #475569;
+      font-weight: 600;
+      margin-top: 1px;
+      margin-bottom: 3px;
+    }
+    .entry-desc {
+      font-size: 8.5pt;
+      color: #475569;
+      margin-top: 2px;
+    }
+    .entry-highlights {
+      padding-left: 16px;
+      font-size: 8.8pt;
+      color: #475569;
+      line-height: ${lineSpacing};
+    }
+    .entry-highlights li {
+      margin-bottom: 2px;
+      text-align: justify;
+    }
+    
+    /* Sidebar styling */
+    .sidebar-section {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .sidebar-section h3 {
+      font-size: 9.5pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #1e293b;
+      margin-bottom: 4px;
+    }
+    .sidebar-line {
+      border-bottom: 1.5px solid #e2e8f0;
+      margin-bottom: 10px;
+    }
+    .contact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      font-size: 8.3pt;
+    }
+    .contact-row {
+      display: flex;
+      gap: 6px;
+      color: #475569;
+    }
+    .c-label {
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .edu-item {
+      margin-bottom: 10px;
+      font-size: 8.3pt;
+      break-inside: avoid;
+    }
+    .edu-degree {
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .edu-school {
+      color: #475569;
+      font-style: italic;
+    }
+    .edu-date {
+      color: #64748b;
+      font-size: 7.8pt;
+    }
+    .edu-note {
+      color: #64748b;
+      font-size: 7.8pt;
+      margin-top: 1px;
+    }
+    .skills-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .skill-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 8.3pt;
+      color: #334155;
+    }
+    .skill-level {
+      font-size: 7.8pt;
+      color: #64748b;
+    }
+    .cert-list {
+      padding-left: 16px;
+      font-size: 8.5pt;
+      color: #475569;
+    }
+    .cert-list li {
+      margin-bottom: 3px;
+    }
+  </style>
+</head>
+<body>
 <div id="main-container">
   <div class="header-band">
-    <div class="avatar-container">
-      <img class="avatar" src="${data.photoUrl || '/images/candidates/candidate_12.jpg'}" alt="photo" />
-    </div>
-    <div class="header-name-wrap">
-      <h1>${data.name}</h1>
+    ${data.photoUrl ? `<img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />` : ''}
+    <div class="header-text">
+      <h1>${data.name || 'Candidate Name'}</h1>
       ${data.title ? `<div class="role">${data.title}</div>` : ''}
     </div>
   </div>
   
-  <div class="body-grid">
-    <div class="sidebar">
-      <div class="sidebar-section">
-        <h3>My Contact</h3>
-        <div class="sidebar-line"></div>
-        <div class="contact-list">
-          ${data.email ? `<div class="contact-row"><span>Email:</span><span>${data.email}</span></div>` : ''}
-          ${data.phone ? `<div class="contact-row"><span>Phone:</span><span>${data.phone}</span></div>` : ''}
-          ${data.location ? `<div class="contact-row"><span>Address:</span><span>${data.location}</span></div>` : ''}
-        </div>
-      </div>
+  <div class="content-wrap">
+    <div class="main-col">
+      ${data.summary ? `
+        <section class="main-section">
+          <h3 class="section-title">About Me</h3>
+          <div class="accent-line"></div>
+          <div class="summary-text">${data.summary}</div>
+        </section>
+      ` : ''}
       
-      ${skillsHtml}
-      ${eduHtml}
+      ${expHtml}
+      ${projHtml}
     </div>
     
-    <div class="main-content">
-      ${data.summary ? `
-        <div class="main-section">
-          <h3>About Me</h3>
-          <div class="main-line"></div>
-          <div style="font-size: 8.8pt; color: #475569; line-height: ${lineSpacing};">${data.summary}</div>
-        </div>
-      ` : ''}
-      
-      ${data.experience && data.experience.length ? `
-        <div class="main-section">
-          <h3>Professional Experience</h3>
-          <div class="main-line"></div>
-          <div>
-            ${expHtml}
-          </div>
-        </div>
-      ` : ''}
-      
-      ${achievementsHtml}
-      ${data.certifications && data.certifications.length ? `
-        <div class="main-section">
-          <h3>Certifications</h3>
-          <div class="main-line"></div>
-          <ul style="padding-left:14px; font-size:8.5pt; color:#475569;">
-            ${data.certifications.map(c => `<li>${c}</li>`).join('')}
-          </ul>
-        </div>
-      ` : ''}
+    <div class="sidebar-col">
+      ${contactHtml}
+      ${eduHtml}
+      ${skillsHtml}
+      ${certHtml}
     </div>
   </div>
 </div>
-</body></html>`;
+</body>
+</html>`;
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// 13. SCHUMACHER CHARCOAL — Charcoal Curved Headshot with Timeline (100% Match)
-// ═══════════════════════════════════════════════════════════════════════════════

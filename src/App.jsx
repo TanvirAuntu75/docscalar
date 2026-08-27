@@ -1,67 +1,94 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 import PublicOnlyRoute from './components/PublicOnlyRoute'
-import ErrorBoundary from './components/ErrorBoundary'
-import BootstrapDownloader from './components/BootstrapDownloader'
 import { BACKEND_URL } from './utils/api'
 import AIChatBot from './components/AIChatBot'
 
-const Home = lazy(() => import('./pages/Home'))
-const PdfToImage = lazy(() => import('./pages/pdf/PdfToImage'))
-const ImageToPdf = lazy(() => import('./pages/pdf/ImageToPdf'))
-const MergePdf = lazy(() => import('./pages/pdf/MergePdf'))
-const SplitPdf = lazy(() => import('./pages/pdf/SplitPdf'))
-const CompressPdf = lazy(() => import('./pages/pdf/CompressPdf'))
-const RotatePdf = lazy(() => import('./pages/pdf/RotatePdf'))
-const ImageConverter = lazy(() => import('./pages/image/ImageConverter'))
-const ImageCompressor = lazy(() => import('./pages/image/ImageCompressor'))
-const ImageResizer = lazy(() => import('./pages/image/ImageResizer'))
-const DocxToPdf = lazy(() => import('./pages/document/DocxToPdf'))
-const TextToPdf = lazy(() => import('./pages/document/TextToPdf'))
-const TranslatePdf = lazy(() => import('./pages/document/TranslatePdf'))
-const AiSummarizer = lazy(() => import('./pages/document/AiSummarizer'))
-const QrGenerator = lazy(() => import('./pages/utility/QrGenerator'))
-const NotFound = lazy(() => import('./pages/NotFound'))
-const Login = lazy(() => import('./pages/Login'))
-const SignUp = lazy(() => import('./pages/SignUp'))
-const Pricing = lazy(() => import('./pages/Pricing'))
+// Resilient dynamic importer that auto-reloads once if a Vite HMR or browser chunk cache error occurs
+const lazyWithRetry = (componentImport) =>
+  lazy(async () => {
+    const pageHasBeenForceRefreshed = JSON.parse(
+      window.sessionStorage.getItem('page-has-been-force-refreshed') || 'false'
+    );
 
-const ComingSoon = lazy(() => import('./pages/utility/ComingSoon'))
-const Privacy = lazy(() => import('./pages/Privacy'))
-const Terms = lazy(() => import('./pages/Terms'))
-const ProtectPdf = lazy(() => import('./pages/pdf/ProtectPdf'))
-const UnlockPdf = lazy(() => import('./pages/pdf/UnlockPdf'))
-const RemovePages = lazy(() => import('./pages/pdf/RemovePages'))
-const ExtractPages = lazy(() => import('./pages/pdf/ExtractPages'))
-const OrganizePdf = lazy(() => import('./pages/pdf/OrganizePdf'))
-const AddWatermark = lazy(() => import('./pages/pdf/AddWatermark'))
-const AddPageNumbers = lazy(() => import('./pages/pdf/AddPageNumbers'))
-const SignPdf = lazy(() => import('./pages/pdf/SignPdf'))
+    try {
+      const component = await componentImport();
+      window.sessionStorage.removeItem('page-has-been-force-refreshed');
+      return component;
+    } catch (error) {
+      if (!pageHasBeenForceRefreshed) {
+        window.sessionStorage.setItem('page-has-been-force-refreshed', 'true');
+        if ('serviceWorker' in navigator) {
+          try {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            for (let reg of regs) await reg.unregister();
+          } catch {}
+        }
+        window.location.reload();
+        return { default: () => null };
+      }
+      throw error;
+    }
+  });
 
-const PowerpointToPdf = lazy(() => import('./pages/document/PowerpointToPdf'))
-const ExcelToPdf = lazy(() => import('./pages/document/ExcelToPdf'))
-const HtmlToPdf = lazy(() => import('./pages/document/HtmlToPdf'))
-const PdfToWord = lazy(() => import('./pages/document/PdfToWord'))
-const CropPdf = lazy(() => import('./pages/pdf/CropPdf'))
-const PdfForms = lazy(() => import('./pages/pdf/PdfForms'))
-const ScanToPdf = lazy(() => import('./pages/pdf/ScanToPdf'))
-const ComparePdf = lazy(() => import('./pages/pdf/ComparePdf'))
-const EditPdf = lazy(() => import('./pages/pdf/EditPdf'))
-const RepairPdf = lazy(() => import('./pages/pdf/RepairPdf'))
-const PdfToExcel = lazy(() => import('./pages/document/PdfToExcel'))
-const PdfToPowerpoint = lazy(() => import('./pages/document/PdfToPowerpoint'))
-const PdfToPdfa = lazy(() => import('./pages/document/PdfToPdfa'))
-const RedactPdf = lazy(() => import('./pages/pdf/RedactPdf'))
-const OcrPdf = lazy(() => import('./pages/pdf/OcrPdf'))
-const UnOcrPdf = lazy(() => import('./pages/pdf/UnOcrPdf'))
-const ConversionPipeline = lazy(() => import('./pages/utility/ConversionPipeline'))
-const ResumeBuilder = lazy(() => import('./pages/utility/ResumeBuilder'))
-const UrlToPdf = lazy(() => import('./pages/utility/UrlToPdf'))
-const DocumentViewer = lazy(() => import('./pages/utility/DocumentViewer'))
+const Home = lazyWithRetry(() => import('./pages/Home'))
+const PdfToImage = lazyWithRetry(() => import('./pages/pdf/PdfToImage'))
+const ImageToPdf = lazyWithRetry(() => import('./pages/pdf/ImageToPdf'))
+const MergePdf = lazyWithRetry(() => import('./pages/pdf/MergePdf'))
+const SplitPdf = lazyWithRetry(() => import('./pages/pdf/SplitPdf'))
+const CompressPdf = lazyWithRetry(() => import('./pages/pdf/CompressPdf'))
+const RotatePdf = lazyWithRetry(() => import('./pages/pdf/RotatePdf'))
+const ImageConverter = lazyWithRetry(() => import('./pages/image/ImageConverter'))
+const ImageCompressor = lazyWithRetry(() => import('./pages/image/ImageCompressor'))
+const ImageResizer = lazyWithRetry(() => import('./pages/image/ImageResizer'))
+const DocxToPdf = lazyWithRetry(() => import('./pages/document/DocxToPdf'))
+const TextToPdf = lazyWithRetry(() => import('./pages/document/TextToPdf'))
+const TranslatePdf = lazyWithRetry(() => import('./pages/document/TranslatePdf'))
+const AiSummarizer = lazyWithRetry(() => import('./pages/document/AiSummarizer'))
+const QrGenerator = lazyWithRetry(() => import('./pages/utility/QrGenerator'))
+const NotFound = lazyWithRetry(() => import('./pages/NotFound'))
+const Login = lazyWithRetry(() => import('./pages/Login'))
+const SignUp = lazyWithRetry(() => import('./pages/SignUp'))
+const Pricing = lazyWithRetry(() => import('./pages/Pricing'))
+
+const ComingSoon = lazyWithRetry(() => import('./pages/utility/ComingSoon'))
+const Privacy = lazyWithRetry(() => import('./pages/Privacy'))
+const Terms = lazyWithRetry(() => import('./pages/Terms'))
+const ProtectPdf = lazyWithRetry(() => import('./pages/pdf/ProtectPdf'))
+const UnlockPdf = lazyWithRetry(() => import('./pages/pdf/UnlockPdf'))
+const RemovePages = lazyWithRetry(() => import('./pages/pdf/RemovePages'))
+const ExtractPages = lazyWithRetry(() => import('./pages/pdf/ExtractPages'))
+const OrganizePdf = lazyWithRetry(() => import('./pages/pdf/OrganizePdf'))
+const AddWatermark = lazyWithRetry(() => import('./pages/pdf/AddWatermark'))
+const AddPageNumbers = lazyWithRetry(() => import('./pages/pdf/AddPageNumbers'))
+const SignPdf = lazyWithRetry(() => import('./pages/pdf/SignPdf'))
+
+const PowerpointToPdf = lazyWithRetry(() => import('./pages/document/PowerpointToPdf'))
+const ExcelToPdf = lazyWithRetry(() => import('./pages/document/ExcelToPdf'))
+const HtmlToPdf = lazyWithRetry(() => import('./pages/document/HtmlToPdf'))
+const PdfToWord = lazyWithRetry(() => import('./pages/document/PdfToWord'))
+const CropPdf = lazyWithRetry(() => import('./pages/pdf/CropPdf'))
+const PdfForms = lazyWithRetry(() => import('./pages/pdf/PdfForms'))
+const ScanToPdf = lazyWithRetry(() => import('./pages/pdf/ScanToPdf'))
+const ComparePdf = lazyWithRetry(() => import('./pages/pdf/ComparePdf'))
+const EditPdf = lazyWithRetry(() => import('./pages/pdf/EditPdf'))
+const RepairPdf = lazyWithRetry(() => import('./pages/pdf/RepairPdf'))
+const PdfToExcel = lazyWithRetry(() => import('./pages/document/PdfToExcel'))
+const PdfToPowerpoint = lazyWithRetry(() => import('./pages/document/PdfToPowerpoint'))
+const PdfToPdfa = lazyWithRetry(() => import('./pages/document/PdfToPdfa'))
+const RedactPdf = lazyWithRetry(() => import('./pages/pdf/RedactPdf'))
+const OcrPdf = lazyWithRetry(() => import('./pages/pdf/OcrPdf'))
+const UnOcrPdf = lazyWithRetry(() => import('./pages/pdf/UnOcrPdf'))
+const BatesNumbering = lazyWithRetry(() => import('./pages/pdf/BatesNumbering'))
+const ConversionPipeline = lazyWithRetry(() => import('./pages/utility/ConversionPipeline'))
+const ResumeBuilder = lazyWithRetry(() => import('./pages/utility/ResumeBuilder'))
+const UrlToPdf = lazyWithRetry(() => import('./pages/utility/UrlToPdf'))
+const UnzipFile = lazyWithRetry(() => import('./pages/utility/UnzipFile'))
+const DocumentViewer = lazyWithRetry(() => import('./pages/utility/DocumentViewer'))
 import { TOOLS } from './utils/constants'
 import Skeleton from './components/ui/Skeleton'
 
@@ -98,69 +125,55 @@ export default function App() {
   const location = useLocation();
   const isCanvas = location.pathname === '/canvas';
 
+  // Smooth window reveal for Tauri desktop mode — prevents black/white screen flashes on launch
   useEffect(() => {
-    // Clear any temporary chunk load error flags upon successful boot/mount
-    sessionStorage.removeItem('chunk_error_reload');
+    if (typeof window !== 'undefined') {
+      const isTauri = typeof window.__TAURI__ !== 'undefined' || typeof window.__TAURI_INTERNALS__ !== 'undefined';
+      if (isTauri) {
+        import('@tauri-apps/api/webviewWindow').then(({ getCurrentWebviewWindow }) => {
+          getCurrentWebviewWindow().show();
+        }).catch(() => {});
+      }
+    }
   }, []);
-  const isWorkspace = location.pathname === '/workspace' || isCanvas;
-  const isResumeBuilder = location.pathname === '/resume-builder';
-  const hideFooter = isWorkspace || isResumeBuilder || location.pathname === '/document-viewer';
-  const mainPadding = isCanvas ? 'pt-0' : (isPro ? 'pt-[72px]' : 'pt-[88px]');
 
-  const [bootstrapChecked, setBootstrapChecked] = useState(false);
-  const [needsBootstrap, setNeedsBootstrap] = useState(false);
-  const [backendStarting, setBackendStarting] = useState(false);
-
+  // Non-blocking backend health ping — silently retries in the background,
+  // never blocks the UI. The app is fully usable while the backend starts.
   useEffect(() => {
-    const checkBootstrap = async () => {
-      const IS_TAURI = typeof window.__TAURI__ !== 'undefined';
-      const maxRetries = IS_TAURI ? 25 : 1; // In desktop, retry for up to 50s
-      const retryDelay = 2000;
+    const IS_TAURI = typeof window.__TAURI__ !== 'undefined';
+    const maxRetries = IS_TAURI ? 25 : 3;
+    const retryDelay = 2000;
+    let cancelled = false;
 
-      for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const pingBackend = async () => {
+      for (let attempt = 0; attempt < maxRetries && !cancelled; attempt++) {
         try {
           const res = await fetch(`${BACKEND_URL}/api/bootstrap/status`);
           if (res.ok) {
-            const data = await res.json();
-            if (!data.installed) {
-              setNeedsBootstrap(true);
-            }
-            setBootstrapChecked(true);
-            return; // Success - exit the retry loop
+            console.log('[DocForge] Backend connected.');
+            return;
           }
-        } catch (err) {
-          if (IS_TAURI && attempt === 0) {
-            setBackendStarting(true); // Show "starting" message after first failure
-          }
-          if (attempt < maxRetries - 1) {
-            await new Promise(resolve => setTimeout(resolve, retryDelay));
-          }
+        } catch {
+          // Backend not ready yet — silent retry
+        }
+        if (attempt < maxRetries - 1 && !cancelled) {
+          await new Promise(r => setTimeout(r, retryDelay));
         }
       }
-      // After all retries, proceed anyway (web mode or backend failed silently)
-      setBootstrapChecked(true);
+      if (!cancelled) {
+        console.warn('[DocForge] Backend unreachable after retries. Client-side tools still work.');
+      }
     };
-    checkBootstrap();
+    pingBackend();
+    return () => { cancelled = true; };
   }, []);
 
+  const isWorkspace = location.pathname === '/workspace';
+  const isResumeBuilder = location.pathname === '/resume-builder';
+  const hideFooter = isWorkspace || isResumeBuilder || isCanvas;
+  const mainPadding = isCanvas ? 'pt-0' : (isPro ? 'pt-[72px]' : 'pt-[88px]');
 
-  if (!bootstrapChecked) {
-    if (backendStarting) {
-      return (
-        <div style={{minHeight:'100dvh',display:'flex',alignItems:'center',justifyContent:'center',background:'#090b0f',color:'white',flexDirection:'column',gap:'16px'}}>
-          <div style={{width:'48px',height:'48px',border:'4px solid rgba(249,115,22,0.2)',borderTop:'4px solid #f97316',borderRadius:'50%',animation:'spin 1s linear infinite'}} />
-          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-          <p style={{color:'#f97316',fontWeight:600,fontSize:'16px',margin:0}}>Starting DocForge backend...</p>
-          <p style={{color:'#64748b',fontSize:'13px',margin:0}}>This may take 10–20 seconds on first launch</p>
-        </div>
-      );
-    }
-    return <PageSkeleton />;
-  }
 
-  if (needsBootstrap) {
-    return <BootstrapDownloader onComplete={() => setNeedsBootstrap(false)} />;
-  }
 
   return (
     <>
@@ -168,7 +181,6 @@ export default function App() {
       <ScrollToTop />
       {!isCanvas && <Header />}
       <main className={`main-content ${mainPadding}`}>
-        <ErrorBoundary>
           <Suspense fallback={<PageSkeleton />}>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -221,9 +233,11 @@ export default function App() {
 
             <Route path="/ocr-pdf" element={<OcrPdf />} />
             <Route path="/un-ocr-pdf" element={<UnOcrPdf />} />
+            <Route path="/bates-numbering" element={<BatesNumbering />} />
             <Route path="/conversion-pipeline" element={<ConversionPipeline />} />
             <Route path="/resume-builder" element={<ResumeBuilder />} />
             <Route path="/url-to-pdf" element={<UrlToPdf />} />
+            <Route path="/unzip-file" element={<UnzipFile />} />
             <Route path="/document-viewer" element={<DocumentViewer />} />
             <Route path="/coming-soon/:toolId" element={<ComingSoon />} />
             <Route path="/privacy" element={<Privacy />} />
@@ -251,7 +265,6 @@ export default function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
-        </ErrorBoundary>
       </main>
       {!hideFooter && <Footer />}
       <AIChatBot />

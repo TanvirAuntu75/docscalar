@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 let activeSetFiles = null;
 
@@ -13,6 +13,7 @@ export function getActiveSetFiles() {
  */
 export default function useFileProcessor() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [files, setFiles] = useState([]);
 
   useEffect(() => {
@@ -25,16 +26,18 @@ export default function useFileProcessor() {
   }, [setFiles]);
 
   useEffect(() => {
-    if (location.state) {
-      if (location.state.initialFiles) {
+    if (location.state && (location.state.initialFiles || location.state.initialFile)) {
+      if (location.state.initialFiles && Array.isArray(location.state.initialFiles) && location.state.initialFiles.length > 0) {
         setFiles(location.state.initialFiles);
-        window.history.replaceState({}, document.title);
       } else if (location.state.initialFile) {
         setFiles([location.state.initialFile]);
-        window.history.replaceState({}, document.title);
       }
+      navigate(location.pathname, { replace: true, state: null });
+      try {
+        window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+      } catch (_) {}
     }
-  }, [location]);
+  }, [location.state, location.pathname, navigate]);
 
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);

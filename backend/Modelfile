@@ -1,6 +1,0 @@
-FROM "C:/Users/Tanvir Alam/Desktop/New folder (3)/models/google_gemma-3-4b-it-Q4_K_M.gguf"
-PARAMETER temperature 0.3
-TEMPLATE """{{ if .System }}<|system|>
-{{ .System }}{{ end }}{{ if .Prompt }}<|user|>
-{{ .Prompt }}{{ end }}<|assistant|>
-{{ .Response }}"""

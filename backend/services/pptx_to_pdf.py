@@ -1,30 +1,26 @@
-import os
 import gc
-import sys
-import time
-import shutil
-import signal
 import logging
-import tempfile
+import os
+import shutil
 import subprocess
-import threading
+import tempfile
+import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, List
 
 from backend.services.libreoffice import (
+    is_valid_pdf_structure,
+    purge_dir,
+    reap_process,
     resolve_libreoffice_binary,
     run_libreoffice_subprocess,
-    reap_process,
-    purge_dir,
-    is_valid_pdf_structure
 )
 
 logger = logging.getLogger("pptx2pdf")
 
 # OOXML / OLE2 magic
-_ZIP_MAGIC = b"PK\x03\x04"          # .pptx is a ZIP
-_OLE2_MAGIC = b"\xd0\xcf\x11\xe0"   # legacy .ppt compound file
+_ZIP_MAGIC = b"PK\x03\x04"  # .pptx is a ZIP
+_OLE2_MAGIC = b"\xd0\xcf\x11\xe0"  # legacy .ppt compound file
 
 
 class ConversionError(Exception):
@@ -38,31 +34,36 @@ class ConversionTimeout(ConversionError):
 @dataclass
 class ConverterConfig:
     timeout_s: float = 30.0
-    kill_grace_s: float = 5.0            # SIGTERM -> SIGKILL grace
-    soffice_bin: Optional[str] = None    # auto-resolved if None
+    kill_grace_s: float = 5.0  # SIGTERM -> SIGKILL grace
+    soffice_bin: str | None = None  # auto-resolved if None
     max_input_bytes: int = 500 * 1024 * 1024
-    allow_legacy_ppt: bool = True        # accept OLE2 .ppt as well
+    allow_legacy_ppt: bool = True  # accept OLE2 .ppt as well
     lang: str = "C.UTF-8"
 
 
 class PPTXToPDFConverter:
-    def __init__(self, config: Optional[ConverterConfig] = None, **kw):
+    def __init__(self, config: ConverterConfig | None = None, **kw):
         self.cfg = config or ConverterConfig(**kw)
         # Fall back to DocForge backend's detected LibreOffice path before scanning system PATH
         from backend import config as backend_config
-        self.soffice = self.cfg.soffice_bin or getattr(backend_config, "LIBREOFFICE_PATH", None)
-        
+
+        self.soffice = self.cfg.soffice_bin or getattr(
+            backend_config, "LIBREOFFICE_PATH", None
+        )
+
         # Verify binary resolution exists
         resolved = None
         if self.soffice:
-            resolved = shutil.which(self.soffice) or (Path(self.soffice).exists() and self.soffice)
+            resolved = shutil.which(self.soffice) or (
+                Path(self.soffice).exists() and self.soffice
+            )
         if not resolved:
             try:
                 self.soffice = resolve_libreoffice_binary()
             except Exception as e:
                 raise ConversionError(
-                    f"LibreOffice binary not found. Please install LibreOffice locally "
-                    f"and ensure it is on your system PATH to run Office conversions."
+                    "LibreOffice binary not found. Please install LibreOffice locally "
+                    "and ensure it is on your system PATH to run Office conversions."
                 ) from e
         else:
             self.soffice = resolved
@@ -77,7 +78,7 @@ class PPTXToPDFConverter:
         self._preflight(in_path)
 
         tmpdir = tempfile.mkdtemp(prefix="pptx2pdf_")
-        proc: Optional[subprocess.Popen] = None
+        proc: subprocess.Popen | None = None
         stdout_data = b""
         stderr_data = b""
         try:
@@ -93,7 +94,9 @@ class PPTXToPDFConverter:
             cmd = self._build_command(work_in, profile_dir, out_dir)
             env = self._build_env(profile_dir)
 
-            logger.info("Converting %s (timeout=%.0fs)", in_path.name, self.cfg.timeout_s)
+            logger.info(
+                "Converting %s (timeout=%.0fs)", in_path.name, self.cfg.timeout_s
+            )
             proc, stdout_data, stderr_data = self._run(cmd, env, tmpdir)
 
             # LibreOffice names output by basename; locate it
@@ -104,8 +107,13 @@ class PPTXToPDFConverter:
             shutil.move(str(produced), str(out_path))
 
             dur = time.monotonic() - start
-            logger.info("OK %s -> %s in %.2fs (%d bytes)",
-                        in_path.name, out_path.name, dur, out_path.stat().st_size)
+            logger.info(
+                "OK %s -> %s in %.2fs (%d bytes)",
+                in_path.name,
+                out_path.name,
+                dur,
+                out_path.stat().st_size,
+            )
             return str(out_path)
 
         except ConversionError:
@@ -131,17 +139,21 @@ class PPTXToPDFConverter:
             raise ConversionError(f"Input is empty: {in_path}")
         if size > self.cfg.max_input_bytes:
             raise ConversionError(
-                f"Input too large: {size} > {self.cfg.max_input_bytes} bytes")
+                f"Input too large: {size} > {self.cfg.max_input_bytes} bytes"
+            )
         with open(in_path, "rb") as f:
             head = f.read(8)
         is_zip = head.startswith(_ZIP_MAGIC)
         is_ole2 = head.startswith(_OLE2_MAGIC)
         if not is_zip and not (self.cfg.allow_legacy_ppt and is_ole2):
             raise ConversionError(
-                f"Input does not look like a PowerPoint file (bad magic bytes): {in_path}")
+                f"Input does not look like a PowerPoint file (bad magic bytes): {in_path}"
+            )
 
     # ---------- 4) command + environment ----------
-    def _build_command(self, work_in: Path, profile_dir: Path, out_dir: Path) -> List[str]:
+    def _build_command(
+        self, work_in: Path, profile_dir: Path, out_dir: Path
+    ) -> list[str]:
         # file:// URI for the profile avoids path-quoting issues
         profile_uri = profile_dir.resolve().as_uri()
         return [
@@ -150,29 +162,34 @@ class PPTXToPDFConverter:
             "--nologo",
             "--nofirststartwizard",
             "--nodefault",
-            "--norestore",                 # don't pop a recovery dialog
+            "--norestore",  # don't pop a recovery dialog
             "--nolockcheck",
             f"-env:UserInstallation={profile_uri}",
-            "--convert-to", "pdf:impress_pdf_Export",
-            "--outdir", str(out_dir),
+            "--convert-to",
+            "pdf:impress_pdf_Export",
+            "--outdir",
+            str(out_dir),
             str(work_in),
         ]
 
     def _build_env(self, profile_dir: Path) -> dict:
         env = os.environ.copy()
-        env["HOME"] = str(profile_dir)          # isolate HOME for safety
+        env["HOME"] = str(profile_dir)  # isolate HOME for safety
         env["LC_ALL"] = self.cfg.lang
         env["LANG"] = self.cfg.lang
-        env.pop("DISPLAY", None)                # force headless; no X attach
+        env.pop("DISPLAY", None)  # force headless; no X attach
         return env
 
     # ---------- 1) subprocess with strict timeout + process-group kill ----------
-    def _run(self, cmd: List[str], env: dict, cwd: str):
+    def _run(self, cmd: list[str], env: dict, cwd: str):
         try:
-            return run_libreoffice_subprocess(cmd, env, cwd, self.cfg.timeout_s, self.cfg.kill_grace_s)
+            return run_libreoffice_subprocess(
+                cmd, env, cwd, self.cfg.timeout_s, self.cfg.kill_grace_s
+            )
         except subprocess.TimeoutExpired as e:
             raise ConversionTimeout(
-                f"LibreOffice exceeded {self.cfg.timeout_s}s") from e
+                f"LibreOffice exceeded {self.cfg.timeout_s}s"
+            ) from e
 
     # ---------- 2) post-flight ----------
     def _postflight(self, produced: Path, returncode: int, stderr: bytes):
@@ -180,17 +197,23 @@ class PPTXToPDFConverter:
         # exit 0 but no file is LibreOffice's most common silent failure
         if not produced.exists():
             raise ConversionError(
-                f"No output produced (exit={returncode}). stderr: {err[:2000]}")
+                f"No output produced (exit={returncode}). stderr: {err[:2000]}"
+            )
         size = produced.stat().st_size
         if size == 0:
             raise ConversionError(
-                f"Output PDF is empty (exit={returncode}). stderr: {err[:2000]}")
+                f"Output PDF is empty (exit={returncode}). stderr: {err[:2000]}"
+            )
         if not self._is_valid_pdf(produced):
             raise ConversionError(
-                f"Output is not a valid PDF (exit={returncode}). stderr: {err[:2000]}")
+                f"Output is not a valid PDF (exit={returncode}). stderr: {err[:2000]}"
+            )
         if returncode not in (0, None):
-            logger.warning("Non-zero exit %s but valid PDF produced; stderr: %s",
-                           returncode, err[:500])
+            logger.warning(
+                "Non-zero exit %s but valid PDF produced; stderr: %s",
+                returncode,
+                err[:500],
+            )
 
     @staticmethod
     def _is_valid_pdf(path: Path) -> bool:
@@ -198,7 +221,7 @@ class PPTXToPDFConverter:
 
     # ---------- 5) cleanup helpers ----------
     @staticmethod
-    def _reap(proc: Optional[subprocess.Popen]):
+    def _reap(proc: subprocess.Popen | None):
         reap_process(proc)
 
     @staticmethod

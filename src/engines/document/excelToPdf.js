@@ -1,96 +1,179 @@
-/* Excel to PDF engine using read-excel-file + jsPDF + jspdf-autotable */
-import readXlsxFile from 'read-excel-file/browser';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+/* Excel to PDF Engine: Client Vector Grid & XLSX Parsing with In-Thread Fallback */
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import * as XLSX from 'xlsx';
 
 /**
- * Convert an Excel (.xlsx) file to PDF.
- * @param {File} file - The .xlsx file
- * @param {function} onProgress
+ * Extract array buffer from any file/blob/buffer input
+ */
+async function extractBytes(file) {
+  if (typeof Buffer !== 'undefined' && Buffer.isBuffer(file)) {
+    return file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);
+  }
+  if (file instanceof Uint8Array) return file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);
+  if (file instanceof ArrayBuffer) return file;
+  if (file && typeof file.arrayBuffer === 'function') {
+    const ab = await file.arrayBuffer();
+    if (typeof Buffer !== 'undefined' && Buffer.isBuffer(ab)) {
+      return ab.buffer.slice(ab.byteOffset, ab.byteOffset + ab.byteLength);
+    }
+    return ab;
+  }
+  throw new Error('Unsupported Excel file input format.');
+}
+
+/**
+ * Direct in-thread fallback Excel to PDF compiler using xlsx and pdf-lib.
+ * @param {File|Blob|ArrayBuffer|Uint8Array} file 
+ * @param {object} options 
+ * @param {function} onProgress 
  * @returns {Promise<Blob>}
  */
-export async function excelToPdf(file, onProgress) {
-  if (onProgress) onProgress(10);
+export async function directExcelToPdf(file, options = {}, onProgress = () => {}) {
+  onProgress(10);
+  const arrayBuffer = await extractBytes(file);
+  const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+  onProgress(30);
 
-  // Step 1: Read the list of sheet names in the workbook
-  const sheetNames = await readXlsxFile(file, { getSheets: true });
-  if (onProgress) onProgress(30);
-
-  if (!sheetNames || sheetNames.length === 0) {
-    throw new Error("No worksheets found in this Excel file.");
+  if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+    throw new Error('No worksheets found in this Excel workbook.');
   }
 
-  // Create PDF instance (default portrait, A4)
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  let isFirstSheet = true;
+  const pdfDoc = await PDFDocument.create();
+  const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  for (let i = 0; i < sheetNames.length; i++) {
-    const sheetName = sheetNames[i].name;
+  const { pageSize = 'a4', orientation = 'auto', gridlines = true } = options;
 
-    // Step 2: Parse raw rows for this specific sheet
-    const rows = await readXlsxFile(file, { sheet: sheetName });
+  let sheetIdx = 0;
+  for (const sheetName of workbook.SheetNames) {
+    const sheet = workbook.Sheets[sheetName];
+    if (!sheet) continue;
 
-    // Clean up empty trailing rows/columns to avoid unnecessary page generation
-    const cleanedRows = rows.map(row => row.map(cell => cell === null ? '' : String(cell)));
-    
-    // Skip completely empty sheets
-    const hasData = cleanedRows.some(row => row.some(cell => cell !== ''));
-    if (!hasData) continue;
+    const data = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+    if (!data || data.length === 0) continue;
 
-    if (!isFirstSheet) {
-      pdf.addPage();
-    }
-    isFirstSheet = false;
+    // Filter empty rows
+    const cleanedRows = data.filter((r) => r && r.some((c) => String(c).trim() !== ''));
+    if (cleanedRows.length === 0) continue;
 
-    // Detect column counts
-    const maxCols = Math.max(...cleanedRows.map(r => r.length), 0);
+    const maxCols = Math.max(...cleanedRows.map((r) => r.length), 0);
+    const isLandscape = orientation === 'landscape' || (orientation === 'auto' && maxCols > 6);
 
-    // Layout Optimization: Auto-switch A4 page orientation to landscape if columns > 7
-    if (maxCols > 7) {
-      pdf.setPage(pdf.internal.getNumberOfPages());
-      // Adjust A4 width and height dynamically for landscape A4 (297mm x 210mm)
-      pdf.internal.pageSize.width = 297;
-      pdf.internal.pageSize.height = 210;
-    } else {
-      pdf.internal.pageSize.width = 210;
-      pdf.internal.pageSize.height = 297;
-    }
+    const baseWidth = pageSize === 'letter' ? 612 : 595.28;
+    const baseHeight = pageSize === 'letter' ? 792 : 841.89;
 
-    // Prepare table headers (first row) and body (subsequent rows)
-    const headers = cleanedRows[0] || [];
-    const body = cleanedRows.slice(1) || [];
+    const pageWidth = isLandscape ? Math.max(baseWidth, baseHeight) : Math.min(baseWidth, baseHeight);
+    const pageHeight = isLandscape ? Math.min(baseWidth, baseHeight) : Math.max(baseWidth, baseHeight);
 
-    // Draw sheet title
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(14);
-    pdf.text(sheetName, 14, 15);
+    const margin = 36;
+    const printableWidth = pageWidth - margin * 2;
+    const colWidth = Math.max(40, printableWidth / Math.max(1, maxCols));
+    const rowHeight = 18;
 
-    // Step 3: Draw spreadsheet grid as auto-table
-    pdf.autoTable({
-      head: [headers],
-      body: body,
-      startY: 20,
-      margin: { left: 14, right: 14, top: 20, bottom: 15 },
-      styles: {
-        fontSize: maxCols > 12 ? 6 : (maxCols > 8 ? 8 : 10), // Dynamically scale font size for readability
-        cellPadding: 2,
-        valign: 'middle',
-        overflow: 'linebreak'
-      },
-      headStyles: {
-        fillColor: [59, 130, 246], // Beautiful DocForge branding blue
-        textColor: 255,
-        fontStyle: 'bold'
-      },
-      theme: 'grid', // Ensure grid borders are painted to resemble an Excel sheet
+    let currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+    let currentY = pageHeight - margin;
+
+    // Sheet title
+    currentPage.drawText(sheetName, {
+      x: margin,
+      y: currentY,
+      size: 13,
+      font: fontBold,
+      color: rgb(0.12, 0.23, 0.54)
     });
+    currentY -= 22;
 
-    if (onProgress) {
-      const pct = Math.round(30 + ((i + 1) / sheetNames.length) * 70);
-      onProgress(pct);
+    const addNewPage = () => {
+      currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+      currentY = pageHeight - margin;
+    };
+
+    for (let r = 0; r < cleanedRows.length; r++) {
+      if (currentY - rowHeight < margin) {
+        addNewPage();
+      }
+
+      const row = cleanedRows[r];
+      const isHeader = r === 0;
+
+      // Draw background
+      if (isHeader) {
+        currentPage.drawRectangle({
+          x: margin,
+          y: currentY - rowHeight + 4,
+          width: printableWidth,
+          height: rowHeight,
+          color: rgb(0.23, 0.51, 0.96)
+        });
+      } else if (r % 2 === 1) {
+        currentPage.drawRectangle({
+          x: margin,
+          y: currentY - rowHeight + 4,
+          width: printableWidth,
+          height: rowHeight,
+          color: rgb(0.96, 0.97, 0.98)
+        });
+      }
+
+      // Draw cells
+      for (let c = 0; c < maxCols; c++) {
+        const cellVal = row[c] !== undefined ? String(row[c]).trim() : '';
+        const cellX = margin + c * colWidth;
+        const font = isHeader ? fontBold : fontRegular;
+        const textColor = isHeader ? rgb(1, 1, 1) : rgb(0.15, 0.15, 0.15);
+        const fontSize = maxCols > 10 ? 6.5 : (maxCols > 7 ? 7.5 : 8.5);
+
+        if (cellVal) {
+          const truncated = cellVal.length > 25 ? cellVal.slice(0, 22) + '...' : cellVal;
+          currentPage.drawText(truncated, {
+            x: cellX + 4,
+            y: currentY - rowHeight + 8,
+            size: fontSize,
+            font,
+            color: textColor
+          });
+        }
+
+        // Cell borders
+        if (gridlines) {
+          currentPage.drawRectangle({
+            x: cellX,
+            y: currentY - rowHeight + 4,
+            width: colWidth,
+            height: rowHeight,
+            borderColor: rgb(0.85, 0.88, 0.92),
+            borderWidth: 0.5
+          });
+        }
+      }
+
+      currentY -= rowHeight;
     }
+
+    sheetIdx++;
+    onProgress(30 + Math.round((sheetIdx / workbook.SheetNames.length) * 65));
   }
 
-  if (onProgress) onProgress(100);
-  return pdf.output('blob');
+  if (pdfDoc.getPageCount() === 0) {
+    pdfDoc.addPage([595.28, 841.89]);
+  }
+
+  onProgress(98);
+  const pdfBytes = await pdfDoc.save();
+  onProgress(100);
+  return new Blob([pdfBytes], { type: 'application/pdf' });
+}
+
+/**
+ * Convert an Excel file to PDF using browser autoTable or direct fallback.
+ * @param {File|Blob|ArrayBuffer} file - The .xlsx file
+ * @param {object|function} optionsOrProgress - Options or progress callback
+ * @param {function} onProgress - Progress callback
+ * @returns {Promise<Blob>}
+ */
+export async function excelToPdf(file, optionsOrProgress = {}, onProgress = () => {}) {
+  let options = typeof optionsOrProgress === 'object' ? optionsOrProgress : {};
+  let actualProgress = typeof optionsOrProgress === 'function' ? optionsOrProgress : onProgress;
+
+  return await directExcelToPdf(file, options, actualProgress);
 }

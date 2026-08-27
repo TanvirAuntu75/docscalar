@@ -1,7 +1,7 @@
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ImageIcon, Wrench } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { CATEGORIES, TOOLS, getToolsByCategory } from '../utils/constants';
 import ToolIcon from './ToolIcon';
@@ -20,22 +20,28 @@ const renderToolIcon = (tool, size = '16px') => {
   );
 };
 
-const pdfCategories = [
+const allToolCategories = [
   {
     id: 'organize',
     title: 'Organize PDF',
-    subtitle: 'Merge, split, remove, extract, and scan pages',
+    subtitle: 'Merge, split, rotate, organize, and crop pages',
     icon: 'view_week',
     iconColor: 'hsl(0, 84%, 60%)',
-    tools: getToolsByCategory('organize-pdf')
+    tools: [
+      ...getToolsByCategory('organize-pdf'),
+      ...getToolsByCategory('edit-pdf').filter(t => ['rotate-pdf', 'crop-pdf'].includes(t.id))
+    ]
   },
   {
     id: 'optimize',
-    title: 'Optimize PDF',
-    subtitle: 'Compress, repair, and run Server Side OCR',
+    title: 'Edit & Optimize',
+    subtitle: 'Watermark, numbers, compress, repair, and OCR',
     icon: 'compress',
     iconColor: 'hsl(220, 90%, 60%)',
-    tools: getToolsByCategory('optimize-pdf')
+    tools: [
+      ...getToolsByCategory('edit-pdf').filter(t => !['rotate-pdf', 'crop-pdf'].includes(t.id)),
+      ...getToolsByCategory('optimize-pdf')
+    ]
   },
   {
     id: 'convert-to',
@@ -54,18 +60,24 @@ const pdfCategories = [
     tools: getToolsByCategory('convert-from-pdf')
   },
   {
-    id: 'security-ai',
-    title: 'Security & Intelligence',
-    subtitle: 'Protect, sign, redact, compare, and AI summarize',
+    id: 'security',
+    title: 'PDF Security',
+    subtitle: 'Protect, unlock, sign, redact, and compare PDFs',
     icon: 'shield',
     iconColor: 'hsl(270, 80%, 65%)',
-    tools: [
-      ...getToolsByCategory('pdf-security'),
-      ...getToolsByCategory('pdf-intelligence')
-    ]
+    tools: getToolsByCategory('pdf-security')
+  },
+  {
+    id: 'image-utility',
+    title: 'Image & Utilities',
+    subtitle: 'Convert, resize, compress, and utility tools',
+    icon: 'auto_fix_high',
+    iconColor: 'hsl(38, 92%, 50%)',
+    tools: TOOLS.filter(t => t.category === 'image' || t.category === 'utility')
   }
 ];
 
+const mobileGroups = allToolCategories;
 const imageAndUtilityTools = [
   ...TOOLS.filter(t => t.category === 'image' || t.category === 'utility')
 ];
@@ -98,7 +110,7 @@ const columnVariants = {
   hidden: { opacity: 0, y: 15 },
   visible: { 
     opacity: 1, 
-    y: 0,
+    y: 0, 
     transition: {
       type: "spring",
       stiffness: 260,
@@ -112,7 +124,7 @@ const itemVariants = {
   hidden: { opacity: 0, y: 8 },
   visible: { 
     opacity: 1, 
-    y: 0,
+    y: 0, 
     transition: {
       type: "spring",
       stiffness: 300,
@@ -136,8 +148,6 @@ export default function Header() {
   const [expandedCategory, setExpandedCategory] = useState(null);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
-  const imageTools = imageAndUtilityTools.filter(t => t.category === 'image');
-  const utilityTools = imageAndUtilityTools.filter(t => t.category === 'utility');
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -182,10 +192,16 @@ export default function Header() {
     localStorage.setItem('theme', newTheme);
     if (newTheme === 'dark') {
       document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
     } else {
-      document.documentElement.classList.add('light');
       document.documentElement.classList.remove('dark');
+    }
+  };
+
+  const handleLogoClick = () => {
+    if (isAuthenticated) {
+      navigate('/workspace');
+    } else {
+      navigate('/');
     }
   };
 
@@ -193,29 +209,25 @@ export default function Header() {
     e.preventDefault();
     setMobileMenuOpen(false);
     if (location.pathname !== '/') {
-      navigate('/' + targetId);
+      navigate('/');
+      setTimeout(() => {
+        const element = document.querySelector(targetId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
     } else {
-      const el = document.getElementById(targetId.substring(1));
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
+      const element = document.querySelector(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
       }
     }
-  };
-
-  const handleLogoClick = () => {
-    navigate('/');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setMobileMenuOpen(false);
   };
 
   const handleCtaClick = () => {
     setMobileMenuOpen(false);
     if (isAuthenticated) {
-      if (!isPro) {
-        navigate('/pricing');
-      } else {
-        navigate('/workspace');
-      }
+      navigate('/pricing');
     } else {
       navigate('/signup');
     }
@@ -227,38 +239,18 @@ export default function Header() {
     navigate('/');
   };
 
-  // Grouped mobile accordions matching new structure
-  const mobileGroups = [
-    { title: 'Organize PDF', id: 'organize-pdf', tools: getToolsByCategory('organize-pdf') },
-    { title: 'Optimize PDF', id: 'optimize-pdf', tools: getToolsByCategory('optimize-pdf') },
-    { 
-      title: 'Convert PDF', 
-      id: 'convert-pdf', 
-      tools: [
-        ...getToolsByCategory('convert-to-pdf'),
-        ...getToolsByCategory('convert-from-pdf')
-      ] 
-    },
-    { 
-      title: 'Security & Intelligence', 
-      id: 'security-ai', 
-      tools: [
-        ...getToolsByCategory('pdf-security'),
-        ...getToolsByCategory('pdf-intelligence')
-      ] 
-    },
-    { 
-      title: 'Image & Utilities', 
-      id: 'image-utility', 
-      tools: imageAndUtilityTools 
-    },
-  ];
+  const isStudio = false;
 
   return (
-    <div className="fixed top-5 left-0 w-full z-50 flex justify-center px-6 pointer-events-none">
+    <div className={`site-header-wrapper fixed left-0 w-full z-50 flex justify-center pointer-events-none transition-all duration-300 ${isStudio ? 'top-0 px-0' : 'top-5 px-6'}`}>
       <motion.nav
         initial={{ y: -70, opacity: 0 }}
-        animate={{ 
+        animate={isStudio ? {
+          y: 0,
+          opacity: 1,
+          borderColor: "var(--border-subtle)",
+          boxShadow: "0 1px 4px rgba(0, 0, 0, 0.05)"
+        } : { 
           y: 0, 
           opacity: 1,
           borderColor: ["var(--border-subtle)", "rgba(var(--color-primary-rgb), 0.25)", "var(--border-subtle)"],
@@ -277,19 +269,21 @@ export default function Header() {
         transition={{
           y: { type: "spring", stiffness: 100, damping: 16 },
           opacity: { duration: 0.6 },
-          borderColor: { duration: 3.5, repeat: Infinity, ease: "easeInOut" },
-          boxShadow: { duration: 3.5, repeat: Infinity, ease: "easeInOut" }
+          borderColor: isStudio ? { duration: 0.3 } : { duration: 3.5, repeat: Infinity, ease: "easeInOut" },
+          boxShadow: isStudio ? { duration: 0.3 } : { duration: 3.5, repeat: Infinity, ease: "easeInOut" }
         }}
-        className="pointer-events-auto w-full max-w-[1380px] rounded-full border transition-colors duration-300"
+        className={`site-header-nav pointer-events-auto w-full transition-all duration-300 ${isStudio ? 'max-w-full rounded-none border-b border-t-0 border-x-0' : 'max-w-[1380px] rounded-full border'}`}
         style={{
-          background: scrolled
-            ? "var(--bg-glass-strong, rgba(250,248,244,0.97))"
-            : "var(--bg-glass, rgba(250,248,244,0.85))",
+          background: isStudio
+            ? "var(--bg-secondary)"
+            : (scrolled
+                ? "var(--bg-glass-strong, rgba(250,248,244,0.97))"
+                : "var(--bg-glass, rgba(250,248,244,0.85))"),
           backdropFilter: "blur(24px) saturate(1.4)",
           WebkitBackdropFilter: "blur(24px) saturate(1.4)",
         }}
       >
-        <div className="flex justify-between items-center gap-4 lg:gap-8 px-8 py-3.5 relative">
+        <div className={`site-header-inner flex justify-between items-center gap-4 lg:gap-8 relative transition-all duration-300 ${isStudio ? 'px-6 py-2 h-[56px] w-full max-w-full' : 'px-8 py-3.5'}`}>
         {/* Logo & Brand */}
         <div className="flex items-center gap-4 flex-shrink-0">
           <div 
@@ -330,7 +324,7 @@ export default function Header() {
             )}
           </Link>
 
-          {/* Canvas link */}
+          {/* Canvas link (Flagship Visual Studio for Authenticated Users) */}
           {isAuthenticated && (
             <Link 
               className={`relative px-4 py-2 transition-colors ${location.pathname === '/canvas' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
@@ -348,6 +342,97 @@ export default function Header() {
               )}
             </Link>
           )}
+
+          {/* All Tools Unified Mega Menu Trigger */}
+          <div 
+            className=""
+            onMouseEnter={() => handleMouseEnter('all-tools')}
+            onMouseLeave={handleMouseLeave}
+          >
+            <button 
+              onClick={() => {
+                setActiveDropdown(null);
+                navigate('/?category=all');
+              }}
+              className={`relative flex items-center gap-1 px-4 py-2 transition-colors cursor-pointer select-none bg-transparent border-none ${
+                activeDropdown === 'all-tools' || location.search.includes('category=') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'
+              }`}
+              style={{ whiteSpace: 'nowrap' }}
+            >
+              <span className="relative z-10">All Tools</span>
+              <span className={`material-symbols-outlined relative z-10 text-[18px] transition-transform duration-200 ${activeDropdown === 'all-tools' ? 'rotate-180 text-primary' : ''}`}>
+                keyboard_arrow_down
+              </span>
+              {(activeDropdown === 'all-tools' || location.search.includes('category=')) && (
+                  <motion.div
+                    layoutId="header-active-line"
+                    className="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-7 h-[3px] rounded-full bg-primary"
+                    initial={false}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+              )}
+            </button>
+            
+            {/* Unified 6-Column Mega Menu Dropdown */}
+            <AnimatePresence>
+              {activeDropdown === 'all-tools' && (
+                <motion.div
+                  variants={dropdownVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  onMouseEnter={() => handleMouseEnter('all-tools')}
+                  onMouseLeave={handleMouseLeave}
+                  className="absolute top-full left-0 right-0 mx-auto mt-2 w-[calc(100vw-48px)] max-w-[1360px] z-50 pointer-events-auto"
+                >
+                  <div className="bg-surface border border-outline-variant/30 rounded-3xl p-6 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.12)]">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+                      {allToolCategories.map((cat) => {
+                        const Icon = categoryIcons[cat.id];
+                        return (
+                          <motion.div 
+                            key={cat.id} 
+                            variants={columnVariants}
+                            className="flex flex-col gap-3 text-left"
+                          >
+                            {/* Column Header */}
+                            <div className="flex items-center gap-2 border-b border-outline-variant/15 pb-2">
+                              <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-primary/10 text-primary flex-shrink-0">
+                                {Icon && <Icon className="w-4 h-4" />}
+                              </div>
+                              <h4 className="text-xs font-bold tracking-wide uppercase text-on-background select-none truncate">
+                                {cat.title}
+                              </h4>
+                            </div>
+
+                            {/* Column Tools List */}
+                            <div className="flex flex-col gap-0.5">
+                              {cat.tools.map((tool) => {
+                                return (
+                                  <motion.div key={tool.id} variants={itemVariants}>
+                                    <Link
+                                      to={tool.path}
+                                      onClick={() => setActiveDropdown(null)}
+                                      className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-primary/5 border border-transparent hover:border-primary/10 transition-all duration-150 group relative overflow-hidden"
+                                    >
+                                      <ToolIcon id={tool.id} size={32} />
+                                      <span className="text-xs font-semibold text-on-background group-hover:text-primary transition-colors truncate">
+                                        {tool.title}
+                                      </span>
+                                    </Link>
+                                  </motion.div>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           {/* CV Builder link */}
           <Link 
@@ -382,206 +467,6 @@ export default function Header() {
                 />
             )}
           </Link>
-
-          {/* PDF Tools Interactive Dropdown Trigger */}
-          <div 
-            className=""
-            onMouseEnter={() => handleMouseEnter('pdf-tools')}
-            onMouseLeave={handleMouseLeave}
-          >
-            <button 
-              onClick={() => {
-                setActiveDropdown(null);
-                navigate('/?category=pdf');
-              }}
-              className={`relative flex items-center gap-1 px-4 py-2 transition-colors cursor-pointer select-none bg-transparent border-none ${
-                activeDropdown === 'pdf-tools' || location.search.includes('category=pdf') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'
-              }`}
-              style={{ whiteSpace: 'nowrap' }}
-            >
-              <span className="relative z-10">PDF Tools</span>
-              <span className={`material-symbols-outlined relative z-10 text-[18px] transition-transform duration-200 ${activeDropdown === 'pdf-tools' ? 'rotate-180 text-primary' : ''}`}>
-                keyboard_arrow_down
-              </span>
-              {(activeDropdown === 'pdf-tools' || location.search.includes('category=pdf')) && (
-                  <motion.div
-                    layoutId="header-active-line"
-                    className="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-7 h-[3px] rounded-full bg-primary"
-                    initial={false}
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-              )}
-            </button>
-            
-            {/* Tabbed Mega Menu Dropdown */}
-              <AnimatePresence>
-                {activeDropdown === 'pdf-tools' && (
-                  <motion.div
-                    variants={dropdownVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    onMouseEnter={() => handleMouseEnter('pdf-tools')}
-                    onMouseLeave={handleMouseLeave}
-                    className="absolute top-full left-0 right-0 mx-auto mt-2 w-[calc(100vw-48px)] max-w-[1300px] z-50 pointer-events-auto"
-                  >
-                    <div className="bg-surface border border-outline-variant/30 rounded-3xl p-6 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.12)]">
-                      <div className="grid grid-cols-5 gap-6">
-                        {pdfCategories.map((cat) => {
-                          const Icon = categoryIcons[cat.id];
-                          return (
-                            <motion.div 
-                              key={cat.id} 
-                              variants={columnVariants}
-                              className="flex flex-col gap-4 text-left"
-                            >
-                              {/* Column Header */}
-                              <div className="flex items-center gap-2 border-b border-outline-variant/15 pb-2">
-                                <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-primary/10 text-primary">
-                                  {Icon && <Icon className="w-4 h-4" />}
-                                </div>
-                                <h4 className="text-xs font-bold tracking-wide uppercase text-on-background select-none">
-                                  {cat.title}
-                                </h4>
-                              </div>
-
-                              {/* Column Tools List */}
-                              <div className="flex flex-col gap-1">
-                                {cat.tools.map((tool) => {
-                                  return (
-                                    <motion.div key={tool.id} variants={itemVariants}>
-                                      <Link
-                                        to={tool.path}
-                                        onClick={() => setActiveDropdown(null)}
-                                        className="flex items-center gap-3.5 px-3 py-2 rounded-2xl hover:bg-primary/5 border border-transparent hover:border-primary/10 transition-all duration-200 group relative overflow-hidden"
-                                      >
-                                        <ToolIcon id={tool.id} size={40} />
-                                        <span className="text-xs font-semibold text-on-background group-hover:text-primary transition-colors truncate">
-                                          {tool.title}
-                                        </span>
-                                      </Link>
-                                    </motion.div>
-                                  );
-                                })}
-                              </div>
-                            </motion.div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-          {/* Image & Utilities Dropdown Trigger */}
-          <div 
-            className=""
-            onMouseEnter={() => handleMouseEnter('image-utilities')}
-            onMouseLeave={handleMouseLeave}
-          >
-            <button 
-              onClick={() => {
-                setActiveDropdown(null);
-                navigate('/?category=image');
-              }}
-              className={`relative flex items-center gap-1 px-4 py-2 transition-colors cursor-pointer select-none bg-transparent border-none ${
-                activeDropdown === 'image-utilities' || location.search.includes('category=image') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'
-              }`}
-              style={{ whiteSpace: 'nowrap' }}
-            >
-              <span className="relative z-10">Image & Utilities</span>
-              <span className={`material-symbols-outlined relative z-10 text-[18px] transition-transform duration-200 ${activeDropdown === 'image-utilities' ? 'rotate-180 text-primary' : ''}`}>
-                keyboard_arrow_down
-              </span>
-              {(activeDropdown === 'image-utilities' || location.search.includes('category=image')) && (
-                  <motion.div
-                    layoutId="header-active-line"
-                    className="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-7 h-[3px] rounded-full bg-primary"
-                    initial={false}
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-              )}
-            </button>
-
-              <AnimatePresence>
-                {activeDropdown === 'image-utilities' && (
-                  <motion.div
-                    variants={dropdownVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    onMouseEnter={() => handleMouseEnter('image-utilities')}
-                    onMouseLeave={handleMouseLeave}
-                    className="absolute top-full left-0 right-0 mx-auto mt-2 w-[calc(100vw-48px)] max-w-[600px] z-50 pointer-events-auto"
-                  >
-                    <div className="bg-surface border border-outline-variant/30 rounded-3xl p-6 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.12)]">
-                      <div className="grid grid-cols-2 gap-6">
-                        {/* Column 1: Image Tools */}
-                        <motion.div variants={columnVariants} className="flex flex-col gap-4 text-left">
-                          <div className="flex items-center gap-2 border-b border-outline-variant/15 pb-2">
-                            <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-primary/10 text-primary">
-                              <ImageIcon className="w-4 h-4" />
-                            </div>
-                            <h4 className="text-xs font-bold tracking-wide uppercase text-on-background select-none">
-                              Image Tools
-                            </h4>
-                          </div>
-                          <div className="flex flex-col gap-1">
-                            {imageTools.map((tool) => {
-                              return (
-                                <motion.div key={tool.id} variants={itemVariants}>
-                                  <Link
-                                    to={tool.path}
-                                    onClick={() => setActiveDropdown(null)}
-                                    className="flex items-center gap-3.5 px-3 py-2 rounded-2xl hover:bg-primary/5 border border-transparent hover:border-primary/10 transition-all duration-200 group relative overflow-hidden"
-                                  >
-                                    <ToolIcon id={tool.id} size={40} />
-                                    <span className="text-xs font-semibold text-on-background group-hover:text-primary transition-colors truncate">
-                                      {tool.title}
-                                    </span>
-                                  </Link>
-                                </motion.div>
-                              );
-                            })}
-                          </div>
-                        </motion.div>
-
-                        {/* Column 2: Utility Tools */}
-                        <motion.div variants={columnVariants} className="flex flex-col gap-4 text-left">
-                          <div className="flex items-center gap-2 border-b border-outline-variant/15 pb-2">
-                            <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-primary/10 text-primary">
-                              <Wrench className="w-4 h-4" />
-                            </div>
-                            <h4 className="text-xs font-bold tracking-wide uppercase text-on-background select-none">
-                              Utilities
-                            </h4>
-                          </div>
-                          <div className="flex flex-col gap-1">
-                            {utilityTools.map((tool) => {
-                              return (
-                                <motion.div key={tool.id} variants={itemVariants}>
-                                  <Link
-                                    to={tool.path}
-                                    onClick={() => setActiveDropdown(null)}
-                                    className="flex items-center gap-3.5 px-3 py-2.5 rounded-2xl hover:bg-primary/5 border border-transparent hover:border-primary/10 transition-all duration-200 group relative overflow-hidden"
-                                  >
-                                    <ToolIcon id={tool.id} size={40} />
-                                    <span className="text-xs font-semibold text-on-background group-hover:text-primary transition-colors truncate">
-                                      {tool.title}
-                                    </span>
-                                  </Link>
-                                </motion.div>
-                              );
-                            })}
-                          </div>
-                        </motion.div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
 
           {/* Pricing link */}
           <Link 
@@ -877,6 +762,6 @@ export default function Header() {
         </div>
       )}
       </motion.nav>
-  </div>
+    </div>
   );
 }

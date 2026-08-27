@@ -16,6 +16,8 @@ export default function FocusStudioPortal({ studio, onCommit, onCancel }) {
   const { toolId, inputFiles, extractedParams } = studio;
   const [editorParams, setEditorParams] = useState(extractedParams);
   const [nlpOp, setNlpOp] = useState(null);
+  const [isDirty, setIsDirty] = useState(false);
+  const [showDiscardModal, setShowDiscardModal] = useState(false);
 
   useEffect(() => {
     if (extractedParams?.initialNlpPrompt) {
@@ -39,6 +41,7 @@ export default function FocusStudioPortal({ studio, onCommit, onCancel }) {
   }[toolId] || { title: 'Focus Studio', desc: 'Review document and apply settings.' };
 
   const handleCommand = (delta) => {
+    setIsDirty(true);
     setNlpOp(delta);
     // Auto clear NLP trigger on next frame
     setTimeout(() => setNlpOp(null), 100);
@@ -46,10 +49,19 @@ export default function FocusStudioPortal({ studio, onCommit, onCancel }) {
 
   // Merge-aware onChange: studios pass partial objects, portal merges them
   const handleParamChange = (patch) => {
+    setIsDirty(true);
     setEditorParams(prev => ({
       ...prev,
       ...(typeof patch === 'function' ? patch(prev) : patch)
     }));
+  };
+
+  const handleCancelClick = () => {
+    if (isDirty) {
+      setShowDiscardModal(true);
+    } else {
+      onCancel();
+    }
   };
 
   const handleApply = () => {
@@ -119,7 +131,7 @@ export default function FocusStudioPortal({ studio, onCommit, onCancel }) {
 
           <div className="flex items-center gap-2.5">
             <button
-              onClick={onCancel}
+              onClick={handleCancelClick}
               className="flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 border border-slate-200/60 cursor-pointer transition-colors"
               title="Cancel Changes"
             >
@@ -138,6 +150,37 @@ export default function FocusStudioPortal({ studio, onCommit, onCancel }) {
         <div className="flex-1 overflow-y-auto px-6 py-5 z-10 min-h-[300px] bg-slate-50/50">
           {renderStudioBody()}
         </div>
+
+        {/* Discard Confirmation Modal */}
+        {showDiscardModal && (
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl p-5 shadow-2xl border border-slate-200 max-w-sm w-full flex flex-col gap-3 text-left">
+              <div className="flex items-center gap-2 text-amber-600 font-bold text-sm">
+                <AlertCircle className="w-5 h-5" /> Discard Unsaved Changes?
+              </div>
+              <p className="text-xs text-slate-500">
+                You have modified settings in this studio. Discarding will revert all unapplied changes.
+              </p>
+              <div className="flex items-center justify-end gap-2 mt-2">
+                <button
+                  onClick={() => setShowDiscardModal(false)}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+                >
+                  Keep Editing
+                </button>
+                <button
+                  onClick={() => {
+                    setShowDiscardModal(false);
+                    onCancel();
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-500 hover:bg-red-600 text-white transition-colors"
+                >
+                  Discard & Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </motion.div>
     </div>
   );

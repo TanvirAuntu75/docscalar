@@ -1,0 +1,40 @@
+{
+  "name": "DocForge — Free Document & PDF Studio",
+  "short_name": "DocForge",
+  "description": "Fast, 100% private in-browser document processing and visual studio.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#0a0e1a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities", "business"],
+  "shortcuts": [
+    {
+      "name": "Merge PDF",
+      "url": "/merge-pdf",
+      "description": "Combine multiple PDF documents"
+    },
+    {
+      "name": "Compress PDF",
+      "url": "/compress-pdf",
+      "description": "Reduce PDF file size"
+    },
+    {
+      "name": "PDF to Word",
+      "url": "/pdf-to-word",
+      "description": "Convert PDF to editable Word DOCX"
+    },
+    {
+      "name": "Visual Canvas",
+      "url": "/canvas",
+      "description": "Visual document workflow studio"
+    }
+  ]
+}

@@ -15,28 +15,64 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
 
-    // Self-healing: if it is a ChunkLoadError (common when updates are deployed),
-    // automatically reload the page once to pull the new version.
+    const isTauri = typeof window !== 'undefined' && (typeof window.__TAURI__ !== 'undefined' || typeof window.__TAURI_INTERNALS__ !== 'undefined');
     const isChunkError = 
       error && 
       (error.name === 'ChunkLoadError' || 
        /chunk|dynamically imported module|failed to fetch/i.test(error.message || ''));
        
-    if (isChunkError) {
-      const hasReloaded = sessionStorage.getItem('chunk_error_reload');
-      if (!hasReloaded) {
-        sessionStorage.setItem('chunk_error_reload', 'true');
-        console.warn('[ErrorBoundary] ChunkLoadError detected. Attempting self-healing page reload...');
+    // Only attempt self-healing reload in Web mode (never in Tauri desktop app to avoid white screen loops)
+    if (isChunkError && !isTauri) {
+      const lastReload = parseInt(sessionStorage.getItem('chunk_error_reload') || '0', 10);
+      if (Date.now() - lastReload > 30000) {
+        sessionStorage.setItem('chunk_error_reload', Date.now().toString());
+        console.warn('[ErrorBoundary] ChunkLoadError detected in Web mode. Refreshing...');
         window.location.reload();
       }
     }
   }
 
-  handleReset = () => {
+  handleReset = async () => {
     sessionStorage.removeItem('chunk_error_reload');
+    if ('serviceWorker' in navigator) {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (let reg of registrations) {
+          await reg.unregister();
+        }
+      } catch {}
+    }
+    if ('caches' in window) {
+      try {
+        const keys = await caches.keys();
+        for (let key of keys) {
+          await caches.delete(key);
+        }
+      } catch {}
+    }
     this.setState({ hasError: false, error: null });
-    // Force redirect to clear any bad state in the URL or history
-    window.location.href = '/';
+    window.location.href = '/?_t=' + Date.now();
+  };
+
+  handleTryAgain = async () => {
+    sessionStorage.removeItem('chunk_error_reload');
+    if ('serviceWorker' in navigator) {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (let reg of registrations) {
+          await reg.unregister();
+        }
+      } catch {}
+    }
+    if ('caches' in window) {
+      try {
+        const keys = await caches.keys();
+        for (let key of keys) {
+          await caches.delete(key);
+        }
+      } catch {}
+    }
+    window.location.href = window.location.pathname + '?_t=' + Date.now();
   };
 
   render() {
@@ -71,7 +107,7 @@ class ErrorBoundary extends React.Component {
                   Go Back Home
                 </button>
                 <button
-                  onClick={() => window.location.reload()}
+                  onClick={this.handleTryAgain}
                   className="font-button text-button bg-surface text-on-background border border-outline-variant hover:border-primary hover:bg-surface-bright px-8 py-3.5 rounded-lg active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2"
                 >
                   <span className="material-symbols-outlined text-[20px]">refresh</span>
@@ -79,7 +115,7 @@ class ErrorBoundary extends React.Component {
                 </button>
               </div>
 
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {import.meta.env.DEV && this.state.error && (
                 <div className="mt-8 text-left bg-surface-container-highest p-4 rounded-lg overflow-auto max-h-48 border border-outline-variant">
                   <p className="font-label-mono text-label-mono text-error mb-2 font-bold">Development Error Details:</p>
                   <pre className="text-xs text-on-surface-variant font-mono whitespace-pre-wrap">

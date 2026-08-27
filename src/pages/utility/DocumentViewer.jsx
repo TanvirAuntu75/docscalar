@@ -4,69 +4,15 @@ import ToolPageLayout from '../../components/ToolPageLayout';
 import SEOHead from '../../components/SEOHead';
 import FileDropzone from '../../components/FileDropzone';
 import { apiFetch, uploadFileSecure, BACKEND_URL } from '../../utils/api';
-import { saveFile } from '../../utils/db';
+import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import { useJobPoller } from '../../hooks/useJobPoller';
-
-
-// Setup pdfjs worker
-
-
-// Import docx-preview
-
-
-// Import SheetJS
-
-
-// Import JSZip
-
-
-// Import highlight.js
-
-
-// Import pptx-to-html
-
-
-import { 
-  Eye, Download, ZoomIn, ZoomOut, RotateCw, Maximize, Minimize, 
-  ChevronLeft, ChevronRight, Search, FileText, X, Play, Pause, 
-  Volume2, FolderOpen, ExternalLink, RefreshCw, FileCode,
-  Table as TableIcon, FileImage, FileAudio, FileVideo, AlertCircle, Wrench
-} from 'lucide-react';
-
-const SMART_ACTIONS = {
-  pdf: [
-    { label: 'Compress PDF', path: '/compress-pdf' },
-    { label: 'Split PDF', path: '/split-pdf' },
-    { label: 'Sign PDF', path: '/sign-pdf' },
-    { label: 'OCR PDF', path: '/ocr-pdf' },
-    { label: 'Merge PDF', path: '/merge-pdf' },
-    { label: 'Redact PDF', path: '/redact-pdf' }
-  ],
-  docx: [
-    { label: 'Convert to PDF', path: '/docx-to-pdf' },
-    { label: 'AI Translate', path: '/ai-translator' },
-    { label: 'AI Summarizer', path: '/ai-summarizer' }
-  ],
-  xlsx: [
-    { label: 'Convert to PDF', path: '/excel-to-pdf' }
-  ],
-  csv: [
-    { label: 'Convert to PDF', path: '/excel-to-pdf' }
-  ],
-  pptx: [
-    { label: 'Convert to PDF', path: '/powerpoint-to-pdf' }
-  ],
-  image: [
-    { label: 'Compress Image', path: '/image-compressor' },
-    { label: 'Resize Image', path: '/image-resizer' },
-    { label: 'Convert Format', path: '/image-converter' },
-    { label: 'Bundle to PDF', path: '/image-to-pdf' }
-  ],
-  text: [
-    { label: 'Convert to PDF', path: '/text-to-pdf' }
-  ]
-};
+import {
+  SUPPORTED_VIEWER_FORMATS,
+  SMART_ACTIONS,
+  detectFileType,
+  parseDocumentMeta
+} from '../../engines/utility/documentViewer';
 
 const formatSize = (bytes) => {
   if (bytes === 0) return '0 B';
@@ -274,16 +220,42 @@ export default function DocumentViewer({ file = null }) {
     }
   }, [rawFiles]);
 
-  // Preload files from props or route state
+  // Preload files from props or route state, or restore IndexedDB draft
   useEffect(() => {
+    let isMounted = true;
     if (file) {
       setRawFiles([file]);
       setActiveIdx(0);
     } else if (location.state && location.state.initialFiles && Array.isArray(location.state.initialFiles) && location.state.initialFiles.length > 0) {
       setRawFiles(location.state.initialFiles);
       setActiveIdx(0);
+      navigate(location.pathname, { replace: true, state: null });
+      try {
+        window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+      } catch (_) {}
+    } else {
+      loadStudioDraft('document-viewer').then(draft => {
+        if (draft && isMounted && draft.files && draft.files.length > 0) {
+          const restored = draft.files.map(f => {
+            if (f instanceof File) return f;
+            return new File([f.blob || f], f.name || 'document.pdf', {
+              type: f.type || 'application/octet-stream',
+              lastModified: f.lastModified || Date.now()
+            });
+          });
+          setRawFiles(restored);
+        }
+      }).catch(err => console.warn('DocumentViewer draft recovery failed:', err));
     }
+    return () => { isMounted = false; };
   }, [file, location.state]);
+
+  // Persist draft on rawFiles change
+  useEffect(() => {
+    if (rawFiles.length > 0) {
+      saveStudioDraft('document-viewer', { files: rawFiles });
+    }
+  }, [rawFiles]);
 
   // Remove a file from queue
   const removeFile = (idxToRemove) => {
@@ -295,6 +267,7 @@ export default function DocumentViewer({ file = null }) {
 
   // Securely close and clear all file data from browser memory
   const clearAllAndReset = useCallback(() => {
+    clearStudioDraft('document-viewer');
     files.forEach(f => {
       if (f.blobUrl) URL.revokeObjectURL(f.blobUrl);
     });

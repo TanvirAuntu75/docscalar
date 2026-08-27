@@ -211,3 +211,53 @@ export async function clearCanvasState() {
     console.error(err);
   }
 }
+
+/**
+ * Persist active studio drafts (Organize, Merge, Sign, Image-to-PDF) to survive browser reloads.
+ */
+export async function saveStudioDraft(key, data) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(CANVAS_STORE_NAME, 'readwrite');
+      const store = transaction.objectStore(CANVAS_STORE_NAME);
+      const request = store.put({ key: `studio_draft_${key}`, data, date: new Date().toISOString() });
+      request.onsuccess = () => resolve();
+      request.onerror = (e) => reject('Failed to save studio draft: ' + e.target.error);
+    });
+  } catch (err) {
+    console.warn('Studio draft save skipped:', err);
+  }
+}
+
+export async function loadStudioDraft(key) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(CANVAS_STORE_NAME, 'readonly');
+      const store = transaction.objectStore(CANVAS_STORE_NAME);
+      const request = store.get(`studio_draft_${key}`);
+      request.onsuccess = () => resolve(request.result ? request.result.data : null);
+      request.onerror = (e) => reject('Failed to load studio draft: ' + e.target.error);
+    });
+  } catch (err) {
+    console.warn('Studio draft load skipped:', err);
+    return null;
+  }
+}
+
+export async function clearStudioDraft(key) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(CANVAS_STORE_NAME, 'readwrite');
+      const store = transaction.objectStore(CANVAS_STORE_NAME);
+      const request = store.delete(`studio_draft_${key}`);
+      request.onsuccess = () => resolve();
+      request.onerror = (e) => reject('Failed to clear studio draft: ' + e.target.error);
+    });
+  } catch (err) {
+    console.warn('Studio draft clear skipped:', err);
+  }
+}
+

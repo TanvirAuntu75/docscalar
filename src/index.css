@@ -242,16 +242,11 @@ body {
   position: relative;
 }
 
-/* SaaS Grid Background overlay */
+/* SaaS Background overlay (clean gradient mesh without grid pattern) */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: linear-gradient(var(--bg-grid-color) 1px, transparent 1px),
-                    linear-gradient(90deg, var(--bg-grid-color) 1px, transparent 1px);
-  background-size: 50px 50px;
-  mask-image: radial-gradient(circle at 50% 40%, black, transparent 85%);
-  -webkit-mask-image: radial-gradient(circle at 50% 40%, black, transparent 85%);
   pointer-events: none;
   z-index: 0;
 }
@@ -603,7 +598,7 @@ input, select, textarea {
 .tool-page {
   max-width: 960px;
   margin: 0 auto;
-  padding: var(--space-md) var(--space-xl) var(--space-2xl);
+  padding: 2.25rem var(--space-xl) var(--space-2xl);
   animation: fadeInUp 0.45s var(--transition-slow);
 }
 
@@ -887,9 +882,10 @@ input, select, textarea {
   overflow-x: auto;
   border-bottom: 1px solid var(--border-medium);
   background: var(--bg-secondary);
-  border-radius: 12px 12px 0 0;
-  margin-top: 1rem;
+  border-radius: 10px 10px 0 0;
+  margin-top: 0;
   scrollbar-width: none;
+  flex-shrink: 0;
 }
 .cv-wizard-tabs::-webkit-scrollbar {
   display: none;
@@ -897,17 +893,18 @@ input, select, textarea {
 .cv-wizard-tab {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.85rem 1.25rem;
+  gap: 0.35rem;
+  padding: 0.5rem 0.85rem;
   background: transparent;
   border: none;
   cursor: pointer;
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 600;
   white-space: nowrap;
-  border-bottom: 2.5px solid transparent;
+  border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 .cv-wizard-tab:hover {
   color: var(--text-primary);
@@ -929,187 +926,187 @@ input, select, textarea {
   justify-content: center;
   font-size: 0.68rem;
   font-weight: 700;
-  color: var(--text-tertiary);
-}
-.cv-wizard-tab.active .cv-wizard-tab-number {
-  background: var(--color-primary);
-  color: #fff;
-  border-color: transparent;
 }
 .cv-wizard-tab.completed .cv-wizard-tab-number {
   background: var(--color-success);
+  border-color: var(--color-success);
   color: #fff;
-  border-color: transparent;
 }
-.cv-wizard-tab.completed .cv-wizard-tab-number::before {
-  content: "✓";
-}
-
-/* Live editor preview — paper floating on canvas like Canva/FlowCV */
-.cv-preview-paper {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background: #0f1117;
-  border-radius: 10px;
-  padding: 24px 20px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  min-height: 0;
-  height: 100%;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.12) transparent;
-}
-.cv-preview-paper::-webkit-scrollbar {
-  width: 6px;
-}
-.cv-preview-paper::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.15);
-  border-radius: 3px;
-}
-/* The white A4 sheet inside the dark canvas */
-.cv-preview-paper iframe {
-  width: 100%;
-  max-width: 700px;
-  aspect-ratio: 1 / 1.4142;
-  border: none;
-  display: block;
-  background: #fff;
-  box-shadow:
-    0 2px 8px rgba(0,0,0,0.4),
-    0 12px 40px rgba(0,0,0,0.6),
-    0 0 0 1px rgba(255,255,255,0.06);
-  border-radius: 3px;
-  flex-shrink: 0;
+.cv-wizard-tab.active .cv-wizard-tab-number {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
 }
 
+/* ==========================================================================
+   UNIVERSAL TOOL STUDIO VIEWPORT & COMPACT STUDIO NAVBAR
+   ========================================================================== */
 
-/* Hide redundant trust badges, subtitle, breadcrumbs, and related tools when a file is loaded in the workspace */
-.tool-page:has(.options-panel) .trust-bar,
-.tool-page:has(.options-panel) .tool-page-subtitle,
-.tool-page:has(.options-panel) .breadcrumb,
-.tool-page:has(.options-panel) .related-tools {
+body.studio-mode-active .site-header-wrapper {
+  top: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+}
+
+body.studio-mode-active .site-header-nav {
+  max-width: 100vw !important;
+  width: 100vw !important;
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  padding: 0 1.5rem !important;
+  height: 48px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+}
+
+body.studio-mode-active .site-header-inner {
+  height: 48px !important;
+  padding: 0 !important;
+}
+
+body.studio-mode-active .main-content {
+  padding-top: 64px !important;
+}
+
+body.studio-mode-active {
+  overflow: hidden !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+}
+
+body.studio-mode-active footer,
+body.studio-mode-active .site-footer,
+body.studio-mode-active .footer {
   display: none !important;
 }
 
-@media (min-width: 1024px) {
-  /* Use premium split workspace-sidebar layout when options are present */
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) {
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    grid-template-rows: auto 1fr auto auto;
-    gap: 0;
-    max-width: 100% !important;
-    width: 100vw;
-    height: calc(100vh - 88px); /* default to match free header padding */
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden;
-  }
+.studio-viewport {
+  position: relative !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: calc(100vh - 64px) !important;
+  max-height: calc(100vh - 64px) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
 
-  /* Dynamically adjust height depending on Pro vs Free header padding */
-  main.pt-\[72px\] .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) {
-    height: calc(100vh - 72px) !important;
+@media (max-width: 1023px) {
+  .studio-viewport {
+    flex-direction: column !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow-y: auto !important;
   }
-  main.pt-\[88px\] .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) {
-    height: calc(100vh - 88px) !important;
-  }
+}
 
-  /* Left column: Workspace area (containing the dropzone/canvas wrapper) */
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) > div:has(.workspace-canvas),
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) > div:has(.dropzone) {
-    grid-column: 1;
-    grid-row: 1 / span 3;
-    height: 100%;
-    overflow-y: auto;
-    padding: var(--space-2xl);
-    background: var(--bg-primary);
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid var(--border-subtle);
-  }
+.studio-canvas-area {
+  flex: 1 1 0%;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-tertiary);
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid var(--border-subtle);
+}
 
-  /* Full-width bottom banner */
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .upgrade-banner {
-    grid-column: 1 / span 2;
-    grid-row: 4;
-    margin: var(--space-xl) var(--space-xl) var(--space-md);
-  }
+.studio-canvas-scroll {
+  flex: 1 1 0%;
+  width: 100%;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1.5rem;
+  background: var(--bg-tertiary);
+  background-image: radial-gradient(var(--bg-pattern-dot) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+  user-select: none;
+}
 
-  /* Right column Sidebar elements */
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .tool-page-header {
-    grid-column: 2;
-    grid-row: 1;
-    margin: 0 !important;
-    padding: var(--space-2xl) var(--space-xl) var(--space-sm) !important;
-    text-align: left !important;
-    background: var(--bg-surface-container) !important;
-    border-bottom: none !important;
-  }
+.studio-sidebar {
+  width: 380px;
+  min-width: 380px;
+  max-width: 380px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  border-left: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  z-index: 20;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.03);
+}
 
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .tool-page-header h1 {
-    font-size: 1.5rem;
-    margin-top: var(--space-xs);
-  }
-
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .tool-page-back {
-    position: static;
-    margin-bottom: var(--space-xs);
-    display: inline-block;
-  }
-
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .tool-page-icon {
-    display: none; /* Hide large icon in sidebar */
-  }
-
-  /* Configuration panel inside sidebar */
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .options-panel {
-    grid-column: 2;
-    grid-row: 2;
-    margin: 0 !important;
-    padding: 0 var(--space-xl) var(--space-xl) !important;
-    background: var(--bg-surface-container) !important;
-    border: none !important;
-    border-radius: 0 !important;
-    backdrop-filter: none !important;
-    box-shadow: none !important;
-    height: 100%;
-    overflow-y: auto;
-  }
-
-  /* Action button bar at bottom of sidebar */
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .action-bar {
-    grid-column: 2;
-    grid-row: 3;
-    margin: 0 !important;
-    padding: var(--space-xl) !important;
-    background: var(--bg-surface-container) !important;
-    box-shadow: none !important;
-    border-top: none !important;
-  }
-
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .action-bar .btn {
+@media (max-width: 1023px) {
+  .studio-sidebar {
     width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-left: none;
+    border-top: 1px solid var(--border-subtle);
   }
+}
 
-  /* Progress indicator inside sidebar */
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) .progress-container {
-    grid-column: 2;
-    grid-row: 4;
-    margin: 0;
-    padding: 0 var(--space-xl) var(--space-xl);
-    background: var(--bg-surface-container);
-  }
+.studio-sidebar-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
 
-  /* Error notifications */
-  .tool-page:has(.options-panel):has(.dropzone, .workspace-canvas) > p:not(.tool-page-subtitle) {
-    grid-column: 2;
-    grid-row: 5;
-    margin: 0;
-    padding: var(--space-md) var(--space-xl);
-    background: var(--bg-surface-container);
-  }
+.studio-sidebar-content {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: var(--bg-primary);
+}
+
+.studio-sidebar-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Hide redundant marketing elements when in studio mode */
+.tool-page.studio-viewport .trust-bar,
+.tool-page.studio-viewport .tool-page-subtitle,
+.tool-page.studio-viewport .breadcrumb,
+.tool-page.studio-viewport .related-tools,
+.tool-page.studio-viewport .tool-content-guide,
+.tool-page.studio-viewport .site-footer {
+  display: none !important;
+}
+
+/* Center non-split studio tools (e.g. conversion tools) cleanly */
+.studio-viewport > div.flex-1:not(:has(.studio-canvas-area)):not(:has(.workspace-canvas-wrapper)) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  overflow-y: auto;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .tool-page-header {
@@ -1487,6 +1484,44 @@ input[type="range"]::-webkit-slider-thumb:hover {
   padding: 0.95rem var(--space-3xl);
   font-size: 1.05rem;
   border-radius: var(--radius-md);
+}
+
+.btn-sm {
+  padding: 0.35rem 0.85rem !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  border-radius: var(--radius-sm, 8px) !important;
+  min-height: 32px !important;
+  height: 32px !important;
+  line-height: 1 !important;
+  gap: 0.35rem !important;
+}
+
+.btn-xs {
+  padding: 0.2rem 0.55rem !important;
+  font-size: 0.74rem !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  min-height: 26px !important;
+  height: 26px !important;
+  line-height: 1 !important;
+  gap: 0.25rem !important;
+}
+
+.workspace-toolbar {
+  min-height: 48px;
+  max-height: 52px;
+  padding: 0.4rem 1rem !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.workspace-toolbar .btn {
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 0.75rem !important;
+  font-size: 0.8rem !important;
 }
 
 .action-bar {
@@ -2335,22 +2370,25 @@ body:has(.options-panel):has(.dropzone, .workspace-canvas) footer {
   backdrop-filter: blur(24px) saturate(1.2) !important;
   -webkit-backdrop-filter: blur(24px) saturate(1.2) !important;
   border: 1px solid var(--border-subtle) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05) !important;
-  transition: border-color 0.3s, box-shadow 0.3s, background 0.3s, transform 0.15s ease-out;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s, transform 0.15s ease-out;
 }
 
 .dark .stitch-node {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+  background: rgba(26, 36, 56, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 12px 36px -6px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08), 0 3px 10px rgba(0, 0, 0, 0.5) !important;
 }
 
 .stitch-node:hover {
   transform: translateY(-2px) scale(1.02);
-  border-color: rgba(var(--color-primary-rgb), 0.3) !important;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08), 0 0 25px rgba(var(--color-primary-rgb), 0.08) !important;
+  border-color: rgba(var(--color-primary-rgb), 0.4) !important;
+  box-shadow: 0 14px 36px -4px rgba(0, 0, 0, 0.12), 0 0 20px rgba(var(--color-primary-rgb), 0.12) !important;
 }
 
 .dark .stitch-node:hover {
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45), 0 0 25px rgba(var(--color-primary-rgb), 0.12) !important;
+  border-color: rgba(var(--color-primary-rgb), 0.6) !important;
+  box-shadow: 0 16px 42px -4px rgba(0, 0, 0, 0.85), 0 0 25px rgba(var(--color-primary-rgb), 0.25), 0 0 0 1px rgba(var(--color-primary-rgb), 0.4) !important;
 }
 
 .stitch-node.is-dragging {
@@ -2359,11 +2397,12 @@ body:has(.options-panel):has(.dropzone, .workspace-canvas) footer {
 
 .stitch-node-selected {
   border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.2), 0 20px 48px rgba(0, 0, 0, 0.12), 0 0 30px rgba(var(--color-primary-rgb), 0.15) !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.25), 0 20px 48px rgba(0, 0, 0, 0.15), 0 0 30px rgba(var(--color-primary-rgb), 0.2) !important;
 }
 
 .dark .stitch-node-selected {
-  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.25), 0 20px 48px rgba(0, 0, 0, 0.5), 0 0 35px rgba(var(--color-primary-rgb), 0.25) !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.4), 0 20px 48px rgba(0, 0, 0, 0.85), 0 0 35px rgba(var(--color-primary-rgb), 0.35) !important;
 }
 
 @keyframes studioCablePulse {

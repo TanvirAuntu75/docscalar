@@ -1,9 +1,10 @@
-from pathlib import Path
-from backend.services.libreoffice import ConversionResult
 import urllib.parse
-import threading
-from backend import config
+from pathlib import Path
+
 from playwright.sync_api import sync_playwright
+
+from backend import config
+from backend.services.libreoffice import ConversionResult
 
 
 def convert_html_to_pdf(input_path: str) -> ConversionResult:
@@ -21,14 +22,18 @@ def convert_html_to_pdf(input_path: str) -> ConversionResult:
     try:
         input_file = Path(input_path)
         if not input_file.exists():
-            return ConversionResult(success=False, error_message="Input file does not exist")
+            return ConversionResult(
+                success=False, error_message="Input file does not exist"
+            )
 
         output_pdf_path = config.OUTPUT_DIR / f"{input_file.stem}.pdf"
 
         # Calculate dynamic timeout based on file size (30s base + 6s per MB, max 3 mins)
         file_size_mb = input_file.stat().st_size / (1024 * 1024)
         dynamic_timeout_ms = min(180000, int(30000 + (file_size_mb * 6000)))
-        print(f"[HTML_TO_PDF] File size: {file_size_mb:.2f} MB. Calculated timeout: {dynamic_timeout_ms / 1000:.1f}s")
+        print(
+            f"[HTML_TO_PDF] File size: {file_size_mb:.2f} MB. Calculated timeout: {dynamic_timeout_ms / 1000:.1f}s"
+        )
 
         with sync_playwright() as p:
             # Launch Chromium, prioritizing system Chrome or Edge to ensure all system fonts render correctly
@@ -38,17 +43,23 @@ def convert_html_to_pdf(input_path: str) -> ConversionResult:
                     # Pass --no-sandbox to avoid permission blocks on Windows font folders
                     args = ["--no-sandbox", "--disable-setuid-sandbox"]
                     if channel:
-                        browser = p.chromium.launch(headless=True, channel=channel, args=args)
+                        browser = p.chromium.launch(
+                            headless=True, channel=channel, args=args
+                        )
                     else:
                         browser = p.chromium.launch(headless=True, args=args)
                     if browser:
                         break
                 except Exception as launch_err:
-                    print(f"[HTML_TO_PDF] Failed to launch Chromium with channel '{channel}': {launch_err}")
-            
+                    print(
+                        f"[HTML_TO_PDF] Failed to launch Chromium with channel '{channel}': {launch_err}"
+                    )
+
             if not browser:
-                return ConversionResult(success=False, error_message="Could not launch Chromium browser")
-                
+                return ConversionResult(
+                    success=False, error_message="Could not launch Chromium browser"
+                )
+
             try:
                 page = browser.new_page()
                 page.set_default_timeout(dynamic_timeout_ms)
@@ -65,9 +76,13 @@ def convert_html_to_pdf(input_path: str) -> ConversionResult:
                             resolved_target = Path(raw_path).resolve()
                             resolved_upload_dir = config.UPLOAD_DIR.resolve()
                             is_main_file = resolved_target == input_file.resolve()
-                            is_in_upload_dir = resolved_upload_dir in resolved_target.parents
+                            is_in_upload_dir = (
+                                resolved_upload_dir in resolved_target.parents
+                            )
                             if not is_main_file and not is_in_upload_dir:
-                                print(f"Security Warning: Blocked local file access: {url}")
+                                print(
+                                    f"Security Warning: Blocked local file access: {url}"
+                                )
                                 route.abort()
                                 return
                         except Exception as route_err:
@@ -79,7 +94,9 @@ def convert_html_to_pdf(input_path: str) -> ConversionResult:
                         or url.startswith("https://")
                         or url.startswith("data:")
                     ):
-                        print(f"Security Warning: Blocked invalid request scheme: {url}")
+                        print(
+                            f"Security Warning: Blocked invalid request scheme: {url}"
+                        )
                         route.abort()
                         return
                     route.continue_()
@@ -94,10 +111,14 @@ def convert_html_to_pdf(input_path: str) -> ConversionResult:
 
                 # Load the HTML file
                 # Load the HTML file with dynamic timeout
-                page.goto(f"file:///{input_file.absolute().as_posix()}", timeout=dynamic_timeout_ms)
+                page.goto(
+                    f"file:///{input_file.absolute().as_posix()}",
+                    timeout=dynamic_timeout_ms,
+                )
 
                 # Inject global print CSS overrides to control page breaks and prevent cut elements
-                page.add_style_tag(content="""
+                page.add_style_tag(
+                    content="""
                     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;600;800&family=Sora:wght@400;600;800&display=swap');
                     
                     @media print {
@@ -117,7 +138,8 @@ def convert_html_to_pdf(input_path: str) -> ConversionResult:
                             height: 0 !important;
                         }
                     }
-                """)
+                """
+                )
 
                 # Wait for network to be idle (external resources like Google Fonts CDN)
                 # Set a 5s timeout so offline/sandboxed environments do not hang.
@@ -132,7 +154,9 @@ def convert_html_to_pdf(input_path: str) -> ConversionResult:
                 try:
                     page.wait_for_function("document.fonts.ready", timeout=5000)
                 except Exception as font_err:
-                    print(f"Font ready check timed out or failed (continuing anyway): {font_err}")
+                    print(
+                        f"Font ready check timed out or failed (continuing anyway): {font_err}"
+                    )
 
                 # ── AUTOMATED LAYOUT OPTIMIZER ─────────────────────────────────────
                 # Inject a child wrapper and zoom the content wrapper so page-breaks
@@ -183,7 +207,7 @@ def convert_html_to_pdf(input_path: str) -> ConversionResult:
                 page.pdf(
                     path=str(output_pdf_path),
                     format="A4",
-                    print_background=True,   # Required: renders background-color, background-image
+                    print_background=True,  # Required: renders background-color, background-image
                     prefer_css_page_size=True,  # Respect CSS @page size declarations
                     # margin intentionally omitted — controlled by CSS @page rules
                 )
@@ -208,4 +232,6 @@ def convert_html_to_pdf(input_path: str) -> ConversionResult:
         # LibreOffice does not support CSS Grid, CSS custom properties, SVG inline,
         # or modern @page print layout. For HTML → PDF, a failed Playwright render
         # is better than a LibreOffice render. Surface the error to the user instead.
-        return ConversionResult(success=False, error_message=f"HTML to PDF conversion failed: {str(e)}")
+        return ConversionResult(
+            success=False, error_message=f"HTML to PDF conversion failed: {e!s}"
+        )

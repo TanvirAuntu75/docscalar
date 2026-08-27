@@ -34,7 +34,7 @@ export const TOOL_REGISTRY = {
     name: 'Compress PDF',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['compress', 'shrink', 'reduce size', 'minimize'],
     defaultParams: { quality: 0.65, mode: 'lossless' },
@@ -44,16 +44,16 @@ export const TOOL_REGISTRY = {
     name: 'OCR PDF',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['ocr', 'recognize', 'searchable', 'read text', 'extract text'],
-    defaultParams: {}
+    defaultParams: { language: 'eng' }
   },
   'un-ocr-pdf': {
     name: 'Un-OCR PDF',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['un-ocr', 'unocr', 'flatten', 'rasterize', 'make non-searchable', 'remove text layer', 'flat pdf', 'prevent copy', 'unselectable text'],
     defaultParams: { scale: 2.0 }
@@ -62,7 +62,7 @@ export const TOOL_REGISTRY = {
     name: 'Rotate PDF',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['rotate', 'turn', 'spin', 'landscape', 'portrait'],
     defaultParams: { angle: 90 }
@@ -71,7 +71,7 @@ export const TOOL_REGISTRY = {
     name: 'Protect PDF',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['protect', 'lock', 'encrypt', 'add password', 'restrict'],
     defaultParams: { password: '', permissions: { print: true, copy: true, modify: false } },
@@ -81,7 +81,7 @@ export const TOOL_REGISTRY = {
     name: 'Unlock PDF',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['unlock', 'decrypt', 'remove password', 'bypass lock', 'drm', 'restriction', 'remove restriction', 'remove restrictions'],
     defaultParams: { password: '' }
@@ -90,7 +90,7 @@ export const TOOL_REGISTRY = {
     name: 'Docx to PDF',
     accept: ['.docx', '.doc'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['word to pdf', 'docx to pdf', 'convert docx', 'convert word'],
     defaultParams: {}
@@ -99,7 +99,7 @@ export const TOOL_REGISTRY = {
     name: 'Excel to PDF',
     accept: ['.xlsx', '.xls', '.csv'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['excel to pdf', 'xlsx to pdf', 'csv to pdf', 'sheet to pdf'],
     defaultParams: {}
@@ -108,16 +108,16 @@ export const TOOL_REGISTRY = {
     name: 'PPT to PDF',
     accept: ['.pptx', '.ppt'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['powerpoint to pdf', 'ppt to pdf', 'pptx to pdf', 'slides to pdf'],
     defaultParams: {}
   },
   'html-to-pdf': {
     name: 'HTML to PDF',
-    accept: ['.html'],
+    accept: ['.html', '.htm'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['html to pdf', 'html', 'convert html', 'web to pdf'],
     defaultParams: {}
@@ -126,7 +126,7 @@ export const TOOL_REGISTRY = {
     name: 'PDF to Word',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.docx',
     synonyms: ['pdf to word', 'pdf to docx', 'to word', 'to docx', 'convert pdf to word'],
     defaultParams: {}
@@ -135,7 +135,7 @@ export const TOOL_REGISTRY = {
     name: 'PDF to Excel',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.xlsx',
     synonyms: ['pdf to excel', 'pdf to sheet', 'to excel', 'to xlsx', 'pdf to xlsx', 'convert pdf to excel'],
     defaultParams: {}
@@ -144,7 +144,7 @@ export const TOOL_REGISTRY = {
     name: 'PDF to PowerPoint',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pptx',
     synonyms: ['pdf to powerpoint', 'pdf to ppt', 'to powerpoint', 'to ppt', 'convert pdf to powerpoint'],
     defaultParams: {}
@@ -153,14 +153,14 @@ export const TOOL_REGISTRY = {
     name: 'Image Converter',
     accept: ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif'],
     minInputs: 1,
-    maxInputs: 20,
+    maxInputs: 50,
     outExt: '.png',
     synonyms: ['convert image format', 'png to jpg', 'jpeg to webp', 'change format', 'image format'],
     defaultParams: { format: 'png' }
   },
   'image-to-pdf': {
     name: 'Image to PDF',
-    accept: ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif'],
+    accept: ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif', '.zip'],
     minInputs: 1,
     maxInputs: 50,
     outExt: '.pdf',
@@ -171,7 +171,7 @@ export const TOOL_REGISTRY = {
     name: 'Image Compressor',
     accept: ['.png', '.jpg', '.jpeg', '.webp'],
     minInputs: 1,
-    maxInputs: 20,
+    maxInputs: 50,
     outExt: '.jpg',
     synonyms: ['compress image', 'shrink image', 'reduce image size'],
     defaultParams: { quality: 0.7 }
@@ -180,7 +180,7 @@ export const TOOL_REGISTRY = {
     name: 'Image Resizer',
     accept: ['.png', '.jpg', '.jpeg', '.webp'],
     minInputs: 1,
-    maxInputs: 20,
+    maxInputs: 50,
     outExt: '.png',
     synonyms: ['resize image', 'scale image', 'change dimensions'],
     defaultParams: { percentage: 75, mode: 'percentage', width: 800, height: 600 }
@@ -189,7 +189,7 @@ export const TOOL_REGISTRY = {
     name: 'Extract ZIP',
     accept: ['.zip'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['unzip', 'extract zip', 'decompress', 'expand zip'],
     defaultParams: {}
@@ -198,7 +198,7 @@ export const TOOL_REGISTRY = {
     name: 'Add Watermark',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['watermark', 'stamp', 'add stamp'],
     defaultParams: { text: 'CONFIDENTIAL', opacity: 0.5, angle: 45 }
@@ -207,7 +207,7 @@ export const TOOL_REGISTRY = {
     name: 'Add Page Numbers',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['page number', 'paginate', 'add page numbers'],
     defaultParams: { format: 'Page {n} of {total}', position: 'bottom-right' }
@@ -216,7 +216,7 @@ export const TOOL_REGISTRY = {
     name: 'Remove Pages',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['remove page', 'delete page', 'exclude page'],
     defaultParams: { range: '' },
@@ -226,10 +226,10 @@ export const TOOL_REGISTRY = {
     name: 'Crop PDF',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['crop'],
-    defaultParams: { x: 0, y: 0, width: 500, height: 500 },
+    defaultParams: { xPercent: 0.1, yPercent: 0.1, widthPercent: 0.8, heightPercent: 0.8 },
     destructive: true,
     needsStudio: true
   },
@@ -237,9 +237,9 @@ export const TOOL_REGISTRY = {
     name: 'Edit PDF',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
-    synonyms: ['edit'],
+    synonyms: ['edit', 'annotate', 'mark up pdf'],
     defaultParams: { overlays: [] },
     needsStudio: true
   },
@@ -250,13 +250,13 @@ export const TOOL_REGISTRY = {
     maxInputs: 0,
     outExt: '.png',
     synonyms: ['qr', 'barcode', 'generate qr'],
-    defaultParams: { text: 'https://docforge.com' }
+    defaultParams: { text: 'https://docforge.app' }
   },
   'redact-pdf': {
     name: 'Redact PDF',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['redact', 'blackout', 'hide sensitive info'],
     defaultParams: { textPatterns: [] },
@@ -276,7 +276,7 @@ export const TOOL_REGISTRY = {
     name: 'PDF to PDF/A',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['pdf to pdfa', 'archive pdf', 'pdf/a'],
     defaultParams: {}
@@ -288,7 +288,25 @@ export const TOOL_REGISTRY = {
     maxInputs: 0,
     outExt: '.pdf',
     synonyms: ['url to pdf', 'convert website', 'website to pdf'],
-    defaultParams: { url: '' }
+    defaultParams: { url: 'https://example.com' }
+  },
+  'bates-numbering': {
+    name: 'Bates Numbering',
+    accept: ['.pdf'],
+    minInputs: 1,
+    maxInputs: 50,
+    outExt: '.pdf',
+    synonyms: ['bates numbering', 'bates stamp', 'legal stamp', 'sequential number', 'discovery numbering'],
+    defaultParams: { prefix: 'CONF-', suffix: '', digits: 6, startNumber: 1, position: 'bottom-right' }
+  },
+  'condition-router': {
+    name: 'Condition Router',
+    accept: ['.pdf', '.docx', '.xlsx', '.png', '.jpg'],
+    minInputs: 1,
+    maxInputs: 50,
+    outExt: '.pdf',
+    synonyms: ['condition', 'branch', 'if condition', 'router', 'rule', 'filter document'],
+    defaultParams: { ruleType: 'pageCount', operator: '>', thresholdValue: 5 }
   },
   'pdf-to-image': {
     name: 'PDF to Image',
@@ -303,16 +321,25 @@ export const TOOL_REGISTRY = {
     name: 'AI Translator',
     accept: ['.pdf', '.txt', '.md', '.docx'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['translate', 'translate file', 'language translation'],
     defaultParams: { target_language: 'Bengali' }
+  },
+  'ai-summarizer': {
+    name: 'AI Summarizer',
+    accept: ['.pdf', '.docx', '.txt', '.md'],
+    minInputs: 1,
+    maxInputs: 50,
+    outExt: '.md',
+    synonyms: ['summarize', 'summary', 'ai summary', 'condense', 'executive summary', 'highlights', 'bullet summary'],
+    defaultParams: { mode: 'highlights', max_bullets: 5 }
   },
   'text-to-pdf': {
     name: 'Text to PDF',
     accept: ['.txt', '.md'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['text to pdf', 'txt to pdf', 'convert text'],
     defaultParams: { fontSize: 12, lineSpacing: 1.5 }
@@ -321,7 +348,7 @@ export const TOOL_REGISTRY = {
     name: 'Sign PDF',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['sign', 'signature', 'sign document'],
     defaultParams: { sigOptions: {} },
@@ -331,7 +358,7 @@ export const TOOL_REGISTRY = {
     name: 'Extract Pages',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['extract page', 'select page'],
     defaultParams: { pages: '' }
@@ -350,7 +377,7 @@ export const TOOL_REGISTRY = {
     name: 'Fill PDF Forms',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['fill form', 'pdf form', 'form fields'],
     defaultParams: { fieldValues: {} },
@@ -360,9 +387,45 @@ export const TOOL_REGISTRY = {
     name: 'Repair PDF',
     accept: ['.pdf'],
     minInputs: 1,
-    maxInputs: 1,
+    maxInputs: 50,
     outExt: '.pdf',
     synonyms: ['repair', 'fix pdf', 'restore pdf'],
+    defaultParams: {}
+  },
+  'scan-to-pdf': {
+    name: 'Scan to PDF',
+    accept: [],
+    minInputs: 0,
+    maxInputs: 0,
+    outExt: '.pdf',
+    synonyms: ['scan', 'scanner', 'camera to pdf'],
+    defaultParams: {}
+  },
+  'conversion-pipeline': {
+    name: 'Conversion Pipeline',
+    accept: ['.pdf', '.docx', '.xlsx', '.pptx', '.png', '.jpg', '.txt'],
+    minInputs: 1,
+    maxInputs: 50,
+    outExt: '.pdf',
+    synonyms: ['pipeline', 'batch convert', 'multi convert'],
+    defaultParams: {}
+  },
+  'resume-builder': {
+    name: 'Resume Builder',
+    accept: [],
+    minInputs: 0,
+    maxInputs: 0,
+    outExt: '.pdf',
+    synonyms: ['resume', 'cv builder', 'cv maker', 'curriculum vitae'],
+    defaultParams: {}
+  },
+  'document-viewer': {
+    name: 'Document Viewer',
+    accept: ['.pdf', '.docx', '.xlsx', '.txt'],
+    minInputs: 1,
+    maxInputs: 1,
+    outExt: '.pdf',
+    synonyms: ['view pdf', 'preview document', 'read pdf'],
     defaultParams: {}
   }
 };
@@ -382,8 +445,17 @@ export const STUDIO_TOOLS = new Set([
   'pdf-forms',
 ]);
 
-export function needsStudioParams(toolId) {
-  return STUDIO_TOOLS.has(toolId);
+export function needsStudioParams(toolId, params = {}) {
+  if (!STUDIO_TOOLS.has(toolId)) return false;
+  // If params already contain visual configurations (e.g. from an NLP command, options panel, or preset), no studio popup is strictly needed!
+  if (toolId === 'organize-pdf' && (params.pageConfigs?.length > 0 || params.pages?.length > 0 || params.rotations || params.deletedPages)) return false;
+  if (toolId === 'sign-pdf' && (params.fields?.length > 0 || params.signatureData || params.signatures?.length > 0)) return false;
+  if (toolId === 'redact-pdf' && (params.boxes?.length > 0 || params.redactions?.length > 0 || params.patterns?.length > 0)) return false;
+  if (toolId === 'crop-pdf' && (params.cropBox || params.margins || params.cropArea)) return false;
+  if (toolId === 'edit-pdf' && (params.overlays?.length > 0 || params.annotations?.length > 0)) return false;
+  if (toolId === 'pdf-forms' && (params.fieldValues && Object.keys(params.fieldValues).length > 0)) return false;
+  if (toolId === 'compare-pdf' && params.diffMode) return false;
+  return true;
 }
 
 /**
@@ -928,21 +1000,28 @@ export function optimizeCanvasLayout(operations, workspaceQueue) {
   });
 
   // Calculate clean, collision-free coordinate positions
-  const COLUMN_WIDTH = 300;
-  const ROW_HEIGHT = 160;
-  const START_X = 80;
-  const START_Y = 120;
+  const COLUMN_WIDTH = 320;
+  const ROW_HEIGHT = 170;
+  const START_X = 100;
+  const START_Y = 100;
 
-  Object.keys(layers).forEach(layerKey => {
+  // Track layer start X offsets dynamically if previous layers used multi-columns
+  let currentLayerX = START_X;
+
+  Object.keys(layers).sort((a, b) => parseInt(a) - parseInt(b)).forEach(layerKey => {
     const layer = parseInt(layerKey);
     const nodes = layers[layer];
-    const totalHeight = (nodes.length - 1) * ROW_HEIGHT;
-    const startY = START_Y - totalHeight / 2;
+    const maxRowsPerSubCol = 4; // Wrap into a 4-row grid for multi-file layers
+    const numSubCols = Math.ceil(nodes.length / maxRowsPerSubCol);
 
     nodes.forEach((node, index) => {
-      node.x = START_X + layer * COLUMN_WIDTH;
-      node.y = startY + index * ROW_HEIGHT;
+      const subCol = Math.floor(index / maxRowsPerSubCol);
+      const subRow = index % maxRowsPerSubCol;
+      node.x = currentLayerX + subCol * 270;
+      node.y = START_Y + subRow * ROW_HEIGHT;
     });
+
+    currentLayerX += Math.max(1, numSubCols) * COLUMN_WIDTH;
   });
 
   // Multi-pass Spring Relaxation Force to align connected nodes vertically
@@ -1094,7 +1173,7 @@ export function validateCanvasConnections(operations, workspaceQueue) {
           issues.push({
             id: `err-${op.id}-${inputId}`,
             type: 'format-mismatch',
-            message: `Spreadsheet '${filename}' connected directly to '${registry.name}'. Needs conversion.`,
+            message: `Excel spreadsheet '${filename}' connected directly to '${registry.name}'. Needs conversion.`,
             fileId: inputId,
             opId: op.id,
             fileName: filename,
@@ -1110,9 +1189,9 @@ export function validateCanvasConnections(operations, workspaceQueue) {
             opId: op.id,
             fileName: filename,
             suggestedToolId: 'powerpoint-to-pdf',
-            suggestedToolName: 'PPT to PDF'
+            suggestedToolName: 'PowerPoint to PDF'
           });
-        } else if (ext === '.html') {
+        } else if (ext === '.html' || ext === '.htm') {
           issues.push({
             id: `err-${op.id}-${inputId}`,
             type: 'format-mismatch',
@@ -1124,15 +1203,29 @@ export function validateCanvasConnections(operations, workspaceQueue) {
             suggestedToolName: 'HTML to PDF'
           });
         } else if (ext === '.zip') {
+          const expectsPdf = acceptedExtensions.includes('.pdf');
           issues.push({
             id: `err-${op.id}-${inputId}`,
             type: 'format-mismatch',
-            message: `ZIP archive '${filename}' connected directly to '${registry.name}'. Needs decompression.`,
+            message: expectsPdf 
+              ? `Images/ZIP archive '${filename}' connected directly to '${registry.name}'. Converting images to unified PDF.`
+              : `ZIP archive '${filename}' connected directly to '${registry.name}'. Needs decompression.`,
             fileId: inputId,
             opId: op.id,
             fileName: filename,
-            suggestedToolId: 'unzip-file',
-            suggestedToolName: 'Extract ZIP'
+            suggestedToolId: expectsPdf ? 'image-to-pdf' : 'unzip-file',
+            suggestedToolName: expectsPdf ? 'Image to PDF' : 'Extract ZIP'
+          });
+        } else if (['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif', '.tiff'].includes(ext) && acceptedExtensions.includes('.pdf')) {
+          issues.push({
+            id: `err-${op.id}-${inputId}`,
+            type: 'format-mismatch',
+            message: `Image '${filename}' connected directly to PDF tool '${registry.name}'. Converting image to PDF.`,
+            fileId: inputId,
+            opId: op.id,
+            fileName: filename,
+            suggestedToolId: 'image-to-pdf',
+            suggestedToolName: 'Image to PDF'
           });
         } else if ((ext === '.txt' || ext === '.md') && op.toolId !== 'text-to-pdf') {
           issues.push({
@@ -1227,10 +1320,10 @@ export function executeAutoHeal(operations, workspaceQueue, issue) {
   const injectorOpId = `op-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
   
   // Position injected card midway between the file and target operator cards
-  const fileX = targetFile ? targetFile.x : targetOp.x - 300;
-  const fileY = targetFile ? targetFile.y : targetOp.y;
-  const injectX = (fileX + targetOp.x) / 2;
-  const injectY = (fileY + targetOp.y) / 2;
+  const fileX = targetFile ? (targetFile.x || 100) : targetOp.x - 300;
+  const fileY = targetFile ? (targetFile.y || 100) : targetOp.y;
+  const injectX = Math.round((fileX + targetOp.x) / 2);
+  const injectY = Math.round((fileY + targetOp.y) / 2);
 
   const defaultParams = TOOL_REGISTRY[suggestedToolId]?.defaultParams || {};
 
@@ -1247,20 +1340,34 @@ export function executeAutoHeal(operations, workspaceQueue, issue) {
     params: defaultParams
   };
 
-  // Reroute target operator input: replace fileId with injectorOpId
+  // Shift target operator and downstream nodes right if needed to create clean visual clearance
+  // Only shift if existing spatial gap is smaller than standard node width (280px)
+  const existingGap = targetOp.x - fileX;
+  const spacingDelta = existingGap >= 280 ? 0 : Math.max(0, 280 - existingGap);
   const updatedOperations = operations.map(op => {
+    let updatedX = op.x || 100;
+    if (op.x >= injectX) {
+      updatedX += spacingDelta;
+    }
     if (op.id === opId) {
       const inputs = op.inputIds.map(inpId => inpId === fileId ? injectorOpId : inpId);
-      return { ...op, inputIds: inputs };
+      return { ...op, x: updatedX, inputIds: inputs };
     }
-    return op;
+    return { ...op, x: updatedX };
+  });
+
+  // Also shift any downstream output file nodes to maintain alignment
+  const updatedQueue = workspaceQueue.map(f => {
+    if (f.x && f.x >= injectX) {
+      return { ...f, x: f.x + spacingDelta };
+    }
+    return f;
   });
 
   // Append new converter operator to list
   updatedOperations.push(injectedOp);
 
-  // Run layout optimization on newly mutated graph to untangle positions
-  return optimizeCanvasLayout(updatedOperations, workspaceQueue);
+  return { operations: updatedOperations, queue: updatedQueue };
 }
 
 // =============================================================================

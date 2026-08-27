@@ -9,15 +9,28 @@ const hexToRgb = (hex) => {
   ) : rgb(1, 1, 1);
 };
 
+const extractBytes = async (file) => {
+  if (file instanceof ArrayBuffer) {
+    return file;
+  }
+  if (file instanceof Uint8Array || (typeof Buffer !== 'undefined' && Buffer.isBuffer(file))) {
+    return file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);
+  }
+  if (file && typeof file.arrayBuffer === 'function') {
+    return await file.arrayBuffer();
+  }
+  throw new Error('Invalid file or buffer format provided to PDF forms engine.');
+};
+
 /**
  * Scan a PDF file and extract all interactive form fields.
  * Minification-proof method detection.
- * @param {File} file - The PDF file.
+ * @param {File|Blob|ArrayBuffer|Uint8Array} file - The PDF file.
  * @returns {Promise<Array>} List of fields: { name, type, value, options }.
  */
 export async function getFormFields(file) {
-  const arrayBuffer = await file.arrayBuffer();
-  const pdfDoc = await PDFDocument.load(arrayBuffer);
+  const arrayBuffer = await extractBytes(file);
+  const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
   const form = pdfDoc.getForm();
   const pages = pdfDoc.getPages();
   
@@ -118,10 +131,10 @@ export async function getFormFields(file) {
  */
 export async function fillFormFields(file, fieldValues, onProgress, flatten = false) {
   if (onProgress) onProgress(15);
-  const arrayBuffer = await file.arrayBuffer();
+  const arrayBuffer = await extractBytes(file);
   if (onProgress) onProgress(35);
   
-  const pdfDoc = await PDFDocument.load(arrayBuffer);
+  const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
   if (onProgress) onProgress(55);
 
   const form = pdfDoc.getForm();
@@ -163,10 +176,10 @@ export async function fillFormFields(file, fieldValues, onProgress, flatten = fa
 
 export async function compileFormWithNewFields(file, createdFields, fieldValues, onProgress, flatten = false) {
   if (onProgress) onProgress(10);
-  const arrayBuffer = await file.arrayBuffer();
+  const arrayBuffer = await extractBytes(file);
   if (onProgress) onProgress(30);
   
-  const pdfDoc = await PDFDocument.load(arrayBuffer);
+  const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
   if (onProgress) onProgress(50);
 
   const form = pdfDoc.getForm();
@@ -287,4 +300,49 @@ export async function compileFormWithNewFields(file, createdFields, fieldValues,
   if (onProgress) onProgress(100);
 
   return new Blob([savedBytes], { type: 'application/pdf' });
+}
+
+/**
+ * Export form fields data to CSV spreadsheet format.
+ * @param {Array} fields 
+ * @param {object} values 
+ * @returns {string} CSV text
+ */
+export function exportFormToCsv(fields = [], values = {}) {
+  const headers = ['Field Name', 'Field Type', 'Field Value', 'Options'];
+  const rows = fields.map(f => {
+    const val = values[f.name] !== undefined ? values[f.name] : (f.value ?? '');
+    const cleanVal = typeof val === 'object' ? JSON.stringify(val) : String(val);
+    const opts = (f.options && Array.isArray(f.options)) ? f.options.join('; ') : '';
+    return [
+      `"${(f.name || '').replace(/"/g, '""')}"`,
+      `"${(f.type || 'text').replace(/"/g, '""')}"`,
+      `"${cleanVal.replace(/"/g, '""')}"`,
+      `"${opts.replace(/"/g, '""')}"`
+    ].join(',');
+  });
+  return [headers.join(','), ...rows].join('\r\n');
+}
+
+/**
+ * Export form fields data to JSON object format.
+ * @param {Array} fields 
+ * @param {object} values 
+ * @returns {string} JSON string
+ */
+export function exportFormToJson(fields = [], values = {}) {
+  const data = {
+    exportDate: new Date().toISOString(),
+    fieldCount: fields.length,
+    fields: {}
+  };
+  fields.forEach(f => {
+    const val = values[f.name] !== undefined ? values[f.name] : (f.value ?? '');
+    data.fields[f.name] = {
+      type: f.type || 'text',
+      value: val,
+      options: f.options || null
+    };
+  });
+  return JSON.stringify(data, null, 2);
 }

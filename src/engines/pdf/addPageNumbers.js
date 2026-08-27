@@ -17,7 +17,7 @@ const hexToRgb = (hex) => {
  * @param {function} onProgress - Progress reporting callback.
  * @returns {Promise<Blob>} The numbered PDF file.
  */
-export async function addPageNumbers(file, options, onProgress) {
+export async function addPageNumbers(file, options = {}, onProgress) {
   if (onProgress) onProgress(10);
   const pdfBytes = await file.arrayBuffer();
   if (onProgress) onProgress(35);
@@ -26,31 +26,55 @@ export async function addPageNumbers(file, options, onProgress) {
   if (onProgress) onProgress(55);
 
   const pages = pdfDoc.getPages();
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  
+  let font;
+  if (options.fontFamily === 'Times') {
+    font = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+  } else if (options.fontFamily === 'Courier') {
+    font = await pdfDoc.embedFont(StandardFonts.Courier);
+  } else {
+    font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  }
   
   const format = options.format || options.formatStr || 'Page {page} of {total}';
   const position = options.position || 'footer-center';
   const fontSize = parseInt(options.fontSize || 10);
   const startNumber = parseInt(options.startNumber || 1);
   const colorVals = hexToRgb(options.color || '#000000');
-  const margin = 36; // spacing offset from page borders
+  const margin = parseInt(options.margin || 36); // spacing offset from page borders
+  const skipFirstPage = Boolean(options.skipFirstPage);
+  const targetPages = Array.isArray(options.targetPages) ? options.targetPages : null;
 
   const totalPages = options.ptopTotalPages || pages.length;
 
   pages.forEach((page, idx) => {
+    // Skip if first page should be excluded (e.g. cover sheet)
+    if (skipFirstPage && idx === 0) {
+      return;
+    }
+
+    // Skip if targetPages filter is active and this page is not in list
+    if (targetPages && !targetPages.includes(idx)) {
+      return;
+    }
+
     const { width, height } = page.getSize();
     const originalPageIndex = (options.ptopPageIndices && options.ptopPageIndices[idx] !== undefined) 
       ? options.ptopPageIndices[idx] 
       : idx;
-    const currentPageNumber = originalPageIndex + startNumber;
+    
+    // Page numbering index adjusted for skipFirstPage if needed
+    const pageNumOffset = skipFirstPage ? originalPageIndex : originalPageIndex + startNumber;
+    const currentPageNumber = skipFirstPage ? Math.max(1, originalPageIndex - 1 + startNumber) : (originalPageIndex + startNumber);
+
     const textStr = format
       .replace('{page}', String(currentPageNumber))
       .replace('{n}', String(currentPageNumber))
-      .replace('{total}', String(totalPages - 1 + startNumber)); // total page offset adjustment
+      .replace('{total}', String(skipFirstPage ? totalPages - 1 : totalPages))
+      .replace('{seq_total}', String(totalPages - 1 + startNumber));
 
     const safeTextStr = cleanTextForWinAnsi(textStr, font);
     const textWidth = font.widthOfTextAtSize(safeTextStr, fontSize);
-    const textHeight = fontSize * 0.8;
 
     let x = (width - textWidth) / 2;
     let y = margin; // default footer-center
@@ -91,3 +115,4 @@ export async function addPageNumbers(file, options, onProgress) {
   
   return new Blob([savedBytes], { type: 'application/pdf' });
 }
+

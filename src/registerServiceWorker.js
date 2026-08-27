@@ -5,9 +5,10 @@ export function register() {
 
   if (!('serviceWorker' in navigator)) return;
 
-  if (!isProd) {
-    // Disable service worker in development to prevent HMR and caching bugs
-    // and automatically unregister any existing service worker on localhost.
+  const isTauri = typeof window !== 'undefined' && typeof window.__TAURI__ !== 'undefined';
+
+  if (!isProd || isTauri) {
+    // Disable service worker in development and Tauri desktop app to prevent stale asset caching
     unregister();
     return;
   }

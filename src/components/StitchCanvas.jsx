@@ -36,8 +36,10 @@ import { repairPdf } from '../engines/pdf/repairPdf';
 import { generateQR } from '../engines/utility/qrGenerate';
 import { ocrPdf, terminateOcrPool } from '../engines/pdf/ocrPdf';
 import { unOcrPdf } from '../engines/pdf/unOcrPdf';
+import { applyBatesNumbering } from '../engines/pdf/batesNumbering';
 import { saveCanvasState, loadCanvasState, clearCanvasState } from '../utils/db';
 import { parseLocalNLPCommand, extractCommandParameters, optimizeCanvasLayout, validateCanvasConnections, executeAutoHeal, hasDependencyCycle, TOOL_REGISTRY, resolveDocumentTargets, detectFanOutTools, needsStudioParams } from '../utils/canvasBrain';
+import { WORKFLOW_PRESETS, encodeFlowToUrl, decodeFlowFromUrl, saveFlowToStorage, loadSavedFlows } from '../utils/flowPresets';
 import { AnimatePresence } from 'framer-motion';
 import FocusStudioPortal from './FocusStudio/FocusStudioPortal';
 
@@ -47,41 +49,49 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 const TOOL_VALIDATION = {
   'merge-pdf':        { accept: ['.pdf'], minInputs: 2, maxInputs: 50, errorMsg: 'Merge PDF requires at least 2 PDF files.' },
   'split-pdf':        { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Split PDF requires exactly 1 PDF file.' },
-  'compress-pdf':     { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Compress PDF requires exactly 1 PDF file.' },
-  'rotate-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Rotate PDF requires exactly 1 PDF file.' },
-  'docx-to-pdf':      { accept: ['.docx', '.doc'], minInputs: 1, maxInputs: 1, errorMsg: 'Word to PDF requires exactly 1 Word file (.docx, .doc).' },
-  'image-to-pdf':     { accept: ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif'], minInputs: 1, maxInputs: 50, errorMsg: 'Image to PDF requires at least 1 image file.' },
-  'image-compressor': { accept: ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif'], minInputs: 1, maxInputs: 20, errorMsg: 'Image Compressor requires exactly 1 image file.' },
-  'image-converter':  { accept: ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif'], minInputs: 1, maxInputs: 20, errorMsg: 'Image Converter requires exactly 1 image file.' },
-  'image-resizer':    { accept: ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif'], minInputs: 1, maxInputs: 20, errorMsg: 'Image Resizer requires exactly 1 image file.' },
-  'ocr-pdf':          { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'OCR PDF requires exactly 1 PDF file.' },
-  'text-to-pdf':      { accept: ['.txt', '.md'], minInputs: 1, maxInputs: 1, errorMsg: 'Text to PDF requires exactly 1 Text file (.txt, .md).' },
-  'add-watermark':    { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Add Watermark requires exactly 1 PDF file.' },
-  'add-page-numbers': { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Add Page Numbers requires exactly 1 PDF file.' },
-  'remove-pages':     { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Remove Pages requires exactly 1 PDF file.' },
-  'extract-pages':    { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Extract Pages requires exactly 1 PDF file.' },
+  'compress-pdf':     { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Compress PDF requires at least 1 PDF file.' },
+  'rotate-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Rotate PDF requires at least 1 PDF file.' },
+  'docx-to-pdf':      { accept: ['.docx', '.doc'], minInputs: 1, maxInputs: 50, errorMsg: 'Word to PDF requires at least 1 Word file (.docx, .doc).' },
+  'image-to-pdf':     { accept: ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif', '.zip'], minInputs: 1, maxInputs: 50, errorMsg: 'Image to PDF requires at least 1 image file or ZIP archive.' },
+  'image-compressor': { accept: ['.png', '.jpg', '.jpeg', '.webp'], minInputs: 1, maxInputs: 50, errorMsg: 'Image Compressor requires at least 1 image file.' },
+  'image-converter':  { accept: ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif'], minInputs: 1, maxInputs: 50, errorMsg: 'Image Converter requires at least 1 image file.' },
+  'image-resizer':    { accept: ['.png', '.jpg', '.jpeg', '.webp'], minInputs: 1, maxInputs: 50, errorMsg: 'Image Resizer requires at least 1 image file.' },
+  'ocr-pdf':          { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'OCR PDF requires at least 1 PDF file.' },
+  'un-ocr-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Un-OCR PDF requires at least 1 PDF file.' },
+  'text-to-pdf':      { accept: ['.txt', '.md'], minInputs: 1, maxInputs: 50, errorMsg: 'Text to PDF requires at least 1 Text file (.txt, .md).' },
+  'add-watermark':    { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Add Watermark requires at least 1 PDF file.' },
+  'add-page-numbers': { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Add Page Numbers requires at least 1 PDF file.' },
+  'remove-pages':     { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Remove Pages requires at least 1 PDF file.' },
+  'extract-pages':    { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Extract Pages requires at least 1 PDF file.' },
   'organize-pdf':     { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Organize PDF requires exactly 1 PDF file.' },
-  'crop-pdf':         { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Crop PDF requires exactly 1 PDF file.' },
-  'edit-pdf':         { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Edit PDF requires exactly 1 PDF file.' },
-  'pdf-forms':        { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Fill PDF Forms requires exactly 1 PDF file.' },
-  'sign-pdf':         { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Sign PDF requires exactly 1 PDF file.' },
-  'repair-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Repair PDF requires exactly 1 PDF file.' },
+  'crop-pdf':         { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Crop PDF requires at least 1 PDF file.' },
+  'edit-pdf':         { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Edit PDF requires at least 1 PDF file.' },
+  'pdf-forms':        { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Fill PDF Forms requires at least 1 PDF file.' },
+  'sign-pdf':         { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Sign PDF requires at least 1 PDF file.' },
+  'repair-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Repair PDF requires at least 1 PDF file.' },
   'qr-generator':     { accept: [], minInputs: 0, maxInputs: 0, errorMsg: 'QR Generator does not require input files.' },
-  'excel-to-pdf':     { accept: ['.xlsx', '.xls', '.csv'], minInputs: 1, maxInputs: 1, errorMsg: 'Excel to PDF requires exactly 1 Excel file.' },
-  'powerpoint-to-pdf':{ accept: ['.pptx', '.ppt'], minInputs: 1, maxInputs: 1, errorMsg: 'PowerPoint to PDF requires exactly 1 PowerPoint file.' },
-  'html-to-pdf':      { accept: ['.html'], minInputs: 1, maxInputs: 1, errorMsg: 'HTML to PDF requires exactly 1 HTML file.' },
-  'pdf-to-word':      { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'PDF to Word requires exactly 1 PDF file.' },
-  'pdf-to-excel':     { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'PDF to Excel requires exactly 1 PDF file.' },
-  'pdf-to-powerpoint':{ accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'PDF to PowerPoint requires exactly 1 PDF file.' },
+  'excel-to-pdf':     { accept: ['.xlsx', '.xls', '.csv'], minInputs: 1, maxInputs: 50, errorMsg: 'Excel to PDF requires at least 1 Excel file.' },
+  'powerpoint-to-pdf':{ accept: ['.pptx', '.ppt'], minInputs: 1, maxInputs: 50, errorMsg: 'PowerPoint to PDF requires at least 1 PowerPoint file.' },
+  'html-to-pdf':      { accept: ['.html', '.htm'], minInputs: 1, maxInputs: 50, errorMsg: 'HTML to PDF requires at least 1 HTML file.' },
+  'pdf-to-word':      { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'PDF to Word requires at least 1 PDF file.' },
+  'pdf-to-excel':     { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'PDF to Excel requires at least 1 PDF file.' },
+  'pdf-to-powerpoint':{ accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'PDF to PowerPoint requires at least 1 PDF file.' },
   'pdf-to-image':     { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'PDF to Image requires at least 1 PDF file.' },
-  'ai-translator':    { accept: ['.pdf', '.txt', '.md', '.docx'], minInputs: 1, maxInputs: 1, errorMsg: 'AI Translator requires exactly 1 document file.' },
-  'unzip-file':       { accept: ['.zip'], minInputs: 1, maxInputs: 1, errorMsg: 'Unzip/Expand File requires exactly 1 ZIP archive.' },
-  'protect-pdf':      { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Protect PDF requires exactly 1 PDF file.' },
-  'unlock-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Unlock PDF requires exactly 1 PDF file.' },
-  'redact-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Redact PDF requires exactly 1 PDF file.' },
+  'ai-translator':    { accept: ['.pdf', '.txt', '.md', '.docx'], minInputs: 1, maxInputs: 50, errorMsg: 'AI Translator requires at least 1 document file.' },
+  'ai-summarizer':    { accept: ['.pdf', '.docx', '.txt', '.md'], minInputs: 1, maxInputs: 50, errorMsg: 'AI Summarizer requires at least 1 document file.' },
+  'unzip-file':       { accept: ['.zip'], minInputs: 1, maxInputs: 50, errorMsg: 'Unzip/Expand File requires at least 1 ZIP archive.' },
+  'protect-pdf':      { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Protect PDF requires at least 1 PDF file.' },
+  'unlock-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Unlock PDF requires at least 1 PDF file.' },
+  'redact-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Redact PDF requires at least 1 PDF file.' },
   'compare-pdf':      { accept: ['.pdf'], minInputs: 2, maxInputs: 2, errorMsg: 'Compare PDF requires exactly 2 PDF files.' },
-  'pdf-to-pdfa':      { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'PDF to PDF/A requires exactly 1 PDF file.' },
+  'pdf-to-pdfa':      { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'PDF to PDF/A requires at least 1 PDF file.' },
   'url-to-pdf':       { accept: [], minInputs: 0, maxInputs: 0, errorMsg: 'URL to PDF does not require input files.' },
+  'bates-numbering':  { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Bates Numbering requires at least 1 PDF file.' },
+  'condition-router': { accept: ['.pdf', '.docx', '.xlsx', '.png', '.jpg'], minInputs: 1, maxInputs: 50, errorMsg: 'Condition Router requires at least 1 input document.' },
+  'scan-to-pdf':      { accept: [], minInputs: 0, maxInputs: 0, errorMsg: 'Scan to PDF accesses camera input directly.' },
+  'conversion-pipeline': { accept: ['.pdf', '.docx', '.xlsx', '.pptx', '.png', '.jpg', '.txt'], minInputs: 1, maxInputs: 50, errorMsg: 'Conversion Pipeline requires at least 1 document.' },
+  'resume-builder':   { accept: [], minInputs: 0, maxInputs: 0, errorMsg: 'Resume Builder creates documents from form templates.' },
+  'document-viewer':  { accept: ['.pdf', '.docx', '.xlsx', '.txt'], minInputs: 1, maxInputs: 1, errorMsg: 'Document Viewer requires 1 document to display.' },
 };
 
 // Startup assertion to ensure TOOL_REGISTRY and TOOL_VALIDATION are synchronized in development
@@ -144,14 +154,16 @@ export default function StitchCanvas({
   const [activeStudio, setActiveStudio] = useState(null);
   const [previewFile, setPreviewFile] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [recipesMenuOpen, setRecipesMenuOpen] = useState(false);
+  const [customFlows, setCustomFlows] = useState(() => loadSavedFlows());
   const menuRef = useRef(null);
+  const recipesMenuRef = useRef(null);
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, gridX: 0, gridY: 0, activeSubmenu: null });
   // Canvas Viewport States
   const [zoom, setZoom] = useState(1.0);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [autoFitViewport, setAutoFitViewport] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
-  const [activeTool, setActiveTool] = useState('select'); // 'select' | 'pan'
   const [collapsedOps, setCollapsedOps] = useState({});
   const toggleOperatorCollapse = (opId) => {
     setCollapsedOps(prev => ({ ...prev, [opId]: !prev[opId] }));
@@ -225,20 +237,23 @@ export default function StitchCanvas({
     }
   }, [clearCanvasSignal]);
 
-  // Click outside handler for floating dropdown menu
+  // Click outside handler for floating dropdown menus
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
       }
+      if (recipesMenuRef.current && !recipesMenuRef.current.contains(event.target)) {
+        setRecipesMenuOpen(false);
+      }
     }
-    if (menuOpen) {
+    if (menuOpen || recipesMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [menuOpen]);
+  }, [menuOpen, recipesMenuOpen]);
 
   // Selected nodes update active focus nodes list
   useEffect(() => {
@@ -544,7 +559,7 @@ export default function StitchCanvas({
       workspaceQueue: workspaceQueue.map(item => ({ ...item })),
       operations: operations.map(op => ({ ...op, inputIds: [...op.inputIds], params: { ...op.params } }))
     };
-    if (undoStack.current.length >= 50) {
+    if (undoStack.current.length >= 5) {
       undoStack.current.shift();
     }
     undoStack.current.push(snapshot);
@@ -553,7 +568,6 @@ export default function StitchCanvas({
 
   const handleUndo = () => {
     if (undoStack.current.length === 0) {
-      showToast('Nothing to undo', 'info');
       return;
     }
     const snapshot = undoStack.current.pop();
@@ -564,13 +578,10 @@ export default function StitchCanvas({
     redoStack.current.push(currentSnapshot);
     setWorkspaceQueue(snapshot.workspaceQueue);
     setOperations(snapshot.operations);
-    showToast('Undo performed');
-    speakAnnouncement('Undo performed.');
   };
 
   const handleRedo = () => {
     if (redoStack.current.length === 0) {
-      showToast('Nothing to redo', 'info');
       return;
     }
     const snapshot = redoStack.current.pop();
@@ -581,18 +592,17 @@ export default function StitchCanvas({
     undoStack.current.push(currentSnapshot);
     setWorkspaceQueue(snapshot.workspaceQueue);
     setOperations(snapshot.operations);
-    showToast('Redo performed');
-    speakAnnouncement('Redo performed.');
   };
 
   // Keyboard undo/redo and deletion shortcuts listener
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (
-        document.activeElement.tagName === 'INPUT' ||
-        document.activeElement.tagName === 'TEXTAREA' ||
-        document.activeElement.tagName === 'SELECT'
-      ) {
+      const isInput = e.composedPath ? e.composedPath().some(el => el.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(el?.tagName)) : (
+        document.activeElement?.tagName === 'INPUT' ||
+        document.activeElement?.tagName === 'TEXTAREA' ||
+        document.activeElement?.tagName === 'SELECT'
+      );
+      if (isInput) {
         return;
       }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
@@ -696,6 +706,17 @@ export default function StitchCanvas({
           setZoom(saved.zoom || 1.0);
           if (saved.autoFitViewport !== undefined) {
             setAutoFitViewport(saved.autoFitViewport);
+          }
+        }
+
+        // Check if a shared workflow flow parameter is passed in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const flowHash = urlParams.get('flow');
+        if (flowHash) {
+          const decodedOps = decodeFlowFromUrl(flowHash);
+          if (decodedOps && decodedOps.length > 0) {
+            setOperations(decodedOps);
+            showToast('✨ Loaded shared DAG workflow from link!', 'success');
           }
         }
       } catch (err) {
@@ -838,10 +859,16 @@ export default function StitchCanvas({
           
           const outputX = (rect.right - canvasRect.left - panOffset.x) / zoom;
           const outputY = (rect.top + rect.height / 2 - canvasRect.top - panOffset.y) / zoom;
+
+          const isConditionRouter = op.toolId === 'condition-router';
+          const trueY = (rect.top + rect.height * 0.32 - canvasRect.top - panOffset.y) / zoom;
+          const falseY = (rect.top + rect.height * 0.68 - canvasRect.top - panOffset.y) / zoom;
           
           coords[op.id] = {
             input: { x: inputX, y: inputY },
-            output: { x: outputX, y: outputY }
+            output: { x: outputX, y: outputY },
+            'output-true': { x: outputX, y: isConditionRouter ? trueY : outputY },
+            'output-false': { x: outputX, y: isConditionRouter ? falseY : outputY }
           };
         }
       });
@@ -899,11 +926,14 @@ export default function StitchCanvas({
                 const inputIds = o.inputIds.includes(draggingCable.fromId)
                   ? o.inputIds
                   : [...o.inputIds, draggingCable.fromId];
-                return { ...o, inputIds };
+                const inputPortMap = {
+                  ...(o.inputPortMap || {}),
+                  [draggingCable.fromId]: draggingCable.type || 'output'
+                };
+                return { ...o, inputIds, inputPortMap };
               }
               return o;
             }));
-            showToast(`Connected node to ${targetOp.toolId.replace('-', ' ')}!`);
           }
         }
       }
@@ -919,26 +949,7 @@ export default function StitchCanvas({
     };
   }, [draggingCable, operations, zoom, panOffset]);
 
-  // Keyboard Spacebar listener to toggle pan tool
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT') {
-        e.preventDefault();
-        setActiveTool('pan');
-      }
-    };
-    const handleKeyUp = (e) => {
-      if (e.code === 'Space') {
-        setActiveTool('select');
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-    };
-  }, []);
+  // Keyboard listener for shortcuts
 
   // Format Helper
   const getFileBadge = (filename) => {
@@ -1100,9 +1111,6 @@ export default function StitchCanvas({
               }
               return o;
             }));
-            const sourceName = workspaceQueue.find(q => q.id === sourceId)?.name || operations.find(o => o.id === sourceId)?.toolId || 'source';
-            speakAnnouncement(`Connected ${sourceName.replace('-', ' ')} to ${targetOp.toolId.replace('-', ' ')}.`);
-            showToast(`Connected node to ${targetOp.toolId.replace('-', ' ')}!`);
           }
         }
       }
@@ -1161,26 +1169,32 @@ export default function StitchCanvas({
   };
 
   const handlePointerDown = (e) => {
-    if (activeTool === 'pan' || e.button === 1) {
-      setIsPanning(true);
-      panStart.current = { x: e.clientX - panOffset.x, y: e.clientY - panOffset.y };
-      e.target.setPointerCapture(e.pointerId);
-    } else if (activeTool === 'select' && (e.target === canvasRef.current || e.target.classList.contains('stitch-dot-grid'))) {
-      const rect = canvasRef.current.getBoundingClientRect();
-      const startX = (e.clientX - rect.left - panOffset.x) / zoom;
-      const startY = (e.clientY - rect.top - panOffset.y) / zoom;
-      selectionStartRef.current = { x: startX, y: startY };
-      hasDraggedRef.current = false;
-      setSelectionBox({
-        startX,
-        startY,
-        currentX: startX,
-        currentY: startY
-      });
-      if (!e.shiftKey && !e.metaKey) {
-        setSelectedNodeIds([]);
+    // If clicking on empty canvas background (or middle mouse):
+    if (e.target === canvasRef.current || e.target.classList.contains('stitch-dot-grid') || e.target.classList.contains('stitch-dot-grid-glow') || e.button === 1) {
+      if ((e.shiftKey || e.metaKey) && e.button !== 1) {
+        // Shift + Drag = Box / Marquee Selection
+        const rect = canvasRef.current.getBoundingClientRect();
+        const startX = (e.clientX - rect.left - panOffset.x) / zoom;
+        const startY = (e.clientY - rect.top - panOffset.y) / zoom;
+        selectionStartRef.current = { x: startX, y: startY };
+        hasDraggedRef.current = false;
+        setSelectionBox({
+          startX,
+          startY,
+          currentX: startX,
+          currentY: startY
+        });
+        e.target.setPointerCapture(e.pointerId);
+      } else {
+        // Direct Viewport Pan (drag anywhere on empty canvas)
+        setIsPanning(true);
+        panStart.current = { x: e.clientX - panOffset.x, y: e.clientY - panOffset.y };
+        hasDraggedRef.current = false;
+        if (!e.shiftKey && !e.metaKey && e.button !== 1) {
+          setSelectedNodeIds([]);
+        }
+        e.target.setPointerCapture(e.pointerId);
       }
-      e.target.setPointerCapture(e.pointerId);
     }
   };
 
@@ -1234,9 +1248,14 @@ export default function StitchCanvas({
     }
 
     if (isPanning) {
+      const newX = e.clientX - panStart.current.x;
+      const newY = e.clientY - panStart.current.y;
+      if (Math.abs(newX - panOffset.x) > 3 || Math.abs(newY - panOffset.y) > 3) {
+        hasDraggedRef.current = true;
+      }
       setPanOffset({
-        x: e.clientX - panStart.current.x,
-        y: e.clientY - panStart.current.y
+        x: newX,
+        y: newY
       });
     } else if (draggingNodeId) {
       const rect = canvasRef.current.getBoundingClientRect();
@@ -1325,7 +1344,7 @@ export default function StitchCanvas({
   const handleFitToView = (customQueue, customOps) => {
     const q = customQueue || workspaceQueue;
     const ops = customOps || operations;
-    if (q.length === 0) return;
+    if (q.length === 0 && ops.length === 0) return;
     
     let minX = Infinity;
     let maxX = -Infinity;
@@ -1350,36 +1369,38 @@ export default function StitchCanvas({
       if (y > maxY) maxY = y;
     });
 
-    const padding = 80;
-    const nodesWidth = (maxX - minX) + 260; // adding card width estimation
-    const nodesHeight = (maxY - minY) + 160;
+    if (!isFinite(minX) || !isFinite(maxX) || !isFinite(minY) || !isFinite(maxY)) return;
+
+    const padding = 100;
+    const nodesWidth = (maxX - minX) + 300;
+    const nodesHeight = (maxY - minY) + 200;
 
     const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
+    const screenW = rect?.width || window.innerWidth;
+    const screenH = rect?.height || window.innerHeight;
 
     const fitZoom = Math.min(
-      (rect.width - padding) / nodesWidth,
-      (rect.height - padding) / nodesHeight,
-      1.2
+      (screenW - padding) / Math.max(nodesWidth, 100),
+      (screenH - padding) / Math.max(nodesHeight, 100),
+      1.1
     );
 
-    const targetZoom = Math.max(0.5, fitZoom);
+    const targetZoom = Math.max(0.35, fitZoom);
     
     // Calculate pan offset to center the bounds
     const centerX = minX + nodesWidth / 2;
     const centerY = minY + nodesHeight / 2;
 
-    const px = rect.width / 2 - centerX * targetZoom;
-    const py = rect.height / 2 - centerY * targetZoom;
+    const px = screenW / 2 - centerX * targetZoom;
+    const py = screenH / 2 - centerY * targetZoom;
 
     setZoom(parseFloat(targetZoom.toFixed(2)));
-    setPanOffset({ x: px, y: py });
+    setPanOffset({ x: Math.round(px), y: Math.round(py) });
   };
 
   // Node Drag Trigger
   const handleNodeDragStart = (e, nodeId, item) => {
     e.stopPropagation();
-    if (activeTool === 'pan') return;
     
     // If not already selected, clear selection and select this node
     if (!selectedNodeIds.includes(nodeId)) {
@@ -1405,7 +1426,6 @@ export default function StitchCanvas({
   // Select / Multi-Select Handlers
   const handleNodeClick = (e, nodeId) => {
     e.stopPropagation();
-    if (activeTool === 'pan') return;
 
     if (e.shiftKey || e.metaKey) {
       if (selectedNodeIds.includes(nodeId)) {
@@ -1423,8 +1443,9 @@ export default function StitchCanvas({
       hasDraggedRef.current = false;
       return;
     }
-    if (e.target === canvasRef.current || e.target.classList.contains('stitch-dot-grid')) {
+    if (e.target === canvasRef.current || e.target.classList.contains('stitch-dot-grid') || e.target.classList.contains('stitch-dot-grid-glow')) {
       setSelectedNodeIds([]);
+      setFocusedNodeId(null);
     }
   };
 
@@ -1526,9 +1547,12 @@ export default function StitchCanvas({
       return map[ext] || 'application/octet-stream';
     };
 
-    // Calculate non-colliding coordinates, checking workspaceQueue, operations, and allocatedPositions
-    let safeX = x + 280;
-    let safeY = y;
+    // Calculate compact multi-column grid coordinates (4 columns per row)
+    const count = allocatedPositions.length;
+    const col = count % 4;
+    const row = Math.floor(count / 4);
+    let safeX = x + 280 + col * 260;
+    let safeY = y + row * 160;
     let collision = true;
     let iterations = 0;
     
@@ -1557,7 +1581,9 @@ export default function StitchCanvas({
       }
       
       if (collision) {
-        safeY += 160;
+        const nextIdx = count + iterations;
+        safeX = x + 280 + (nextIdx % 4) * 260;
+        safeY = y + Math.floor(nextIdx / 4) * 160;
       }
     }
 
@@ -1611,8 +1637,6 @@ export default function StitchCanvas({
       }
       return op;
     }));
-
-    showToast('Connection disconnected');
   };
 
   const handleExportWorkflow = () => {
@@ -1743,7 +1767,6 @@ export default function StitchCanvas({
       pushHistoryState();
       setOperations(prev => [...prev, newOp]);
       speakAnnouncement(`Added ${actionId.replace('-', ' ')} operator to canvas.`);
-      showToast(`Added ${actionId.replace('-', ' ')} tool to canvas. Connect inputs to start.`);
       return opId;
     }
     
@@ -1844,19 +1867,109 @@ export default function StitchCanvas({
     setOperations(prev => [...prev, newOp]);
     speakAnnouncement(`Added ${actionId.replace('-', ' ')} operator to canvas.`);
 
-    if (compatibleItems.length === 0) {
-      if (items.length > 0) {
-        showToast(`⚠️ Incompatible files selected. Spawning empty ${actionId.replace('-', ' ')} tool.`);
-      } else {
-        showToast(`Added ${actionId.replace('-', ' ')} tool to canvas. Connect inputs to start.`);
-      }
-    } else if (validation && compatibleItems.length < validation.minInputs) {
-      showToast(`Added ${actionId.replace('-', ' ')} tool and connected ${compatibleItems.length} file(s). (Needs ${validation.minInputs} to run)`);
-    } else {
-      showToast(`Added ${actionId.replace('-', ' ')} tool to canvas and connected selected files!`);
+    if (compatibleItems.length === 0 && items.length > 0) {
+      showToast(`⚠️ Incompatible files selected. Spawning empty ${actionId.replace('-', ' ')} tool.`, 'warning');
     }
 
     return opId;
+  };
+
+  const applyWorkflowPreset = (preset) => {
+    if (!preset || !preset.nodes) return;
+    pushHistoryState();
+
+    const canvasWidth = canvasRef.current ? canvasRef.current.clientWidth : 800;
+    const canvasHeight = canvasRef.current ? canvasRef.current.clientHeight : 600;
+    const startX = (canvasWidth / 2 - panOffset.x) / zoom - (preset.nodes.length * 140);
+    const startY = (canvasHeight / 2 - panOffset.y) / zoom - 50;
+
+    const idMap = {};
+    const spawnedOps = preset.nodes.map((n, idx) => {
+      const newId = `op-${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${idx}`;
+      idMap[n.id] = newId;
+      return {
+        id: newId,
+        toolId: n.toolId,
+        params: n.params || {},
+        x: Math.round(startX + idx * 280),
+        y: Math.round(startY),
+        inputIds: [],
+        inputPortMap: {},
+        outputId: null,
+        status: 'idle',
+        progress: 0
+      };
+    });
+
+    // Wire internal connections between nodes
+    (preset.connections || []).forEach(conn => {
+      const fromRealId = idMap[conn.from];
+      const toOp = spawnedOps.find(o => o.id === idMap[conn.to]);
+      if (fromRealId && toOp) {
+        toOp.inputIds.push(fromRealId);
+        if (conn.fromPort) {
+          toOp.inputPortMap[fromRealId] = conn.fromPort;
+        }
+      }
+    });
+
+    setOperations(prev => [...prev, ...spawnedOps]);
+    setRecipesMenuOpen(false);
+    showToast(`✨ Loaded ${preset.name} blueprint! Connect your files to begin.`, 'success');
+  };
+
+  const handleShareFlow = () => {
+    if (operations.length === 0) {
+      showToast('Add tools to canvas before sharing workflow.', 'info');
+      return;
+    }
+    const flowHash = encodeFlowToUrl(operations);
+    const shareUrl = `${window.location.origin}/canvas?flow=${flowHash}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showToast('🔗 Shareable workflow link copied to clipboard!', 'success');
+    }).catch(() => {
+      showToast('Failed to copy link to clipboard', 'error');
+    });
+  };
+
+  const handleSaveCustomFlow = () => {
+    if (operations.length === 0) {
+      showToast('Add tools to canvas before saving blueprint.', 'info');
+      return;
+    }
+    const flowName = window.prompt('Enter blueprint name:', `Custom Workflow ${new Date().toLocaleDateString()}`);
+    if (!flowName || !flowName.trim()) return;
+    saveFlowToStorage(flowName.trim(), operations);
+    setCustomFlows(loadSavedFlows());
+    showToast(`💾 Saved custom blueprint "${flowName.trim()}"!`, 'success');
+  };
+
+  const applyCustomFlow = (savedFlow) => {
+    if (!savedFlow || !savedFlow.operations) return;
+    pushHistoryState();
+    const canvasWidth = canvasRef.current ? canvasRef.current.clientWidth : 800;
+    const canvasHeight = canvasRef.current ? canvasRef.current.clientHeight : 600;
+    const startX = (canvasWidth / 2 - panOffset.x) / zoom - (savedFlow.operations.length * 140);
+    const startY = (canvasHeight / 2 - panOffset.y) / zoom - 50;
+
+    const spawnedOps = savedFlow.operations.map((n, idx) => {
+      return {
+        id: `op-custom-${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${idx}`,
+        toolId: n.toolId,
+        params: n.params || {},
+        x: Math.round(startX + idx * 280),
+        y: Math.round(startY),
+        inputIds: [],
+        inputPortMap: {},
+        outputId: null,
+        status: 'idle',
+        progress: 0
+      };
+    });
+
+    setOperations(prev => [...prev, ...spawnedOps]);
+    setRecipesMenuOpen(false);
+    showToast(`✨ Loaded "${savedFlow.name}" blueprint!`, 'success');
   };
 
   // Click-to-connect handler for selected nodes to operator input port
@@ -2000,6 +2113,9 @@ export default function StitchCanvas({
       convertFormData.append('mode', modeVal);
       convertFormData.append('range', rangeVal);
       convertFormData.append('extra_params', JSON.stringify(extraParamsVal));
+    } else if (actionId === 'ai-summarizer' || actionId === 'smart-summarize') {
+      convertUrl = '/api/smart-convert';
+      convertFormData.append('mode', 'summarize');
     } else if (actionId === 'ai-translator') {
       convertUrl = '/api/smart-convert';
       convertFormData.append('mode', 'translate');
@@ -2043,52 +2159,110 @@ export default function StitchCanvas({
     }
     const convertData = await convertRes.json();
     const { job_id } = convertData;
-    progressCb(45, 'Queued...');
+    progressCb(10, 'Queued on server...');
 
-    // Step 3: Poll status
+    // Step 3: Poll status using Web Worker timer to avoid background tab throttling
     let status = 'queued';
     let resultData = null;
     let tries = 0;
     let consecutiveFailures = 0;
-    while (status !== 'finished' && status !== 'failed' && tries < 300) {
-      await new Promise(r => setTimeout(r, 1500));
-      tries++;
-      try {
-        const statusRes = await fetch(`${BACKEND_URL}/api/job/${job_id}/status`);
-        if (statusRes.ok) {
-          consecutiveFailures = 0; // reset on success
-          const statusData = await statusRes.json();
-          status = statusData.status;
-          
-          let displayStatusText = 'Processing...';
-          if (status === 'queued') {
-            displayStatusText = 'Queued...';
-          } else if (status === 'started') {
-            displayStatusText = 'Processing...';
+
+    const workerTimerCode = `
+      let timer = null;
+      self.onmessage = function(e) {
+        if (e.data === 'start') {
+          if (!timer) {
+            timer = setInterval(function() { self.postMessage('tick'); }, 1200);
           }
-          
-          if (status === 'finished') {
-            resultData = statusData;
-          } else if (status === 'failed') {
-            throw new Error(statusData.error || 'Server task execution failed.');
+        } else if (e.data === 'stop') {
+          if (timer) { clearInterval(timer); timer = null; }
+        }
+      };
+    `;
+    const workerBlob = new Blob([workerTimerCode], { type: 'application/javascript' });
+    const workerUrl = URL.createObjectURL(workerBlob);
+    let pollWorker = null;
+    try {
+      pollWorker = new Worker(workerUrl);
+      pollWorker.postMessage('start'); // Start the interval timer once
+    } catch (e) {
+      pollWorker = null;
+    }
+
+    const waitTick = () => new Promise(resolve => {
+      let isResolved = false;
+      let onVisRef = null;
+      const onDone = () => {
+        if (!isResolved) {
+          isResolved = true;
+          if (onVisRef) document.removeEventListener('visibilitychange', onVisRef);
+          resolve();
+        }
+      };
+      const onVis = () => {
+        if (document.visibilityState === 'visible') {
+          onDone();
+        }
+      };
+      onVisRef = onVis;
+      if (pollWorker) {
+        const handler = (e) => {
+          if (e.data === 'tick') {
+            pollWorker.removeEventListener('message', handler);
+            onDone();
           }
-          // Increment progress slightly
-          progressCb(Math.min(90, 45 + Math.floor((tries / 300) * 45)), displayStatusText);
-        } else {
+        };
+        pollWorker.addEventListener('message', handler);
+      } else {
+        setTimeout(onDone, 1200);
+      }
+      document.addEventListener('visibilitychange', onVis);
+    });
+
+    try {
+      while (status !== 'finished' && status !== 'failed' && tries < 600) {
+        await waitTick();
+        tries++;
+        try {
+          const statusRes = await fetch(`${BACKEND_URL}/api/job/${job_id}/status`);
+          if (statusRes.ok) {
+            consecutiveFailures = 0;
+            const statusData = await statusRes.json();
+            status = statusData.status;
+            
+            const serverProgress = statusData.progress || (status === 'started' ? Math.min(85, 15 + Math.floor((tries / 300) * 70)) : 10);
+            const serverMessage = statusData.message || (status === 'started' ? 'Processing on server...' : 'Queued on server...');
+            
+            if (status === 'finished') {
+              resultData = statusData;
+              progressCb(95, 'Finalizing download...');
+            } else if (status === 'failed') {
+              throw new Error(statusData.error || 'Server task execution failed.');
+            } else {
+              progressCb(serverProgress, serverMessage);
+            }
+          } else {
+            consecutiveFailures++;
+            if (consecutiveFailures >= 8) {
+              throw new Error('Failed to retrieve task status: Server returned error response.');
+            }
+          }
+        } catch (pollErr) {
+          if (pollErr.message && (pollErr.message.includes('Server task execution failed') || pollErr.message.includes('Failed to retrieve task status'))) {
+            throw pollErr;
+          }
           consecutiveFailures++;
-          if (consecutiveFailures >= 5) {
-            throw new Error('Failed to retrieve task status: Server returned error response.');
+          if (consecutiveFailures >= 8) {
+            throw new Error('Network connection lost. The server is unreachable after multiple attempts.');
           }
-        }
-      } catch (pollErr) {
-        if (pollErr.message && (pollErr.message.includes('Server task execution failed') || pollErr.message.includes('Failed to retrieve task status'))) {
-          throw pollErr;
-        }
-        consecutiveFailures++;
-        if (consecutiveFailures >= 5) {
-          throw new Error('Network connection lost. The server is unreachable after multiple attempts.');
         }
       }
+    } finally {
+      if (pollWorker) {
+        pollWorker.postMessage('stop');
+        pollWorker.terminate();
+      }
+      URL.revokeObjectURL(workerUrl);
     }
 
     if (!resultData || !resultData.download_url) {
@@ -2096,7 +2270,7 @@ export default function StitchCanvas({
     }
 
     // Step 4: Download result file
-    progressCb(90, 'Downloading...');
+    progressCb(95, 'Downloading file...');
     const downloadRes = await fetch(BACKEND_URL + resultData.download_url);
     if (!downloadRes.ok) {
       throw new Error('Failed to retrieve converted file from server.');
@@ -2167,7 +2341,32 @@ export default function StitchCanvas({
     } else if (actionId === 'docx-to-pdf') {
       return await docxToPdf(mainFile, progressCb);
     } else if (actionId === 'image-to-pdf') {
-      return await imagesToPdf(allItems.map(i => i.file || i), progressCb);
+      let imageFiles = [];
+      const inputItems = allItems && allItems.length > 0 ? allItems : [mainFile];
+      for (const item of inputItems) {
+        const f = item.file || item;
+        if (f.name && f.name.toLowerCase().endsWith('.zip')) {
+          const zip = new JSZip();
+          const zipContent = await zip.loadAsync(f);
+          const zipEntries = [];
+          for (const [filename, fileEntry] of Object.entries(zipContent.files)) {
+            if (!fileEntry.dir) {
+              const ext = '.' + filename.split('.').pop().toLowerCase();
+              if (['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif', '.tiff'].includes(ext)) {
+                zipEntries.push({ filename, fileEntry });
+              }
+            }
+          }
+          zipEntries.sort((a, b) => a.filename.localeCompare(b.filename, undefined, { numeric: true, sensitivity: 'base' }));
+          for (const entry of zipEntries) {
+            const blob = await entry.fileEntry.async('blob');
+            imageFiles.push(new File([blob], entry.filename, { type: blob.type || 'image/png' }));
+          }
+        } else {
+          imageFiles.push(f);
+        }
+      }
+      return await imagesToPdf(imageFiles, progressCb);
     } else if (actionId === 'image-compressor') {
       progressCb(40);
       const result = await compressImage(mainFile, params.quality || 0.7);
@@ -2241,10 +2440,51 @@ export default function StitchCanvas({
       return await powerpointToPdf(mainFile, progressCb);
     } else if (actionId === 'html-to-pdf') {
       return await htmlToPdf(mainFile, progressCb);
-    } else if (['pdf-to-word', 'pdf-to-excel', 'pdf-to-powerpoint', 'ai-translator', 'protect-pdf', 'unlock-pdf', 'redact-pdf', 'compare-pdf', 'pdf-to-pdfa', 'url-to-pdf'].includes(actionId)) {
+    } else if (['pdf-to-word', 'pdf-to-excel', 'pdf-to-powerpoint', 'ai-translator', 'ai-summarizer', 'protect-pdf', 'unlock-pdf', 'redact-pdf', 'compare-pdf', 'pdf-to-pdfa', 'url-to-pdf'].includes(actionId)) {
       return await executeServerJob(mainFile, actionId, params, progressCb);
+    } else if (actionId === 'unzip-file') {
+      const zip = new JSZip();
+      const zipContent = await zip.loadAsync(mainFile);
+      const entries = Object.values(zipContent.files).filter(e => !e.dir);
+      progressCb(100);
+      return entries.length === 1 ? await entries[0].async('blob') : mainFile;
     } else if (actionId === 'repair-pdf') {
       return await repairPdf(mainFile, progressCb);
+    } else if (actionId === 'bates-numbering') {
+      const pdfBytes = await mainFile.arrayBuffer();
+      const outputBytes = await applyBatesNumbering(pdfBytes, params);
+      progressCb(100);
+      return new Blob([outputBytes], { type: 'application/pdf' });
+    } else if (actionId === 'condition-router') {
+      const ruleType = params.ruleType || 'pageCount';
+      const operator = params.operator || '>';
+      const threshold = Number(params.thresholdValue) || 5;
+      let pass = false;
+      try {
+        if (ruleType === 'pageCount') {
+          const count = await getPdfPageCount(mainFile);
+          if (operator === '>') pass = count > threshold;
+          else if (operator === '<') pass = count < threshold;
+          else if (operator === '==') pass = count === threshold;
+          else if (operator === '>=') pass = count >= threshold;
+          else if (operator === '<=') pass = count <= threshold;
+        } else if (ruleType === 'fileSizeMB') {
+          const sizeMB = mainFile.size / (1024 * 1024);
+          if (operator === '>') pass = sizeMB > threshold;
+          else if (operator === '<') pass = sizeMB < threshold;
+          else if (operator === '==') pass = Math.round(sizeMB) === threshold;
+        }
+      } catch (e) {
+        console.warn('Condition router evaluation fallback:', e);
+      }
+      progressCb(100);
+      const outputBlob = new Blob([await mainFile.arrayBuffer()], { type: mainFile.type || 'application/pdf' });
+      return {
+        blob: outputBlob,
+        name: mainFile.name,
+        pass: pass,
+        isConditionRouter: true
+      };
     } else if (actionId === 'crop-pdf') {
       const bounds = params.bounds || { xPercent: 10, yPercent: 10, widthPercent: 80, heightPercent: 80 };
       return await cropPdf(mainFile, bounds, progressCb);
@@ -2256,7 +2496,20 @@ export default function StitchCanvas({
       return await fillFormFields(mainFile, fieldValues, progressCb);
     } else if (actionId === 'sign-pdf') {
       const sigOptions = params.sigOptions || {};
-      return await signPdf(mainFile, sigOptions, progressCb);
+      const fields = params.fields || (Array.isArray(sigOptions) ? sigOptions : [
+        {
+          id: 'sig_canvas_auto',
+          type: 'signature',
+          pageIndex: sigOptions.pageIndex ?? params.pageIndex ?? 0,
+          x: sigOptions.xPercent ?? params.xPercent ?? 0.5,
+          y: sigOptions.yPercent ?? params.yPercent ?? 0.5,
+          width: sigOptions.widthPercent ?? params.widthPercent ?? 0.25,
+          height: 0.08,
+          dataUrl: sigOptions.signatureDataUrl || params.signatureDataUrl || null,
+          blob: sigOptions.signaturePngBlob || null
+        }
+      ]);
+      return await signPdf(mainFile, fields, { onProgress: progressCb });
     } else if (actionId === 'unzip-file') {
       progressCb(10);
       speakAnnouncement("Unzipping archive.");
@@ -2605,8 +2858,8 @@ export default function StitchCanvas({
       }
     }
     
-    // Intercept Focus Studio tools
-    if (needsStudioParams(actionId) && !fromStudioCommit) {
+    // Intercept Focus Studio tools (only if visual configurations are missing)
+    if (needsStudioParams(actionId, op.params) && !fromStudioCommit) {
       console.log(`[executeOperator] Intercepting ${opId} for Focus Studio.`);
       const inputFiles = items.map(item => item.file);
       setActiveStudio({
@@ -3013,8 +3266,32 @@ export default function StitchCanvas({
         } else if (actionId === 'docx-to-pdf') {
           resultBlob = await docxToPdf(mainFile, progressCb);
         } else if (actionId === 'image-to-pdf') {
-          const files = itemsForEngine.map(i => i.file);
-          resultBlob = await imagesToPdf(files, progressCb);
+          let imageFiles = [];
+          const inputItems = itemsForEngine && itemsForEngine.length > 0 ? itemsForEngine : (files && files.length > 0 ? files : [mainFile]);
+          for (const item of inputItems) {
+            const f = item.file || item;
+            if (f.name && f.name.toLowerCase().endsWith('.zip')) {
+              const zip = new JSZip();
+              const zipContent = await zip.loadAsync(f);
+              const zipEntries = [];
+              for (const [filename, fileEntry] of Object.entries(zipContent.files)) {
+                if (!fileEntry.dir) {
+                  const ext = '.' + filename.split('.').pop().toLowerCase();
+                  if (['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif', '.tiff'].includes(ext)) {
+                    zipEntries.push({ filename, fileEntry });
+                  }
+                }
+              }
+              zipEntries.sort((a, b) => a.filename.localeCompare(b.filename, undefined, { numeric: true, sensitivity: 'base' }));
+              for (const entry of zipEntries) {
+                const blob = await entry.fileEntry.async('blob');
+                imageFiles.push(new File([blob], entry.filename, { type: blob.type || 'image/png' }));
+              }
+            } else {
+              imageFiles.push(f);
+            }
+          }
+          resultBlob = await imagesToPdf(imageFiles, progressCb);
         } else if (actionId === 'image-compressor') {
           progressCb(40);
           const quality = params.quality || 0.7;
@@ -3166,19 +3443,24 @@ export default function StitchCanvas({
           const fieldValues = params.fieldValues || {};
           resultBlob = await fillFormFields(mainFile, fieldValues, progressCb);
         } else if (actionId === 'sign-pdf') {
-          let sigOptions = params.sigOptions || {};
-          if (params.signatureDataUrl) {
-            const response = await fetch(params.signatureDataUrl);
-            const sigBlob = await response.blob();
-            sigOptions = {
-              signaturePngBlob: sigBlob,
-              pageIndex: params.pageIndex ?? 0,
-              xPercent: params.xPercent ?? 0.5,
-              yPercent: params.yPercent ?? 0.5,
-              widthPercent: params.widthPercent ?? 0.25
-            };
+          let fields = params.fields;
+          if (!fields) {
+            const sigOptions = params.sigOptions || {};
+            const dataUrl = params.signatureDataUrl || sigOptions.signatureDataUrl || null;
+            const sigBlob = sigOptions.signaturePngBlob || null;
+            fields = [{
+              id: 'sig_canvas_node',
+              type: 'signature',
+              pageIndex: params.pageIndex ?? sigOptions.pageIndex ?? 0,
+              x: params.xPercent ?? sigOptions.xPercent ?? 0.5,
+              y: params.yPercent ?? sigOptions.yPercent ?? 0.5,
+              width: params.widthPercent ?? sigOptions.widthPercent ?? 0.25,
+              height: 0.08,
+              dataUrl: dataUrl,
+              blob: sigBlob
+            }];
           }
-          resultBlob = await signPdf(mainFile, sigOptions, progressCb);
+          resultBlob = await signPdf(mainFile, fields, { onProgress: progressCb });
         } else if (actionId === 'redact-pdf') {
           const redactParams = {
             boxes: params.boxes || [],
@@ -3216,6 +3498,61 @@ export default function StitchCanvas({
           resultBlob = await powerpointToPdf(mainFile, progressCb);
         } else if (actionId === 'html-to-pdf') {
           resultBlob = await htmlToPdf(mainFile, progressCb);
+        } else if (actionId === 'bates-numbering') {
+          const pdfBytes = await mainFile.arrayBuffer();
+          const outputBytes = await applyBatesNumbering(pdfBytes, params);
+          progressCb(100);
+          resultBlob = new Blob([outputBytes], { type: 'application/pdf' });
+        } else if (actionId === 'condition-router') {
+          const ruleType = params.ruleType || 'pageCount';
+          const operator = params.operator || '>';
+          const threshold = Number(params.thresholdValue) || 5;
+          let pass = false;
+          try {
+            if (ruleType === 'pageCount') {
+              const count = await getPdfPageCount(mainFile);
+              if (operator === '>') pass = count > threshold;
+              else if (operator === '<') pass = count < threshold;
+              else if (operator === '==') pass = count === threshold;
+              else if (operator === '>=') pass = count >= threshold;
+              else if (operator === '<=') pass = count <= threshold;
+            } else if (ruleType === 'fileSizeMB') {
+              const sizeMB = mainFile.size / (1024 * 1024);
+              if (operator === '>') pass = sizeMB > threshold;
+              else if (operator === '<') pass = sizeMB < threshold;
+              else if (operator === '==') pass = Math.abs(sizeMB - threshold) < 0.1;
+              else if (operator === '>=') pass = sizeMB >= threshold;
+              else if (operator === '<=') pass = sizeMB <= threshold;
+            }
+          } catch (condErr) {
+            console.warn('[condition-router] Evaluation warning:', condErr);
+          }
+          progressCb(100);
+          resultBlob = mainFile;
+        } else if (actionId === 'ai-summarizer') {
+          progressCb(20);
+          try {
+            resultBlob = await executeServerJob(mainFile, 'ai-summarizer', params, progressCb);
+          } catch (serverErr) {
+            console.warn('[runEngine] Server summarization fallback to client extractive summary:', serverErr);
+            const text = mainFile.text ? await mainFile.text() : 'Document content summary';
+            const lines = text.split('\n').filter(l => l.trim().length > 20);
+            const topBullets = lines.slice(0, 5).map(l => `- ${l.trim()}`).join('\n');
+            const summaryMd = `# Executive Summary: ${mainFile.name}\n\n## Key Highlights\n${topBullets || '- Document content extracted and processed.'}\n\n---\n*Generated locally by DocForge Zero-Cost Intelligence Engine*`;
+            resultBlob = new Blob([summaryMd], { type: 'text/markdown' });
+            progressCb(100);
+          }
+        } else if (actionId === 'unzip-file') {
+          progressCb(30);
+          const zip = new JSZip();
+          const zipContent = await zip.loadAsync(mainFile);
+          const entries = Object.values(zipContent.files).filter(e => !e.dir);
+          if (entries.length === 1) {
+            resultBlob = await entries[0].async('blob');
+          } else {
+            resultBlob = mainFile;
+          }
+          progressCb(100);
         } else if (['pdf-to-word', 'pdf-to-excel', 'pdf-to-powerpoint', 'ai-translator', 'protect-pdf', 'unlock-pdf', 'redact-pdf', 'compare-pdf', 'pdf-to-pdfa', 'url-to-pdf'].includes(actionId)) {
           resultBlob = await executeServerJob(mainFile, actionId, params, progressCb);
         } else {
@@ -3227,15 +3564,36 @@ export default function StitchCanvas({
       const getOutputNameForAction = (baseName, ext, actionId, params) => {
         if (actionId === 'compress-pdf') return `${baseName}_compressed.pdf`;
         if (actionId === 'split-pdf') return `${baseName}_split.zip`;
-        if (['docx-to-pdf', 'excel-to-pdf', 'powerpoint-to-pdf', 'image-to-pdf', 'html-to-pdf'].includes(actionId)) return `${baseName}.pdf`;
-        if (actionId === 'image-compressor') return `${baseName}_compressed.${ext}`;
+        if (['docx-to-pdf', 'excel-to-pdf', 'powerpoint-to-pdf', 'image-to-pdf', 'html-to-pdf', 'text-to-pdf'].includes(actionId)) return `${baseName}.pdf`;
+        if (actionId === 'image-compressor') return `${baseName}_compressed.${ext || 'jpg'}`;
         if (actionId === 'image-converter') return `${baseName}_converted.${params.format || 'png'}`;
-        if (actionId === 'image-resizer') return `${baseName}_resized.${ext}`;
+        if (actionId === 'image-resizer') return `${baseName}_resized.${ext || 'png'}`;
         if (actionId === 'ocr-pdf') return `${baseName}_ocr.pdf`;
+        if (actionId === 'un-ocr-pdf') return `${baseName}_flattened.pdf`;
         if (actionId === 'pdf-to-word') return `${baseName}.docx`;
         if (actionId === 'pdf-to-excel') return `${baseName}.xlsx`;
         if (actionId === 'pdf-to-powerpoint') return `${baseName}.pptx`;
+        if (actionId === 'pdf-to-image') return `${baseName}_images.zip`;
+        if (actionId === 'pdf-to-pdfa') return `${baseName}_pdfa.pdf`;
         if (actionId === 'ai-translator') return `${baseName}_translated.pdf`;
+        if (actionId === 'ai-summarizer') return `${baseName}_summary.md`;
+        if (actionId === 'bates-numbering') return `${baseName}_bates.pdf`;
+        if (actionId === 'add-watermark') return `${baseName}_watermarked.pdf`;
+        if (actionId === 'add-page-numbers') return `${baseName}_numbered.pdf`;
+        if (actionId === 'remove-pages') return `${baseName}_modified.pdf`;
+        if (actionId === 'extract-pages') return `${baseName}_extracted.pdf`;
+        if (actionId === 'organize-pdf') return `${baseName}_organized.pdf`;
+        if (actionId === 'crop-pdf') return `${baseName}_cropped.pdf`;
+        if (actionId === 'edit-pdf') return `${baseName}_edited.pdf`;
+        if (actionId === 'pdf-forms') return `${baseName}_filled.pdf`;
+        if (actionId === 'sign-pdf') return `${baseName}_signed.pdf`;
+        if (actionId === 'redact-pdf') return `${baseName}_redacted.pdf`;
+        if (actionId === 'repair-pdf') return `${baseName}_repaired.pdf`;
+        if (actionId === 'compare-pdf') return `${baseName}_comparison.pdf`;
+        if (actionId === 'qr-generator') return `qr_code.png`;
+        if (actionId === 'url-to-pdf') return `webpage_${Date.now()}.pdf`;
+        if (actionId === 'condition-router') return `${baseName}_routed.pdf`;
+        if (actionId === 'unzip-file') return `${baseName}_extracted.pdf`;
         return `${baseName}_output.pdf`;
       };
 
@@ -3677,7 +4035,7 @@ export default function StitchCanvas({
         const successMessage = isSplitUnpack
           ? `Successfully split into ${splitOutputIds.length} files!`
           : `Successfully processed ${outputName}!`;
-        speakAnnouncement(isSplitUnpack ? `WASM operation complete. Generated ${splitOutputIds.length} documents.` : `WASM operation complete. Output document ${outputName} generated.`);
+        speakAnnouncement(isSplitUnpack ? `Processing complete. Generated ${splitOutputIds.length} documents.` : `Processing complete. Output document ${outputName} generated.`);
         showToast(successMessage);
 
         const nextOps = opsList.map(o => o.id === opId ? { 
@@ -4565,80 +4923,16 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
           }
         };
 
-        // Try local developer LLM ports only in development mode (LM Studio/Ollama)
-        if (import.meta.env.DEV) {
-          // Try LM Studio local port 1234 (3s timeout — connection-refused fails fast, hanging LLM is the concern)
-          try {
-            const res = await fetchWithTimeout('http://localhost:1234/v1/chat/completions', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload),
-              mode: 'cors'
-            }, 3000);
-            if (res.ok) {
-              const data = await res.json();
-              const planText = data.choices[0].message.content.trim();
-              const parsed = JSON.parse(cleanJsonText(planText));
-              if (parsed && parsed.operations) return parsed;
-            }
-          } catch (e) {}
-
-          // Try Ollama local port 11434 (3s timeout)
-          try {
-            let activeModel = 'gemma3';
-            try {
-              const tagsRes = await fetchWithTimeout('http://localhost:11434/api/tags', {}, 1500);
-              if (tagsRes.ok) {
-                const tagsData = await tagsRes.json();
-                const downloadedModels = (tagsData.models || []).map(m => m.name);
-                if (downloadedModels.length > 0) {
-                  let found = false;
-                  for (const pref of ["qwen3", "qwen2.5", "qwen", "gemma3", "gemma"]) {
-                    for (const m of downloadedModels) {
-                      if (m.toLowerCase().includes(pref)) {
-                        activeModel = m;
-                        found = true;
-                        break;
-                      }
-                    }
-                    if (found) break;
-                  }
-                  if (!found) activeModel = downloadedModels[0];
-                }
-              }
-            } catch (e) {}
-
-            const ollamaPayload = {
-              model: activeModel,
-              prompt: `${systemPrompt}\n\nUser request: ${queryText}`,
-              stream: false,
-              format: 'json',
-              options: { temperature: 0.1 }
-            };
-            const res = await fetchWithTimeout('http://localhost:11434/api/generate', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(ollamaPayload),
-              mode: 'cors'
-            }, 3000);
-            if (res.ok) {
-              const data = await res.json();
-              const parsed = JSON.parse(cleanJsonText(data.response));
-              if (parsed && parsed.operations) return parsed;
-            }
-          } catch (e) {}
-        }
-
-        // Try FastAPI Backend agent-plan (5s timeout — backend has its own internal 1s connect timeouts)
+        // Try FastAPI Backend agent-plan (2.5s timeout — cloud LLM fallback or fast heuristic planner)
         try {
           const res = await fetchWithTimeout(`${BACKEND_URL}/api/canvas/agent-plan`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query: queryText, graph_state: gState, last_active_nodes: lastActive })
-          }, 5000);
+          }, 2500);
           if (res.ok) {
             const data = await res.json();
-            if (data.success && data.steps) {
+            if (data.success && data.steps && data.steps.length > 0) {
               // Convert steps to operations schema
               return {
                 confidence_score: 0.95,
@@ -5039,10 +5333,29 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
             const aId = op.toolId;
             // Resolve input files for this op
             const inputFiles = [];
+            let isBranchSkipped = false;
+
             for (const inputId of op.inputIds) {
               // Check if this came from a previous pipeline op
               if (pipelineOutputs[inputId]) {
                 const out = pipelineOutputs[inputId];
+
+                // Check condition routing branch filtering
+                if (out.isConditionRouter) {
+                  const branchType = op.inputPortMap?.[inputId];
+                  const conditionPassed = out.pass;
+                  if (branchType === 'output-true' && !conditionPassed) {
+                    console.log(`[Pipeline] Condition router evaluated FALSE, skipping True branch consumer ${op.toolId}`);
+                    isBranchSkipped = true;
+                    break;
+                  }
+                  if (branchType === 'output-false' && conditionPassed) {
+                    console.log(`[Pipeline] Condition router evaluated TRUE, skipping False branch consumer ${op.toolId}`);
+                    isBranchSkipped = true;
+                    break;
+                  }
+                }
+
                 if (out.outputs && out.outputs.length > 0) {
                   for (const sub of out.outputs) {
                     inputFiles.push(new File([sub.blob], sub.name, { type: sub.blob.type }));
@@ -5063,8 +5376,9 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
               }
             }
 
-            if (inputFiles.length === 0) {
-              console.warn(`[Pipeline] No input files resolved for ${op.toolId}, skipping`);
+            if (isBranchSkipped || inputFiles.length === 0) {
+              console.log(`[Pipeline] Skipping node ${op.toolId} (isBranchSkipped=${isBranchSkipped}, inputs=${inputFiles.length})`);
+              setOperations(prev => prev.map(o => o.id === op.id ? { ...o, status: 'idle', progress: 0 } : o));
               continue;
             }
 
@@ -5278,8 +5592,8 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
   };
 
   // Helper to draw SVG cables
-  const drawCable = (fromId, toId, opStatus, opProgress) => {
-    const from = portCoords[fromId]?.output;
+  const drawCable = (fromId, toId, opStatus, opProgress, branchType) => {
+    const from = (branchType && portCoords[fromId]?.[branchType]) || portCoords[fromId]?.output;
     const to = portCoords[toId]?.input;
     if (!from || !to) return null;
 
@@ -5295,11 +5609,17 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
     let strokeColor = 'var(--border-strong)';
     let isAnimated = false;
 
+    if (branchType === 'output-true') {
+      strokeColor = '#10b981'; // Emerald Green
+    } else if (branchType === 'output-false') {
+      strokeColor = '#f59e0b'; // Amber
+    }
+
     if (opStatus === 'processing') {
-      strokeColor = 'var(--color-primary)';
+      strokeColor = branchType === 'output-false' ? '#fbbf24' : 'var(--color-primary)';
       isAnimated = true;
     } else if (opStatus === 'completed') {
-      strokeColor = 'var(--color-primary-light)';
+      strokeColor = branchType === 'output-true' ? '#10b981' : branchType === 'output-false' ? '#f59e0b' : 'var(--color-primary-light)';
     } else if (opStatus === 'failed') {
       strokeColor = 'var(--color-danger)';
     }
@@ -5371,7 +5691,6 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
   // Drop Event onto Canvas spawns a node at drop location
   const handleCanvasDrop = (e) => {
     e.preventDefault();
-    if (activeTool === 'pan') return;
 
     const files = Array.from(e.dataTransfer.files);
     if (files.length === 0) return;
@@ -5593,21 +5912,21 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
         '--bg-primary': theme === 'dark' ? '#0b0f19' : '#ffffff',
         '--bg-secondary': theme === 'dark' ? '#111827' : '#faf5eb',
         '--bg-tertiary': theme === 'dark' ? '#070a13' : '#f5f0e6',
-        '--bg-card': theme === 'dark' ? '#1f2937' : '#ffffff',
-        '--bg-card-hover': theme === 'dark' ? '#374151' : '#fcfcfc',
-        '--bg-glass': theme === 'dark' ? 'rgba(11, 15, 25, 0.8)' : 'rgba(255, 255, 255, 0.85)',
-        '--bg-glass-strong': theme === 'dark' ? 'rgba(11, 15, 25, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-        '--text-primary': theme === 'dark' ? '#f3f4f6' : '#0f172a',
-        '--text-secondary': theme === 'dark' ? '#9ca3af' : '#475569',
-        '--text-tertiary': theme === 'dark' ? '#6b7280' : '#64748b',
-        '--border-subtle': theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(249, 115, 22, 0.12)',
-        '--border-medium': theme === 'dark' ? '#374151' : 'rgba(249, 115, 22, 0.25)',
-        '--border-strong': theme === 'dark' ? '#4b5563' : 'rgba(249, 115, 22, 0.5)',
+        '--bg-card': theme === 'dark' ? '#1a2438' : '#ffffff',
+        '--bg-card-hover': theme === 'dark' ? '#24324c' : '#fcfcfc',
+        '--bg-glass': theme === 'dark' ? 'rgba(26, 36, 56, 0.94)' : 'rgba(255, 255, 255, 0.92)',
+        '--bg-glass-strong': theme === 'dark' ? 'rgba(26, 36, 56, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+        '--text-primary': theme === 'dark' ? '#f8fafc' : '#0f172a',
+        '--text-secondary': theme === 'dark' ? '#94a3b8' : '#475569',
+        '--text-tertiary': theme === 'dark' ? '#64748b' : '#64748b',
+        '--border-subtle': theme === 'dark' ? 'rgba(255, 255, 255, 0.14)' : 'rgba(249, 115, 22, 0.14)',
+        '--border-medium': theme === 'dark' ? 'rgba(255, 255, 255, 0.24)' : 'rgba(249, 115, 22, 0.28)',
+        '--border-strong': theme === 'dark' ? 'rgba(255, 255, 255, 0.38)' : 'rgba(249, 115, 22, 0.5)',
         background: theme === 'dark' 
           ? 'linear-gradient(135deg, #0b0f19 0%, #070a13 100%)' 
           : 'linear-gradient(135deg, #ffffff 0%, #faf5eb 100%)',
         border: theme === 'dark'
-          ? '1px solid rgba(255, 255, 255, 0.08)'
+          ? '1px solid rgba(255, 255, 255, 0.10)'
           : '1px solid rgba(249, 115, 22, 0.25)',
       }}
     >
@@ -5646,7 +5965,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
         tabIndex={0}
         role="application"
         aria-label="Document Workflow Canvas. Use Arrow Keys to navigate cards, Space or Enter to select, C to connect, Delete to remove focused node."
-        className={`w-full flex-grow relative overflow-hidden stitch-dot-grid z-10 cursor-${activeTool === 'pan' || isPanning ? 'grab active:grabbing' : 'default'} focus:ring-2 focus:ring-primary/20 outline-none`}
+        className={`w-full flex-grow relative overflow-hidden stitch-dot-grid z-10 cursor-${isPanning ? 'grabbing' : 'grab'} focus:ring-2 focus:ring-primary/20 outline-none`}
         style={{
           backgroundPosition: `${panOffset.x}px ${panOffset.y}px`,
         }}
@@ -5683,6 +6002,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
               // Draw inputs
               op.inputIds.forEach(inputId => {
                 let cableSourceId = inputId;
+                const branchType = op.inputPortMap?.[inputId];
                 if (inputId.startsWith('op-')) {
                   const upstreamOp = operations.find(o => o.id === inputId);
                   if (upstreamOp && upstreamOp.outputId) {
@@ -5690,9 +6010,10 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                   }
                 }
                 
-                if (!seenSources.has(cableSourceId)) {
-                  seenSources.add(cableSourceId);
-                  cables.push(drawCable(cableSourceId, op.id, op.status, op.progress));
+                const connectionKey = `${cableSourceId}-${op.id}-${branchType || 'def'}`;
+                if (!seenSources.has(connectionKey)) {
+                  seenSources.add(connectionKey);
+                  cables.push(drawCable(cableSourceId, op.id, op.status, op.progress, branchType));
                 }
               });
               // Draw output
@@ -5708,7 +6029,8 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
 
             {/* Temporary dragging cable */}
             {draggingCable && (() => {
-              const fromCoords = portCoords[draggingCable.fromId]?.output;
+              const portKey = draggingCable.type || 'output';
+              const fromCoords = portCoords[draggingCable.fromId]?.[portKey] || portCoords[draggingCable.fromId]?.output;
               if (!fromCoords) return null;
               const dx = Math.abs(draggingCable.currentX - fromCoords.x) * 0.45;
               const cx1 = fromCoords.x + dx;
@@ -5716,21 +6038,22 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
               const cx2 = draggingCable.currentX - dx;
               const cy2 = draggingCable.currentY;
               const path = `M ${fromCoords.x} ${fromCoords.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${draggingCable.currentX} ${draggingCable.currentY}`;
+              const cableColor = draggingCable.type === 'output-true' ? '#10b981' : draggingCable.type === 'output-false' ? '#f59e0b' : 'var(--color-primary)';
               return (
                 <g>
                   <path
                      d={path}
                      fill="none"
-                     stroke="var(--color-primary)"
+                     stroke={cableColor}
                      strokeWidth="2.5"
                      strokeDasharray="5 5"
-                     opacity="0.8"
+                     opacity="0.85"
                    />
                    <circle
                      cx={draggingCable.currentX}
                      cy={draggingCable.currentY}
                      r="4"
-                     fill="var(--color-primary)"
+                     fill={cableColor}
                      opacity="0.9"
                    />
                 </g>
@@ -5821,11 +6144,11 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
 
                   {/* Text Details Stack */}
                   <div className="flex flex-col min-w-0 flex-grow">
-                    <span className="text-[11px] font-bold text-on-background truncate leading-normal" title={item.name}>
+                    <span className="text-[11px] font-bold text-slate-900 dark:text-slate-100 truncate leading-normal" title={item.name}>
                       {item.name}
                     </span>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className="text-[9px] text-outline font-medium">{formatSize(item.size)}</span>
+                      <span className="text-[9px] text-slate-500 dark:text-slate-400 font-medium">{formatSize(item.size)}</span>
                       {item.pageRange && (
                         <span className="text-[7.5px] font-extrabold bg-primary/10 border border-primary/20 text-primary px-1 py-0.5 rounded leading-none">
                           Target: {item.pageRange}
@@ -5840,7 +6163,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                       e.stopPropagation();
                       setPreviewFile(item.file);
                     }}
-                    className="w-5 h-5 rounded-md hover:bg-primary/15 hover:text-primary text-outline flex items-center justify-center transition-colors cursor-pointer opacity-40 hover:opacity-100 flex-shrink-0 mr-1.5"
+                    className="w-5 h-5 rounded-md hover:bg-primary/15 hover:text-primary text-slate-400 dark:text-slate-400 hover:dark:text-primary flex items-center justify-center transition-colors cursor-pointer opacity-60 hover:opacity-100 flex-shrink-0 mr-1.5"
                     title="Preview file"
                   >
                     <span className="material-symbols-outlined text-[13px]">visibility</span>
@@ -5871,7 +6194,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                         };
                       }));
                     }}
-                    className="w-5 h-5 rounded-md hover:bg-error-container/15 hover:text-error text-outline flex items-center justify-center transition-colors cursor-pointer opacity-40 hover:opacity-100 flex-shrink-0"
+                    className="w-5 h-5 rounded-md hover:bg-error-container/15 hover:text-error text-slate-400 dark:text-slate-400 hover:dark:text-error flex items-center justify-center transition-colors cursor-pointer opacity-60 hover:opacity-100 flex-shrink-0"
                   >
                     <span className="material-symbols-outlined text-[13px]">delete</span>
                   </button>
@@ -5999,11 +6322,32 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                 />
                 
                 {/* Output port anchor */}
-                <div 
-                  onPointerDown={(e) => handleStartCableDrag(e, op.id, 'output')}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[6px] w-3 h-3 hover:w-4 hover:h-4 transition-all rounded-full bg-primary border border-surface shadow-sm z-30 cursor-crosshair pointer-events-auto" 
-                  title="Drag to Connect Output" 
-                />
+                {op.toolId === 'condition-router' ? (
+                  <>
+                    {/* True Port (Green) */}
+                    <div 
+                      onPointerDown={(e) => handleStartCableDrag(e, op.id, 'output-true')}
+                      className="absolute right-0 top-[32%] -translate-y-1/2 translate-x-[7px] w-4 h-4 rounded-full bg-emerald-500 border border-surface shadow-sm z-30 cursor-crosshair pointer-events-auto flex items-center justify-center text-[8px] text-white font-bold hover:scale-110 transition-transform shadow-emerald-500/30" 
+                      title="True Branch (Condition Met) - Drag to connect" 
+                    >
+                      ✓
+                    </div>
+                    {/* False Port (Amber) */}
+                    <div 
+                      onPointerDown={(e) => handleStartCableDrag(e, op.id, 'output-false')}
+                      className="absolute right-0 top-[68%] -translate-y-1/2 translate-x-[7px] w-4 h-4 rounded-full bg-amber-500 border border-surface shadow-sm z-30 cursor-crosshair pointer-events-auto flex items-center justify-center text-[8px] text-white font-bold hover:scale-110 transition-transform shadow-amber-500/30" 
+                      title="False Branch (Condition Failed) - Drag to connect" 
+                    >
+                      ✗
+                    </div>
+                  </>
+                ) : (
+                  <div 
+                    onPointerDown={(e) => handleStartCableDrag(e, op.id, 'output')}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[6px] w-3 h-3 hover:w-4 hover:h-4 transition-all rounded-full bg-primary border border-surface shadow-sm z-30 cursor-crosshair pointer-events-auto" 
+                    title="Drag to Connect Output" 
+                  />
+                )}
 
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mb-1 text-primary flex-shrink-0">
                   <span className="material-symbols-outlined text-[18px]">
@@ -6012,6 +6356,8 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                      op.toolId === 'split-pdf' ? 'content_cut' : 
                      op.toolId === 'rotate-pdf' ? 'rotate_right' :
                      op.toolId === 'add-watermark' ? 'water_drop' :
+                     op.toolId === 'bates-numbering' ? 'pin' :
+                     op.toolId === 'condition-router' ? 'alt_route' :
                      op.toolId === 'protect-pdf' ? 'lock' :
                      op.toolId === 'image-compressor' ? 'photo_size_select_large' :
                      op.toolId === 'image-converter' ? 'change_circle' :
@@ -6022,6 +6368,12 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                 <h4 className="text-[11px] font-bold text-on-background capitalize">
                   {op.toolId.replace('-', ' ')}
                 </h4>
+
+                {op.inputIds.length > 1 && op.toolId !== 'merge-pdf' && (
+                  <span className="px-1.5 py-0.5 rounded-full text-[8px] font-bold bg-primary/10 text-primary border border-primary/20 mt-0.5 select-none">
+                    📦 Batch ({op.inputIds.length} files)
+                  </span>
+                )}
 
                 {op.inputIds.length > 0 && !isCollapsed && (
                   <div className="w-full mt-1.5 flex flex-col gap-0.5 text-left text-[8.5px] text-outline pointer-events-auto">
@@ -6477,6 +6829,73 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                       </div>
                     )}
 
+                    {/* BATES NUMBERING */}
+                    {op.toolId === 'bates-numbering' && (
+                      <div className="flex flex-col gap-1 w-full text-[9px]">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-on-surface-variant font-semibold">Prefix:</span>
+                          <input
+                            type="text"
+                            value={params.prefix || 'CONF-'}
+                            onChange={(e) => updateOperatorParams(op.id, { prefix: e.target.value })}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            className="w-16 px-1.5 py-0.5 rounded border border-outline-variant bg-surface text-on-surface font-mono text-[9px]"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-on-surface-variant font-semibold">Start #:</span>
+                          <input
+                            type="number"
+                            min="1"
+                            value={params.startNumber || 1}
+                            onChange={(e) => updateOperatorParams(op.id, { startNumber: Number(e.target.value) })}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            className="w-14 px-1.5 py-0.5 rounded border border-outline-variant bg-surface text-on-surface font-mono text-[9px]"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* CONDITION ROUTER */}
+                    {op.toolId === 'condition-router' && (
+                      <div className="flex flex-col gap-1 w-full text-[9px]">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-on-surface-variant font-semibold">Rule:</span>
+                          <select
+                            value={params.ruleType || 'pageCount'}
+                            onChange={(e) => updateOperatorParams(op.id, { ruleType: e.target.value })}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            className="px-1.5 py-0.5 rounded border border-outline-variant bg-surface text-on-surface text-[9px]"
+                          >
+                            <option value="pageCount">Page Count</option>
+                            <option value="fileSizeMB">Size (MB)</option>
+                          </select>
+                        </div>
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-on-surface-variant font-semibold">If:</span>
+                          <div className="flex items-center gap-1">
+                            <select
+                              value={params.operator || '>'}
+                              onChange={(e) => updateOperatorParams(op.id, { operator: e.target.value })}
+                              onPointerDown={(e) => e.stopPropagation()}
+                              className="px-1 py-0.5 rounded border border-outline-variant bg-surface text-on-surface text-[9px]"
+                            >
+                              <option value=">">&gt;</option>
+                              <option value="<">&lt;</option>
+                              <option value="==">==</option>
+                            </select>
+                            <input
+                              type="number"
+                              value={params.thresholdValue || 5}
+                              onChange={(e) => updateOperatorParams(op.id, { thresholdValue: Number(e.target.value) })}
+                              onPointerDown={(e) => e.stopPropagation()}
+                              className="w-10 px-1 py-0.5 rounded border border-outline-variant bg-surface text-on-surface font-mono text-[9px]"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {/* 10. REMOVE PAGES */}
                     {op.toolId === 'remove-pages' && (
                       <div className="flex flex-col gap-1 w-full">
@@ -6772,7 +7191,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
         {/* FLOATING ACTION OVERLAYS */}
         
         {/* Floating Zoom / Reset panel (Bottom Right) */}
-        <div className="absolute bottom-4 right-4 z-40 glass-widget p-1.5 rounded-xl flex items-center gap-1">
+        <div className="absolute bottom-4 right-20 z-40 glass-widget p-1.5 rounded-xl flex items-center gap-1 shadow-lg">
           <button onClick={handleZoomOut} className="w-7 h-7 rounded-lg hover:bg-surface text-outline hover:text-primary flex items-center justify-center cursor-pointer transition-colors" title="Zoom Out">
             <span className="material-symbols-outlined text-[18px]">zoom_out</span>
           </button>
@@ -6791,33 +7210,14 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
           </button>
         </div>
 
-        {/* Floating Toolbar Panel (Left Center) */}
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-40 glass-widget p-1.5 rounded-xl flex flex-col gap-1.5">
-          <button
-            onClick={() => setActiveTool('select')}
-            className={`w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer transition-all ${
-              activeTool === 'select' ? 'bg-primary text-white shadow-md' : 'hover:bg-surface text-outline hover:text-primary'
-            }`}
-            title="Pointer Tool (Select/Drag)"
-          >
-            <span className="material-symbols-outlined text-[18px]">near_me</span>
-          </button>
-          <button
-            onClick={() => setActiveTool('pan')}
-            className={`w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer transition-all ${
-              activeTool === 'pan' ? 'bg-primary text-white shadow-md' : 'hover:bg-surface text-outline hover:text-primary'
-            }`}
-            title="Hand Tool (Pan Viewport)"
-          >
-            <span className="material-symbols-outlined text-[18px]">pan_tool</span>
-          </button>
-          <div className="w-5 h-[1px] bg-outline-variant/60 mx-auto" />
+        {/* Floating Quick Action Widget (Left Center) */}
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-40 glass-widget p-1.5 rounded-xl flex flex-col gap-1.5 shadow-lg">
           <button
             onClick={handleLocalSelectClick}
-            className="w-8 h-8 rounded-lg hover:bg-surface text-outline hover:text-primary flex items-center justify-center cursor-pointer transition-colors"
+            className="w-8 h-8 rounded-lg hover:bg-primary/10 text-outline hover:text-primary flex items-center justify-center cursor-pointer transition-colors"
             title="Upload Files to Canvas"
           >
-            <span className="material-symbols-outlined text-[18px]">add</span>
+            <span className="material-symbols-outlined text-[20px]">add</span>
           </button>
           <input type="file" ref={fileInputRef} onChange={handleFileInputChange} multiple={true} className="hidden" accept=".pdf,.docx,.doc,.txt,.md,image/*,.pptx,.ppt,.xlsx,.xls,.csv,.html,.htm" />
         </div>
@@ -7060,8 +7460,106 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
             </button>
 
             <div className="flex items-center gap-1">
-              <span className="text-[10px] font-bold bg-surface-container border border-outline-variant text-on-surface-variant px-1.5 py-0.5 rounded-md">{workspaceQueue.length} files</span>
+              <button
+                onClick={() => handleFitToView()}
+                className="text-[10px] font-bold bg-surface-container hover:bg-primary/10 hover:text-primary border border-outline-variant hover:border-primary/40 text-on-surface-variant px-2 py-0.5 rounded-md transition-all cursor-pointer flex items-center gap-1"
+                title="Click to center and fit all files in view"
+              >
+                <span className="material-symbols-outlined text-[12px]">fit_screen</span>
+                {workspaceQueue.length} {workspaceQueue.length === 1 ? 'file' : 'files'}
+              </button>
             </div>
+
+            <div className="h-4 w-[1px] bg-outline-variant/60" />
+
+            {/* Workflow Recipes Dropdown */}
+            <div className="relative" ref={recipesMenuRef}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setRecipesMenuOpen(!recipesMenuOpen);
+                }}
+                className="text-[11px] text-amber-500 hover:bg-amber-500/10 border border-amber-500/30 bg-amber-500/5 px-2.5 py-1 rounded-lg transition-all font-bold flex items-center gap-1.5 cursor-pointer shadow-sm"
+                title="Load pre-configured multi-step workflow blueprints"
+              >
+                <span className="material-symbols-outlined text-[14px]">auto_fix_high</span>
+                Recipes
+                <span className="material-symbols-outlined text-[12px]">{recipesMenuOpen ? 'expand_less' : 'expand_more'}</span>
+              </button>
+
+              {recipesMenuOpen && (
+                <div 
+                  className="absolute top-full left-0 mt-2 w-80 bg-surface-container-high border border-outline-variant/80 rounded-xl shadow-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-outline border-b border-outline-variant/50 flex justify-between items-center">
+                    <span>Workflow Blueprints</span>
+                    <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-mono">1-CLICK</span>
+                  </div>
+                  
+                  <div className="flex flex-col gap-1 mt-1.5 max-h-64 overflow-y-auto pr-0.5">
+                    {WORKFLOW_PRESETS.map((preset) => (
+                      <button
+                        key={preset.id}
+                        onClick={() => applyWorkflowPreset(preset)}
+                        className="w-full text-left p-2 rounded-lg hover:bg-primary/10 transition-all flex flex-col gap-0.5 group cursor-pointer"
+                      >
+                        <div className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors flex items-center justify-between">
+                          <span>{preset.name}</span>
+                          <span className="text-[9px] font-semibold text-outline-variant bg-surface-container px-1 py-0.5 rounded uppercase">{preset.category}</span>
+                        </div>
+                        <span className="text-[10px] text-on-surface-variant line-clamp-2 leading-tight">
+                          {preset.description}
+                        </span>
+                      </button>
+                    ))}
+
+                    {/* Custom User Blueprints */}
+                    {customFlows && customFlows.length > 0 && (
+                      <>
+                        <div className="px-2 pt-2 pb-1 text-[9.5px] font-bold uppercase tracking-wider text-outline border-t border-outline-variant/50 mt-1">
+                          My Saved Blueprints
+                        </div>
+                        {customFlows.map((flow, fIdx) => (
+                          <button
+                            key={`custom-${fIdx}`}
+                            onClick={() => applyCustomFlow(flow)}
+                            className="w-full text-left p-2 rounded-lg hover:bg-emerald-500/10 transition-all flex flex-col gap-0.5 group cursor-pointer border border-emerald-500/20 bg-emerald-500/5"
+                          >
+                            <div className="text-xs font-bold text-on-surface group-hover:text-emerald-500 transition-colors flex items-center justify-between">
+                              <span>{flow.name}</span>
+                              <span className="text-[9px] font-mono text-emerald-600 bg-emerald-500/10 px-1 py-0.5 rounded">{flow.operations?.length || 0} nodes</span>
+                            </div>
+                          </button>
+                        ))}
+                      </>
+                    )}
+                  </div>
+
+                  {/* Save current canvas as custom blueprint */}
+                  <div className="mt-2 pt-2 border-t border-outline-variant/60">
+                    <button
+                      onClick={handleSaveCustomFlow}
+                      disabled={operations.length === 0}
+                      className="w-full py-1.5 px-2.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">bookmark_add</span>
+                      Save Current Canvas as Blueprint
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Share Flow Link Button */}
+            <button
+              onClick={handleShareFlow}
+              className="text-[10.5px] text-on-surface-variant hover:text-primary hover:bg-primary/5 px-2 py-1 rounded-lg transition-all font-semibold flex items-center gap-1.5 cursor-pointer"
+              title="Copy shareable link to this workflow DAG"
+            >
+              <span className="material-symbols-outlined text-[13px]">share</span>
+              Share Flow
+            </button>
 
             <div className="h-4 w-[1px] bg-outline-variant/60" />
 

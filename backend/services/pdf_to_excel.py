@@ -13,21 +13,23 @@ Pipeline:
   Phase 6: Excel Renderer     — Professional formatting, Index sheet, auto-fit, freeze panes
 """
 
-import pdfplumber
+import gc
+import logging
+import re
+import threading
+import unicodedata
+from collections import Counter
+from dataclasses import dataclass, field
+from pathlib import Path
+
 import openpyxl
-from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+import pdfplumber
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
+
+from backend import config
 from backend.services.libreoffice import ConversionResult
 from backend.services.utils import validate_pdf
-from backend import config
-from pathlib import Path
-from dataclasses import dataclass, field
-from collections import Counter
-import re
-import gc
-import unicodedata
-import logging
-import threading
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +38,7 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 # Excel hard limits
-EXCEL_FORBIDDEN_CHARS = ['\\', '/', '*', '?', ':', '[', ']']
+EXCEL_FORBIDDEN_CHARS = ["\\", "/", "*", "?", ":", "[", "]"]
 MAX_SHEET_NAME_LEN = 31
 MAX_EXCEL_ROWS = 1_048_576
 MAX_EXCEL_COLS = 16_384
@@ -46,15 +48,15 @@ MAX_COL_WIDTH = 50
 MIN_COL_WIDTH = 8
 
 # Header detection thresholds
-HEADER_FONT_RATIO = 1.15      # Section header ≥ 1.15× median body font
-SUBHEADER_FONT_RATIO = 1.1    # Sub-header ≥ 1.1× median body font
-PAGE_MARGIN_ZONE = 40         # pts from top/bottom for repeating header/footer detection
-TABLE_CAPTION_GAP = 45        # max pts gap between caption text and table top
+HEADER_FONT_RATIO = 1.15  # Section header ≥ 1.15× median body font
+SUBHEADER_FONT_RATIO = 1.1  # Sub-header ≥ 1.1× median body font
+PAGE_MARGIN_ZONE = 40  # pts from top/bottom for repeating header/footer detection
+TABLE_CAPTION_GAP = 45  # max pts gap between caption text and table top
 
 # Cross-page stitching thresholds
 CONTINUATION_COL_WIDTH_TOL = 0.15  # 15% column-width-ratio tolerance
-HEADER_MATCH_THRESHOLD = 0.8      # 80% cell match = repeated header
-MAX_PAGE_GAP = 5                   # Max intervening noise pages allowed for continuation
+HEADER_MATCH_THRESHOLD = 0.8  # 80% cell match = repeated header
+MAX_PAGE_GAP = 5  # Max intervening noise pages allowed for continuation
 
 # Excel styling
 HEADER_FILL_COLOR = "4472C4"
@@ -69,17 +71,17 @@ CELL_BORDER_COLOR = "D9D9D9"
 
 # Regex for cleaning math artifacts from header text
 MATH_ARTIFACTS_RE = re.compile(
-    r'[∫∑∏∂∆∇√∞≈≠≤≥±×÷]|'   # math symbols
-    r'\bd[xyz]\b\.?|'           # differentials like dx, dy
-    r'\bf\s*\(\s*x\s*\)\s*=',  # f(x) = ...
-    re.UNICODE
+    r"[∫∑∏∂∆∇√∞≈≠≤≥±×÷]|"  # math symbols
+    r"\bd[xyz]\b\.?|"  # differentials like dx, dy
+    r"\bf\s*\(\s*x\s*\)\s*=",  # f(x) = ...
+    re.UNICODE,
 )
 
 # Fallback table settings for borderless tables (text-alignment strategy)
 TEXT_TABLE_SETTINGS = {
     "vertical_strategy": "text",
     "horizontal_strategy": "text",
-    "min_words_vertical": 2,      # Reduced from 3 to catch borderless grids effectively
+    "min_words_vertical": 2,  # Reduced from 3 to catch borderless grids effectively
     "min_words_horizontal": 1,
     "snap_tolerance": 5,
     "join_tolerance": 5,
@@ -90,6 +92,7 @@ TEXT_TABLE_SETTINGS = {
 @dataclass
 class PDFToExcelConfig:
     """Configuration options for the PDF-to-Excel engine."""
+
     enable_layout_detection: bool = True
     device: str = "cpu"
 
@@ -98,6 +101,7 @@ class PDFToExcelConfig:
 _layout_detector = None
 _layout_detector_lock = threading.Lock()
 
+
 def get_layout_detector(device: str = "cpu"):
     """Lazily load the LayoutDetection model in a thread-safe manner using ONNX Runtime."""
     global _layout_detector
@@ -105,15 +109,19 @@ def get_layout_detector(device: str = "cpu"):
         with _layout_detector_lock:
             if _layout_detector is None:
                 from paddleocr import LayoutDetection
-                logger.info("Initializing PaddleOCR LayoutDetection model on %s...", device)
+
+                logger.info(
+                    "Initializing PaddleOCR LayoutDetection model on %s...", device
+                )
                 # engine='onnxruntime' is used for fast CPU execution and stability
-                _layout_detector = LayoutDetection(device=device, engine='onnxruntime')
+                _layout_detector = LayoutDetection(device=device, engine="onnxruntime")
     return _layout_detector
 
 
 # Lazy loading cache for PaddleOCR TableStructureRecognition model
 _table_detector = None
 _table_detector_lock = threading.Lock()
+
 
 def get_table_detector(device: str = "cpu"):
     """Lazily load the TableStructureRecognition model in a thread-safe manner using ONNX Runtime."""
@@ -122,8 +130,14 @@ def get_table_detector(device: str = "cpu"):
         with _table_detector_lock:
             if _table_detector is None:
                 from paddleocr import TableStructureRecognition
-                logger.info("Initializing PaddleOCR TableStructureRecognition model on %s...", device)
-                _table_detector = TableStructureRecognition(device=device, engine='onnxruntime')
+
+                logger.info(
+                    "Initializing PaddleOCR TableStructureRecognition model on %s...",
+                    device,
+                )
+                _table_detector = TableStructureRecognition(
+                    device=device, engine="onnxruntime"
+                )
     return _table_detector
 
 
@@ -131,18 +145,20 @@ def get_table_detector(device: str = "cpu"):
 # Data Structures
 # ============================================================================
 
+
 @dataclass
 class PageScan:
     """Phase 1 output: raw elements from a single page."""
-    page_num: int             # 1-indexed
+
+    page_num: int  # 1-indexed
     width: float
     height: float
-    chars: list               # pdfplumber char dicts
-    words: list               # pdfplumber word dicts (with fontname, size)
-    tables: list              # list of TableExtract dicts
-    rects: list               # pdfplumber rect dicts
-    lines: list               # pdfplumber line dicts
-    images: list              # pdfplumber image dicts
+    chars: list  # pdfplumber char dicts
+    words: list  # pdfplumber word dicts (with fontname, size)
+    tables: list  # list of TableExtract dicts
+    rects: list  # pdfplumber rect dicts
+    lines: list  # pdfplumber line dicts
+    images: list  # pdfplumber image dicts
     is_blank: bool = False
     is_image_only: bool = False
     is_landscape: bool = False
@@ -151,12 +167,13 @@ class PageScan:
 @dataclass
 class ClassifiedContent:
     """Phase 2 output: classified text elements for a page."""
+
     page_num: int
-    section_headers: list     # [(text, y_position, font_size)]
-    sub_headers: list         # [(text, y_position, font_size)]
-    captions: list            # [(text, y_position, associated_table_idx)]
-    footnotes: list           # [(text, y_position)]
-    tables: list              # same table dicts from PageScan
+    section_headers: list  # [(text, y_position, font_size)]
+    sub_headers: list  # [(text, y_position, font_size)]
+    captions: list  # [(text, y_position, associated_table_idx)]
+    footnotes: list  # [(text, y_position)]
+    tables: list  # same table dicts from PageScan
     median_body_size: float
     body_fontname: str
 
@@ -164,28 +181,31 @@ class ClassifiedContent:
 @dataclass
 class TableGroup:
     """A single logical table — may span multiple PDF pages."""
+
     title: str | None = None
     header_row: list = field(default_factory=list)
-    data_rows: list = field(default_factory=list)   # list[list[str|None]]
-    col_widths: list = field(default_factory=list)   # PDF-point widths per column
+    data_rows: list = field(default_factory=list)  # list[list[str|None]]
+    col_widths: list = field(default_factory=list)  # PDF-point widths per column
     source_pages: list = field(default_factory=list)
     col_count: int = 0
-    merges: list = field(default_factory=list)       # list[tuple[int, int, int, int]]
+    merges: list = field(default_factory=list)  # list[tuple[int, int, int, int]]
 
 
 @dataclass
 class Section:
     """A logical section of the document."""
+
     title: str = ""
     subtitle: str | None = None
-    tables: list = field(default_factory=list)       # list[TableGroup]
-    page_range: tuple = (0, 0)                       # (first_page, last_page)
+    tables: list = field(default_factory=list)  # list[TableGroup]
+    page_range: tuple = (0, 0)  # (first_page, last_page)
 
 
 @dataclass
 class DocumentStructure:
     """The complete parsed document."""
-    sections: list = field(default_factory=list)      # list[Section]
+
+    sections: list = field(default_factory=list)  # list[Section]
     orphan_tables: list = field(default_factory=list)  # list[TableGroup]
     metadata: dict = field(default_factory=dict)
     stats: dict = field(default_factory=dict)
@@ -198,20 +218,21 @@ class DocumentStructure:
 # Common font mis-mappings to intercept and correct
 # 'ZapfDingbats', 'Symbol', and some wingdings map standard ASCII to symbols.
 GLYPH_CORRECTIONS = {
-    '3': '✓',
-    '4': '✔',
-    '8': '✘',
-    'n': '■',
-    'o': '☐',
-    'l': '●',
-    'm': '❍',
-    'p': '❑',
-    'q': '❒',
-    'H': '★',
-    '›': '↑',
-    'œ': '↓',
-    '¡': '★',
+    "3": "✓",
+    "4": "✔",
+    "8": "✘",
+    "n": "■",
+    "o": "☐",
+    "l": "●",
+    "m": "❍",
+    "p": "❑",
+    "q": "❒",
+    "H": "★",
+    "›": "↑",
+    "œ": "↓",
+    "¡": "★",
 }
+
 
 class PageScanner:
     """Extracts all raw elements from each PDF page."""
@@ -226,22 +247,25 @@ class PageScanner:
                 if "dingbat" in font or "symbol" in font or "wingding" in font:
                     char["text"] = GLYPH_CORRECTIONS[text]
                 # Also handle cases where PDF text extraction failed and gave weird mappings even in standard fonts
-                elif text == 'H' and ("star" in font or "rating" in font):
-                     char["text"] = '★'
+                elif text == "H" and ("star" in font or "rating" in font):
+                    char["text"] = "★"
 
     @staticmethod
     def _fix_rotated_text(chars: list):
         """Detect vertically oriented text that pdfplumber extracts backwards, and reverse it."""
         rotated_groups = []
         current_group = []
-        
+
         for c in chars:
             m = c.get("matrix")
             is_rot = m and len(m) >= 4 and m[1] > 0.01 and m[2] < -0.01
             if is_rot:
                 if current_group:
                     last_c = current_group[-1]
-                    if abs(c["x0"] - last_c["x0"]) < 5.0 and abs(c["top"] - last_c["bottom"]) < 15.0:
+                    if (
+                        abs(c["x0"] - last_c["x0"]) < 5.0
+                        and abs(c["top"] - last_c["bottom"]) < 15.0
+                    ):
                         current_group.append(c)
                     else:
                         rotated_groups.append(current_group)
@@ -254,7 +278,7 @@ class PageScanner:
                     current_group = []
         if current_group:
             rotated_groups.append(current_group)
-            
+
         for gp in rotated_groups:
             if len(gp) > 1:
                 gp_sorted = sorted(gp, key=lambda x: x["top"])
@@ -264,289 +288,431 @@ class PageScanner:
                     c["text"] = rev_t
 
     @staticmethod
-    def _extract_tables_via_layout(page, pdf_path: str, config: PDFToExcelConfig) -> list | None:
+    def _extract_tables_via_layout(
+        page, pdf_path: str, config: PDFToExcelConfig
+    ) -> list | None:
         """
         Segment the page into individual tables using PaddleOCR's LayoutDetection model,
         then run table extraction on each cropped area.
         """
-        import fitz
-        import cv2
-        import numpy as np
-        import tempfile
         import os
+        import tempfile
+
+        import cv2
+        import fitz
+        import numpy as np
 
         temp_img_path = None
         try:
             # Render the specific PDF page to a high-resolution image using fitz (PyMuPDF)
             doc = fitz.open(pdf_path)
             if page.page_number - 1 >= len(doc):
-                logger.warning("Page number %d out of bounds for PDF %s", page.page_number, pdf_path)
+                logger.warning(
+                    "Page number %d out of bounds for PDF %s",
+                    page.page_number,
+                    pdf_path,
+                )
                 return None
             fitz_page = doc.load_page(page.page_number - 1)
             pix = fitz_page.get_pixmap(dpi=150)
-            
+
             # Convert fitz pixmap to numpy array
-            img_data = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.h, pix.w, pix.n)
+            img_data = np.frombuffer(pix.samples, dtype=np.uint8).reshape(
+                pix.h, pix.w, pix.n
+            )
             if pix.n == 4:
                 img = cv2.cvtColor(img_data, cv2.COLOR_RGBA2BGR)
             elif pix.n == 3:
                 img = cv2.cvtColor(img_data, cv2.COLOR_RGB2BGR)
             else:
                 img = cv2.cvtColor(img_data, cv2.COLOR_GRAY2BGR)
-            
+
             doc.close()
 
             # Write to a temporary file for prediction
             with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
                 temp_img_path = temp_file.name
-            
+
             cv2.imwrite(temp_img_path, img)
 
             # Predict layout
             detector = get_layout_detector(config.device)
             res = detector.predict(temp_img_path)
-            
-            if not res or 'boxes' not in res[0]:
+
+            if not res or "boxes" not in res[0]:
                 logger.info("No layout boxes detected on page %d", page.page_number)
                 return None
-                
-            boxes = res[0]['boxes']
-            table_boxes = [box for box in boxes if box.get('label') == 'table']
-            
+
+            boxes = res[0]["boxes"]
+            table_boxes = [box for box in boxes if box.get("label") == "table"]
+
             if not table_boxes:
-                logger.info("No table layout boxes detected on page %d", page.page_number)
+                logger.info(
+                    "No table layout boxes detected on page %d", page.page_number
+                )
                 return None
-                
-            logger.info("Detected %d tables on page %d via layout detection", len(table_boxes), page.page_number)
-            
+
+            logger.info(
+                "Detected %d tables on page %d via layout detection",
+                len(table_boxes),
+                page.page_number,
+            )
+
             # Sort table boxes vertically (by top coordinate) to preserve reading/rendering order
-            table_boxes = sorted(table_boxes, key=lambda b: float(b['coordinate'][1]))
-            
+            table_boxes = sorted(table_boxes, key=lambda b: float(b["coordinate"][1]))
+
             pdf_w = float(page.width)
             pdf_h = float(page.height)
             img_h, img_w = img.shape[:2]
-            
+
             scale_x = pdf_w / float(img_w)
             scale_y = pdf_h / float(img_h)
-            
+
             all_tables = []
             for i, box in enumerate(table_boxes):
-                coord = box['coordinate']
+                coord = box["coordinate"]
                 # Scale with 5pt padding to avoid cutting borders/cells, clamped to page boundaries
                 x0 = max(0.0, float(coord[0]) * scale_x - 5.0)
                 top = max(0.0, float(coord[1]) * scale_y - 5.0)
                 x1 = min(pdf_w, float(coord[2]) * scale_x + 5.0)
                 bottom = min(pdf_h, float(coord[3]) * scale_y + 5.0)
-                
-                logger.debug("Table %d bbox on page %d: (%.2f, %.2f, %.2f, %.2f)", 
-                             i + 1, page.page_number, x0, top, x1, bottom)
-                
+
+                logger.debug(
+                    "Table %d bbox on page %d: (%.2f, %.2f, %.2f, %.2f)",
+                    i + 1,
+                    page.page_number,
+                    x0,
+                    top,
+                    x1,
+                    bottom,
+                )
+
                 structure_success = False
                 try:
                     tx0 = max(0, int(coord[0]) - 5)
                     ty0 = max(0, int(coord[1]) - 5)
                     tx1 = min(img_w, int(coord[2]) + 5)
                     ty1 = min(img_h, int(coord[3]) + 5)
-                    
+
                     if tx1 > tx0 and ty1 > ty0:
                         cropped_img = img[ty0:ty1, tx0:tx1]
-                        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_table_file:
+                        with tempfile.NamedTemporaryFile(
+                            suffix=".png", delete=False
+                        ) as temp_table_file:
                             table_img_path = temp_table_file.name
                         try:
                             cv2.imwrite(table_img_path, cropped_img)
-                            
+
                             table_rec = get_table_detector(config.device)
                             res_table = table_rec.predict(table_img_path)
-                            
-                            if res_table and 'structure' in res_table[0] and 'bbox' in res_table[0]:
+
+                            if (
+                                res_table
+                                and "structure" in res_table[0]
+                                and "bbox" in res_table[0]
+                            ):
                                 r = res_table[0]
-                                structure_tokens = r['structure']
-                                bboxes = r['bbox']
-                                
+                                structure_tokens = r["structure"]
+                                bboxes = r["bbox"]
+
                                 grid = {}
                                 occupied = set()
                                 curr_row = -1
                                 curr_col = 0
                                 bbox_idx = 0
-                                
+
                                 token_idx = 0
                                 while token_idx < len(structure_tokens):
                                     t = structure_tokens[token_idx]
-                                    if t == '<tr>':
+                                    if t == "<tr>":
                                         curr_row += 1
                                         curr_col = 0
                                         token_idx += 1
-                                    elif t == '</tr>':
+                                    elif t == "</tr>":
                                         token_idx += 1
-                                    elif t == '<td></td>':
+                                    elif t == "<td></td>":
                                         rowspan = 1
                                         colspan = 1
                                         token_idx += 1
-                                        
+
                                         while (curr_row, curr_col) in occupied:
                                             curr_col += 1
-                                            
+
                                         cell_bbox = None
                                         if bbox_idx < len(bboxes):
                                             raw_b = bboxes[bbox_idx]
-                                            xs = [raw_b[0], raw_b[2], raw_b[4], raw_b[6]]
-                                            ys = [raw_b[1], raw_b[3], raw_b[5], raw_b[7]]
-                                            cell_bbox = (min(xs), min(ys), max(xs), max(ys))
+                                            xs = [
+                                                raw_b[0],
+                                                raw_b[2],
+                                                raw_b[4],
+                                                raw_b[6],
+                                            ]
+                                            ys = [
+                                                raw_b[1],
+                                                raw_b[3],
+                                                raw_b[5],
+                                                raw_b[7],
+                                            ]
+                                            cell_bbox = (
+                                                min(xs),
+                                                min(ys),
+                                                max(xs),
+                                                max(ys),
+                                            )
                                             bbox_idx += 1
-                                            
+
                                         grid[(curr_row, curr_col)] = {
-                                            'bbox': cell_bbox,
-                                            'rowspan': rowspan,
-                                            'colspan': colspan
+                                            "bbox": cell_bbox,
+                                            "rowspan": rowspan,
+                                            "colspan": colspan,
                                         }
                                         occupied.add((curr_row, curr_col))
                                         curr_col += 1
-                                    elif t.startswith('<td'):
+                                    elif t.startswith("<td"):
                                         rowspan = 1
                                         colspan = 1
                                         attr_tokens = []
                                         token_idx += 1
-                                        
-                                        while token_idx < len(structure_tokens) and structure_tokens[token_idx] != '>':
-                                            attr_tokens.append(structure_tokens[token_idx])
+
+                                        while (
+                                            token_idx < len(structure_tokens)
+                                            and structure_tokens[token_idx] != ">"
+                                        ):
+                                            attr_tokens.append(
+                                                structure_tokens[token_idx]
+                                            )
                                             token_idx += 1
-                                            
-                                        if token_idx < len(structure_tokens) and structure_tokens[token_idx] == '>':
+
+                                        if (
+                                            token_idx < len(structure_tokens)
+                                            and structure_tokens[token_idx] == ">"
+                                        ):
                                             token_idx += 1
-                                            
-                                        if token_idx < len(structure_tokens) and structure_tokens[token_idx] == '</td>':
+
+                                        if (
+                                            token_idx < len(structure_tokens)
+                                            and structure_tokens[token_idx] == "</td>"
+                                        ):
                                             token_idx += 1
-                                            
+
                                         attr_str = "".join(attr_tokens)
-                                        r_match = re.search(r'rowspan="(\d+)"', attr_str)
+                                        r_match = re.search(
+                                            r'rowspan="(\d+)"', attr_str
+                                        )
                                         if r_match:
                                             rowspan = int(r_match.group(1))
-                                        c_match = re.search(r'colspan="(\d+)"', attr_str)
+                                        c_match = re.search(
+                                            r'colspan="(\d+)"', attr_str
+                                        )
                                         if c_match:
                                             colspan = int(c_match.group(1))
-                                            
+
                                         while (curr_row, curr_col) in occupied:
                                             curr_col += 1
-                                            
+
                                         cell_bbox = None
                                         if bbox_idx < len(bboxes):
                                             raw_b = bboxes[bbox_idx]
-                                            xs = [raw_b[0], raw_b[2], raw_b[4], raw_b[6]]
-                                            ys = [raw_b[1], raw_b[3], raw_b[5], raw_b[7]]
-                                            cell_bbox = (min(xs), min(ys), max(xs), max(ys))
+                                            xs = [
+                                                raw_b[0],
+                                                raw_b[2],
+                                                raw_b[4],
+                                                raw_b[6],
+                                            ]
+                                            ys = [
+                                                raw_b[1],
+                                                raw_b[3],
+                                                raw_b[5],
+                                                raw_b[7],
+                                            ]
+                                            cell_bbox = (
+                                                min(xs),
+                                                min(ys),
+                                                max(xs),
+                                                max(ys),
+                                            )
                                             bbox_idx += 1
-                                            
+
                                         grid[(curr_row, curr_col)] = {
-                                            'bbox': cell_bbox,
-                                            'rowspan': rowspan,
-                                            'colspan': colspan
+                                            "bbox": cell_bbox,
+                                            "rowspan": rowspan,
+                                            "colspan": colspan,
                                         }
-                                        
+
                                         for dr in range(rowspan):
                                             for dc in range(colspan):
-                                                occupied.add((curr_row + dr, curr_col + dc))
+                                                occupied.add(
+                                                    (curr_row + dr, curr_col + dc)
+                                                )
                                         curr_col += colspan
                                     else:
                                         token_idx += 1
-                                
+
                                 if occupied:
                                     row_count = max(r for r, c in occupied) + 1
                                     col_count = max(c for r, c in occupied) + 1
-                                    
+
                                     pdf_tx0 = tx0 * scale_x
                                     pdf_ty0 = ty0 * scale_y
                                     page_words = page.extract_words()
-                                    
+
                                     rows_data = []
                                     merges = []
-                                    
+
                                     for r in range(row_count):
                                         row_cells = []
                                         for c in range(col_count):
                                             cell = grid.get((r, c))
                                             if cell:
-                                                cb = cell['bbox']
+                                                cb = cell["bbox"]
                                                 cell_text = ""
                                                 if cb:
-                                                    cx0_abs = pdf_tx0 + cb[0] * scale_x - 1.5
+                                                    cx0_abs = (
+                                                        pdf_tx0 + cb[0] * scale_x - 1.5
+                                                    )
                                                     cy0_abs = pdf_ty0 + cb[1] * scale_y
-                                                    cx1_abs = pdf_tx0 + cb[2] * scale_x + 1.5
+                                                    cx1_abs = (
+                                                        pdf_tx0 + cb[2] * scale_x + 1.5
+                                                    )
                                                     cy1_abs = pdf_ty0 + cb[3] * scale_y
-                                                    
-                                                    cx0_abs = max(0.0, min(cx0_abs, pdf_w))
-                                                    cy0_abs = max(0.0, min(cy0_abs, pdf_h))
-                                                    cx1_abs = max(0.0, min(cx1_abs, pdf_w))
-                                                    cy1_abs = max(0.0, min(cy1_abs, pdf_h))
-                                                    
-                                                    if cx1_abs > cx0_abs and cy1_abs > cy0_abs:
+
+                                                    cx0_abs = max(
+                                                        0.0, min(cx0_abs, pdf_w)
+                                                    )
+                                                    cy0_abs = max(
+                                                        0.0, min(cy0_abs, pdf_h)
+                                                    )
+                                                    cx1_abs = max(
+                                                        0.0, min(cx1_abs, pdf_w)
+                                                    )
+                                                    cy1_abs = max(
+                                                        0.0, min(cy1_abs, pdf_h)
+                                                    )
+
+                                                    if (
+                                                        cx1_abs > cx0_abs
+                                                        and cy1_abs > cy0_abs
+                                                    ):
                                                         cell_words = [
-                                                            w for w in page_words
-                                                            if cy0_abs <= (w['top'] + w['bottom']) / 2.0 <= cy1_abs
-                                                            and cx0_abs <= (w['x0'] + w['x1']) / 2.0 <= cx1_abs
+                                                            w
+                                                            for w in page_words
+                                                            if cy0_abs
+                                                            <= (w["top"] + w["bottom"])
+                                                            / 2.0
+                                                            <= cy1_abs
+                                                            and cx0_abs
+                                                            <= (w["x0"] + w["x1"]) / 2.0
+                                                            <= cx1_abs
                                                         ]
-                                                        cell_words = sorted(cell_words, key=lambda w: w['x0'])
-                                                        cell_text = " ".join(w['text'] for w in cell_words).strip()
-                                                
+                                                        cell_words = sorted(
+                                                            cell_words,
+                                                            key=lambda w: w["x0"],
+                                                        )
+                                                        cell_text = " ".join(
+                                                            w["text"]
+                                                            for w in cell_words
+                                                        ).strip()
+
                                                 row_cells.append(cell_text)
-                                                if cell['rowspan'] > 1 or cell['colspan'] > 1:
-                                                    merges.append((r, c, r + cell['rowspan'] - 1, c + cell['colspan'] - 1))
+                                                if (
+                                                    cell["rowspan"] > 1
+                                                    or cell["colspan"] > 1
+                                                ):
+                                                    merges.append(
+                                                        (
+                                                            r,
+                                                            c,
+                                                            r + cell["rowspan"] - 1,
+                                                            c + cell["colspan"] - 1,
+                                                        )
+                                                    )
                                             else:
                                                 row_cells.append(None)
                                         rows_data.append(row_cells)
-                                    
+
                                     col_widths = [0.0] * col_count
                                     for c in range(col_count):
                                         widths_c = []
                                         for r in range(row_count):
                                             cell = grid.get((r, c))
-                                            if cell and cell['colspan'] == 1 and cell['bbox']:
-                                                cb = cell['bbox']
+                                            if (
+                                                cell
+                                                and cell["colspan"] == 1
+                                                and cell["bbox"]
+                                            ):
+                                                cb = cell["bbox"]
                                                 w_pt = (cb[2] - cb[0]) * scale_x
                                                 widths_c.append(w_pt)
                                         if widths_c:
-                                            col_widths[c] = sum(widths_c) / len(widths_c)
+                                            col_widths[c] = sum(widths_c) / len(
+                                                widths_c
+                                            )
                                         else:
                                             col_widths[c] = 72.0
-                                            
-                                    rows_data = PageScanner._repair_split_headers(rows_data)
-                                    rows_data = PageScanner._fix_header_rowspan(rows_data)
-                                    
-                                    all_tables.append({
-                                        "bbox": (x0, top, x1, bottom),
-                                        "rows": rows_data,
-                                        "col_count": col_count,
-                                        "col_widths": col_widths,
-                                        "extracted_title": None,
-                                        "merges": merges
-                                    })
+
+                                    rows_data = PageScanner._repair_split_headers(
+                                        rows_data
+                                    )
+                                    rows_data = PageScanner._fix_header_rowspan(
+                                        rows_data
+                                    )
+
+                                    all_tables.append(
+                                        {
+                                            "bbox": (x0, top, x1, bottom),
+                                            "rows": rows_data,
+                                            "col_count": col_count,
+                                            "col_widths": col_widths,
+                                            "extracted_title": None,
+                                            "merges": merges,
+                                        }
+                                    )
                                     structure_success = True
-                                    logger.info("Successfully extracted table %d on page %d using TableStructureRecognition", i + 1, page.page_number)
+                                    logger.info(
+                                        "Successfully extracted table %d on page %d using TableStructureRecognition",
+                                        i + 1,
+                                        page.page_number,
+                                    )
                         finally:
                             if os.path.exists(table_img_path):
                                 os.unlink(table_img_path)
-                except Exception as ex:
-                    logger.exception("Failed TableStructureRecognition for table %d on page %d, falling back to heuristic", i + 1, page.page_number)
-                
+                except Exception:
+                    logger.exception(
+                        "Failed TableStructureRecognition for table %d on page %d, falling back to heuristic",
+                        i + 1,
+                        page.page_number,
+                    )
+
                 if not structure_success:
                     cropped_page = page.crop((x0, top, x1, bottom))
-                    tables_data = PageScanner._extract_tables_with_fallback(cropped_page)
+                    tables_data = PageScanner._extract_tables_with_fallback(
+                        cropped_page
+                    )
                     if tables_data:
                         all_tables.extend(tables_data)
-            
+
             return all_tables if all_tables else None
 
-        except Exception as e:
-            logger.exception("Error in layout-based table extraction on page %d", page.page_number)
+        except Exception:
+            logger.exception(
+                "Error in layout-based table extraction on page %d", page.page_number
+            )
             return None
         finally:
             if temp_img_path and os.path.exists(temp_img_path):
                 try:
                     os.unlink(temp_img_path)
                 except Exception as e:
-                    logger.warning("Could not delete temporary image file %s: %s", temp_img_path, str(e))
+                    logger.warning(
+                        "Could not delete temporary image file %s: %s",
+                        temp_img_path,
+                        str(e),
+                    )
 
     @staticmethod
-    def scan_page(page, pdf_path: str | None = None, config: PDFToExcelConfig | None = None) -> PageScan:
+    def scan_page(
+        page, pdf_path: str | None = None, config: PDFToExcelConfig | None = None
+    ) -> PageScan:
         """Harvest every element from a single page without any analysis."""
         page_num = page.page_number  # 1-indexed by pdfplumber
         width = float(page.width)
@@ -565,16 +731,25 @@ class PageScanner:
 
         if is_blank or is_image_only:
             return PageScan(
-                page_num=page_num, width=width, height=height,
-                chars=[], words=[], tables=[], rects=[], lines=[], images=images,
-                is_blank=is_blank, is_image_only=is_image_only,
+                page_num=page_num,
+                width=width,
+                height=height,
+                chars=[],
+                words=[],
+                tables=[],
+                rects=[],
+                lines=[],
+                images=images,
+                is_blank=is_blank,
+                is_image_only=is_image_only,
                 is_landscape=is_landscape,
             )
 
         # Words with font metadata (critical for header detection)
         words = page.extract_words(
             keep_blank_chars=False,
-            x_tolerance=3, y_tolerance=3,
+            x_tolerance=3,
+            y_tolerance=3,
             extra_attrs=["fontname", "size"],
         )
 
@@ -582,16 +757,23 @@ class PageScanner:
         tables_data = None
         if config and config.enable_layout_detection and pdf_path:
             tables_data = PageScanner._extract_tables_via_layout(page, pdf_path, config)
-            
+
         if tables_data is None:
             # Fallback/default strategy chain
             tables_data = PageScanner._extract_tables_with_fallback(page)
 
         return PageScan(
-            page_num=page_num, width=width, height=height,
-            chars=chars, words=words, tables=tables_data,
-            rects=page.rects, lines=page.lines, images=images,
-            is_blank=False, is_image_only=False,
+            page_num=page_num,
+            width=width,
+            height=height,
+            chars=chars,
+            words=words,
+            tables=tables_data,
+            rects=page.rects,
+            lines=page.lines,
+            images=images,
+            is_blank=False,
+            is_image_only=False,
             is_landscape=is_landscape,
         )
 
@@ -610,9 +792,12 @@ class PageScanner:
                     b1 = t1.bbox
                     b2 = t2.bbox
                     # Check if b1 is entirely inside b2
-                    if (b1[0] >= b2[0] - 2 and b1[1] >= b2[1] - 2 and
-                        b1[2] <= b2[2] + 2 and b1[3] <= b2[3] + 2):
-
+                    if (
+                        b1[0] >= b2[0] - 2
+                        and b1[1] >= b2[1] - 2
+                        and b1[2] <= b2[2] + 2
+                        and b1[3] <= b2[3] + 2
+                    ):
                         # Tie breaker for exact duplicates: keep the first one
                         if b1 == b2:
                             if i > j:
@@ -666,7 +851,7 @@ class PageScanner:
                     continue
 
                 # Single-col table: try vertical=text, horizontal=lines on crop
-                bbox = t.bbox   # (x0, top, x1, bottom)
+                bbox = t.bbox  # (x0, top, x1, bottom)
                 # Expand vertically to capture header text above first line.
                 # Use the root page to crop from, preventing crop-on-crop boundary errors.
                 root_page = page.parent_page if hasattr(page, "parent_page") else page
@@ -675,12 +860,14 @@ class PageScanner:
                 cropped = root_page.crop((0, crop_top, root_page.width, crop_bottom))
 
                 # Try lines-based rows, text-based columns
-                t_hyb = cropped.find_tables(table_settings={
-                    "vertical_strategy": "text",
-                    "horizontal_strategy": "lines",
-                    "snap_tolerance": 5,
-                    "join_tolerance": 5,
-                })
+                t_hyb = cropped.find_tables(
+                    table_settings={
+                        "vertical_strategy": "text",
+                        "horizontal_strategy": "lines",
+                        "snap_tolerance": 5,
+                        "join_tolerance": 5,
+                    }
+                )
                 if t_hyb and len((t_hyb[0].extract() or [[]])[0]) > 1:
                     # Get col x-ranges from hybrid cell boundaries
                     hyb_rows = t_hyb[0].extract()
@@ -689,34 +876,38 @@ class PageScanner:
                         xs_set.add(cell[0])
                         xs_set.add(cell[2])
                     xs = sorted(xs_set)
-                    col_x_ranges = [(xs[i], xs[i+1]) for i in range(len(xs)-1)]
+                    col_x_ranges = [(xs[i], xs[i + 1]) for i in range(len(xs) - 1)]
 
                     # Find words above the table that form the header row.
                     # pdfplumber preserves original page coords even after crop(),
                     # so t_hyb[0].bbox[1] is already in original page y-coords.
                     hyb_table_top = t_hyb[0].bbox[1]
-                    original_header_bottom = hyb_table_top   # top of first data row
-                    original_header_top = crop_top           # = bbox[1] - 30 of S1 table
+                    original_header_bottom = hyb_table_top  # top of first data row
+                    original_header_top = crop_top  # = bbox[1] - 30 of S1 table
 
                     words = page.extract_words()
                     header_words = [
-                        w for w in words
-                        if original_header_top <= w['top'] < original_header_bottom
+                        w
+                        for w in words
+                        if original_header_top <= w["top"] < original_header_bottom
                     ]
 
                     if header_words:
                         # ---- Determine column boundaries from header words ----
                         # Group header words by their y-position (line)
                         from collections import defaultdict
+
                         lines_by_y = defaultdict(list)
                         for w in header_words:
-                            y_key = round(w['top'], 0)
+                            y_key = round(w["top"], 0)
                             lines_by_y[y_key].append(w)
 
                         if lines_by_y:
                             # Use the last line in the header area (closest to table)
                             last_y = max(lines_by_y.keys())
-                            hdr_line_words = sorted(lines_by_y[last_y], key=lambda w: w['x0'])
+                            hdr_line_words = sorted(
+                                lines_by_y[last_y], key=lambda w: w["x0"]
+                            )
 
                             # Build column ranges from word positions in the header line
                             # Each word (or group of close words) = one column
@@ -728,34 +919,43 @@ class PageScanner:
                                 # Find the largest gaps between words to split columns
                                 gaps = []
                                 for wi in range(len(hdr_line_words) - 1):
-                                    gap = hdr_line_words[wi+1]['x0'] - hdr_line_words[wi]['x1']
+                                    gap = (
+                                        hdr_line_words[wi + 1]["x0"]
+                                        - hdr_line_words[wi]["x1"]
+                                    )
                                     gaps.append((gap, wi))
                                 # Sort by gap size, pick top (target_cols-1) as column separators
                                 split_points = sorted(
-                                    sorted(gaps, key=lambda g: -g[0])[:target_cols-1],
-                                    key=lambda g: g[1]
+                                    sorted(gaps, key=lambda g: -g[0])[
+                                        : target_cols - 1
+                                    ],
+                                    key=lambda g: g[1],
                                 )
                                 col_texts = []
                                 start = 0
                                 for _, split_idx in split_points:
-                                    group = hdr_line_words[start:split_idx+1]
-                                    col_texts.append(' '.join(w['text'] for w in group))
+                                    group = hdr_line_words[start : split_idx + 1]
+                                    col_texts.append(" ".join(w["text"] for w in group))
                                     start = split_idx + 1
-                                col_texts.append(' '.join(w['text'] for w in hdr_line_words[start:]))
+                                col_texts.append(
+                                    " ".join(w["text"] for w in hdr_line_words[start:])
+                                )
                             else:
                                 # Fewer words than cols: project onto col_x_ranges
-                                col_texts = [''] * target_cols
+                                col_texts = [""] * target_cols
                                 for w in hdr_line_words:
-                                    cx = (w['x0'] + w['x1']) / 2
+                                    cx = (w["x0"] + w["x1"]) / 2
                                     for ci, (x0, x1) in enumerate(col_x_ranges):
                                         if x0 - 8 <= cx <= x1 + 8:
-                                            col_texts[ci] = (col_texts[ci] + ' ' + w['text']).strip()
+                                            col_texts[ci] = (
+                                                col_texts[ci] + " " + w["text"]
+                                            ).strip()
                                             break
 
                             # Pad/trim to match column count
                             while len(col_texts) < len(col_x_ranges):
-                                col_texts.append('')
-                            col_texts = col_texts[:len(col_x_ranges)]
+                                col_texts.append("")
+                            col_texts = col_texts[: len(col_x_ranges)]
 
                             # Only use if >=2 cols got text
                             if sum(1 for c in col_texts if c) >= 2:
@@ -763,14 +963,16 @@ class PageScanner:
 
                     # Build a fake packaged dict directly
                     col_widths = [x1 - x0 for x0, x1 in col_x_ranges]
-                    rescued.append({
-                        "bbox": (bbox[0], original_header_top, bbox[2], bbox[3]),
-                        "rows": hyb_rows,
-                        "col_count": len(col_x_ranges),
-                        "col_widths": col_widths,
-                        "extracted_title": None,
-                        "_pre_packaged": True,
-                    })
+                    rescued.append(
+                        {
+                            "bbox": (bbox[0], original_header_top, bbox[2], bbox[3]),
+                            "rows": hyb_rows,
+                            "col_count": len(col_x_ranges),
+                            "col_widths": col_widths,
+                            "extracted_title": None,
+                            "_pre_packaged": True,
+                        }
+                    )
                     any_rescued = True
                     skip_s3 = True
                 else:
@@ -792,8 +994,7 @@ class PageScanner:
             found_text = page.find_tables(table_settings=TEXT_TABLE_SETTINGS)
             if found_text:
                 found_text = PageScanner._filter_nested_tables(found_text)
-                valid = [t for t in found_text
-                         if len((t.extract() or [[]])[0]) > 1]
+                valid = [t for t in found_text if len((t.extract() or [[]])[0]) > 1]
                 if valid:
                     return PageScanner._package_tables(valid)
 
@@ -833,7 +1034,7 @@ class PageScanner:
                 is_title_row = (
                     len(non_empty0) == 1
                     and len(non_empty1) >= 2
-                    and all((c is None or str(c).strip() == '') for c in row0[1:])
+                    and all((c is None or str(c).strip() == "") for c in row0[1:])
                 )
                 if is_title_row:
                     extracted_title = str(non_empty0[0]).strip()
@@ -850,13 +1051,15 @@ class PageScanner:
 
             col_count = len(rows_data[0]) if rows_data else col_count
 
-            result.append({
-                "bbox": t.bbox,
-                "rows": rows_data,
-                "col_count": col_count,
-                "col_widths": col_widths,
-                "extracted_title": extracted_title,
-            })
+            result.append(
+                {
+                    "bbox": t.bbox,
+                    "rows": rows_data,
+                    "col_count": col_count,
+                    "col_widths": col_widths,
+                    "extracted_title": extracted_title,
+                }
+            )
         return result
 
     @staticmethod
@@ -912,7 +1115,7 @@ class PageScanner:
 
         # If every odd row (1, 3, 5, ...) is completely empty, strip them
         odd_rows_all_empty = all(
-            all(c is None or str(c).strip() == '' for c in rows_data[i])
+            all(c is None or str(c).strip() == "" for c in rows_data[i])
             for i in range(1, len(rows_data), 2)
         )
         if odd_rows_all_empty and len(rows_data) > 2:
@@ -924,6 +1127,7 @@ class PageScanner:
 # ============================================================================
 # Phase 2: Content Classifier
 # ============================================================================
+
 
 class ContentClassifier:
     """Classifies text elements into structural roles using font/position heuristics."""
@@ -959,8 +1163,12 @@ class ContentClassifier:
                     bottom_counter[txt] += 1
 
         threshold = min(3, max(2, text_page_count // 10))
-        self._repeating_top_texts = {t for t, c in top_counter.items() if c >= threshold}
-        self._repeating_bottom_texts = {t for t, c in bottom_counter.items() if c >= threshold}
+        self._repeating_top_texts = {
+            t for t, c in top_counter.items() if c >= threshold
+        }
+        self._repeating_bottom_texts = {
+            t for t, c in bottom_counter.items() if c >= threshold
+        }
 
     # ------------------------------------------------------------------
     # Per-page classification
@@ -971,9 +1179,13 @@ class ContentClassifier:
         if scan.is_blank or scan.is_image_only:
             return ClassifiedContent(
                 page_num=scan.page_num,
-                section_headers=[], sub_headers=[], captions=[],
-                footnotes=[], tables=scan.tables,
-                median_body_size=0.0, body_fontname="",
+                section_headers=[],
+                sub_headers=[],
+                captions=[],
+                footnotes=[],
+                tables=scan.tables,
+                median_body_size=0.0,
+                body_fontname="",
             )
 
         median_size, body_font = self._font_stats(scan.chars)
@@ -997,7 +1209,10 @@ class ContentClassifier:
             stripped = line_text.strip()
 
             # Skip repeating headers / footers
-            if stripped in self._repeating_top_texts or stripped in self._repeating_bottom_texts:
+            if (
+                stripped in self._repeating_top_texts
+                or stripped in self._repeating_bottom_texts
+            ):
                 continue
 
             # Skip text that sits inside a table bounding box
@@ -1006,22 +1221,33 @@ class ContentClassifier:
 
             # Compute line properties
             is_bold = any(
-                "Bold" in w.get("fontname", "") or "bold" in w.get("fontname", "").lower()
+                "Bold" in w.get("fontname", "")
+                or "bold" in w.get("fontname", "").lower()
                 for w in line_words
             )
             max_font = max((w.get("size", 0) for w in line_words), default=0)
             is_above_table = first_table_top is not None and line_top < first_table_top
-            is_below_table = last_table_bottom is not None and line_top > last_table_bottom
+            is_below_table = (
+                last_table_bottom is not None and line_top > last_table_bottom
+            )
 
             # Classification logic
-            if is_bold and max_font >= median_size * HEADER_FONT_RATIO and is_above_table:
+            if (
+                is_bold
+                and max_font >= median_size * HEADER_FONT_RATIO
+                and is_above_table
+            ):
                 # Add word and character limit to avoid matching prose paragraphs
                 if len(stripped.split()) <= 12 and len(stripped) <= 80:
                     clean = self._clean_header(line_text)
                     if clean:
                         section_headers.append((clean, line_top, max_font))
 
-            elif is_bold and max_font >= median_size * SUBHEADER_FONT_RATIO and is_above_table:
+            elif (
+                is_bold
+                and max_font >= median_size * SUBHEADER_FONT_RATIO
+                and is_above_table
+            ):
                 if len(stripped.split()) <= 12 and len(stripped) <= 80:
                     clean = self._clean_header(line_text)
                     if clean:
@@ -1077,7 +1303,9 @@ class ContentClassifier:
             if abs(w["top"] - cur_top) <= 3:
                 cur_words.append(w)
             else:
-                lines.append((cur_words, cur_top, " ".join(c["text"] for c in cur_words)))
+                lines.append(
+                    (cur_words, cur_top, " ".join(c["text"] for c in cur_words))
+                )
                 cur_words = [w]
                 cur_top = w["top"]
         lines.append((cur_words, cur_top, " ".join(c["text"] for c in cur_words)))
@@ -1091,9 +1319,9 @@ class ContentClassifier:
     @staticmethod
     def _clean_header(text: str) -> str:
         """Strip math artifacts, excess whitespace, trailing punctuation from header text."""
-        cleaned = MATH_ARTIFACTS_RE.sub('', text)
-        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
-        cleaned = cleaned.rstrip('. ')
+        cleaned = MATH_ARTIFACTS_RE.sub("", text)
+        cleaned = re.sub(r"\s+", " ", cleaned).strip()
+        cleaned = cleaned.rstrip(". ")
         return cleaned
 
 
@@ -1101,11 +1329,14 @@ class ContentClassifier:
 # Phase 3: Structural Analyzer
 # ============================================================================
 
+
 class StructuralAnalyzer:
     """Builds the document's logical section → table-group tree."""
 
     @staticmethod
-    def analyze(classified_pages: list[ClassifiedContent], metadata: dict) -> DocumentStructure:
+    def analyze(
+        classified_pages: list[ClassifiedContent], metadata: dict
+    ) -> DocumentStructure:
         doc = DocumentStructure(metadata=metadata)
         current_section: Section | None = None
 
@@ -1158,7 +1389,7 @@ class StructuralAnalyzer:
                     elif len(page.tables) == 1 and i < len(page.captions):
                         cap_text = page.captions[i][0]
                         words_in_cap = cap_text.split()
-                        is_sentence_fragment = cap_text.rstrip().endswith('.')
+                        is_sentence_fragment = cap_text.rstrip().endswith(".")
                         if 2 <= len(words_in_cap) <= 6 and not is_sentence_fragment:
                             tg.title = cap_text
 
@@ -1169,7 +1400,11 @@ class StructuralAnalyzer:
 
         # close final section
         if current_section is not None:
-            last_page = classified_pages[-1].page_num if classified_pages else current_section.page_range[0]
+            last_page = (
+                classified_pages[-1].page_num
+                if classified_pages
+                else current_section.page_range[0]
+            )
             current_section.page_range = (current_section.page_range[0], last_page)
             doc.sections.append(current_section)
 
@@ -1187,6 +1422,7 @@ class StructuralAnalyzer:
 # ============================================================================
 # Phase 4: Cross-Page Stitcher
 # ============================================================================
+
 
 class CrossPageStitcher:
     """Detects and merges continuation tables across page boundaries."""
@@ -1229,17 +1465,23 @@ class CrossPageStitcher:
                 if curr.merges:
                     if header_repeated:
                         # Shift merges that are completely in the data rows (start_row >= len(curr.header_row)).
-                        offset = (len(prev.header_row) + len(prev.data_rows)) - len(curr.header_row)
+                        offset = (len(prev.header_row) + len(prev.data_rows)) - len(
+                            curr.header_row
+                        )
                         for m in curr.merges:
                             start_r, start_c, end_r, end_c = m
                             if start_r >= len(curr.header_row):
-                                prev.merges.append((start_r + offset, start_c, end_r + offset, end_c))
+                                prev.merges.append(
+                                    (start_r + offset, start_c, end_r + offset, end_c)
+                                )
                     else:
                         # Shift all merges in curr
                         offset = len(prev.header_row) + len(prev.data_rows)
                         for m in curr.merges:
                             start_r, start_c, end_r, end_c = m
-                            prev.merges.append((start_r + offset, start_c, end_r + offset, end_c))
+                            prev.merges.append(
+                                (start_r + offset, start_c, end_r + offset, end_c)
+                            )
 
                 prev.data_rows.extend(rows_to_add)
                 prev.source_pages.extend(curr.source_pages)
@@ -1255,7 +1497,11 @@ class CrossPageStitcher:
             return False
 
         # Column width ratios must be similar
-        if prev.col_widths and curr.col_widths and len(prev.col_widths) == len(curr.col_widths):
+        if (
+            prev.col_widths
+            and curr.col_widths
+            and len(prev.col_widths) == len(curr.col_widths)
+        ):
             total_p = sum(prev.col_widths) or 1
             total_c = sum(curr.col_widths) or 1
             for wp, wc in zip(prev.col_widths, curr.col_widths):
@@ -1278,7 +1524,8 @@ class CrossPageStitcher:
         if min_len == 0:
             return False
         matches = sum(
-            1 for a, b in zip(original, candidate)
+            1
+            for a, b in zip(original, candidate)
             if CrossPageStitcher._norm(a) == CrossPageStitcher._norm(b)
         )
         return (matches / min_len) >= HEADER_MATCH_THRESHOLD
@@ -1287,30 +1534,37 @@ class CrossPageStitcher:
     def _norm(val) -> str:
         if val is None:
             return ""
-        return re.sub(r'\s+', ' ', str(val).lower().strip())
+        return re.sub(r"\s+", " ", str(val).lower().strip())
 
 
 # ============================================================================
 # Phase 5: Data Normalizer
 # ============================================================================
 
+
 class DataNormalizer:
     """Parses and types every cell value for proper Excel formatting."""
 
     # Pre-compiled patterns (class-level for performance)
     _RE_CURRENCY = re.compile(
-        r'^([£$€¥₹₽¢])\s*([+-]?\d{1,3}(?:[,.\s]\d{3})*(?:[.,]\d+)?)\s*$|'
-        r'^([+-]?\d{1,3}(?:[,.\s]\d{3})*(?:[.,]\d+)?)\s*([£$€¥₹₽¢])\s*$'
+        r"^([£$€¥₹₽¢])\s*([+-]?\d{1,3}(?:[,.\s]\d{3})*(?:[.,]\d+)?)\s*$|"
+        r"^([+-]?\d{1,3}(?:[,.\s]\d{3})*(?:[.,]\d+)?)\s*([£$€¥₹₽¢])\s*$"
     )
-    _RE_SCI = re.compile(r'^[+-]?\d+\.?\d*[eE][+-]?\d+$')
-    _RE_INT_COMMA = re.compile(r'^[+-]?\d{1,3}(?:,\d{3})*$')
-    _RE_FLOAT_COMMA = re.compile(r'^[+-]?\d{1,3}(?:,\d{3})*\.\d+$')
+    _RE_SCI = re.compile(r"^[+-]?\d+\.?\d*[eE][+-]?\d+$")
+    _RE_INT_COMMA = re.compile(r"^[+-]?\d{1,3}(?:,\d{3})*$")
+    _RE_FLOAT_COMMA = re.compile(r"^[+-]?\d{1,3}(?:,\d{3})*\.\d+$")
     _DATE_PATS = [
-        re.compile(r'^\d{4}-\d{2}-\d{2}$'),                                                   # 2024-01-15
-        re.compile(r'^\d{2}/\d{2}/\d{4}$'),                                                    # 01/15/2024
-        re.compile(r'^\d{2}-\d{2}-\d{4}$'),                                                    # 01-15-2024
-        re.compile(r'^\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+\d{4}$', re.I),
-        re.compile(r'^(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+\d{1,2},?\s+\d{4}$', re.I),
+        re.compile(r"^\d{4}-\d{2}-\d{2}$"),  # 2024-01-15
+        re.compile(r"^\d{2}/\d{2}/\d{4}$"),  # 01/15/2024
+        re.compile(r"^\d{2}-\d{2}-\d{4}$"),  # 01-15-2024
+        re.compile(
+            r"^\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+\d{4}$",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"^(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+\d{1,2},?\s+\d{4}$",
+            re.IGNORECASE,
+        ),
     ]
 
     @staticmethod
@@ -1353,7 +1607,7 @@ class DataNormalizer:
         if m:
             g = m.groups()
             symbol = g[0] or g[3]
-            num_str = re.sub(r'[,\s]', '', g[1] or g[2])
+            num_str = re.sub(r"[,\s]", "", g[1] or g[2])
             try:
                 return (float(num_str), f"currency_{symbol}")
             except ValueError:
@@ -1364,6 +1618,7 @@ class DataNormalizer:
             if pat.match(text):
                 try:
                     from dateutil.parser import parse as _dp
+
                     return (_dp(text), "date")
                 except Exception:
                     pass
@@ -1378,32 +1633,33 @@ class DataNormalizer:
 
         # 6. Integer (with optional comma grouping)
         if DataNormalizer._RE_INT_COMMA.match(text):
-            return (int(text.replace(',', '')), "integer")
+            return (int(text.replace(",", "")), "integer")
 
         # 7. Float (with optional comma grouping)
         if DataNormalizer._RE_FLOAT_COMMA.match(text):
-            return (round(float(text.replace(',', '')), 4), "float")
+            return (round(float(text.replace(",", "")), 4), "float")
 
         # 8. Plain number (no grouping separators)
         try:
-            if '.' in text:
+            if "." in text:
                 return (round(float(text), 4), "float")
             return (int(text), "integer")
         except ValueError:
             pass
 
         # 9. String — unicode normalize + strip control chars
-        cleaned = unicodedata.normalize('NFKC', text)
-        cleaned = ''.join(
-            c for c in cleaned
-            if not unicodedata.category(c).startswith('C') or c in '\n\t'
+        cleaned = unicodedata.normalize("NFKC", text)
+        cleaned = "".join(
+            c
+            for c in cleaned
+            if not unicodedata.category(c).startswith("C") or c in "\n\t"
         )
 
         # Repair visual text wrapping: replace single newlines with spaces.
         # But preserve double newlines (paragraphs) and bulleted list newlines.
         # Bullet patterns: -, •, *, 1.
-        if '\n' in cleaned:
-            parts = cleaned.split('\n')
+        if "\n" in cleaned:
+            parts = cleaned.split("\n")
             fixed_parts = []
             for i, part in enumerate(parts):
                 stripped = part.strip()
@@ -1412,29 +1668,31 @@ class DataNormalizer:
                     continue
 
                 # Check if this part looks like the start of a new item
-                is_bullet = bool(re.match(r'^[-•*]|\d+\.', stripped))
-                prev_is_empty = (parts[i-1].strip() == "")
+                is_bullet = bool(re.match(r"^[-•*]|\d+\.", stripped))
+                prev_is_empty = parts[i - 1].strip() == ""
 
                 if prev_is_empty:
                     # We need to preserve the double newline
-                    fixed_parts.append('\n\n' + part)
+                    fixed_parts.append("\n\n" + part)
                 elif is_bullet:
-                    fixed_parts.append('\n' + part)
+                    fixed_parts.append("\n" + part)
                 else:
                     # It's a visual wrap continuation, replace newline with space
                     # Ensure we don't double space if there's trailing/leading spaces
-                    if fixed_parts[-1].endswith(' ') or part.startswith(' '):
+                    if fixed_parts[-1].endswith(" ") or part.startswith(" "):
                         # Append directly but strip the newline from original
-                        fixed_parts[-1] += part.lstrip(' ') if fixed_parts[-1].endswith(' ') else part
+                        fixed_parts[-1] += (
+                            part.lstrip(" ") if fixed_parts[-1].endswith(" ") else part
+                        )
                     else:
-                        fixed_parts[-1] += ' ' + part.lstrip(' ')
+                        fixed_parts[-1] += " " + part.lstrip(" ")
 
             # Reconstruct the string, properly keeping double newlines if they existed
             cleaned = "".join(fixed_parts)
             # Cleanup any weird spacing artifacts created by the join
-            cleaned = cleaned.replace(' \n', '\n').replace('\n ', '\n')
+            cleaned = cleaned.replace(" \n", "\n").replace("\n ", "\n")
             # Fix triple newlines from the double newline logic
-            cleaned = cleaned.replace('\n\n\n', '\n\n')
+            cleaned = cleaned.replace("\n\n\n", "\n\n")
 
         return (cleaned, "string")
 
@@ -1499,6 +1757,7 @@ class DataNormalizer:
 # Phase 6: Excel Renderer
 # ============================================================================
 
+
 class ExcelRenderer:
     """Generates a professionally formatted Excel workbook."""
 
@@ -1506,21 +1765,37 @@ class ExcelRenderer:
         self._used_names: set[str] = set()
 
         # Pre-build style objects (reused across all cells)
-        self._font_section = Font(name='Calibri', size=SECTION_TITLE_SIZE, bold=True, color=INDEX_TITLE_COLOR)
-        self._font_header = Font(name='Calibri', size=TABLE_HEADER_SIZE, bold=True, color=HEADER_FONT_COLOR)
-        self._font_data = Font(name='Calibri', size=DATA_CELL_SIZE)
-        self._font_subtitle = Font(name='Calibri', size=11, bold=True, italic=True)
-        self._font_index_title = Font(name='Calibri', size=16, bold=True, color=INDEX_TITLE_COLOR)
-        self._font_message = Font(name='Calibri', size=12, italic=True, color="888888")
+        self._font_section = Font(
+            name="Calibri", size=SECTION_TITLE_SIZE, bold=True, color=INDEX_TITLE_COLOR
+        )
+        self._font_header = Font(
+            name="Calibri", size=TABLE_HEADER_SIZE, bold=True, color=HEADER_FONT_COLOR
+        )
+        self._font_data = Font(name="Calibri", size=DATA_CELL_SIZE)
+        self._font_subtitle = Font(name="Calibri", size=11, bold=True, italic=True)
+        self._font_index_title = Font(
+            name="Calibri", size=16, bold=True, color=INDEX_TITLE_COLOR
+        )
+        self._font_message = Font(name="Calibri", size=12, italic=True, color="888888")
 
-        self._fill_header = PatternFill(start_color=HEADER_FILL_COLOR, end_color=HEADER_FILL_COLOR, fill_type='solid')
-        self._fill_alt = PatternFill(start_color=ALT_ROW_FILL_COLOR, end_color=ALT_ROW_FILL_COLOR, fill_type='solid')
+        self._fill_header = PatternFill(
+            start_color=HEADER_FILL_COLOR,
+            end_color=HEADER_FILL_COLOR,
+            fill_type="solid",
+        )
+        self._fill_alt = PatternFill(
+            start_color=ALT_ROW_FILL_COLOR,
+            end_color=ALT_ROW_FILL_COLOR,
+            fill_type="solid",
+        )
 
-        self._border_header = Border(bottom=Side(style='medium', color=HEADER_BORDER_COLOR))
-        self._border_cell = Border(bottom=Side(style='thin', color=CELL_BORDER_COLOR))
+        self._border_header = Border(
+            bottom=Side(style="medium", color=HEADER_BORDER_COLOR)
+        )
+        self._border_cell = Border(bottom=Side(style="thin", color=CELL_BORDER_COLOR))
 
-        self._align_center = Alignment(horizontal='center', vertical='center')
-        self._align_right = Alignment(horizontal='right')
+        self._align_center = Alignment(horizontal="center", vertical="center")
+        self._align_right = Alignment(horizontal="right")
         self._align_wrap = Alignment(wrap_text=True)
 
     # ------------------------------------------------------------------
@@ -1566,19 +1841,19 @@ class ExcelRenderer:
             if section.tables and section.title:
                 first_section_title = section.title
                 break
-        
+
         if not first_section_title and doc.orphan_tables:
             for tg in doc.orphan_tables:
                 if tg.title:
                     first_section_title = tg.title
                     break
-        
+
         if not first_section_title:
             first_section_title = output_path.stem
 
         sheet_title = clean_sheet_name(first_section_title, set())
         ws = wb.create_sheet(title=sheet_title)
-        
+
         current_row = 1
 
         # Render all sections onto the single worksheet
@@ -1598,7 +1873,7 @@ class ExcelRenderer:
         if doc.orphan_tables:
             if current_row > 1:
                 current_row += 3
-            
+
             for i, tg in enumerate(doc.orphan_tables):
                 label = tg.title or f"Table {i + 1}"
 
@@ -1608,17 +1883,19 @@ class ExcelRenderer:
                 current_row += 2
 
                 # Freeze panes only if it starts at row 1
-                freeze_pane = (current_row - 2 == 1)
-                written = self._write_table(ws, tg, start_row=current_row, freeze=freeze_pane)
+                freeze_pane = current_row - 2 == 1
+                written = self._write_table(
+                    ws, tg, start_row=current_row, freeze=freeze_pane
+                )
                 current_row += written + 3
             has_content = True
 
         # Absolute fallback if no content
         if not has_content:
             ws_fallback = wb.create_sheet(title="Extracted Data")
-            ws_fallback['A1'] = "No tables were detected in this PDF document."
-            ws_fallback['A1'].font = self._font_message
-            ws_fallback.column_dimensions['A'].width = 50
+            ws_fallback["A1"] = "No tables were detected in this PDF document."
+            ws_fallback["A1"].font = self._font_message
+            ws_fallback.column_dimensions["A"].width = 50
             if sheet_title in wb.sheetnames:
                 wb.remove(wb[sheet_title])
 
@@ -1650,22 +1927,28 @@ class ExcelRenderer:
         title_cell = ws.cell(row=row, column=1, value=section.title)
         title_cell.font = self._font_section
         if merge_width > 1:
-            ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=merge_width)
+            ws.merge_cells(
+                start_row=row, start_column=1, end_row=row, end_column=merge_width
+            )
         row += 2  # blank row after title
 
-        first_table = (start_row == 1) # Only freeze if it's the very first table
+        first_table = start_row == 1  # Only freeze if it's the very first table
         for tg in section.tables:
             # Table sub-title (short extracted title or caption only)
             if tg.title:
                 sub = ws.cell(row=row, column=1, value=tg.title)
                 sub.font = self._font_subtitle
                 if merge_width > 1:
-                    ws.merge_cells(start_row=row, start_column=1,
-                                   end_row=row, end_column=min(max(tg.col_count, 2), merge_width))
+                    ws.merge_cells(
+                        start_row=row,
+                        start_column=1,
+                        end_row=row,
+                        end_column=min(max(tg.col_count, 2), merge_width),
+                    )
                 row += 1
 
             written = self._write_table(ws, tg, start_row=row, freeze=first_table)
-            row += written + 2   # 2-row gap between consecutive tables
+            row += written + 2  # 2-row gap between consecutive tables
             first_table = False
 
         return row - start_row
@@ -1674,7 +1957,9 @@ class ExcelRenderer:
     # Table writer (core rendering loop)
     # ------------------------------------------------------------------
 
-    def _write_table(self, ws, tg: TableGroup, start_row: int, freeze: bool = True) -> int:
+    def _write_table(
+        self, ws, tg: TableGroup, start_row: int, freeze: bool = True
+    ) -> int:
         """Write a single normalized table. Returns number of rows written."""
         header, data, col_fmts = DataNormalizer.normalize_table(tg)
         header, data = DataNormalizer.prune_trailing(header, data)
@@ -1683,7 +1968,7 @@ class ExcelRenderer:
             return 0
 
         col_count = len(header) or (len(data[0]) if data else 0)
-        col_widths = [MIN_COL_WIDTH] * col_count   # track for auto-fit
+        col_widths = [MIN_COL_WIDTH] * col_count  # track for auto-fit
         row = start_row
 
         # ---- Header row ----
@@ -1722,29 +2007,34 @@ class ExcelRenderer:
                 # Number formatting
                 if fmt.startswith("currency_"):
                     sym = fmt.split("_", 1)[1]
-                    c.number_format = {'$': '$#,##0.00', '€': '€#,##0.00',
-                                       '£': '£#,##0.00'}.get(sym, '#,##0.00')
+                    c.number_format = {
+                        "$": "$#,##0.00",
+                        "€": "€#,##0.00",
+                        "£": "£#,##0.00",
+                    }.get(sym, "#,##0.00")
                     c.alignment = self._align_right
                 elif fmt == "date":
-                    c.number_format = 'YYYY-MM-DD'
+                    c.number_format = "YYYY-MM-DD"
                     c.alignment = self._align_right
                 elif fmt in ("integer", "float", "scientific"):
                     c.number_format = {
-                        "integer": '#,##0',
-                        "float": '#,##0.00####',
-                        "scientific": '0.00E+00',
+                        "integer": "#,##0",
+                        "float": "#,##0.00####",
+                        "scientific": "0.00E+00",
                     }[fmt]
                     c.alignment = self._align_right
-                elif fmt == "string" and val and '\n' in str(val):
+                elif fmt == "string" and val and "\n" in str(val):
                     c.alignment = self._align_wrap
 
                 if val is not None:
-                    col_widths[ci] = max(col_widths[ci], min(len(str(val)), MAX_COL_WIDTH))
+                    col_widths[ci] = max(
+                        col_widths[ci], min(len(str(val)), MAX_COL_WIDTH)
+                    )
 
             row += 1
 
         # ---- Merge cells ----
-        if hasattr(tg, 'merges') and tg.merges:
+        if hasattr(tg, "merges") and tg.merges:
             max_r_idx = len(header) + len(data) - 1
             max_c_idx = col_count - 1
             for start_r, start_c, end_r, end_c in tg.merges:
@@ -1753,7 +2043,7 @@ class ExcelRenderer:
                 e_r = min(end_r, max_r_idx)
                 s_c = min(start_c, max_c_idx)
                 e_c = min(end_c, max_c_idx)
-                
+
                 # Only merge if it spans more than a single cell
                 if e_r > s_r or e_c > s_c:
                     try:
@@ -1761,11 +2051,17 @@ class ExcelRenderer:
                             start_row=start_row + s_r,
                             start_column=1 + s_c,
                             end_row=start_row + e_r,
-                            end_column=1 + e_c
+                            end_column=1 + e_c,
                         )
                     except Exception as e:
-                        logger.warning("Failed to merge cells (%d,%d) to (%d,%d): %s", 
-                                       start_row + s_r, 1 + s_c, start_row + e_r, 1 + e_c, e)
+                        logger.warning(
+                            "Failed to merge cells (%d,%d) to (%d,%d): %s",
+                            start_row + s_r,
+                            1 + s_c,
+                            start_row + e_r,
+                            1 + e_c,
+                            e,
+                        )
 
         # ---- Auto-fit column widths ----
         for ci in range(col_count):
@@ -1785,6 +2081,7 @@ class ExcelRenderer:
 # Orchestrator
 # ============================================================================
 
+
 class SmartPDFToExcelConverter:
     """Orchestrates the six-phase pipeline."""
 
@@ -1795,7 +2092,9 @@ class SmartPDFToExcelConverter:
         try:
             input_file = Path(input_path)
             if not input_file.exists():
-                return ConversionResult(success=False, error_message="Input file does not exist")
+                return ConversionResult(
+                    success=False, error_message="Input file does not exist"
+                )
 
             validation_err = validate_pdf(str(input_file))
             if validation_err:
@@ -1811,72 +2110,94 @@ class SmartPDFToExcelConverter:
                         needs_ocr = True
                         break
 
+            ocr_temp_path = None
             if needs_ocr:
-                logger.info("Scanned/image-only pages detected. Running OCR pre-processing first...")
-                from backend.services.ocr import run_ocr_on_pdf
-                ocr_res = run_ocr_on_pdf(str(input_file))
-                if ocr_res.success:
-                    input_file = Path(ocr_res.output_path)
-                    logger.info("OCR pre-processing successful. Parsing tables from OCR'ed searchable PDF: %s", input_file)
-                else:
-                    logger.warning("OCR pre-processing failed: %s. Continuing with original PDF.", ocr_res.error_message)
-
-            with pdfplumber.open(input_file) as pdf:
-                meta = pdf.metadata or {}
-                total = len(pdf.pages)
-
-                # ---- Phase 1: Scan ----
-                logger.info("Phase 1/6: Scanning %d pages...", total)
-                scans: list[PageScan] = []
-                for page in pdf.pages:
-                    scans.append(PageScanner.scan_page(page, pdf_path=str(input_file), config=self.config))
-                    page.flush_cache()
-                gc.collect()
-
-                # ---- Phase 2: Classify ----
-                logger.info("Phase 2/6: Classifying content...")
-                classifier = ContentClassifier()
-                classifier.detect_repeating_zones(scans)
-
-                classified: list[ClassifiedContent] = []
-                for scan in scans:
-                    if scan.is_blank or scan.is_image_only:
-                        continue
-                    classified.append(classifier.classify_page(scan))
-
-                del scans  # free memory
-                gc.collect()
-
-                # ---- Phase 3: Structure ----
-                logger.info("Phase 3/6: Analyzing document structure...")
-                doc = StructuralAnalyzer.analyze(classified, meta)
-
-                del classified
-                gc.collect()
-
-                # ---- Phase 4: Stitch ----
-                logger.info("Phase 4/6: Stitching continuation tables...")
-                doc = CrossPageStitcher.stitch(doc)
-
-                # ---- Phase 5 + 6: Normalize & Render ----
-                logger.info("Phase 5-6/6: Rendering Excel workbook...")
-                renderer = ExcelRenderer()
-                renderer.render(doc, output_path)
-
-            gc.collect()
-
-            if not output_path.exists():
-                return ConversionResult(
-                    success=False,
-                    error_message="Conversion completed but output file was not created",
+                logger.info(
+                    "Scanned/image-only pages detected. Running OCR pre-processing first..."
                 )
+                from backend.services.ocr import run_ocr_on_pdf
 
-            logger.info("Conversion complete — stats: %s", doc.stats)
-            return ConversionResult(
-                success=True,
-                output_path=str(output_path),
-                file_size_bytes=output_path.stat().st_size,
-            )
+                ocr_res = run_ocr_on_pdf(str(input_file))
+                if ocr_res.success and ocr_res.output_path:
+                    input_file = Path(ocr_res.output_path)
+                    ocr_temp_path = ocr_res.output_path
+                    logger.info(
+                        "OCR pre-processing successful. Parsing tables from OCR'ed searchable PDF: %s",
+                        input_file,
+                    )
+                else:
+                    logger.warning(
+                        "OCR pre-processing failed: %s. Continuing with original PDF.",
+                        ocr_res.error_message,
+                    )
+
+            try:
+                with pdfplumber.open(input_file) as pdf:
+                    meta = pdf.metadata or {}
+                    total = len(pdf.pages)
+
+                    # ---- Phase 1: Scan ----
+                    logger.info("Phase 1/6: Scanning %d pages...", total)
+                    scans: list[PageScan] = []
+                    for page in pdf.pages:
+                        scans.append(
+                            PageScanner.scan_page(
+                                page, pdf_path=str(input_file), config=self.config
+                            )
+                        )
+                        page.flush_cache()
+                    gc.collect()
+
+                    # ---- Phase 2: Classify ----
+                    logger.info("Phase 2/6: Classifying content...")
+                    classifier = ContentClassifier()
+                    classifier.detect_repeating_zones(scans)
+
+                    classified: list[ClassifiedContent] = []
+                    for scan in scans:
+                        if scan.is_blank or scan.is_image_only:
+                            continue
+                        classified.append(classifier.classify_page(scan))
+
+                    del scans  # free memory
+                    gc.collect()
+
+                    # ---- Phase 3: Structure ----
+                    logger.info("Phase 3/6: Analyzing document structure...")
+                    doc = StructuralAnalyzer.analyze(classified, meta)
+
+                    del classified
+                    gc.collect()
+
+                    # ---- Phase 4: Stitch ----
+                    logger.info("Phase 4/6: Stitching continuation tables...")
+                    doc = CrossPageStitcher.stitch(doc)
+
+                    # ---- Phase 5 + 6: Normalize & Render ----
+                    logger.info("Phase 5-6/6: Rendering Excel workbook...")
+                    renderer = ExcelRenderer()
+                    renderer.render(doc, output_path)
+
+                gc.collect()
+
+                if not output_path.exists():
+                    return ConversionResult(
+                        success=False,
+                        error_message="Conversion completed but output file was not created",
+                    )
+
+                logger.info("Conversion complete — stats: %s", doc.stats)
+                return ConversionResult(
+                    success=True,
+                    output_path=str(output_path),
+                    file_size_bytes=output_path.stat().st_size,
+                )
+            finally:
+                if ocr_temp_path and Path(ocr_temp_path).exists():
+                    try:
+                        Path(ocr_temp_path).unlink(missing_ok=True)
+                    except Exception:
+                        pass
 
         except Exception as e:
             logger.exception("PDF-to-Excel conversion failed")
@@ -1886,6 +2207,7 @@ class SmartPDFToExcelConverter:
 # ============================================================================
 # Public API  (unchanged signature — drop-in replacement)
 # ============================================================================
+
 
 def convert_pdf_to_excel(input_path: str) -> ConversionResult:
     """

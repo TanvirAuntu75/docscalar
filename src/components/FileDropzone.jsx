@@ -1,10 +1,11 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { formatFileSize, TOOLS } from '../utils/constants';
 
-export default function FileDropzone({ accept, multiple, files, setFiles, maxFiles = 50, compact = false }) {
+export default function FileDropzone({ accept, multiple, files = [], setFiles = () => {}, maxFiles = 50, compact = false }) {
   const inputRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const [dragOver, setDragOver] = useState(false);
   const [isWindowDragging, setIsWindowDragging] = useState(false);
   const [imagePreviews, setImagePreviews] = useState({});
@@ -19,16 +20,18 @@ export default function FileDropzone({ accept, multiple, files, setFiles, maxFil
   );
 
   useEffect(() => {
-    if (location.state && setFiles) {
-      if (location.state.initialFiles) {
+    if (location.state && setFiles && (location.state.initialFiles || location.state.initialFile)) {
+      if (location.state.initialFiles && Array.isArray(location.state.initialFiles) && location.state.initialFiles.length > 0) {
         setFiles(location.state.initialFiles);
-        window.history.replaceState({}, document.title);
       } else if (location.state.initialFile) {
         setFiles([location.state.initialFile]);
-        window.history.replaceState({}, document.title);
       }
+      navigate(location.pathname, { replace: true, state: null });
+      try {
+        window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+      } catch (_) {}
     }
-  }, [location, setFiles]);
+  }, [location.state, location.pathname, navigate, setFiles]);
 
   useEffect(() => {
     if (toast) {

@@ -201,6 +201,20 @@ export const TOOLS = [
     implemented: true,
     minTier: 'pro',
   },
+  {
+    id: 'bates-numbering',
+    category: 'edit-pdf',
+    title: 'Bates Numbering',
+    description: 'Add sequential alphanumeric legal Bates stamps across PDF pages',
+    icon: 'pin',
+    iconBg: 'rgba(59, 130, 246, 0.15)',
+    iconColor: 'hsl(220, 90%, 60%)',
+    path: '/bates-numbering',
+    accept: '.pdf',
+    multiple: false,
+    implemented: true,
+    minTier: 'free',
+  },
 
   // ── Convert to PDF ────────────────────────────────
   {
@@ -516,7 +530,7 @@ export const TOOLS = [
     path: '/ai-summarizer',
     accept: '.txt,.docx,.pdf,.md',
     multiple: false,
-    implemented: true,
+    implemented: false,
     minTier: 'pro',
   },
   {
@@ -530,7 +544,7 @@ export const TOOLS = [
     path: '/ai-translator',
     accept: '.txt,.docx,.pdf,.md',
     multiple: false,
-    implemented: true,
+    implemented: false,
     minTier: 'pro',
   },
 

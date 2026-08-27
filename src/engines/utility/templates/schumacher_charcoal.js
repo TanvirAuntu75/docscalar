@@ -1,13 +1,43 @@
-export function generateSchumacherCharcoalHtml(data, themeColor = '#2f2e2d', themeFont = 'Inter', sectionOrder = ['summary','experience','education','skills','projects','certifications'], themeLayout = 'single', pageMargin = 0, lineSpacing = 1.45) {
-  const accent = themeColor === 'default' || themeColor === '#0f3b7d' ? '#2f2e2d' : themeColor;
+// ═══════════════════════════════════════════════════════════════════════════════
+// 13. SCHUMACHER CHARCOAL — Deep Charcoal Editorial Split (Refined & Flawless)
+// ═══════════════════════════════════════════════════════════════════════════════
 
-  const expHtml = data.experience.map(e => `
-    <div class="timeline-item">
-      <div class="timeline-year">(${e.start.split(' ')[1] || e.start} – ${e.end.split(' ')[1] || e.end})</div>
-      <div class="timeline-role">${e.role.toUpperCase()}</div>
-      <div class="timeline-company">${e.company}</div>
-      ${e.highlights && e.highlights.length ? `<ul class="timeline-desc">${e.highlights.map(h => `<li>${h}</li>`).join('')}</ul>` : ''}
-    </div>`).join('');
+export function generateSchumacherCharcoalHtml(
+  data,
+  themeColor = '#2f2e2d',
+  themeFont = 'Inter',
+  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
+  themeLayout = 'single',
+  pageMargin = 0,
+  lineSpacing = 1.45
+) {
+  const accent = themeColor === 'default' || !themeColor ? '#2f2e2d' : themeColor;
+  const fontFam = themeFont === 'Playfair Display' ? "'Playfair Display', Georgia, serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : "'Inter', -apple-system, sans-serif";
+
+  const expHtml = data.experience && data.experience.length ? `
+    <div class="timeline-group">
+      <div class="section-title-wrap">
+        <h2>Experience</h2>
+      </div>
+      <div class="timeline-line-wrap">
+        ${data.experience.map(e => `
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="item-header">
+              <span class="timeline-role">${e.role}</span>
+              <span class="timeline-year">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+            </div>
+            <div class="timeline-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+            ${e.highlights && e.highlights.filter(Boolean).length ? `
+              <ul class="timeline-desc">
+                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+              </ul>
+            ` : ''}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  ` : '';
 
   const eduHtml = data.education && data.education.length ? `
     <div class="timeline-group">
@@ -17,9 +47,12 @@ export function generateSchumacherCharcoalHtml(data, themeColor = '#2f2e2d', the
       <div class="timeline-line-wrap">
         ${data.education.map(e => `
           <div class="timeline-item">
-            <div class="timeline-year">(${e.start.split(' ')[1] || e.start} – ${e.end.split(' ')[1] || e.end})</div>
-            <div class="timeline-role">${e.school.toUpperCase()}</div>
-            <div class="timeline-company">${e.degree}${e.note ? ` (GPA: ${e.note})` : ''}</div>
+            <div class="timeline-dot"></div>
+            <div class="item-header">
+              <span class="timeline-role">${e.degree}</span>
+              <span class="timeline-year">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+            </div>
+            <div class="timeline-company">${e.school}${e.note ? ` · ${e.note}` : ''}</div>
           </div>
         `).join('')}
       </div>
@@ -31,14 +64,29 @@ export function generateSchumacherCharcoalHtml(data, themeColor = '#2f2e2d', the
       <div class="section-title-wrap">
         <h2>Projects</h2>
       </div>
-      <div class="timeline-line-wrap" style="padding-bottom: 0;">
+      <div class="timeline-line-wrap">
         ${data.projects.map(p => `
-          <div class="timeline-item" style="margin-bottom: 10px;">
-            <div style="font-weight: 700; font-size: 9.5pt; color: #1e293b;">${p.name}</div>
-            <div style="font-size: 8.5pt; color: #475569; margin-top: 1px;">${p.description}</div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="item-header">
+              <span class="timeline-role">${p.name}</span>
+              ${p.url ? `<span class="timeline-year"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
+            </div>
+            ${p.description ? `<div style="font-size: 8.5pt; color: #475569; margin-top: 2px;">${p.description}</div>` : ''}
           </div>
         `).join('')}
       </div>
+    </div>
+  ` : '';
+
+  const certHtml = data.certifications && data.certifications.length ? `
+    <div class="sidebar-section">
+      <div class="sidebar-title-wrap">
+        <h3>Certifications</h3>
+      </div>
+      <ul class="cert-list" style="margin-top: 8px;">
+        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+      </ul>
     </div>
   ` : '';
 
@@ -47,10 +95,12 @@ export function generateSchumacherCharcoalHtml(data, themeColor = '#2f2e2d', the
       <div class="sidebar-title-wrap">
         <h3>Contact</h3>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+      <div class="contact-list">
         ${data.phone ? `<div class="contact-row"><span>${data.phone}</span></div>` : ''}
-        ${data.email ? `<div class="contact-row"><span style="word-break: break-all;">${data.email}</span></div>` : ''}
+        ${data.email ? `<div class="contact-row"><a href="mailto:${data.email}" style="color: inherit; text-decoration: none; word-break: break-all;">${data.email}</a></div>` : ''}
         ${data.location ? `<div class="contact-row"><span>${data.location}</span></div>` : ''}
+        ${data.linkedin ? `<div class="contact-row"><a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${data.website ? `<div class="contact-row"><a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
       </div>
     </div>
   `;
@@ -60,18 +110,23 @@ export function generateSchumacherCharcoalHtml(data, themeColor = '#2f2e2d', the
       <div class="sidebar-title-wrap">
         <h3>Skills</h3>
       </div>
-      <ul class="bullet-list" style="margin-top: 10px;">
-        ${data.skills.map((s, idx) => {
+      <div class="skills-grid" style="margin-top: 8px;">
+        ${data.skills.map((s) => {
           let name = s;
-          let levelText = ['Expert', 'Advanced', 'Intermediate'][idx % 3];
+          let levelText = '';
           if (s.includes(' - ')) {
             const parts = s.split(' - ');
             name = parts[0];
             levelText = parts[1];
           }
-          return `<li>• ${name} (${levelText})</li>`;
+          return `
+            <div class="skill-item">
+              <span>• ${name}</span>
+              ${levelText ? `<span style="color: #94a3b8; font-size: 7.8pt;">${levelText}</span>` : ''}
+            </div>
+          `;
         }).join('')}
-      </ul>
+      </div>
     </div>
   ` : '';
 
@@ -79,226 +134,250 @@ export function generateSchumacherCharcoalHtml(data, themeColor = '#2f2e2d', the
   const langHtml = langSection && langSection.items?.length ? `
     <div class="sidebar-section">
       <div class="sidebar-title-wrap">
-        <h3>Language</h3>
+        <h3>${langSection.title || 'Languages'}</h3>
       </div>
-      <ul class="bullet-list" style="margin-top: 10px;">
-        ${langSection.items.map(i => `<li>• ${i.title}${i.value ? ` (${i.value})` : ''}</li>`).join('')}
-      </ul>
+      <div class="skills-grid" style="margin-top: 8px;">
+        ${langSection.items.map(i => `
+          <div class="skill-item">
+            <span>• ${i.title}</span>
+            ${i.value ? `<span style="color: #94a3b8; font-size: 7.8pt;">${i.value}</span>` : ''}
+          </div>
+        `).join('')}
+      </div>
     </div>
   ` : '';
 
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<style>
-  @page { margin: 0; size: A4; }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: #fff; color: #1e293b; -webkit-print-color-adjust: exact; }
-  
-  #main-container {
-    display: flex;
-    min-height: 297mm;
-  }
-  
-  /* Sidebar containing curvy overlap header and dark bg */
-  .sidebar {
-    width: 33%;
-    background: ${accent};
-    color: #fff;
-    padding: 30px 20px;
-    font-size: 8.5pt;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .avatar-wrap {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px;
-    position: relative;
-  }
-  .avatar-container {
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    border: 4px solid #fff;
-    overflow: hidden;
-    background: #e2e8f0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  }
-  .avatar {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .sidebar-section {
-    margin-bottom: 25px;
-  }
-  .sidebar-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-bottom: 1.5px solid rgba(255, 255, 255, 0.25);
-    padding-bottom: 5px;
-  }
-  .sidebar-section h3 {
-    font-size: 10pt;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .contact-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: rgba(255, 255, 255, 0.85);
-  }
-  .bullet-list {
-    list-style: none;
-    padding: 0;
-  }
-  .bullet-list li {
-    margin-bottom: 5px;
-    color: rgba(255, 255, 255, 0.85);
-  }
-  
-  /* Main content area */
-  .main-content {
-    width: 67%;
-    padding: 50px 35px;
-    background: #fff;
-  }
-  .name-header {
-    margin-bottom: 35px;
-  }
-  .name-header h1 {
-    font-size: 30pt;
-    font-weight: 900;
-    color: ${accent};
-    line-height: 1.05;
-    letter-spacing: -0.5px;
-  }
-  .name-header .title {
-    font-size: 11.5pt;
-    font-weight: 600;
-    color: #64748b;
-    margin-top: 6px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  
-  /* Timeline styles */
-  .timeline-group {
-    margin-bottom: 25px;
-  }
-  .section-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 15px;
-  }
-  .section-icon {
-    font-size: 14pt;
-  }
-  .timeline-group h2 {
-    font-size: 12pt;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: ${accent};
-  }
-  .timeline-line-wrap {
-    position: relative;
-    padding-left: 20px;
-    border-left: 2px solid #e2e8f0;
-    margin-left: 8px;
-  }
-  .timeline-item {
-    position: relative;
-    margin-bottom: 18px;
-  }
-  .timeline-item::before {
-    content: "";
-    position: absolute;
-    left: -24px;
-    top: 5px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: ${accent};
-  }
-  .timeline-year {
-    font-size: 9pt;
-    font-weight: 700;
-    color: #64748b;
-  }
-  .timeline-role {
-    font-weight: 800;
-    font-size: 9.5pt;
-    color: #1e293b;
-    margin-top: 1px;
-  }
-  .timeline-company {
-    font-size: 8.5pt;
-    font-weight: 600;
-    color: #475569;
-    margin-top: 1px;
-  }
-  .timeline-desc {
-    padding-left: 14px;
-    font-size: 8.5pt;
-    color: #475569;
-    line-height: 1.45;
-    margin-top: 4px;
-  }
-</style></head><body>
-<div id="main-container">
-  <div class="sidebar">
-    <div class="avatar-wrap">
-      <div class="avatar-container">
-        <img class="avatar" src="${data.photoUrl || '/images/candidates/candidate_13.jpg'}" alt="photo" />
-      </div>
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    @page { margin: 0; size: A4; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      font-family: ${fontFam};
+      background: #ffffff;
+      color: #1e293b;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    #main-container {
+      display: flex;
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: #ffffff;
+    }
+    
+    /* Left Sidebar (32%) */
+    .sidebar {
+      width: 32%;
+      background: #2f2e2d;
+      color: #ffffff;
+      padding: ${35 + pageMargin}px 22px;
+      font-size: 8.5pt;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .avatar-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+    .avatar {
+      width: 105px;
+      height: 105px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      object-fit: cover;
+      display: block;
+    }
+    .sidebar-section {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .sidebar-title-wrap h3 {
+      font-size: 9.5pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #ffffff;
+      border-bottom: 1.5px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 4px;
+    }
+    .contact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 8px;
+    }
+    .contact-row {
+      color: #e2e8f0;
+      font-size: 8.3pt;
+      word-break: break-all;
+    }
+    .skills-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .skill-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 8.3pt;
+      color: #e2e8f0;
+    }
+    .cert-list {
+      padding-left: 16px;
+      font-size: 8.3pt;
+      color: #e2e8f0;
+    }
+    .cert-list li {
+      margin-bottom: 3px;
+    }
+    
+    /* Main Content (68%) */
+    .main-content {
+      width: 68%;
+      padding: ${40 + pageMargin}px 32px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .main-header {
+      border-bottom: 2px solid #2f2e2d;
+      padding-bottom: 12px;
+      margin-bottom: 4px;
+    }
+    .main-header h1 {
+      font-size: 24pt;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+    .main-header .title {
+      font-size: 10.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #64748b;
+      margin-top: 3px;
+      margin-bottom: 6px;
+    }
+    .main-header .summary {
+      font-size: 8.8pt;
+      color: #475569;
+      line-height: ${lineSpacing};
+      text-align: justify;
+    }
+    
+    .timeline-group {
+      break-inside: auto;
+    }
+    .section-title-wrap h2 {
+      font-size: 10.5pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #0f172a;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+    .timeline-line-wrap {
+      border-left: 2px solid #e2e8f0;
+      margin-left: 6px;
+      padding-left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .timeline-item {
+      position: relative;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -21px;
+      top: 5px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #2f2e2d;
+    }
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .timeline-role {
+      font-weight: 700;
+      font-size: 9.5pt;
+      color: #0f172a;
+    }
+    .timeline-year {
+      font-size: 8.2pt;
+      font-weight: 600;
+      color: #64748b;
+      font-variant-numeric: tabular-nums;
+    }
+    .timeline-company {
+      font-size: 8.8pt;
+      color: #475569;
+      font-weight: 600;
+      margin-top: 1px;
+      margin-bottom: 3px;
+    }
+    .timeline-desc {
+      padding-left: 16px;
+      font-size: 8.8pt;
+      color: #475569;
+      line-height: ${lineSpacing};
+    }
+    .timeline-desc li {
+      margin-bottom: 2px;
+      text-align: justify;
+    }
+  </style>
+</head>
+<body>
+  <div id="main-container">
+    <div class="sidebar">
+      ${data.photoUrl ? `
+        <div class="avatar-container">
+          <img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />
+        </div>
+      ` : ''}
+      ${contactHtml}
+      ${skillsHtml}
+      ${langHtml}
+      ${certHtml}
     </div>
     
-    ${data.summary ? `
-      <div class="sidebar-section">
-        <div class="sidebar-title-wrap">
-          <h3>About Me</h3>
-        </div>
-        <div style="margin-top: 10px; line-height: 1.45; color: rgba(255, 255, 255, 0.85);">${data.summary}</div>
+    <div class="main-content">
+      <div class="main-header">
+        <h1>${data.name || 'Candidate Name'}</h1>
+        ${data.title ? `<div class="title">${data.title}</div>` : ''}
+        ${data.summary ? `<div class="summary">${data.summary}</div>` : ''}
       </div>
-    ` : ''}
-    
-    ${contactHtml}
-    ${skillsHtml}
-    ${langHtml}
-  </div>
-  
-  <div class="main-content">
-    <div class="name-header">
-      <h1>${data.name}</h1>
-      ${data.title ? `<div class="title">${data.title}</div>` : ''}
+      
+      ${expHtml}
+      ${eduHtml}
+      ${projHtml}
     </div>
-    
-    ${data.education && data.education.length ? eduHtml : ''}
-    
-    ${data.experience && data.experience.length ? `
-      <div class="timeline-group">
-        <div class="section-title-wrap">
-          <h2>Experience</h2>
-        </div>
-        <div class="timeline-line-wrap">
-          ${expHtml}
-        </div>
-      </div>
-    ` : ''}
-    
-    ${projHtml}
   </div>
-</div>
-</body></html>`;
+</body>
+</html>`;
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// 14. CATRINE OLIVE — Sage/Olive Premium Split Layout (100% Match)
-// ═══════════════════════════════════════════════════════════════════════════════

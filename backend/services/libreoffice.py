@@ -1,14 +1,14 @@
+import logging
 import os
-import subprocess
-import tempfile
-from pathlib import Path
-from dataclasses import dataclass
-import sys
-import time
 import shutil
 import signal
-import logging
-from typing import Optional, List, Tuple
+import subprocess
+import sys
+import tempfile
+import time
+from dataclasses import dataclass
+from pathlib import Path
+
 from backend import config
 
 logger = logging.getLogger("libreoffice")
@@ -16,23 +16,24 @@ logger = logging.getLogger("libreoffice")
 # Supported format mappings
 SUPPORTED_CONVERSIONS = {
     # PDF input support
-    "pdf":  ["docx"],
+    "pdf": ["docx"],
     # Word formats
     "docx": ["pdf", "odt", "rtf", "html", "txt"],
-    "doc":  ["pdf", "docx", "odt", "txt"],
-    "odt":  ["pdf", "docx", "rtf", "html", "txt"],
+    "doc": ["pdf", "docx", "odt", "txt"],
+    "odt": ["pdf", "docx", "rtf", "html", "txt"],
     # Excel formats
     "xlsx": ["pdf", "csv", "ods", "html"],
-    "xls":  ["pdf", "xlsx", "csv", "html"],
-    "ods":  ["pdf", "xlsx", "csv"],
+    "xls": ["pdf", "xlsx", "csv", "html"],
+    "ods": ["pdf", "xlsx", "csv"],
     # PowerPoint formats
     "pptx": ["pdf", "odp", "html"],
-    "ppt":  ["pdf", "pptx", "odp"],
-    "odp":  ["pdf", "pptx"],
+    "ppt": ["pdf", "pptx", "odp"],
+    "odp": ["pdf", "pptx"],
     # Text/Others
-    "rtf":  ["pdf", "docx", "html"],
-    "txt":  ["pdf"],
+    "rtf": ["pdf", "docx", "html"],
+    "txt": ["pdf"],
 }
+
 
 @dataclass
 class ConversionResult:
@@ -41,7 +42,9 @@ class ConversionResult:
     error_message: str = None
     file_size_bytes: int = None
 
+
 # ---------- Shared LibreOffice Process & Validation Helpers ----------
+
 
 def resolve_libreoffice_binary() -> str:
     """
@@ -51,13 +54,21 @@ def resolve_libreoffice_binary() -> str:
         path = shutil.which(name)
         if path:
             return path
-    for cand in ("/usr/bin/soffice", "/opt/libreoffice/program/soffice",
-                 "/Applications/LibreOffice.app/Contents/MacOS/soffice"):
+    for cand in (
+        "/usr/bin/soffice",
+        "/opt/libreoffice/program/soffice",
+        "/Applications/LibreOffice.app/Contents/MacOS/soffice",
+    ):
         if Path(cand).exists():
             return cand
-    raise RuntimeError("LibreOffice not found on PATH or common installation directories.")
+    raise RuntimeError(
+        "LibreOffice not found on PATH or common installation directories."
+    )
 
-def run_libreoffice_subprocess(cmd: List[str], env: dict, cwd: str, timeout_s: float, kill_grace_s: float) -> Tuple[subprocess.Popen, bytes, bytes]:
+
+def run_libreoffice_subprocess(
+    cmd: list[str], env: dict, cwd: str, timeout_s: float, kill_grace_s: float
+) -> tuple[subprocess.Popen, bytes, bytes]:
     """
     Executes a subprocess command with a timeout and process group termination safety.
     """
@@ -72,13 +83,16 @@ def run_libreoffice_subprocess(cmd: List[str], env: dict, cwd: str, timeout_s: f
         stdout, stderr = proc.communicate(timeout=timeout_s)
         return proc, stdout, stderr
     except subprocess.TimeoutExpired:
-        logger.error("LibreOffice process timed out after %.0fs; killing tree", timeout_s)
+        logger.error(
+            "LibreOffice process timed out after %.0fs; killing tree", timeout_s
+        )
         kill_process_tree(proc, kill_grace_s)
         try:
             stdout, stderr = proc.communicate(timeout=kill_grace_s)
         except Exception:
             stdout, stderr = b"", b""
         raise subprocess.TimeoutExpired(cmd, timeout_s, stdout, stderr)
+
 
 def kill_process_tree(proc: subprocess.Popen, grace_s: float = 5.0):
     """
@@ -96,13 +110,16 @@ def kill_process_tree(proc: subprocess.Popen, grace_s: float = 5.0):
             if proc.poll() is None:
                 os.killpg(pgid, signal.SIGKILL)
         else:
-            subprocess.run(["taskkill", "/F", "/T", "/PID", str(proc.pid)], capture_output=True)
+            subprocess.run(
+                ["taskkill", "/F", "/T", "/PID", str(proc.pid)], capture_output=True
+            )
     except ProcessLookupError:
         pass
     except Exception:
         logger.exception("Error killing process tree")
 
-def reap_process(proc: Optional[subprocess.Popen]):
+
+def reap_process(proc: subprocess.Popen | None):
     """
     Gracefully reaps a subprocess.Popen object, closing lingering stream handles.
     """
@@ -121,6 +138,7 @@ def reap_process(proc: Optional[subprocess.Popen]):
         except Exception:
             pass
 
+
 def purge_dir(tmpdir: str):
     """
     Deletes a temporary directory tree.
@@ -129,6 +147,7 @@ def purge_dir(tmpdir: str):
         shutil.rmtree(tmpdir, ignore_errors=True)
     except Exception:
         logger.exception("Failed to purge temp dir %s", tmpdir)
+
 
 def is_valid_pdf_structure(path: Path) -> bool:
     """
@@ -148,7 +167,9 @@ def is_valid_pdf_structure(path: Path) -> bool:
         logger.exception("PDF validation check failed")
         return False
 
+
 # ---------- End of Shared Helpers ----------
+
 
 def convert_with_libreoffice(input_path: str, target_format: str) -> ConversionResult:
     """
@@ -158,13 +179,17 @@ def convert_with_libreoffice(input_path: str, target_format: str) -> ConversionR
     try:
         input_file = Path(input_path)
         if not input_file.exists():
-            return ConversionResult(success=False, error_message="Input file does not exist")
+            return ConversionResult(
+                success=False, error_message="Input file does not exist"
+            )
 
         ext = input_file.suffix.lower().replace(".", "")
-        
+
         # Dispatch to specialized converters dynamically to avoid circular imports
         if ext in ["xlsx", "xls", "csv", "ods"] and target_format == "pdf":
-            from backend.services.excel_to_pdf import ExcelToPDFConverter, ConversionError as ExcelConvError
+            from backend.services.excel_to_pdf import ConversionError as ExcelConvError
+            from backend.services.excel_to_pdf import ExcelToPDFConverter
+
             try:
                 converter = ExcelToPDFConverter()
                 output_pdf_path = config.OUTPUT_DIR / f"{input_file.stem}.pdf"
@@ -172,15 +197,20 @@ def convert_with_libreoffice(input_path: str, target_format: str) -> ConversionR
                 return ConversionResult(
                     success=True,
                     output_path=str(output_pdf_path),
-                    file_size_bytes=output_pdf_path.stat().st_size
+                    file_size_bytes=output_pdf_path.stat().st_size,
                 )
             except ExcelConvError as e:
                 return ConversionResult(success=False, error_message=str(e))
             except Exception as e:
-                return ConversionResult(success=False, error_message=f"Excel to PDF conversion failed: {str(e)}")
+                return ConversionResult(
+                    success=False,
+                    error_message=f"Excel to PDF conversion failed: {e!s}",
+                )
 
         elif ext in ["pptx", "ppt", "odp"] and target_format == "pdf":
-            from backend.services.pptx_to_pdf import PPTXToPDFConverter, ConversionError as PptxConvError
+            from backend.services.pptx_to_pdf import ConversionError as PptxConvError
+            from backend.services.pptx_to_pdf import PPTXToPDFConverter
+
             try:
                 converter = PPTXToPDFConverter()
                 output_pdf_path = config.OUTPUT_DIR / f"{input_file.stem}.pdf"
@@ -188,27 +218,33 @@ def convert_with_libreoffice(input_path: str, target_format: str) -> ConversionR
                 return ConversionResult(
                     success=True,
                     output_path=str(output_pdf_path),
-                    file_size_bytes=output_pdf_path.stat().st_size
+                    file_size_bytes=output_pdf_path.stat().st_size,
                 )
             except PptxConvError as e:
                 return ConversionResult(success=False, error_message=str(e))
             except Exception as e:
-                return ConversionResult(success=False, error_message=f"PowerPoint to PDF conversion failed: {str(e)}")
+                return ConversionResult(
+                    success=False,
+                    error_message=f"PowerPoint to PDF conversion failed: {e!s}",
+                )
 
-        if ext not in SUPPORTED_CONVERSIONS or target_format not in SUPPORTED_CONVERSIONS[ext]:
+        if (
+            ext not in SUPPORTED_CONVERSIONS
+            or target_format not in SUPPORTED_CONVERSIONS[ext]
+        ):
             return ConversionResult(
-                success=False, 
-                error_message=f"Conversion from {ext} to {target_format} is not supported"
+                success=False,
+                error_message=f"Conversion from {ext} to {target_format} is not supported",
             )
 
         # Output to our designated output directory
         output_dir = config.OUTPUT_DIR
-        
-        # Create a temporary directory for an isolated LibreOffice user profile
-        with tempfile.TemporaryDirectory() as temp_env:
-            # The UserInstallation path must be a file URI
-            env_uri = Path(temp_env).as_uri()
 
+        # Use an isolated temporary profile directory to prevent concurrent lock file collisions
+        temp_profile_dir = Path(tempfile.mkdtemp(prefix="lo_profile_"))
+        env_uri = temp_profile_dir.resolve().as_uri()
+
+        try:
             # Build subprocess command
             # --headless: Run without GUI
             # --convert-to: Target format
@@ -228,7 +264,7 @@ def convert_with_libreoffice(input_path: str, target_format: str) -> ConversionR
                     target_format,
                     "--outdir",
                     str(output_dir),
-                    str(input_file)
+                    str(input_file),
                 ]
             else:
                 cmd = [
@@ -244,7 +280,7 @@ def convert_with_libreoffice(input_path: str, target_format: str) -> ConversionR
                     target_format,
                     "--outdir",
                     str(output_dir),
-                    str(input_file)
+                    str(input_file),
                 ]
 
             # In Windows, prevent console window popup during background execution
@@ -257,37 +293,41 @@ def convert_with_libreoffice(input_path: str, target_format: str) -> ConversionR
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=120, # 2 minutes timeout to prevent hanging
-                creationflags=creation_flags
+                timeout=120,  # 2 minutes timeout to prevent hanging
+                creationflags=creation_flags,
             )
 
-        if result.returncode != 0:
-            return ConversionResult(
-                success=False, 
-                error_message=f"LibreOffice process failed (code {result.returncode}): {result.stderr or result.stdout}"
-            )
-
-        # Find the expected output file name
-        expected_output = output_dir / f"{input_file.stem}.{target_format}"
-        if not expected_output.exists():
-            # Sometimes LibreOffice sanitizes output name space characters
-            # Let's search output folder for any file with matching stem and extension
-            matches = list(output_dir.glob(f"*{input_file.stem}*.{target_format}"))
-            if matches:
-                expected_output = matches[0]
-            else:
+            if result.returncode != 0:
                 return ConversionResult(
-                    success=False, 
-                    error_message="Conversion process finished but output file could not be found"
+                    success=False,
+                    error_message=f"LibreOffice process failed (code {result.returncode}): {result.stderr or result.stdout}",
                 )
 
-        return ConversionResult(
-            success=True,
-            output_path=str(expected_output),
-            file_size_bytes=expected_output.stat().st_size
-        )
+            # Find the expected output file name
+            expected_output = output_dir / f"{input_file.stem}.{target_format}"
+            if not expected_output.exists():
+                # Sometimes LibreOffice sanitizes output name space characters
+                # Let's search output folder for any file with matching stem and extension
+                matches = list(output_dir.glob(f"*{input_file.stem}*.{target_format}"))
+                if matches:
+                    expected_output = matches[0]
+                else:
+                    return ConversionResult(
+                        success=False,
+                        error_message="Conversion process finished but output file could not be found",
+                    )
+
+            return ConversionResult(
+                success=True,
+                output_path=str(expected_output),
+                file_size_bytes=expected_output.stat().st_size,
+            )
+        finally:
+            shutil.rmtree(temp_profile_dir, ignore_errors=True)
 
     except subprocess.TimeoutExpired:
-        return ConversionResult(success=False, error_message="Conversion timed out after 120 seconds")
+        return ConversionResult(
+            success=False, error_message="Conversion timed out after 120 seconds"
+        )
     except Exception as e:
         return ConversionResult(success=False, error_message=str(e))

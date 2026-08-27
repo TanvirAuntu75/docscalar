@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scratch/compile_knowledge.js && vite build && node scratch/compress_assets.js",
+    "watch-repo": "node scripts/watch_repo.js",
+    "build": "node scripts/watch_repo.js --once && node scripts/compile_knowledge.js && vite build",
+    "test:frontend": "node tests/frontend/test_100_queries.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "tauri": "tauri"
@@ -14,6 +16,9 @@
     "@jvmr/pptx-to-html": "^1.0.1",
     "@react-three/drei": "^9.100.0",
     "@react-three/fiber": "^8.15.0",
+    "@tauri-apps/plugin-dialog": "^2.7.2",
+    "@tauri-apps/plugin-fs": "^2.5.1",
+    "@tauri-apps/plugin-shell": "^2.3.5",
     "@types/animejs": "^3.1.13",
     "@xenova/transformers": "^2.17.2",
     "animejs": "^3.2.2",

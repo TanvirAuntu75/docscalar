@@ -1,6 +1,6 @@
+import glob
 import os
 import sys
-import glob
 from pathlib import Path
 
 # Dynamically register standard Windows paths for Tesseract and Ghostscript if not on PATH
@@ -16,7 +16,7 @@ if sys.platform == "win32":
 
 
 # Base Paths
-IS_PACKAGED = getattr(sys, 'frozen', False)
+IS_PACKAGED = getattr(sys, "frozen", False)
 IS_DESKTOP_MODE = os.getenv("DOCFORGE_DESKTOP", "false").lower() == "true"
 
 if IS_PACKAGED or IS_DESKTOP_MODE:
@@ -58,6 +58,7 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 # Google Gemini API Key (for cloud LLM canvas intent planning)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 
+
 # LibreOffice Path Auto-detection
 def detect_libreoffice_path():
     # If in packaged/desktop mode, check the local AppData bin folder first
@@ -74,9 +75,10 @@ def detect_libreoffice_path():
     for p in windows_paths:
         if Path(p).exists():
             return p
-            
+
     # Default fallback for Linux/macOS (should be in PATH)
     return "libreoffice"
+
 
 LIBREOFFICE_PATH = os.getenv("LIBREOFFICE_PATH", detect_libreoffice_path())
 

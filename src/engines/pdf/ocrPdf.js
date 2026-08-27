@@ -63,6 +63,18 @@ class OcrWorkerPool {
 
 const globalPool = new OcrWorkerPool();
 
+async function extractBytes(file) {
+  if (file instanceof Uint8Array) return file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);
+  if (file instanceof ArrayBuffer) return file;
+  if (typeof Buffer !== 'undefined' && Buffer.isBuffer(file)) {
+    return file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);
+  }
+  if (file && typeof file.arrayBuffer === 'function') {
+    return await file.arrayBuffer();
+  }
+  throw new Error('Unsupported PDF file input format for OCR.');
+}
+
 export function terminateOcrPool() {
   globalPool.terminate();
 }
@@ -71,9 +83,9 @@ export async function ocrPdf(file, options = {}, progressCb = () => {}) {
   let pdf = null;
   try {
     const selectedLanguage = options.language || 'eng';
-    const gpuEnabled = localStorage.getItem('gpuBoostEnabled') !== 'false';
+    const gpuEnabled = typeof localStorage !== 'undefined' && localStorage.getItem('gpuBoostEnabled') !== 'false';
     
-    const arrayBuffer = await file.arrayBuffer();
+    const arrayBuffer = await extractBytes(file);
     pdf = await pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
     const totalPages = pdf.numPages;
     

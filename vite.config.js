@@ -1,7 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default defineConfig({
+  base: './',
   plugins: [react()],
   optimizeDeps: {
     entries: ['index.html'],
@@ -9,6 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       'animejs': 'animejs/lib/anime.es.js',
+      'file-saver$': path.resolve(__dirname, './src/utils/fileSaver.js'),
     },
   },
   server: {
@@ -19,7 +26,9 @@ export default defineConfig({
         '**/.venv/**',
         '**/public/models/**',
         '**/dist/**',
-        '**/.git/**'
+        '**/.git/**',
+        '**/scripts/**',
+        '**/repo_map.md'
       ]
     }
   },
@@ -28,14 +37,18 @@ export default defineConfig({
   },
   build: {
     target: 'es2020',
-    emptyOutDir: false,
+    emptyOutDir: true,
+    chunkSizeWarningLimit: 1200,
     rollupOptions: {
       output: {
         manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-icons': ['lucide-react'],
+          'vendor-motion': ['framer-motion'],
           'vendor-pdf': ['pdf-lib', 'pdfjs-dist'],
           'vendor-doc': ['mammoth', 'jspdf', 'html2canvas'],
-          'vendor-util': ['file-saver', 'jszip', 'qrcode'],
-          'vendor-motion': ['framer-motion'],
+          'vendor-sheet': ['xlsx'],
+          'vendor-util': ['jszip', 'qrcode'],
         }
       }
     }

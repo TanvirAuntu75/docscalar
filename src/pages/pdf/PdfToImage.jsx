@@ -1,454 +1,955 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
+import { Link } from 'react-router-dom';
+import * as pdfjsLib from 'pdfjs-dist';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
-import AdPlaceholder from '../../components/AdPlaceholder';
-import useFileProcessor from '../../hooks/useFileProcessor';
 import { pdfToImages, pdfToImagesStream } from '../../engines/pdf/pdfToImage';
-import { saveFile } from '../../utils/db';
+import { formatFileSize } from '../../utils/constants';
+import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 
-// Check if the browser supports the File System Access API (directory picker)
+const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+
 const SUPPORTS_DIR_PICKER = typeof window !== 'undefined' && 'showDirectoryPicker' in window;
 
 export default function PdfToImage() {
-  const {
-    files,
-    setFiles,
-    processing,
-    setProcessing,
-    progress,
-    setProgress,
-    result,
-    setResult,
-    error,
-    setError,
-    reset,
-    createSafeObjectURL
-  } = useFileProcessor();
+  const [files, setFiles] = useState([]);
+  const [activeFileIndex, setActiveFileIndex] = useState(0);
 
-  const [format, setFormat]       = useState('png');
-  const [quality, setQuality]     = useState(0.92);
-  const [scale, setScale]         = useState(2);
-  // 'folder' = Direct Folder Export (File System Access API)
-  // 'zip'    = In-memory ZIP download (legacy fallback)
+  // Conversion Settings
+  const [format, setFormat] = useState('png'); // 'png' | 'jpeg' | 'webp'
+  const [quality, setQuality] = useState(0.92);
+  const [scale, setScale] = useState(2); // 1 = 72dpi, 2 = 150dpi, 3 = 300dpi
   const [exportMode, setExportMode] = useState(SUPPORTS_DIR_PICKER ? 'folder' : 'zip');
+  const [pageScope, setPageScope] = useState('all'); // 'all' | 'custom'
+  const [customRange, setCustomRange] = useState('');
+  const [selectedPages, setSelectedPages] = useState(new Set());
+  const [outputArchiveName, setOutputArchiveName] = useState('');
 
-  // Live streaming counters
-  const [streamedPages, setStreamedPages]   = useState(0);
+  // UI Studio Canvas State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [zoomLevel, setZoomLevel] = useState(1); // 1 = normal, 2 = large, 3 = compact
+  const [pageThumbnails, setPageThumbnails] = useState([]);
+  const [loadingThumbnails, setLoadingThumbnails] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // Processing & Result State
+  const [processing, setProcessing] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [progressStage, setProgressStage] = useState('');
+  const [streamedPages, setStreamedPages] = useState(0);
   const [totalStreamPages, setTotalStreamPages] = useState(0);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
 
-  // Ref to accumulate preview blobs during streaming (first 4 only)
   const previewBlobsRef = useRef([]);
+  const fileInputRef = useRef(null);
 
-  // ─── Convert handler ───────────────────────────────────────────────────────
+  // 1. Restore Draft Session on Mount
+  useEffect(() => {
+    let isMounted = true;
+    const restoreSession = async () => {
+      try {
+        const draft = await loadStudioDraft('pdf-to-image');
+        if (draft && draft.files && draft.files.length > 0 && isMounted) {
+          const restoredFiles = draft.files.map((f) => {
+            if (f instanceof File) return f;
+            return new File([f.blob || f], f.name || 'document.pdf', {
+              type: f.type || 'application/pdf',
+              lastModified: f.lastModified || Date.now()
+            });
+          });
+          setFiles(restoredFiles);
+          if (draft.format) setFormat(draft.format);
+          if (draft.quality !== undefined) setQuality(draft.quality);
+          if (draft.scale !== undefined) setScale(draft.scale);
+          if (draft.exportMode) setExportMode(draft.exportMode);
+          if (draft.pageScope) setPageScope(draft.pageScope);
+          if (draft.customRange) setCustomRange(draft.customRange);
+          if (draft.outputArchiveName) setOutputArchiveName(draft.outputArchiveName);
+        }
+      } catch (err) {
+        console.warn('PDF to Image draft recovery failed:', err);
+      }
+    };
+    restoreSession();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // 2. Save Draft Session on State Change
+  useEffect(() => {
+    if (files.length > 0) {
+      saveStudioDraft('pdf-to-image', {
+        files,
+        format,
+        quality,
+        scale,
+        exportMode,
+        pageScope,
+        customRange,
+        outputArchiveName
+      });
+    }
+  }, [files, format, quality, scale, exportMode, pageScope, customRange, outputArchiveName]);
+
+  // 3. Render Active PDF Page Thumbnails
+  useEffect(() => {
+    if (files.length === 0) {
+      setPageThumbnails([]);
+      setTotalPages(0);
+      setSelectedPages(new Set());
+      return;
+    }
+
+    const currentFile = files[activeFileIndex] || files[0];
+    let isCancelled = false;
+
+    const loadThumbnails = async () => {
+      setLoadingThumbnails(true);
+      try {
+        const arrayBuffer = await currentFile.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        if (isCancelled) {
+          pdf.destroy();
+          return;
+        }
+
+        const count = pdf.numPages;
+        setTotalPages(count);
+        setSelectedPages(new Set(Array.from({ length: count }, (_, i) => i + 1)));
+
+        const thumbs = [];
+        for (let i = 1; i <= Math.min(count, 50); i++) {
+          if (isCancelled) break;
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({ scale: 0.3 });
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const ctx = canvas.getContext('2d');
+          await page.render({ canvasContext: ctx, viewport }).promise;
+          thumbs.push({
+            pageNumber: i,
+            dataUrl: canvas.toDataURL('image/jpeg', 0.8),
+            width: viewport.width,
+            height: viewport.height
+          });
+        }
+
+        if (!isCancelled) {
+          setPageThumbnails(thumbs);
+          setLoadingThumbnails(false);
+          if (!outputArchiveName) {
+            const base = currentFile.name.replace(/\.[^.]+$/, '');
+            setOutputArchiveName(`${base}-images.zip`);
+          }
+        }
+      } catch (err) {
+        if (!isCancelled) {
+          console.warn('Failed to load page thumbnails for PDF:', err);
+          setLoadingThumbnails(false);
+        }
+      }
+    };
+
+    loadThumbnails();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [files, activeFileIndex]);
+
+  // Parse page list to convert
+  const targetPageIndices = useMemo(() => {
+    if (totalPages === 0) return [];
+    if (pageScope === 'all') {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    if (pageScope === 'custom' && customRange.trim()) {
+      const indices = new Set();
+      const parts = customRange.split(',').map((s) => s.trim());
+      parts.forEach((p) => {
+        if (p.includes('-')) {
+          const [start, end] = p.split('-').map((n) => parseInt(n.trim()));
+          if (!isNaN(start) && !isNaN(end)) {
+            for (let i = Math.min(start, end); i <= Math.max(start, end); i++) {
+              if (i >= 1 && i <= totalPages) indices.add(i);
+            }
+          }
+        } else {
+          const num = parseInt(p);
+          if (!isNaN(num) && num >= 1 && num <= totalPages) indices.add(num);
+        }
+      });
+      return Array.from(indices).sort((a, b) => a - b);
+    }
+    return Array.from(selectedPages).sort((a, b) => a - b);
+  }, [totalPages, pageScope, customRange, selectedPages]);
+
+  const togglePageSelection = (pageNumber) => {
+    setSelectedPages((prev) => {
+      const next = new Set(prev);
+      if (next.has(pageNumber)) {
+        next.delete(pageNumber);
+      } else {
+        next.add(pageNumber);
+      }
+      return next;
+    });
+  };
+
+  const selectAllPages = () => {
+    setSelectedPages(new Set(Array.from({ length: totalPages }, (_, i) => i + 1)));
+    setPageScope('all');
+  };
+
+  const deselectAllPages = () => {
+    setSelectedPages(new Set());
+  };
+
   const handleConvert = async () => {
     if (!files.length) return;
-    const file = files[0];
+    const file = files[activeFileIndex] || files[0];
     setProcessing(true);
     setProgress(0);
+    setProgressStage('Initializing image rendering engine...');
     setStreamedPages(0);
-    setTotalStreamPages(0);
+    setTotalStreamPages(targetPageIndices.length);
     setError(null);
     setResult(null);
     previewBlobsRef.current = [];
 
+    const conversionOptions = {
+      format: format === 'jpeg' ? 'jpeg' : format === 'webp' ? 'webp' : 'png',
+      quality,
+      scale,
+      pageIndices: targetPageIndices.length < totalPages ? targetPageIndices : undefined
+    };
+
     try {
-      if (exportMode === 'folder') {
-        // ── Direct Folder Export via File System Access API ──────────────────
+      if (exportMode === 'folder' && SUPPORTS_DIR_PICKER) {
+        // Direct Folder Export via File System Access API
         let dirHandle;
         try {
           dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
         } catch (e) {
-          // User cancelled the picker — abort gracefully
           setProcessing(false);
           return;
         }
 
-        const folderName = file.name.replace(/\.[^.]+$/, '') + '-images';
+        const baseFolder = file.name.replace(/\.[^.]+$/, '');
+        const folderName = `${baseFolder}-images`;
         let subDir;
         try {
           subDir = await dirHandle.getDirectoryHandle(folderName, { create: true });
         } catch {
-          subDir = dirHandle; // fallback to root of chosen folder
+          subDir = dirHandle;
         }
 
         let savedCount = 0;
-        const { totalPages } = await pdfToImagesStream(
+        const previewUrls = [];
+
+        await pdfToImagesStream(
           file,
-          { format, quality, scale },
+          conversionOptions,
           async ({ name, blob, pageIndex, totalPages: tp, progress: pg }) => {
-            // Keep first 4 blobs for preview
-            if (previewBlobsRef.current.length < 4) {
-              previewBlobsRef.current.push({ url: createSafeObjectURL(blob), name });
+            if (previewBlobsRef.current.length < 6) {
+              const objUrl = URL.createObjectURL(blob);
+              previewBlobsRef.current.push({ url: objUrl, name });
+              previewUrls.push(objUrl);
             }
 
-            // Write directly to disk
             const fileHandle = await subDir.getFileHandle(name, { create: true });
-            const writable   = await fileHandle.createWritable();
+            const writable = await fileHandle.createWritable();
             await writable.write(blob);
             await writable.close();
 
             savedCount++;
             setStreamedPages(savedCount);
-            setTotalStreamPages(tp);
             setProgress(pg);
+            setProgressStage(`Writing image ${savedCount} of ${tp} to disk...`);
           },
-          setProgress
+          (p) => setProgress(p)
         );
-
-        // Save a small metadata entry to local workspace DB
-        try {
-          await saveFile(
-            `${folderName}.zip`,
-            savedCount,
-            'application/zip',
-            'PDF to Images',
-            null
-          );
-        } catch (_) { /* non-critical */ }
 
         setResult({
           mode: 'folder',
-          totalPages,
+          totalPages: savedCount,
           folderName,
+          format: format.toUpperCase(),
+          scale: `${scale}x (${scale * 72} DPI)`,
           previews: previewBlobsRef.current,
+          previewUrls
         });
 
+        await clearStudioDraft('pdf-to-image');
       } else {
-        // ── ZIP mode — collect all blobs in memory (≤100 pages enforced by worker) ──
-        const { blobs, names } = await pdfToImages(file, { format, quality, scale }, setProgress);
+        // ZIP Archive Mode
+        setProgressStage('Rendering high-resolution pages in parallel...');
+        const { blobs, names } = await pdfToImages(file, conversionOptions, (p) => {
+          setProgress(Math.round(p * 0.7));
+          setProgressStage(`Rendering pages (${Math.round(p * 0.7)}%)...`);
+        });
 
-        const previewUrls = blobs.slice(0, 4).map(b => createSafeObjectURL(b));
-
-        // Package into ZIP
+        setProgressStage('Packaging images into compressed ZIP archive...');
         const zip = new JSZip();
         blobs.forEach((b, i) => zip.file(names[i], b));
-        const zipBlob = await zip.generateAsync({ type: 'blob' }, (meta) => {
-          setProgress(Math.round(meta.percent));
-        });
-        const zipName = `${file.name.replace(/\.[^.]+$/, '')}-images.zip`;
 
-        try {
-          await saveFile(zipName, zipBlob.size, 'application/zip', 'PDF to Images', zipBlob);
-        } catch (_) { /* non-critical */ }
+        const zipBlob = await zip.generateAsync({ type: 'blob' }, (meta) => {
+          setProgress(70 + Math.round(meta.percent * 0.3));
+        });
+
+        const finalName = outputArchiveName || `${file.name.replace(/\.[^.]+$/, '')}-images.zip`;
+        const previewUrls = blobs.slice(0, 6).map((b) => URL.createObjectURL(b));
 
         setResult({
           mode: 'zip',
           blobs,
           names,
           zipBlob,
-          zipName,
+          name: finalName,
+          size: zipBlob.size,
           totalPages: blobs.length,
-          previewUrls,
+          format: format.toUpperCase(),
+          scale: `${scale}x (${scale * 72} DPI)`,
+          previewUrls
         });
+
+        await saveFile(finalName, zipBlob.size, 'application/zip', 'PDF to Images', zipBlob);
+        await clearStudioDraft('pdf-to-image');
       }
     } catch (err) {
-      setError(err.message || 'Conversion failed');
+      console.error('PDF to Images conversion error:', err);
+      setError(err.message || 'Conversion failed. Please verify the PDF is not password protected or corrupted.');
     } finally {
       setProcessing(false);
     }
   };
 
-  // ─── Download (ZIP mode only) ──────────────────────────────────────────────
   const downloadZip = () => {
     if (!result?.zipBlob) return;
-    saveAs(result.zipBlob, result.zipName);
+    saveAs(result.zipBlob, result.name);
   };
 
-  // ─── Helpers ───────────────────────────────────────────────────────────────
-  const isLarge   = files.length > 0; // we don't know page count until worker runs
-  const btnLabel  = processing
-    ? exportMode === 'folder'
-      ? `Saving page ${streamedPages}${totalStreamPages ? ` / ${totalStreamPages}` : ''}…`
-      : `Converting… ${progress}%`
-    : 'Convert to Images';
+  const resetWorkspace = () => {
+    clearStudioDraft('pdf-to-image');
+    setFiles([]);
+    setActiveFileIndex(0);
+    setResult(null);
+    setError(null);
+    setProgress(0);
+    setProgressStage('');
+    setPageScope('all');
+    setCustomRange('');
+    setFormat('png');
+    setScale(2);
+    setQuality(0.92);
+  };
 
-  // ─── Render ────────────────────────────────────────────────────────────────
+  const filteredThumbs = useMemo(() => {
+    if (!searchQuery.trim()) return pageThumbnails;
+    const q = searchQuery.trim();
+    return pageThumbnails.filter((t) => t.pageNumber.toString().includes(q));
+  }, [pageThumbnails, searchQuery]);
+
   return (
     <ToolPageLayout
       toolId="pdf-to-image"
-      title="PDF to Images"
-      description="Convert each PDF page to high-quality PNG or JPG images"
+      title="PDF to Images Studio"
+      description="Convert PDF pages into crystal-clear PNG, JPG, or WebP images with custom DPI resolutions."
       files={files}
-      onFileSwitch={(idx) => {
-        setFiles(prev => {
-          if (idx < 0 || idx >= prev.length) return prev;
-          const next = [...prev];
-          const [item] = next.splice(idx, 1);
-          next.unshift(item);
-          return next;
-        });
-      }}>
+      hasResult={Boolean(result)}
+      suppressSwitcher={true}
+    >
       <SEOHead
-        title="Convert PDF to Image Online Free (High Quality Pages)"
-        description="Convert PDF pages to high-quality PNG or JPG images instantly in your browser. 100% private, no file uploads to servers."
+        title="PDF to Images Online Free — High-Resolution Page Converter | DocForge"
+        description="Convert PDF pages to lossless PNG, JPG, or WebP images. Stream directly to disk or download as a ZIP archive."
       />
 
-      {!result && (
-        <>
-          <FileDropzone accept=".pdf" multiple={false} files={files} setFiles={setFiles} />
+      {!result ? (
+        files.length === 0 ? (
+          <FileDropzone
+            accept=".pdf,application/pdf"
+            multiple={true}
+            files={files}
+            setFiles={setFiles}
+          />
+        ) : (
+          <div className="flex-1 flex w-full h-full min-h-0 overflow-hidden relative">
+            {/* ========================================================================= */}
+            {/* LEFT / CENTER: Interactive Visual Document Canvas & Page Gallery          */}
+            {/* ========================================================================= */}
+            <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
+              {/* Sticky Canvas Toolbar */}
+              <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {/* Active File Switcher */}
+                    {files.length > 1 ? (
+                      <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
+                        <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">description</span>
+                        <select
+                          value={activeFileIndex}
+                          onChange={(e) => setActiveFileIndex(parseInt(e.target.value))}
+                          className="bg-transparent text-xs font-semibold text-[var(--text-primary)] outline-none cursor-pointer max-w-[160px] truncate"
+                        >
+                          {files.map((f, i) => (
+                            <option key={i} value={i} className="bg-[var(--bg-primary)] text-[var(--text-primary)]">
+                              {f.name} ({formatFileSize(f.size)})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
+                        <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
+                        <span className="truncate max-w-[200px]">{files[0]?.name}</span>
+                        <span className="text-[var(--text-secondary)] font-normal">({formatFileSize(files[0]?.size || 0)})</span>
+                      </div>
+                    )}
 
-          {files.length > 0 && (
-            <div className="options-panel">
-              <div className="options-title">Conversion Options</div>
-              <div className="options-row">
+                    {totalPages > 0 && (
+                      <div className="flex items-center gap-1 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-secondary)]">
+                        <span className="material-symbols-outlined text-[14px]">auto_stories</span>
+                        <span>{targetPageIndices.length} / {totalPages} Selected</span>
+                      </div>
+                    )}
 
-                {/* Format */}
-                <div className="option-group">
-                  <label>Format</label>
-                  <select value={format} onChange={e => setFormat(e.target.value)}>
-                    <option value="png">PNG (Lossless)</option>
-                    <option value="jpeg">JPG (Smaller size)</option>
-                  </select>
-                </div>
-
-                {/* Scale */}
-                <div className="option-group">
-                  <label>Scale</label>
-                  <select value={scale} onChange={e => setScale(Number(e.target.value))}>
-                    <option value={1}>1× (Fast)</option>
-                    <option value={2}>2× (Recommended)</option>
-                    <option value={3}>3× (High Quality)</option>
-                  </select>
-                </div>
-
-                {/* JPEG quality slider */}
-                {format === 'jpeg' && (
-                  <div className="option-group">
-                    <label>Quality: {Math.round(quality * 100)}%</label>
-                    <input
-                      type="range" min="10" max="100"
-                      value={quality * 100}
-                      onChange={e => setQuality(e.target.value / 100)}
-                    />
+                    {/* Quick Selection Buttons */}
+                    <button
+                      type="button"
+                      onClick={selectAllPages}
+                      className="px-2 py-1 text-xs font-semibold rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] border border-[var(--border-subtle)] text-[var(--text-primary)] cursor-pointer transition-colors"
+                    >
+                      Select All
+                    </button>
+                    <button
+                      type="button"
+                      onClick={deselectAllPages}
+                      className="px-2 py-1 text-xs font-semibold rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] border border-[var(--border-subtle)] text-[var(--text-secondary)] cursor-pointer transition-colors"
+                    >
+                      Clear
+                    </button>
                   </div>
-                )}
+
+                  {/* Filter & View Controls */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {/* Search / Filter Pages */}
+                    <div className="relative flex items-center">
+                      <span className="material-symbols-outlined absolute left-2 text-[14px] text-[var(--text-secondary)] pointer-events-none">
+                        search
+                      </span>
+                      <input
+                        type="text"
+                        placeholder="Page #"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-7 pr-2 py-1 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none w-20"
+                      />
+                    </div>
+
+                    {/* Grid Density Zoom */}
+                    <div className="flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
+                      <button
+                        type="button"
+                        onClick={() => setZoomLevel(3)}
+                        className={`p-1 rounded cursor-pointer transition-colors ${zoomLevel === 3 ? 'bg-[var(--bg-primary)] text-[var(--color-primary)] shadow-xs' : 'text-[var(--text-secondary)]'}`}
+                        title="Compact View"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">grid_view</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setZoomLevel(1)}
+                        className={`p-1 rounded cursor-pointer transition-colors ${zoomLevel === 1 ? 'bg-[var(--bg-primary)] text-[var(--color-primary)] shadow-xs' : 'text-[var(--text-secondary)]'}`}
+                        title="Standard View"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">view_module</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setZoomLevel(2)}
+                        className={`p-1 rounded cursor-pointer transition-colors ${zoomLevel === 2 ? 'bg-[var(--bg-primary)] text-[var(--color-primary)] shadow-xs' : 'text-[var(--text-secondary)]'}`}
+                        title="Large View"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">crop_free</span>
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={resetWorkspace}
+                      className="p-1 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer"
+                      title="Reset workspace"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">restart_alt</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              {/* ── Export Mode Selector ──────────────────────────────────── */}
-              <div style={{ marginTop: '1.25rem' }}>
-                <div className="options-title" style={{ marginBottom: '0.6rem' }}>Export Mode</div>
-
-                {/* Direct Folder Export card */}
-                {SUPPORTS_DIR_PICKER && (
-                  <label
-                    style={{
-                      display: 'flex', alignItems: 'flex-start', gap: '0.75rem',
-                      padding: '0.9rem 1rem',
-                      borderRadius: '10px',
-                      border: exportMode === 'folder'
-                        ? '2px solid var(--color-primary)'
-                        : '2px solid var(--border-color)',
-                      background: exportMode === 'folder'
-                        ? 'color-mix(in srgb, var(--color-primary) 8%, var(--bg-surface))'
-                        : 'var(--bg-surface)',
-                      cursor: 'pointer',
-                      marginBottom: '0.65rem',
-                      transition: 'border-color 0.2s, background 0.2s',
-                    }}
+              {/* Central Visual Document Grid */}
+              <div className="flex-1 overflow-auto p-4 sm:p-6 relative bg-pattern select-none">
+                {loadingThumbnails ? (
+                  <div className="h-full flex flex-col items-center justify-center gap-3 text-[var(--text-secondary)]">
+                    <span className="material-symbols-outlined text-[32px] animate-spin text-[var(--color-primary)]">
+                      progress_activity
+                    </span>
+                    <span className="text-xs font-semibold">Generating page thumbnails...</span>
+                  </div>
+                ) : filteredThumbs.length > 0 ? (
+                  <div
+                    className={`grid gap-4 mx-auto max-w-7xl ${
+                      zoomLevel === 3
+                        ? 'grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8'
+                        : zoomLevel === 2
+                        ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'
+                        : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'
+                    }`}
                   >
-                    <input
-                      type="radio" name="exportMode" value="folder"
-                      checked={exportMode === 'folder'}
-                      onChange={() => setExportMode('folder')}
-                      style={{ marginTop: '3px', accentColor: 'var(--color-primary)' }}
-                    />
-                    <div>
-                      <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'var(--color-primary)' }}>folder_open</span>
-                        Direct Folder Export
-                        <span style={{
-                          fontSize: '11px', fontWeight: 700, letterSpacing: '0.05em',
-                          background: 'var(--color-primary)', color: '#fff',
-                          padding: '1px 7px', borderRadius: '99px', marginLeft: '4px',
-                        }}>RECOMMENDED</span>
-                      </div>
-                      <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '3px' }}>
-                        Pages are written directly to a folder on your drive, one by one. Works for PDFs of
-                        any size — even 7,000+ pages. Zero memory crashes.
-                      </div>
-                    </div>
-                  </label>
-                )}
+                    {filteredThumbs.map((thumb) => {
+                      const isSelected = selectedPages.has(thumb.pageNumber);
+                      return (
+                        <div
+                          key={thumb.pageNumber}
+                          onClick={() => togglePageSelection(thumb.pageNumber)}
+                          className={`group relative flex flex-col bg-[var(--bg-primary)] rounded-xl border overflow-hidden shadow-xs hover:shadow-md transition-all cursor-pointer ${
+                            isSelected
+                              ? 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/30'
+                              : 'border-[var(--border-subtle)] opacity-60 hover:opacity-100'
+                          }`}
+                        >
+                          {/* Header Checkbox Pill */}
+                          <div className="px-2.5 py-1.5 flex items-center justify-between bg-[var(--bg-secondary)] border-b border-[var(--border-subtle)]">
+                            <span className="text-[10px] font-bold text-[var(--text-secondary)]">
+                              Page #{thumb.pageNumber}
+                            </span>
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => {}}
+                              className="w-3.5 h-3.5 accent-[var(--color-primary)] cursor-pointer"
+                            />
+                          </div>
 
-                {/* ZIP Download card */}
-                <label
-                  style={{
-                    display: 'flex', alignItems: 'flex-start', gap: '0.75rem',
-                    padding: '0.9rem 1rem',
-                    borderRadius: '10px',
-                    border: exportMode === 'zip'
-                      ? '2px solid var(--color-primary)'
-                      : '2px solid var(--border-color)',
-                    background: exportMode === 'zip'
-                      ? 'color-mix(in srgb, var(--color-primary) 8%, var(--bg-surface))'
-                      : 'var(--bg-surface)',
-                    cursor: 'pointer',
-                    transition: 'border-color 0.2s, background 0.2s',
-                  }}
-                >
-                  <input
-                    type="radio" name="exportMode" value="zip"
-                    checked={exportMode === 'zip'}
-                    onChange={() => setExportMode('zip')}
-                    style={{ marginTop: '3px', accentColor: 'var(--color-primary)' }}
-                  />
-                  <div>
-                    <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'var(--text-secondary)' }}>folder_zip</span>
-                      Download as ZIP
-                    </div>
-                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '3px' }}>
-                      All images are packaged into a single ZIP file. Works in all browsers. Limited to
-                      PDFs with up to <strong>100 pages</strong> — larger files may crash the browser tab.
-                    </div>
+                          {/* Thumbnail Canvas Frame */}
+                          <div className="p-2 flex items-center justify-center bg-slate-100 dark:bg-slate-900/40 min-h-[140px]">
+                            <img
+                              src={thumb.dataUrl}
+                              alt={`Page ${thumb.pageNumber}`}
+                              className="max-h-48 w-auto object-contain rounded shadow-xs drop-shadow-xs"
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                </label>
-
-                {/* Warning: ZIP mode + no dir picker support */}
-                {!SUPPORTS_DIR_PICKER && (
-                  <div style={{
-                    marginTop: '0.75rem', padding: '0.65rem 0.9rem',
-                    borderRadius: '8px', fontSize: '13px',
-                    background: 'color-mix(in srgb, #f59e0b 12%, var(--bg-surface))',
-                    border: '1px solid #f59e0b', color: 'var(--text-primary)',
-                    display: 'flex', gap: '0.5rem', alignItems: 'flex-start',
-                  }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#f59e0b', marginTop: '1px' }}>warning</span>
-                    <span>
-                      Your browser doesn&apos;t support Direct Folder Export.
-                      For large PDFs (&gt;100 pages), use <strong>Chrome</strong> or <strong>Edge</strong>.
-                    </span>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-[var(--text-secondary)]">
+                    <span className="material-symbols-outlined text-[36px] mb-2 opacity-50">search_off</span>
+                    <span className="text-xs font-semibold">No pages matching filter</span>
                   </div>
                 )}
               </div>
             </div>
-          )}
 
-          {/* Progress bar */}
-          {processing && (
-            <div className="progress-container">
-              <div className="progress-bar-container">
-                <div className="progress-bar-track">
-                  <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
+            {/* ========================================================================= */}
+            {/* RIGHT: Studio Options Sidebar                                             */}
+            {/* ========================================================================= */}
+            <div className="options-panel w-80 min-w-80 max-w-80 bg-[var(--bg-primary)] border-l border-[var(--border-subtle)] flex flex-col justify-between h-full select-none shadow-sm z-20">
+              <div className="p-4 border-b border-[var(--border-subtle)] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[18px] text-[var(--color-primary)]">image</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--text-primary)]">
+                    Image Options
+                  </span>
                 </div>
+                <span className="text-xs font-bold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2 py-0.5 rounded-full">
+                  {targetPageIndices.length} Pages
+                </span>
               </div>
-              <p className="progress-status" style={{ marginTop: '0.5rem' }}>
-                {exportMode === 'folder' && totalStreamPages > 0
-                  ? `Writing page ${streamedPages} of ${totalStreamPages} directly to your folder… (${progress}%)`
-                  : `Converting… ${progress}%`}
-              </p>
-              {exportMode === 'folder' && totalStreamPages > 0 && (
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center', marginTop: '4px' }}>
-                  Memory usage stays constant — pages are saved and released one by one
-                </p>
-              )}
-            </div>
-          )}
 
-          {error && (
-            <p style={{ color: 'var(--color-danger)', textAlign: 'center', marginTop: '1rem' }}>
-              {error}
-            </p>
-          )}
+              <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+                {/* 1. Image Format Selection */}
+                <div className="flex flex-col gap-2">
+                  <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                    Output Format
+                  </span>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {[
+                      { id: 'png', label: 'PNG', desc: 'Lossless' },
+                      { id: 'jpeg', label: 'JPG', desc: 'Compact' },
+                      { id: 'webp', label: 'WebP', desc: 'Modern' }
+                    ].map((fmt) => (
+                      <button
+                        key={fmt.id}
+                        type="button"
+                        onClick={() => setFormat(fmt.id)}
+                        className={`p-2.5 rounded-xl border flex flex-col items-center gap-0.5 transition-all cursor-pointer ${
+                          format === fmt.id
+                            ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold shadow-xs'
+                            : 'border-[var(--border-subtle)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'
+                        }`}
+                      >
+                        <span className="text-xs font-extrabold">{fmt.label}</span>
+                        <span className="text-[9px] opacity-75">{fmt.desc}</span>
+                      </button>
+                    ))}
+                  </div>
 
-          <div className="action-bar">
-            <button
-              className="btn btn-primary btn-lg flex items-center justify-center gap-2"
-              onClick={handleConvert}
-              disabled={!files.length || processing}
-            >
-              {processing && (
-                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-              )}
-              <span>{btnLabel}</span>
-            </button>
-          </div>
-        </>
-      )}
-
-      {/* ── Result Screen ───────────────────────────────────────────────────── */}
-      {result && (
-        <div className="result-area">
-          <div className="result-icon select-none">
-            <span className="material-symbols-outlined text-[48px] text-green-500 fill select-none">check_circle</span>
-          </div>
-
-          <div className="result-title">Conversion Complete!</div>
-
-          {result.mode === 'folder' ? (
-            <>
-              <div className="result-info">
-                {result.totalPages.toLocaleString()} pages saved directly to{' '}
-                <strong>&ldquo;{result.folderName}&rdquo;</strong> on your device
-              </div>
-              <div style={{
-                margin: '0.75rem auto', padding: '0.7rem 1.1rem',
-                maxWidth: '480px', borderRadius: '10px', fontSize: '13.5px',
-                background: 'color-mix(in srgb, var(--color-success, #22c55e) 10%, var(--bg-surface))',
-                border: '1px solid var(--color-success, #22c55e)',
-                display: 'flex', gap: '0.5rem', alignItems: 'center',
-              }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'var(--color-success, #22c55e)' }}>folder_open</span>
-                <span>Open your chosen folder to find all the converted images.</span>
-              </div>
-              {/* Preview thumbnails (first 4 pages) */}
-              {result.previews.length > 0 && (
-                <div className="result-preview">
-                  {result.previews.map((p, i) => (
-                    <img key={i} src={p.url} alt={`Page ${i + 1} preview`} />
-                  ))}
-                  {result.totalPages > 4 && (
-                    <span style={{ alignSelf: 'center', color: 'var(--text-secondary)' }}>
-                      +{result.totalPages - 4} more in your folder
-                    </span>
+                  {/* Quality Slider (for JPG & WebP) */}
+                  {format !== 'png' && (
+                    <div className="p-3 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl flex flex-col gap-1.5 mt-1 animate-[fadeIn_0.15s_ease-out]">
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span className="text-[var(--text-secondary)]">Image Quality</span>
+                        <span className="text-[var(--color-primary)] font-bold">{Math.round(quality * 100)}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.2"
+                        max="1.0"
+                        step="0.05"
+                        value={quality}
+                        onChange={(e) => setQuality(parseFloat(e.target.value))}
+                        className="w-full h-1 accent-[var(--color-primary)] cursor-pointer"
+                      />
+                    </div>
                   )}
                 </div>
-              )}
-            </>
-          ) : (
-            <>
-              <div className="result-info">{result.totalPages} pages converted</div>
-              <div className="result-preview">
-                {result.previewUrls.map((url, i) => (
-                  <img key={i} src={url} alt={`Page ${i + 1}`} />
-                ))}
-                {result.totalPages > 4 && (
-                  <span style={{ alignSelf: 'center', color: 'var(--text-secondary)' }}>
-                    +{result.totalPages - 4} more
+
+                {/* 2. Rendering DPI / Scale */}
+                <div className="flex flex-col gap-2 pt-2 border-t border-[var(--border-subtle)]">
+                  <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                    Resolution / DPI Scale
                   </span>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {[
+                      { val: 1, label: '1×', dpi: '72 DPI' },
+                      { val: 2, label: '2×', dpi: '150 DPI' },
+                      { val: 3, label: '3×', dpi: '300 DPI' }
+                    ].map((sc) => (
+                      <button
+                        key={sc.val}
+                        type="button"
+                        onClick={() => setScale(sc.val)}
+                        className={`p-2.5 rounded-xl border flex flex-col items-center gap-0.5 transition-all cursor-pointer ${
+                          scale === sc.val
+                            ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold shadow-xs'
+                            : 'border-[var(--border-subtle)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'
+                        }`}
+                      >
+                        <span className="text-xs font-extrabold">{sc.label}</span>
+                        <span className="text-[9px] opacity-75">{sc.dpi}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Page Selection Scope */}
+                <div className="flex flex-col gap-2 pt-2 border-t border-[var(--border-subtle)]">
+                  <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                    Pages to Convert
+                  </span>
+                  <div className="flex gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setPageScope('all')}
+                      className={`flex-1 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                        pageScope === 'all'
+                          ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
+                          : 'border-[var(--border-subtle)] bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
+                      }`}
+                    >
+                      All ({totalPages})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPageScope('custom')}
+                      className={`flex-1 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                        pageScope === 'custom'
+                          ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
+                          : 'border-[var(--border-subtle)] bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
+                      }`}
+                    >
+                      Custom Range
+                    </button>
+                  </div>
+
+                  {pageScope === 'custom' && (
+                    <input
+                      type="text"
+                      placeholder="e.g. 1-3, 5, 8"
+                      value={customRange}
+                      onChange={(e) => setCustomRange(e.target.value)}
+                      className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none animate-[fadeIn_0.15s_ease-out]"
+                    />
+                  )}
+                </div>
+
+                {/* 4. Export Mode */}
+                <div className="flex flex-col gap-2 pt-2 border-t border-[var(--border-subtle)]">
+                  <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                    Export Delivery Mode
+                  </span>
+
+                  {SUPPORTS_DIR_PICKER && (
+                    <label className={`p-3 rounded-xl border flex items-start gap-2.5 cursor-pointer transition-all ${
+                      exportMode === 'folder'
+                        ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
+                        : 'border-[var(--border-subtle)] bg-[var(--bg-secondary)] hover:border-[var(--border-strong)]'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="exportMode"
+                        value="folder"
+                        checked={exportMode === 'folder'}
+                        onChange={() => setExportMode('folder')}
+                        className="mt-0.5 accent-[var(--color-primary)] cursor-pointer"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-[var(--text-primary)]">Direct Folder Export</span>
+                          <span className="text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded">
+                            Fast Stream
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-[var(--text-secondary)] mt-0.5">
+                          Stream-saves images directly to disk with zero memory limits.
+                        </p>
+                      </div>
+                    </label>
+                  )}
+
+                  <label className={`p-3 rounded-xl border flex items-start gap-2.5 cursor-pointer transition-all ${
+                    exportMode === 'zip'
+                      ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
+                      : 'border-[var(--border-subtle)] bg-[var(--bg-secondary)] hover:border-[var(--border-strong)]'
+                  }`}>
+                    <input
+                      type="radio"
+                      name="exportMode"
+                      value="zip"
+                      checked={exportMode === 'zip'}
+                      onChange={() => setExportMode('zip')}
+                      className="mt-0.5 accent-[var(--color-primary)] cursor-pointer"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <span className="text-xs font-bold text-[var(--text-primary)] block">Download ZIP Archive</span>
+                      <p className="text-[10px] text-[var(--text-secondary)] mt-0.5">
+                        Bundles all converted images into a single downloadable .zip archive.
+                      </p>
+                    </div>
+                  </label>
+                </div>
+
+                {/* 5. Custom Output Filename */}
+                {exportMode === 'zip' && (
+                  <div className="flex flex-col gap-1 pt-2 border-t border-[var(--border-subtle)]">
+                    <label className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                      Output ZIP Filename
+                    </label>
+                    <input
+                      type="text"
+                      value={outputArchiveName}
+                      onChange={(e) => setOutputArchiveName(e.target.value)}
+                      placeholder="document-images.zip"
+                      className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none"
+                    />
+                  </div>
+                )}
+
+                {/* Progress Bar (While Processing) */}
+                {processing && (
+                  <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
+                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
+                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                          progress_activity
+                        </span>
+                        {progressStage || 'Converting...'}
+                      </span>
+                      <span>{progress}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-[var(--color-primary)] transition-all duration-200 rounded-full"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {error && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium">
+                    {error}
+                  </div>
                 )}
               </div>
-            </>
-          )}
 
-          <div className="action-bar">
-            {result.mode === 'zip' && (
-              <button
-                className="btn btn-success btn-lg flex items-center justify-center gap-2"
-                onClick={downloadZip}
-              >
-                <span className="material-symbols-outlined text-[20px] select-none">download</span>
-                <span>Download ZIP</span>
-              </button>
+              {/* Sticky Primary CTA Action Button */}
+              <div className="p-4 border-t border-[var(--border-subtle)] bg-[var(--bg-primary)]">
+                <button
+                  type="button"
+                  onClick={handleConvert}
+                  disabled={processing || files.length === 0 || targetPageIndices.length === 0}
+                  className="w-full py-3 px-4 bg-[var(--color-primary)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl shadow-lg shadow-[var(--color-primary)]/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
+                >
+                  {processing ? (
+                    <>
+                      <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+                      <span>{exportMode === 'folder' ? `Exporting (${streamedPages}/${totalStreamPages})...` : `Converting (${progress}%)...`}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-[18px]">
+                        {exportMode === 'folder' ? 'folder_open' : 'photo_library'}
+                      </span>
+                      <span>{exportMode === 'folder' ? 'Export to Folder' : `Convert ${targetPageIndices.length} Pages`}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      ) : (
+        /* ========================================================================= */
+        /* RESULT VIEW: Celebratory High-Fidelity Download Card                       */
+        /* ========================================================================= */
+        <div className="w-full flex-1 flex items-center justify-center p-4 sm:p-8">
+          <div className="max-w-2xl w-full p-8 sm:p-10 bg-[var(--bg-primary)] border border-[var(--border-subtle)] rounded-3xl shadow-xl shadow-black/5 dark:shadow-black/25 flex flex-col items-center text-center gap-6 animate-[scaleIn_0.22s_ease-out]">
+            {/* Celebration Icon Badge */}
+            <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+              <span className="material-symbols-outlined text-[40px]">check_circle</span>
+            </div>
+
+            {/* Title & Document Pill */}
+            <div className="flex flex-col gap-2 max-w-md">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight">
+                Conversion Complete!
+              </h2>
+              <p className="text-sm text-[var(--text-secondary)]">
+                {result.mode === 'folder'
+                  ? `${result.totalPages} pages saved directly to "${result.folderName}" on your device.`
+                  : `${result.totalPages} high-resolution ${result.format} images bundled into ZIP archive.`}
+              </p>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-full text-xs font-semibold text-[var(--text-primary)] mx-auto mt-2 max-w-full">
+                <span className="material-symbols-outlined text-[16px] text-emerald-500">
+                  {result.mode === 'folder' ? 'folder_open' : 'folder_zip'}
+                </span>
+                <span className="truncate max-w-[220px]">{result.name || result.folderName}</span>
+                {result.size && (
+                  <>
+                    <span className="text-[var(--text-tertiary)]">•</span>
+                    <span className="text-[var(--color-primary)] font-bold">{formatFileSize(result.size)}</span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Telemetry Diagnostics Grid */}
+            <div className="grid grid-cols-3 gap-2.5 w-full">
+              <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
+                <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Total Pages</span>
+                <span className="text-base font-extrabold text-[var(--text-primary)]">{result.totalPages}</span>
+              </div>
+              <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
+                <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Format</span>
+                <span className="text-base font-extrabold text-emerald-600 dark:text-emerald-400">{result.format}</span>
+              </div>
+              <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
+                <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Resolution</span>
+                <span className="text-xs font-bold text-[var(--text-primary)] mt-1">{result.scale}</span>
+              </div>
+            </div>
+
+            {/* Visual Image Preview Grid */}
+            {result.previewUrls && result.previewUrls.length > 0 && (
+              <div className="w-full flex flex-col gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] text-left">
+                  Sample Rendered Images
+                </span>
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)]">
+                  {result.previewUrls.map((url, i) => (
+                    <div key={i} className="aspect-3/4 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-800 shadow-xs">
+                      <img src={url} alt={`Page ${i + 1}`} className="w-full h-full object-contain" />
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
-            <button
-              className="btn btn-secondary flex items-center justify-center gap-1.5"
-              onClick={reset}
-            >
-              <span className="material-symbols-outlined text-[16px] select-none">restart_alt</span>
-              <span>Convert Another</span>
-            </button>
+
+            {/* Action Buttons (Strict Single-Line No Wrap) */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center pt-2">
+              {result.mode === 'zip' && (
+                <button
+                  type="button"
+                  className="btn btn-success btn-lg flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 w-full sm:w-auto min-w-[200px] text-sm sm:text-base font-bold py-3 px-6 whitespace-nowrap cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  onClick={downloadZip}
+                >
+                  <span className="material-symbols-outlined text-[20px]">download</span>
+                  <span>Download ZIP Archive</span>
+                </button>
+              )}
+
+              <button
+                type="button"
+                className="btn btn-secondary btn-lg flex items-center justify-center gap-2 w-full sm:w-auto min-w-[180px] text-sm sm:text-base font-semibold py-3 px-5 whitespace-nowrap cursor-pointer hover:bg-[var(--bg-secondary)] transition-all"
+                onClick={resetWorkspace}
+              >
+                <span className="material-symbols-outlined text-[18px]">restart_alt</span>
+                <span>Convert Another PDF</span>
+              </button>
+            </div>
+
+            {/* Quick Next Steps */}
+            <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
+                Continue Working with PDF Tools
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <Link
+                  to="/image-to-pdf"
+                  className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[20px] text-[var(--color-primary)]">picture_as_pdf</span>
+                  <div className="min-w-0">
+                    <p className="font-bold truncate group-hover:text-[var(--color-primary)]">Images to PDF</p>
+                    <p className="text-[10px] text-[var(--text-secondary)] truncate">Combine images</p>
+                  </div>
+                </Link>
+
+                <Link
+                  to="/extract-pdf"
+                  className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[20px] text-[var(--color-primary)]">call_split</span>
+                  <div className="min-w-0">
+                    <p className="font-bold truncate group-hover:text-[var(--color-primary)]">Extract Pages</p>
+                    <p className="text-[10px] text-[var(--text-secondary)] truncate">Export PDF pages</p>
+                  </div>
+                </Link>
+
+                <Link
+                  to="/compress-pdf"
+                  className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[20px] text-[var(--color-primary)]">compress</span>
+                  <div className="min-w-0">
+                    <p className="font-bold truncate group-hover:text-[var(--color-primary)]">Compress PDF</p>
+                    <p className="text-[10px] text-[var(--text-secondary)] truncate">Reduce file size</p>
+                  </div>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       )}
-
-      <AdPlaceholder format="leaderboard" />
     </ToolPageLayout>
   );
 }

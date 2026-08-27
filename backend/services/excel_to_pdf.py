@@ -1,32 +1,29 @@
-import os
-import gc
-import sys
 import csv
-import time
-import shutil
-import signal
+import gc
 import logging
-import tempfile
+import os
+import shutil
 import subprocess
+import tempfile
+import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, List
 
 import openpyxl
 from openpyxl.worksheet.worksheet import Worksheet
 
 from backend.services.libreoffice import (
+    is_valid_pdf_structure,
+    purge_dir,
+    reap_process,
     resolve_libreoffice_binary,
     run_libreoffice_subprocess,
-    reap_process,
-    purge_dir,
-    is_valid_pdf_structure
 )
 
 logger = logging.getLogger("xlsx2pdf")
 
-_ZIP_MAGIC = b"PK\x03\x04"          # .xlsx is a ZIP
-_OLE2_MAGIC = b"\xd0\xcf\x11\xe0"   # legacy .xls (unsupported by openpyxl)
+_ZIP_MAGIC = b"PK\x03\x04"  # .xlsx is a ZIP
+_OLE2_MAGIC = b"\xd0\xcf\x11\xe0"  # legacy .xls (unsupported by openpyxl)
 
 
 class ConversionError(Exception):
@@ -41,31 +38,36 @@ class ConversionTimeout(ConversionError):
 class ConverterConfig:
     timeout_s: float = 45.0
     kill_grace_s: float = 5.0
-    soffice_bin: Optional[str] = None
+    soffice_bin: str | None = None
     max_input_bytes: int = 300 * 1024 * 1024
-    landscape_col_threshold: int = 7        # >this many cols -> landscape
+    landscape_col_threshold: int = 7  # >this many cols -> landscape
     lang: str = "C.UTF-8"
     csv_default_encoding: str = "utf-8-sig"
 
 
 class ExcelToPDFConverter:
-    def __init__(self, config: Optional[ConverterConfig] = None, **kw):
+    def __init__(self, config: ConverterConfig | None = None, **kw):
         self.cfg = config or ConverterConfig(**kw)
         # Fall back to DocForge backend's detected LibreOffice path before scanning system PATH
         from backend import config as backend_config
-        self.soffice = self.cfg.soffice_bin or getattr(backend_config, "LIBREOFFICE_PATH", None)
-        
+
+        self.soffice = self.cfg.soffice_bin or getattr(
+            backend_config, "LIBREOFFICE_PATH", None
+        )
+
         # Verify binary resolution exists
         resolved = None
         if self.soffice:
-            resolved = shutil.which(self.soffice) or (Path(self.soffice).exists() and self.soffice)
+            resolved = shutil.which(self.soffice) or (
+                Path(self.soffice).exists() and self.soffice
+            )
         if not resolved:
             try:
                 self.soffice = resolve_libreoffice_binary()
             except Exception as e:
                 raise ConversionError(
-                    f"LibreOffice binary not found. Please install LibreOffice locally "
-                    f"and ensure it is on your system PATH to run Office conversions."
+                    "LibreOffice binary not found. Please install LibreOffice locally "
+                    "and ensure it is on your system PATH to run Office conversions."
                 ) from e
         else:
             self.soffice = resolved
@@ -79,7 +81,7 @@ class ExcelToPDFConverter:
         self._preflight(in_path)
 
         tmpdir = tempfile.mkdtemp(prefix="xlsx2pdf_")
-        proc: Optional[subprocess.Popen] = None
+        proc: subprocess.Popen | None = None
         stderr_data = b""
         try:
             # 1/2/3: build a LibreOffice-friendly working copy
@@ -97,7 +99,9 @@ class ExcelToPDFConverter:
             cmd = self._build_command(work_in, profile_dir, out_dir)
             env = self._build_env(profile_dir)
 
-            logger.info("Converting %s (timeout=%.0fs)", in_path.name, self.cfg.timeout_s)
+            logger.info(
+                "Converting %s (timeout=%.0fs)", in_path.name, self.cfg.timeout_s
+            )
             proc, _stdout, stderr_data = self._run(cmd, env, tmpdir)
 
             produced = out_dir / (Path(work_in).stem + ".pdf")
@@ -107,8 +111,13 @@ class ExcelToPDFConverter:
             shutil.move(str(produced), str(out_path))
 
             dur = time.monotonic() - start
-            logger.info("OK %s -> %s in %.2fs (%d bytes)",
-                        in_path.name, out_path.name, dur, out_path.stat().st_size)
+            logger.info(
+                "OK %s -> %s in %.2fs (%d bytes)",
+                in_path.name,
+                out_path.name,
+                dur,
+                out_path.stat().st_size,
+            )
             return str(out_path)
 
         except ConversionError:
@@ -139,7 +148,8 @@ class ExcelToPDFConverter:
         if head.startswith(_OLE2_MAGIC):
             raise ConversionError(
                 "Legacy .xls (OLE2) not supported by openpyxl pre-flight. "
-                "Convert to .xlsx first or route to a raw-LibreOffice path.")
+                "Convert to .xlsx first or route to a raw-LibreOffice path."
+            )
         if not head.startswith(_ZIP_MAGIC):
             raise ConversionError(f"Not a valid .xlsx (bad magic bytes): {in_path}")
 
@@ -187,10 +197,10 @@ class ExcelToPDFConverter:
             ws.print_area = None
         except Exception:
             pass
-        ws.page_setup.scale = None            # scale and fitTo are mutually exclusive
+        ws.page_setup.scale = None  # scale and fitTo are mutually exclusive
         ws.sheet_properties.pageSetUpPr.fitToPage = True  # honor fit settings
-        ws.page_setup.fitToWidth = 1          # squeeze all columns to 1 page wide
-        ws.page_setup.fitToHeight = 0         # allow as many pages tall as needed
+        ws.page_setup.fitToWidth = 1  # squeeze all columns to 1 page wide
+        ws.page_setup.fitToHeight = 0  # allow as many pages tall as needed
         if max_col > self.cfg.landscape_col_threshold:
             ws.page_setup.orientation = "landscape"
         else:
@@ -234,16 +244,25 @@ class ExcelToPDFConverter:
         return work_in
 
     # ---------- command + environment ----------
-    def _build_command(self, work_in: Path, profile_dir: Path, out_dir: Path) -> List[str]:
+    def _build_command(
+        self, work_in: Path, profile_dir: Path, out_dir: Path
+    ) -> list[str]:
         profile_uri = profile_dir.resolve().as_uri()
         # impress? no -> calc PDF export filter
         return [
-            self.soffice, "--headless", "--nologo", "--nofirststartwizard",
-            "--nodefault", "--norestore", "--nolockcheck",
+            self.soffice,
+            "--headless",
+            "--nologo",
+            "--nofirststartwizard",
+            "--nodefault",
+            "--norestore",
+            "--nolockcheck",
             "--calc",
             f"-env:UserInstallation={profile_uri}",
-            "--convert-to", "pdf:calc_pdf_Export",
-            "--outdir", str(out_dir),
+            "--convert-to",
+            "pdf:calc_pdf_Export",
+            "--outdir",
+            str(out_dir),
             str(work_in),
         ]
 
@@ -256,23 +275,35 @@ class ExcelToPDFConverter:
         return env
 
     # ---------- subprocess with strict timeout + process-group kill ----------
-    def _run(self, cmd: List[str], env: dict, cwd: str):
+    def _run(self, cmd: list[str], env: dict, cwd: str):
         try:
-            return run_libreoffice_subprocess(cmd, env, cwd, self.cfg.timeout_s, self.cfg.kill_grace_s)
+            return run_libreoffice_subprocess(
+                cmd, env, cwd, self.cfg.timeout_s, self.cfg.kill_grace_s
+            )
         except subprocess.TimeoutExpired as e:
-            raise ConversionTimeout(f"LibreOffice exceeded {self.cfg.timeout_s}s") from e
+            raise ConversionTimeout(
+                f"LibreOffice exceeded {self.cfg.timeout_s}s"
+            ) from e
 
     # ---------- post-flight ----------
     def _postflight(self, produced: Path, returncode, stderr: bytes):
         err = (stderr or b"").decode("utf-8", "replace").strip()
         if not produced.exists():
-            raise ConversionError(f"No output produced (exit={returncode}). stderr: {err[:2000]}")
+            raise ConversionError(
+                f"No output produced (exit={returncode}). stderr: {err[:2000]}"
+            )
         if produced.stat().st_size == 0:
-            raise ConversionError(f"Output PDF empty (exit={returncode}). stderr: {err[:2000]}")
+            raise ConversionError(
+                f"Output PDF empty (exit={returncode}). stderr: {err[:2000]}"
+            )
         if not self._is_valid_pdf(produced):
-            raise ConversionError(f"Output not a valid PDF (exit={returncode}). stderr: {err[:2000]}")
+            raise ConversionError(
+                f"Output not a valid PDF (exit={returncode}). stderr: {err[:2000]}"
+            )
         if returncode not in (0, None):
-            logger.warning("Non-zero exit %s but valid PDF; stderr: %s", returncode, err[:500])
+            logger.warning(
+                "Non-zero exit %s but valid PDF; stderr: %s", returncode, err[:500]
+            )
 
     @staticmethod
     def _is_valid_pdf(path: Path) -> bool:
@@ -280,7 +311,7 @@ class ExcelToPDFConverter:
 
     # ---------- cleanup ----------
     @staticmethod
-    def _reap(proc: Optional[subprocess.Popen]):
+    def _reap(proc: subprocess.Popen | None):
         reap_process(proc)
 
     @staticmethod

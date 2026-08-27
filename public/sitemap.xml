@@ -1,16 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://docforge.app/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>
-  <url><loc>https://docforge.app/pdf-to-image</loc><priority>0.9</priority></url>
-  <url><loc>https://docforge.app/image-to-pdf</loc><priority>0.9</priority></url>
-  <url><loc>https://docforge.app/merge-pdf</loc><priority>0.9</priority></url>
-  <url><loc>https://docforge.app/split-pdf</loc><priority>0.9</priority></url>
-  <url><loc>https://docforge.app/compress-pdf</loc><priority>0.9</priority></url>
-  <url><loc>https://docforge.app/rotate-pdf</loc><priority>0.8</priority></url>
-  <url><loc>https://docforge.app/image-converter</loc><priority>0.8</priority></url>
-  <url><loc>https://docforge.app/image-compressor</loc><priority>0.8</priority></url>
-  <url><loc>https://docforge.app/image-resizer</loc><priority>0.8</priority></url>
-  <url><loc>https://docforge.app/docx-to-pdf</loc><priority>0.9</priority></url>
-  <url><loc>https://docforge.app/text-to-pdf</loc><priority>0.7</priority></url>
-  <url><loc>https://docforge.app/qr-generator</loc><priority>0.7</priority></url>
+  <!-- Core Hub Pages -->
+  <url><loc>https://docforge.app/</loc><priority>1.0</priority><changefreq>daily</changefreq></url>
+  <url><loc>https://docforge.app/workspace</loc><priority>0.9</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/canvas</loc><priority>0.9</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/resume-builder</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://docforge.app/document-viewer</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://docforge.app/pricing</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Organize PDF -->
+  <url><loc>https://docforge.app/merge-pdf</loc><priority>0.95</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/split-pdf</loc><priority>0.95</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/remove-pages</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/extract-pages</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/organize-pdf</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/scan-to-pdf</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+
+  <!-- Optimize PDF -->
+  <url><loc>https://docforge.app/compress-pdf</loc><priority>0.95</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/repair-pdf</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/ocr-pdf</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/un-ocr-pdf</loc><priority>0.80</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/bates-numbering</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+
+  <!-- Convert to PDF -->
+  <url><loc>https://docforge.app/docx-to-pdf</loc><priority>0.95</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/image-to-pdf</loc><priority>0.95</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/excel-to-pdf</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/powerpoint-to-pdf</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/text-to-pdf</loc><priority>0.80</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/html-to-pdf</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/url-to-pdf</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+
+  <!-- Convert from PDF -->
+  <url><loc>https://docforge.app/pdf-to-word</loc><priority>0.95</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/pdf-to-excel</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/pdf-to-powerpoint</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/pdf-to-image</loc><priority>0.95</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/pdf-to-pdfa</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+
+  <!-- Edit & Security -->
+  <url><loc>https://docforge.app/rotate-pdf</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/crop-pdf</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/edit-pdf</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/pdf-forms</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/protect-pdf</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/unlock-pdf</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/sign-pdf</loc><priority>0.95</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/redact-pdf</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/compare-pdf</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/add-watermark</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/add-page-numbers</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+
+  <!-- Intelligence & Utilities -->
+  <url><loc>https://docforge.app/translate-pdf</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/ai-summarizer</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/image-converter</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/image-resizer</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/image-compressor</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docforge.app/qr-generator</loc><priority>0.80</priority><changefreq>weekly</changefreq></url>
 </urlset>

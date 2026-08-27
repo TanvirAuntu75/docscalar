@@ -12,28 +12,22 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Python 3.14
+    - name: Set up Python 3.12
       uses: actions/setup-python@v5
       with:
-        python-version: '3.14-dev' # Verify compatibility on Python 3.14
+        python-version: '3.12'
         
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r backend/requirements.txt
+        pip install pytest pytest-asyncio
         
-    - name: Run Code Quality Lint
+    - name: Run Backend Pytest Suite
       run: |
-        # Optional: Add ruff/flake8 checks here
-        echo "Linter checks passed."
+        pytest backend/tests
 
-    - name: Run Backend Unit Tests
-      run: python backend/test_conversions.py
-
-    - name: Run Backend Auth/Billing Tests
-      run: python backend/test_auth_billing.py
-
-  frontend-build:
+  frontend-test-and-build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -46,6 +40,9 @@ jobs:
         
     - name: Install dependencies
       run: npm ci
+      
+    - name: Run Frontend AI & Intelligence Test Suite (110 Queries)
+      run: npm run test:frontend
       
     - name: Build production app
       run: npm run build

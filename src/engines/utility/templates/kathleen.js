@@ -1,29 +1,49 @@
-export function generateKathleenHtml(data, themeColor = '#d97706', themeFont = 'Inter', sectionOrder = ['summary','experience','education','skills','projects','certifications'], themeLayout = 'single', pageMargin = 0, lineSpacing = 1.45) {
-  const accent = themeColor === 'default' || themeColor === '#2c3549' ? '#d97706' : themeColor;
+// ═══════════════════════════════════════════════════════════════════════════════
+// 6. KATHLEEN — Warm Amber Header Accent & Minimalist Sidebar (Refined & Flawless)
+// ═══════════════════════════════════════════════════════════════════════════════
 
-  const nameParts = data.name.split(' ');
-  const firstName = nameParts[0] || '';
-  const lastName = nameParts.slice(1).join(' ') || '';
+export function generateKathleenHtml(
+  data,
+  themeColor = '#d97706',
+  themeFont = 'Inter',
+  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
+  themeLayout = 'single',
+  pageMargin = 0,
+  lineSpacing = 1.45
+) {
+  const accent = themeColor === 'default' || !themeColor ? '#d97706' : themeColor;
+  const fontFam = themeFont === 'Playfair Display' ? "'Playfair Display', Georgia, serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : "'Inter', -apple-system, sans-serif";
 
-  const expHtml = data.experience.map(e => `
-    <div style="margin-bottom: 22px;">
-      <div style="font-weight: 700; font-size: 10pt; color: #1e293b;">${e.role}</div>
-      <div style="font-weight: 600; font-size: 9pt; color: #64748b; margin-top: 1px;">
-        ${e.company} | <span style="font-weight: 400; font-style: italic;">${data.location || 'Location'}</span>
-      </div>
-      <div style="font-size: 8pt; font-style: italic; color: #64748b; margin-top: 2px; margin-bottom: 8px;">${e.start} - ${e.end}</div>
-      ${e.highlights && e.highlights.length ? `<ul style="padding-left: 14px; font-size: 8.5pt; color: #334155; line-height: 1.45;">${e.highlights.map(h => `<li style="margin-bottom: 4px;">• ${h}</li>`).join('')}</ul>` : ''}
-    </div>`).join('');
+  const expHtml = data.experience && data.experience.length ? `
+    <section class="main-section">
+      <h2 class="main-section-title">Work Experience</h2>
+      <div class="main-line"></div>
+      ${data.experience.map(e => `
+        <div class="exp-item">
+          <div class="exp-header">
+            <span class="exp-role">${e.role}</span>
+            <span class="exp-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+          </div>
+          <div class="exp-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+          ${e.highlights && e.highlights.filter(Boolean).length ? `
+            <ul class="exp-desc">
+              ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+            </ul>
+          ` : ''}
+        </div>
+      `).join('')}
+    </section>
+  ` : '';
 
   const eduHtml = data.education && data.education.length ? `
     <div class="sidebar-section">
       <h3>Education</h3>
       <div class="sidebar-line"></div>
       ${data.education.map(e => `
-        <div style="margin-bottom: 12px;">
-          <div style="font-size: 8pt; color: #475569; font-weight: 500;">${e.start} - ${e.end}</div>
-          <div style="font-weight: 700; font-size: 8.5pt; color: #1e293b; margin-top: 1px;">${e.degree}</div>
-          <div style="font-size: 8pt; color: #475569; margin-top: 1px;">${e.school}</div>
+        <div class="edu-item">
+          <div class="edu-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
+          <div class="edu-degree">${e.degree}</div>
+          <div class="edu-school">${e.school}${e.note ? ` · ${e.note}` : ''}</div>
         </div>
       `).join('')}
     </div>
@@ -33,220 +53,378 @@ export function generateKathleenHtml(data, themeColor = '#d97706', themeFont = '
     <div class="sidebar-section">
       <h3>Skills</h3>
       <div class="sidebar-line"></div>
-      <ul style="list-style: none; padding: 0;">
-        ${data.skills.map((s, idx) => {
+      <div class="skills-grid">
+        ${data.skills.map((s) => {
           let name = s;
-          let levelText = ['Expert', 'Advanced', 'Intermediate'][idx % 3];
+          let levelText = '';
           if (s.includes(' - ')) {
             const parts = s.split(' - ');
             name = parts[0];
             levelText = parts[1];
           }
           return `
-            <li style="display: flex; justify-content: space-between; font-size: 8.2pt; color: #334155; margin-bottom: 6px;">
-              <span>• ${name}</span>
-              <span style="color: #64748b; font-size: 7.8pt;">${levelText}</span>
-            </li>
+            <div class="skill-row">
+              <span class="skill-name">• ${name}</span>
+              ${levelText ? `<span class="skill-level">${levelText}</span>` : ''}
+            </div>
           `;
         }).join('')}
-      </ul>
+      </div>
     </div>
   ` : '';
 
   const projHtml = data.projects && data.projects.length ? `
-    <section style="margin-bottom: 24px;">
+    <section class="main-section">
       <h2 class="main-section-title">Projects</h2>
       <div class="main-line"></div>
       ${data.projects.map(p => `
-        <div style="margin-bottom: 12px;">
-          <div style="font-weight: 700; font-size: 9pt; color: #1e293b;">${p.name}</div>
-          <div style="font-size: 8.2pt; color: #475569; margin-top: 2px;">${p.description}</div>
+        <div class="proj-item">
+          <div class="proj-header">
+            <span class="proj-title">${p.name}</span>
+            ${p.url ? `<span class="proj-url"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
+          </div>
+          ${p.description ? `<div class="proj-desc">${p.description}</div>` : ''}
         </div>
       `).join('')}
     </section>
   ` : '';
 
   const certHtml = data.certifications && data.certifications.length ? `
-    <section style="margin-bottom: 24px;">
+    <section class="main-section">
       <h2 class="main-section-title">Certifications</h2>
       <div class="main-line"></div>
-      <ul style="padding-left: 14px; font-size: 8.5pt; color: #475569; line-height: 1.45;">
-        ${data.certifications.map(c => `
-          <li style="margin-bottom: 4px;">• ${c}</li>
-        `).join('')}
+      <ul class="cert-list">
+        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
       </ul>
     </section>
   ` : '';
 
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;850&display=swap" rel="stylesheet"/>
-<style>
-  @page { margin: 0; size: A4; }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: #fff; color: #334155; -webkit-print-color-adjust: exact; }
-  
-  #main-container {
-    display: flex;
-    min-height: 297mm;
-  }
-  
-  /* Left column side block */
-  .sidebar {
-    width: 33%;
-    background: #f5f5f5;
-    padding: 40px 22px;
-    font-size: 8.5pt;
-    border-right: 1px solid #e5e5e5;
-  }
-  .stacked-name {
-    margin-bottom: 35px;
-  }
-  .stacked-name .first {
-    font-size: 28pt;
-    font-weight: 850;
-    color: #1a1a1a;
-    line-height: 0.95;
-    letter-spacing: -0.5px;
-    text-transform: uppercase;
-  }
-  .stacked-name .last {
-    font-size: 28pt;
-    font-weight: 800;
-    color: #334155;
-    line-height: 0.95;
-    letter-spacing: -0.5px;
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
-  
-  .sidebar-section {
-    margin-bottom: 25px;
-  }
-  .sidebar-section h3 {
-    font-size: 9pt;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #1a1a1a;
-    margin-bottom: 4px;
-  }
-  .sidebar-line {
-    border-bottom: 1.5px solid ${accent};
-    width: 30px;
-    margin-bottom: 12px;
-  }
-  
-  .contact-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .contact-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .contact-circle {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: ${accent};
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 7.5pt;
-  }
-  .contact-val {
-    font-size: 8pt;
-    color: #334155;
-    word-break: break-all;
-  }
-  
-  /* Main content side block */
-  .main-content {
-    width: 67%;
-    padding: 40px 35px;
-    background: #fff;
-    position: relative;
-  }
-  .quote-accent {
-    position: absolute;
-    top: 25px;
-    right: 35px;
-    font-size: 72pt;
-    font-weight: 850;
-    color: ${accent};
-    opacity: 0.22;
-    line-height: 1;
-    font-family: Georgia, serif;
-    pointer-events: none;
-    select: none;
-  }
-  
-  .main-section-title {
-    font-size: 9.5pt;
-    font-weight: 850;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #1a1a1a;
-    margin-bottom: 4px;
-  }
-  .main-line {
-    border-bottom: 1.5px solid #e5e5e5;
-    margin-bottom: 14px;
-  }
-</style></head><body>
-<div id="main-container">
-  <div class="sidebar">
-    <div class="stacked-name">
-      <div class="first">${firstName}</div>
-      <div class="last">${lastName}</div>
+  const langSection = (data.customSections || []).find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');
+  const langHtml = langSection && langSection.items?.length ? `
+    <div class="sidebar-section">
+      <h3>${langSection.title || 'Languages'}</h3>
+      <div class="sidebar-line"></div>
+      <div class="skills-grid">
+        ${langSection.items.map(i => `
+          <div class="skill-row">
+            <span class="skill-name">• ${i.title}</span>
+            ${i.value ? `<span class="skill-level">${i.value}</span>` : ''}
+          </div>
+        `).join('')}
+      </div>
     </div>
-    
+  ` : '';
+
+  const contactHtml = `
     <div class="sidebar-section">
       <h3>Contact</h3>
       <div class="sidebar-line"></div>
       <div class="contact-list">
-        ${data.email ? `<div class="contact-row"><div class="contact-circle">e</div><span class="contact-val">${data.email}</span></div>` : ''}
-        ${data.phone ? `<div class="contact-row"><div class="contact-circle">t</div><span class="contact-val">${data.phone}</span></div>` : ''}
-        ${data.location ? `<div class="contact-row"><div class="contact-circle">a</div><span class="contact-val">${data.location}</span></div>` : ''}
+        ${data.location ? `
+          <div class="contact-item">
+            <span class="label">Location</span>
+            <span class="val">${data.location}</span>
+          </div>
+        ` : ''}
+        ${data.phone ? `
+          <div class="contact-item">
+            <span class="label">Phone</span>
+            <span class="val">${data.phone}</span>
+          </div>
+        ` : ''}
+        ${data.email ? `
+          <div class="contact-item">
+            <span class="label">Email</span>
+            <span class="val"><a href="mailto:${data.email}" style="color: inherit; text-decoration: none;">${data.email}</a></span>
+          </div>
+        ` : ''}
+        ${data.linkedin ? `
+          <div class="contact-item">
+            <span class="label">LinkedIn</span>
+            <span class="val"><a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></span>
+          </div>
+        ` : ''}
+        ${data.website ? `
+          <div class="contact-item">
+            <span class="label">Website</span>
+            <span class="val"><a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></span>
+          </div>
+        ` : ''}
       </div>
     </div>
-    
-    ${eduHtml}
-    ${skillsHtml}
-  </div>
-  
-  <div class="main-content">
-    <div class="quote-accent">”</div>
-    
-    ${data.summary ? `
-      <section style="margin-bottom: 24px;">
-        <h2 class="main-section-title">Professional Summary</h2>
-        <div class="main-line"></div>
-        <div style="font-size: 8.8pt; color: #334155; line-height: ${lineSpacing};">${data.summary}</div>
-      </section>
-    ` : ''}
-    
-    ${data.experience && data.experience.length ? `
-      <section style="margin-bottom: 24px;">
-        <h2 class="main-section-title">Work Experience</h2>
-        <div class="main-line"></div>
-        <div>
-          ${expHtml}
-        </div>
-      </section>
-    ` : ''}
-    
-    ${projHtml}
-    ${certHtml}
-  </div>
-</div>
-</body></html>`;
-}
+  `;
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 7. RICHARD — Premium Split Band Layout (100% Match)
-// ═══════════════════════════════════════════════════════════════════════════════
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    @page { margin: 0; size: A4; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      font-family: ${fontFam};
+      background: #ffffff;
+      color: #334155;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    #main-container {
+      display: flex;
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: #ffffff;
+    }
+    
+    /* Left Sidebar (33%) */
+    .sidebar {
+      width: 33%;
+      background: #fafaf9;
+      padding: ${35 + pageMargin}px 22px;
+      font-size: 8.5pt;
+      border-right: 1.5px solid #e7e5e4;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .avatar-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+    .avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid ${accent};
+      object-fit: cover;
+      display: block;
+    }
+    .sidebar-section {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .sidebar-section h3 {
+      font-size: 10pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: ${accent};
+      margin-bottom: 4px;
+    }
+    .sidebar-line {
+      border-bottom: 1.5px solid #e7e5e4;
+      margin-bottom: 10px;
+    }
+    .contact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .contact-item .label {
+      font-weight: 700;
+      font-size: 7.5pt;
+      text-transform: uppercase;
+      color: #78716c;
+      letter-spacing: 0.5px;
+    }
+    .contact-item .val {
+      font-size: 8.3pt;
+      color: #1c1917;
+      margin-top: 1px;
+      word-break: break-all;
+    }
+    .edu-item {
+      margin-bottom: 10px;
+      break-inside: avoid;
+    }
+    .edu-date {
+      font-size: 7.8pt;
+      color: #78716c;
+      font-weight: 500;
+    }
+    .edu-degree {
+      font-weight: 700;
+      font-size: 8.8pt;
+      color: #1c1917;
+      margin-top: 1px;
+    }
+    .edu-school {
+      font-size: 8pt;
+      color: #57534e;
+    }
+    .skills-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .skill-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 8.3pt;
+      color: #292524;
+    }
+    .skill-name {
+      font-weight: 500;
+    }
+    .skill-level {
+      font-size: 7.8pt;
+      color: #78716c;
+    }
+    
+    /* Main Content (67%) */
+    .main-content {
+      width: 67%;
+      padding: ${40 + pageMargin}px 32px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .main-header {
+      border-bottom: 2px solid ${accent};
+      padding-bottom: 12px;
+      margin-bottom: 4px;
+    }
+    .main-header h1 {
+      font-size: 24pt;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+    .main-header .title {
+      font-size: 10.5pt;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: ${accent};
+      margin-top: 3px;
+      margin-bottom: 6px;
+    }
+    .main-header .summary {
+      font-size: 9pt;
+      color: #475569;
+      line-height: ${lineSpacing};
+      text-align: justify;
+    }
+    .main-section {
+      break-inside: auto;
+    }
+    .main-section-title {
+      font-size: 10.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: ${accent};
+      margin-bottom: 3px;
+    }
+    .main-line {
+      border-bottom: 1.5px solid #e2e8f0;
+      margin-bottom: 10px;
+    }
+    .exp-item {
+      margin-bottom: 12px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .exp-role {
+      font-weight: 700;
+      font-size: 9.5pt;
+      color: #1e293b;
+    }
+    .exp-date {
+      font-size: 8.3pt;
+      font-weight: 600;
+      color: #64748b;
+      font-variant-numeric: tabular-nums;
+    }
+    .exp-company {
+      font-weight: 600;
+      font-size: 8.8pt;
+      color: #64748b;
+      margin-top: 1px;
+      margin-bottom: 3px;
+    }
+    .exp-desc {
+      padding-left: 16px;
+      font-size: 8.8pt;
+      color: #334155;
+      line-height: ${lineSpacing};
+    }
+    .exp-desc li {
+      margin-bottom: 2px;
+      text-align: justify;
+    }
+    .proj-item {
+      margin-bottom: 8px;
+      break-inside: avoid;
+    }
+    .proj-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .proj-title {
+      font-weight: 700;
+      font-size: 9pt;
+      color: #1e293b;
+    }
+    .proj-url {
+      font-size: 8pt;
+    }
+    .proj-desc {
+      font-size: 8.5pt;
+      color: #475569;
+      margin-top: 1px;
+    }
+    .cert-list {
+      padding-left: 16px;
+      font-size: 8.5pt;
+      color: #475569;
+    }
+    .cert-list li {
+      margin-bottom: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div id="main-container">
+    <div class="sidebar">
+      ${data.photoUrl ? `
+        <div class="avatar-container">
+          <img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />
+        </div>
+      ` : ''}
+      ${contactHtml}
+      ${eduHtml}
+      ${skillsHtml}
+      ${langHtml}
+    </div>
+    
+    <div class="main-content">
+      <div class="main-header">
+        <h1>${data.name || 'Candidate Name'}</h1>
+        ${data.title ? `<div class="title">${data.title}</div>` : ''}
+        ${data.summary ? `<div class="summary">${data.summary}</div>` : ''}
+      </div>
+      
+      ${expHtml}
+      ${projHtml}
+      ${certHtml}
+    </div>
+  </div>
+</body>
+</html>`;
+}

@@ -27,7 +27,71 @@ import {
   generateZivOliveHtml,
   generateAdoraDiagonalHtml,
   generateWilsonMinimalHtml,
-  generateAlvaradoSlateHtml
+  generateAlvaradoSlateHtml,
+  generateKellyMintHtml,
+  generateBerlinTwoToneHtml,
+  generateCardMatrixHtml,
+  generateVioletModernHtml,
+  generateDateCapsuleHtml,
+  generateSagePastelHtml,
+  generateLilacSidebarHtml,
+  generateOceanBlockHtml,
+  generateCambridgeRoseHtml,
+  generateStockholmYellowHtml,
+  generateEmeraldPrestigeHtml,
+  generateBordeauxWineHtml,
+  generateTokyoIceBlueHtml,
+  generateViennaCrestHtml,
+  generateOsloTaupeHtml,
+  generateKyotoCoralHtml,
+  generateZurichSlateBlockHtml,
+  generateBarcelonaCyanHtml,
+  generateGenevaCharcoalHtml,
+  generateMilanBlushHtml,
+  generateHelsinkiNavyHtml,
+  generateOxfordBurgundyHtml,
+  generateDublinForestHtml,
+  generateManhattanNoirHtml,
+  generateMontrealFrostHtml,
+  generateFlorenceTerracottaHtml,
+  generateCopenhagenSandHtml,
+  generateSeoulNeonHtml,
+  generateAustinAmberHtml,
+  generateEdinburghNavyHtml,
+  generateKyivGoldenHtml,
+  generateSingaporeRubyHtml,
+  generateVeniceSandSplitHtml,
+  generateBostonCrimsonHtml,
+  generateMadridSunHtml,
+  generateOsakaMinimalHtml,
+  generateSanFranciscoSkylineHtml,
+  generateAmsterdamOrangeHtml,
+  generateStockholmMonochromeHtml,
+  generatePragueBrassHtml,
+  generateCairoGoldHtml,
+  generateReykjavikSlateHtml,
+  generateBuenosAiresTangoHtml,
+  generateVancouverPineHtml,
+  generateLyonLavenderHtml,
+  generateSeattleEmeraldHtml,
+  generateCapeTownSunsetHtml,
+  generateHelsinkiFrostHtml,
+  generateDiagonalWedgeHtml,
+  generateFloatingCardMatrixHtml,
+  generateSplitDualBlockHtml,
+  generateOverlappingBadgeHtml,
+  generateAdelinePalmerstonHtml,
+  generateAdoraMontminyHtml,
+  generateAdamFletcherHtml,
+  generateRichardSanchezHtml,
+  generateSebastianBennettHtml,
+  generateLornaAlvaradoHtml,
+  generateDonnaStroupeHtml,
+  generateIsabelSchumacherHtml,
+  generateHowardOngHtml,
+  generateTerracottaArchHtml,
+  generateKorinaVillanuevaHtml,
+  generateIsabelMercadoHtml
 } from '../../engines/utility/resumeTemplates';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
@@ -161,40 +225,257 @@ const defaultData = {
 };
 
 const TEMPLATE_MAP = {
-  mariana:       { label: '✨ Mariana',       fn: generateMarianaHtml,       badge: 'Premium Headshot',    photoUrl: '/images/candidates/candidate_1.jpg',  candidateName: 'Mariana Anderson' },
-  olivia:        { label: '✨ Olivia',        fn: generateOliviaHtml,        badge: 'Premium Bronze',      photoUrl: '/images/candidates/candidate_3.jpg',  candidateName: 'Olivia Sterling' },
-  jonathan:      { label: '✨ Jonathan',      fn: generateJonathanHtml,      badge: 'Classic Serif',       photoUrl: '/images/candidates/candidate_10.jpg', candidateName: 'Jonathan Brewer' },
-  emma:          { label: '✨ Emma',          fn: generateEmmaHtml,          badge: 'Balanced Split',      photoUrl: '/images/candidates/candidate_5.jpg',  candidateName: 'Emma Sinclair' },
-  charles:       { label: '✨ Charles',       fn: generateCharlesHtml,       badge: 'Ocean Teal',          photoUrl: '/images/candidates/candidate_4.jpg',  candidateName: 'Charles Rodriguez' },
-  kathleen:      { label: '✨ Kathleen',      fn: generateKathleenHtml,      badge: 'Modern Accent',       photoUrl: '/images/candidates/candidate_14.jpg', candidateName: 'Kathleen Jenkins' },
-  richard:       { label: '✨ Richard',       fn: generateRichardHtml,       badge: 'Split Band',          photoUrl: '/images/candidates/candidate_2.jpg',  candidateName: 'Richard Fowler' },
-  sanchez_dark:  { label: '✨ Sanchez Dark',  fn: generateSanchezDarkHtml,  badge: 'Timeline Sidebar',    photoUrl: '/images/candidates/candidate_6.jpg',  candidateName: 'Mateo Sanchez' },
-  wilson_light:  { label: '✨ Wilson Light',  fn: generateWilsonLightHtml,  badge: 'Modern Navy',         photoUrl: '/images/candidates/candidate_9.jpg',  candidateName: 'Marcus Wilson' },
-  sanchez_mono:  { label: '✨ Sanchez Mono',  fn: generateSanchezMonoHtml,  badge: 'Minimalist Timeline', photoUrl: '/images/candidates/candidate_7.jpg',  candidateName: 'Yuki Sanchez' },
-  sanchez_wave:  { label: '✨ Sanchez Wave',  fn: generateSanchezWaveHtml,  badge: 'Elegant Waves',       photoUrl: '/images/candidates/candidate_8.jpg',  candidateName: 'Mei Sanchez' },
-  ong_burgundy:  { label: '✨ Howard Burgundy',fn: generateOngBurgundyHtml,  badge: 'Burgundy Classic',    photoUrl: '/images/candidates/candidate_11.jpg', candidateName: 'David Howard' },
-  schumacher_charcoal: { label: '✨ Schumacher Charcoal', fn: generateSchumacherCharcoalHtml, badge: 'Curved Headshot', photoUrl: '/images/candidates/candidate_13.jpg', candidateName: 'Layla Schumacher' },
-  ziv_olive:     { label: '✨ Catrine Olive',  fn: generateZivOliveHtml,      badge: 'Sage Split',          photoUrl: '/images/candidates/candidate_12.jpg', candidateName: 'Catrine Olive' },
-  adora_diagonal: { label: '✨ Adora Diagonal', fn: generateAdoraDiagonalHtml, badge: 'Diagonal Waves',     photoUrl: '/images/candidates/candidate_15.jpg', candidateName: 'Adora Sharma' },
-  wilson_minimal: { label: '✨ Wilson Minimal', fn: generateWilsonMinimalHtml, badge: 'Elegant Border',     photoUrl: '/images/candidates/candidate_1.jpg',  candidateName: 'Mariana Wilson' },
-  alvarado_slate: { label: '✨ Lorna Slate',    fn: generateAlvaradoSlateHtml, badge: 'Slate Ribbon',        photoUrl: '/images/candidates/candidate_3.jpg',  candidateName: 'Lorna Slate' },
+  adeline_palmerston: { label: '👑 Adeline Palmerston', fn: generateAdelinePalmerstonHtml, badge: 'Exact Slate & Bronze', photoUrl: '/images/candidates/adeline.jpg', candidateName: 'Adeline Palmerston' },
+  adora_montminy: { label: '👑 Adora Montminy', fn: generateAdoraMontminyHtml, badge: 'Exact Gradient Blue & Slate', photoUrl: '/images/candidates/adora.jpg', candidateName: 'Adora Montminy' },
+  adam_fletcher: { label: '👑 Adam Fletcher', fn: generateAdamFletcherHtml, badge: 'Exact Charcoal Bar Header', photoUrl: '/images/candidates/adam.jpg', candidateName: 'Adam Fletcher' },
+  richard_sanchez: { label: '👑 Richard Sanchez', fn: generateRichardSanchezHtml, badge: 'Exact Royal Blue Banner', photoUrl: '/images/candidates/richard.jpg', candidateName: 'Richard Sanchez' },
+  sebastian_bennett: { label: '👑 Sebastian Bennett', fn: generateSebastianBennettHtml, badge: 'Exact Executive Rounded Card', photoUrl: '/images/candidates/sebastian.jpg', candidateName: 'Sebastian Bennett' },
+  lorna_alvarado: { label: '👑 Lorna Alvarado', fn: generateLornaAlvaradoHtml, badge: 'Exact 3D Folded Ribbon', photoUrl: '/images/candidates/lorna.jpg', candidateName: 'Lorna Alvarado' },
+  donna_stroupe: { label: '👑 Donna Stroupe', fn: generateDonnaStroupeHtml, badge: 'Exact Espresso Banner & Taupe', photoUrl: '/images/candidates/donna.jpg', candidateName: 'Donna Stroupe' },
+  isabel_schumacher: { label: '👑 Isabel Schumacher', fn: generateIsabelSchumacherHtml, badge: 'Exact Charcoal Halo & Nodes', photoUrl: '/images/candidates/isabel.jpg', candidateName: 'Isabel Schumacher' },
+  howard_ong: { label: '👑 Howard Ong', fn: generateHowardOngHtml, badge: 'Exact Burgundy Banner & Headroom', photoUrl: '/images/candidates/howard.jpg', candidateName: 'Howard Ong' },
+  terracotta_arch: { label: '👑 Terracotta Arch', fn: generateTerracottaArchHtml, badge: 'Exact Terracotta & Sage Overview', photoUrl: '/images/candidates/adeline.jpg', candidateName: 'Adeline Palmerston' },
+  korina_villanueva: { label: '👑 Korina Villanueva', fn: generateKorinaVillanuevaHtml, badge: 'Exact Chevron Pennant & Dots', photoUrl: '/images/candidates/korina.jpg', candidateName: 'Korina Villanueva' },
+  isabel_mercado: { label: '👑 Isabel Mercado', fn: generateIsabelMercadoHtml, badge: 'Exact Framed Portrait & Pills', photoUrl: '/images/candidates/isabel.jpg', candidateName: 'Isabel Mercado' },
+  diagonal_wedge: { label: '✨ Diagonal Wedge', fn: generateDiagonalWedgeHtml, badge: 'Polygon Cut & 5-Dots', photoUrl: '/images/candidates/marcus.jpg', candidateName: 'Marcus Sterling' },
+  floating_card_matrix: { label: '✨ Floating Cards', fn: generateFloatingCardMatrixHtml, badge: 'Modular Cards & Bars', photoUrl: '/images/candidates/clara.jpg', candidateName: 'Clara Oswald' },
+  split_dual_block: { label: '✨ Split Dual Block', fn: generateSplitDualBlockHtml, badge: 'Forest & Peach Box', photoUrl: '/images/candidates/evelyn.jpg', candidateName: 'Evelyn St. Claire' },
+  overlapping_badge: { label: '✨ Overlap Badge', fn: generateOverlappingBadgeHtml, badge: 'Navy Banner Halo Badge', photoUrl: '/images/candidates/alexander.jpg', candidateName: 'Alexander Hayes' },
+  mariana:       { label: '✨ Mariana',       fn: generateMarianaHtml,       badge: 'Premium Headshot',    photoUrl: '/images/candidates/mariana.jpg',  candidateName: 'Mariana Anderson' },
+  olivia:        { label: '✨ Olivia',        fn: generateOliviaHtml,        badge: 'Premium Bronze',      photoUrl: '/images/candidates/olivia.jpg',  candidateName: 'Olivia Sterling' },
+  jonathan:      { label: '✨ Jonathan',      fn: generateJonathanHtml,      badge: 'Classic Serif',       photoUrl: '/images/candidates/jonathan.jpg', candidateName: 'Jonathan Brewer' },
+  emma:          { label: '✨ Emma',          fn: generateEmmaHtml,          badge: 'Balanced Split',      photoUrl: '/images/candidates/emma.jpg',  candidateName: 'Emma Sinclair' },
+  charles:       { label: '✨ Charles',       fn: generateCharlesHtml,       badge: 'Ocean Teal',          photoUrl: '/images/candidates/charles.jpg',  candidateName: 'Charles Rodriguez' },
+  kathleen:      { label: '✨ Kathleen',      fn: generateKathleenHtml,      badge: 'Modern Accent',       photoUrl: '/images/candidates/kathleen.jpg', candidateName: 'Kathleen Jenkins' },
+  richard:       { label: '✨ Richard',       fn: generateRichardHtml,       badge: 'Split Band',          photoUrl: '/images/candidates/richard.jpg',  candidateName: 'Richard Fowler' },
+  sanchez_dark:  { label: '✨ Sanchez Dark',  fn: generateSanchezDarkHtml,  badge: 'Timeline Sidebar',    photoUrl: '/images/candidates/mateo.jpg',  candidateName: 'Mateo Sanchez' },
+  wilson_light:  { label: '✨ Wilson Light',  fn: generateWilsonLightHtml,  badge: 'Modern Navy',         photoUrl: '/images/candidates/marcus.jpg',  candidateName: 'Marcus Wilson' },
+  sanchez_mono:  { label: '✨ Sanchez Mono',  fn: generateSanchezMonoHtml,  badge: 'Minimalist Timeline', photoUrl: '/images/candidates/yuki.jpg',  candidateName: 'Yuki Sanchez' },
+  sanchez_wave:  { label: '✨ Sanchez Wave',  fn: generateSanchezWaveHtml,  badge: 'Elegant Waves',       photoUrl: '/images/candidates/mei.jpg',  candidateName: 'Mei Sanchez' },
+  ong_burgundy:  { label: '✨ Howard Burgundy',fn: generateOngBurgundyHtml,  badge: 'Burgundy Classic',    photoUrl: '/images/candidates/howard.jpg', candidateName: 'David Howard' },
+  schumacher_charcoal: { label: '✨ Schumacher Charcoal', fn: generateSchumacherCharcoalHtml, badge: 'Curved Headshot', photoUrl: '/images/candidates/isabel.jpg', candidateName: 'Layla Schumacher' },
+  ziv_olive:     { label: '✨ Catrine Olive',  fn: generateZivOliveHtml,      badge: 'Sage Split',          photoUrl: '/images/candidates/catrine.jpg', candidateName: 'Catrine Olive' },
+  adora_diagonal: { label: '✨ Adora Diagonal', fn: generateAdoraDiagonalHtml, badge: 'Diagonal Waves',     photoUrl: '/images/candidates/adora.jpg', candidateName: 'Adora Sharma' },
+  wilson_minimal: { label: '✨ Wilson Minimal', fn: generateWilsonMinimalHtml, badge: 'Elegant Border',     photoUrl: '/images/candidates/mariana.jpg',  candidateName: 'Mariana Wilson' },
+  alvarado_slate: { label: '✨ Lorna Slate',    fn: generateAlvaradoSlateHtml, badge: 'Slate Ribbon',        photoUrl: '/images/candidates/lorna.jpg',  candidateName: 'Lorna Slate' },
+  kelly_mint:    { label: '✨ Kelly Mint',     fn: generateKellyMintHtml,     badge: 'Mint Highlight',      photoUrl: '/images/candidates/kelly.jpg',  candidateName: 'Kelly Blackwell' },
+  berlin_two_tone: { label: '✨ Berlin Two-Tone', fn: generateBerlinTwoToneHtml, badge: 'Warm Tan Card',   photoUrl: '/images/candidates/berlin.jpg',  candidateName: 'David Berlin' },
+  card_matrix:   { label: '✨ Card Matrix',    fn: generateCardMatrixHtml,    badge: 'Boxed Tech Cards',    photoUrl: '/images/candidates/charles.jpg',  candidateName: 'Alex Mercer' },
+  violet_modern: { label: '✨ Violet Modern',  fn: generateVioletModernHtml,  badge: 'Electric Violet',     photoUrl: '/images/candidates/elena.jpg', candidateName: 'Elena Rostova' },
+  date_capsule:  { label: '✨ Date Capsule',   fn: generateDateCapsuleHtml,   badge: 'Capsule Timeline',    photoUrl: '/images/candidates/jason.jpg', candidateName: 'Jason Vance' },
+  sage_pastel:   { label: '✨ Sage Mist',      fn: generateSagePastelHtml,    badge: 'Pastel Sage',         photoUrl: '/images/candidates/claire.jpg', candidateName: 'Claire Laurent' },
+  lilac_sidebar: { label: '✨ Lilac Harmony',  fn: generateLilacSidebarHtml,  badge: 'Lavender Sidebar',    photoUrl: '/images/candidates/chloe.jpg', candidateName: 'Chloe Bennett' },
+  ocean_block:   { label: '✨ Ocean Block',    fn: generateOceanBlockHtml,    badge: 'Navy Block Header',   photoUrl: '/images/candidates/candidate_9.jpg',  candidateName: 'Julian Hayes' },
+  cambridge_rose: { label: '✨ Cambridge Rose', fn: generateCambridgeRoseHtml, badge: 'Rose Duo-Tone',     photoUrl: '/images/candidates/candidate_3.jpg',  candidateName: 'Clara Cambridge' },
+  stockholm_yellow: { label: '✨ Stockholm Gold', fn: generateStockholmYellowHtml, badge: 'Gold Asymmetric', photoUrl: '/images/candidates/candidate_6.jpg', candidateName: 'Astrid Lindqvist' },
+  emerald_prestige: { label: '✨ Emerald Prestige', fn: generateEmeraldPrestigeHtml, badge: 'Forest Badge Matrix', photoUrl: '/images/candidates/candidate_1.jpg', candidateName: 'Arthur Vance' },
+  bordeaux_wine: { label: '✨ Bordeaux Wine',  fn: generateBordeauxWineHtml,  badge: 'Wine Executive Split', photoUrl: '/images/candidates/candidate_15.jpg', candidateName: 'Genevieve Bordeaux' },
+  tokyo_ice_blue: { label: '✨ Tokyo Ice Blue', fn: generateTokyoIceBlueHtml, badge: 'Steel Studio Cards',  photoUrl: '/images/candidates/candidate_7.jpg',  candidateName: 'Kenji Takahashi' },
+  vienna_crest:  { label: '✨ Vienna Crest',   fn: generateViennaCrestHtml,   badge: 'European Academic',   photoUrl: '/images/candidates/candidate_10.jpg', candidateName: 'Dr. Stefan Weber' },
+  oslo_taupe:    { label: '✨ Oslo Taupe',     fn: generateOsloTaupeHtml,     badge: 'Warm Espresso Minimal', photoUrl: '/images/candidates/candidate_5.jpg', candidateName: 'Freja Lind' },
+  kyoto_coral:   { label: '✨ Kyoto Coral',    fn: generateKyotoCoralHtml,    badge: 'Coral Minimalist Grid', photoUrl: '/images/candidates/candidate_8.jpg', candidateName: 'Hana Tanaka' },
+  zurich_slate_block: { label: '✨ Zurich Slate', fn: generateZurichSlateBlockHtml, badge: 'Slate Indigo Block', photoUrl: '/images/candidates/candidate_2.jpg', candidateName: 'Dominik Weber' },
+  barcelona_cyan: { label: '✨ Barcelona Cyan', fn: generateBarcelonaCyanHtml, badge: 'Cyan Tech Modern', photoUrl: '/images/candidates/candidate_4.jpg', candidateName: 'Javier Gomez' },
+  geneva_charcoal: { label: '✨ Geneva Charcoal', fn: generateGenevaCharcoalHtml, badge: 'Charcoal Gold Exec', photoUrl: '/images/candidates/candidate_9.jpg', candidateName: 'Henri Laurent' },
+  milan_blush:   { label: '✨ Milan Blush',    fn: generateMilanBlushHtml,    badge: 'Blush Peach Editorial', photoUrl: '/images/candidates/candidate_14.jpg', candidateName: 'Alessandra Rossi' },
+  helsinki_navy: { label: '✨ Helsinki Navy',  fn: generateHelsinkiNavyHtml,  badge: 'Navy Mint Tech',      photoUrl: '/images/candidates/candidate_11.jpg', candidateName: 'Elias Lindqvist' },
+  oxford_burgundy: { label: '✨ Oxford Burgundy', fn: generateOxfordBurgundyHtml, badge: 'British Academic', photoUrl: '/images/candidates/candidate_13.jpg', candidateName: 'Prof. Arthur Pendelton' },
+  dublin_forest: { label: '✨ Dublin Forest',  fn: generateDublinForestHtml,  badge: 'Forest Ochre Botanical', photoUrl: '/images/candidates/candidate_12.jpg', candidateName: 'Ciara O’Connor' },
+  manhattan_noir: { label: '✨ Manhattan Noir', fn: generateManhattanNoirHtml, badge: 'Monochrome Wall St', photoUrl: '/images/candidates/candidate_15.jpg', candidateName: 'Alexander Vance' },
+  montreal_frost: { label: '✨ Montreal Frost', fn: generateMontrealFrostHtml, badge: 'Azure Frost Cards',  photoUrl: '/images/candidates/candidate_6.jpg',  candidateName: 'Camille Beaulieu' },
+  florence_terracotta: { label: '✨ Florence Terracotta', fn: generateFlorenceTerracottaHtml, badge: 'Terracotta Linen', photoUrl: '/images/candidates/candidate_1.jpg', candidateName: 'Matteo Moretti' },
+  copenhagen_sand: { label: '✨ Copenhagen Sand', fn: generateCopenhagenSandHtml, badge: 'Nordic Sand Minimal', photoUrl: '/images/candidates/candidate_3.jpg', candidateName: 'Signe Møller' },
+  seoul_neon:    { label: '✨ Seoul Neon',     fn: generateSeoulNeonHtml,     badge: 'Midnight Violet Matrix', photoUrl: '/images/candidates/candidate_7.jpg', candidateName: 'Ji-hoon Park' },
+  austin_amber:  { label: '✨ Austin Amber',   fn: generateAustinAmberHtml,   badge: 'Teal Amber Startup',  photoUrl: '/images/candidates/candidate_5.jpg',  candidateName: 'Wyatt Sterling' },
+  edinburgh_navy: { label: '✨ Edinburgh Navy', fn: generateEdinburghNavyHtml, badge: 'Royal Navy Classic', photoUrl: '/images/candidates/candidate_10.jpg', candidateName: 'Alistair MacLeod' },
+  kyiv_golden:   { label: '✨ Kyiv Golden',    fn: generateKyivGoldenHtml,    badge: 'Golden Wheat Split',  photoUrl: '/images/candidates/candidate_8.jpg',  candidateName: 'Oksana Kovalenko' },
+  singapore_ruby: { label: '✨ Singapore Ruby', fn: generateSingaporeRubyHtml, badge: 'Ruby Crimson Fintech', photoUrl: '/images/candidates/candidate_14.jpg', candidateName: 'Derrick Chen' },
+  venice_sand_split: { label: '✨ Venice Sand', fn: generateVeniceSandSplitHtml, badge: 'Sand Espresso Luxury', photoUrl: '/images/candidates/candidate_2.jpg', candidateName: 'Gianna Bellini' },
+  boston_crimson: { label: '✨ Boston Crimson', fn: generateBostonCrimsonHtml, badge: 'Ivy League Crimson',  photoUrl: '/images/candidates/candidate_9.jpg',  candidateName: 'Harrison Ford' },
+  madrid_sun:    { label: '✨ Madrid Sun',     fn: generateMadridSunHtml,     badge: 'Solar Gold High-Contrast', photoUrl: '/images/candidates/candidate_4.jpg', candidateName: 'Carlos Vega' },
+  osaka_minimal: { label: '✨ Osaka Minimal',  fn: generateOsakaMinimalHtml,  badge: 'Technical Monospace', photoUrl: '/images/candidates/candidate_11.jpg', candidateName: 'Ren Sato' },
+  san_francisco_skyline: { label: '✨ SF Skyline', fn: generateSanFranciscoSkylineHtml, badge: 'Sky Blue Tech', photoUrl: '/images/candidates/candidate_13.jpg', candidateName: 'Jordan Hayes' },
+  amsterdam_orange: { label: '✨ Amsterdam Orange', fn: generateAmsterdamOrangeHtml, badge: 'Indigo Orange Dutch', photoUrl: '/images/candidates/candidate_6.jpg', candidateName: 'Lars van der Meer' },
+  stockholm_monochrome: { label: '✨ Stockholm Mono', fn: generateStockholmMonochromeHtml, badge: 'Nordic Pure Mono Grid', photoUrl: '/images/candidates/candidate_15.jpg', candidateName: 'Frederik Lind' },
+  prague_brass:  { label: '✨ Prague Brass',   fn: generatePragueBrassHtml,   badge: 'Olive Brass Academic', photoUrl: '/images/candidates/candidate_12.jpg', candidateName: 'Václav Dvořák' },
+  cairo_gold:    { label: '✨ Cairo Gold',      fn: generateCairoGoldHtml,     badge: 'Obsidian Gold Luxury', photoUrl: '/images/candidates/candidate_5.jpg',  candidateName: 'Tarek Mansour' },
+  reykjavik_slate: { label: '✨ Reykjavik Slate', fn: generateReykjavikSlateHtml, badge: 'Glacial Ice Nordic', photoUrl: '/images/candidates/candidate_8.jpg',  candidateName: 'Astrid Jónsdóttir' },
+  buenos_aires_tango: { label: '✨ Buenos Aires Tango', fn: generateBuenosAiresTangoHtml, badge: 'Plum Champagne Arts', photoUrl: '/images/candidates/candidate_14.jpg', candidateName: 'Valentina Soler' },
+  vancouver_pine: { label: '✨ Vancouver Pine', fn: generateVancouverPineHtml, badge: 'Pine Timber CleanTech', photoUrl: '/images/candidates/candidate_7.jpg', candidateName: 'Liam MacIntyre' },
+  lyon_lavender: { label: '✨ Lyon Lavender',  fn: generateLyonLavenderHtml,  badge: 'Lavender Creative Studio', photoUrl: '/images/candidates/candidate_9.jpg', candidateName: 'Amélie Laurent' },
+  seattle_emerald: { label: '✨ Seattle Emerald', fn: generateSeattleEmeraldHtml, badge: 'Emerald Teal Cloud', photoUrl: '/images/candidates/candidate_3.jpg', candidateName: 'Noah Vance' },
+  cape_town_sunset: { label: '✨ Cape Town Sunset', fn: generateCapeTownSunsetHtml, badge: 'Terracotta Gold Coastal', photoUrl: '/images/candidates/candidate_10.jpg', candidateName: 'Thabo Ndlovu' },
+  helsinki_frost: { label: '✨ Helsinki Frost', fn: generateHelsinkiFrostHtml, badge: 'Frosted Ice Exec Classic', photoUrl: '/images/candidates/candidate_1.jpg', candidateName: 'Matti Virtanen' },
 };
 
-// ─── Helper: render preview inside iframe ─────────────────────────────────────
+// ─── Helper: render preview inside iframe with zoom & smooth scrolling ──────
 function ResumePreview({ html }) {
+  const containerRef = useRef(null);
+  const [scale, setScale] = useState(0.65);
+  const [fitMode, setFitMode] = useState('fit-width'); // 'fit-width' | 'fit-page' | 'custom'
+  const [zoomLevel, setZoomLevel] = useState(0.85);
+
+  const calculateScale = () => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const availW = rect.width - 32;
+    const availH = rect.height - 32;
+    if (availW <= 0) return;
+
+    if (fitMode === 'fit-page') {
+      const sW = availW / 794;
+      const sH = Math.max(0.2, (availH > 0 ? availH : 600) / 1123);
+      const computed = Math.min(sW, sH);
+      setScale(Math.max(0.3, Math.min(1.2, computed)));
+    } else if (fitMode === 'fit-width') {
+      const sW = availW / 794;
+      setScale(Math.max(0.35, Math.min(1.3, sW)));
+    }
+  };
+
+  useEffect(() => {
+    calculateScale();
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver(() => {
+      calculateScale();
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [fitMode]);
+
+  const activeScale = fitMode === 'custom' ? zoomLevel : scale;
+
   return (
-    <iframe
-      srcDoc={html}
-      title="Resume Preview"
-      style={{
-        width: '100%',
-        height: '100%',
-        border: 'none',
-        background: '#fff',
-        display: 'block',
-      }}
-      sandbox="allow-same-origin"
-    />
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', minHeight: 0, overflow: 'hidden' }}>
+      {/* Zoom & View Toolbar */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0.4rem 0.75rem',
+        background: 'rgba(255,255,255,0.05)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: '8px 8px 0 0',
+        fontSize: '0.75rem',
+        color: 'var(--text-secondary)',
+        gap: '0.5rem',
+        flexShrink: 0
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <button
+            type="button"
+            className={`btn btn-sm ${fitMode === 'fit-width' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ padding: '0.25rem 0.6rem', fontSize: '0.72rem', height: 'auto', lineHeight: '1.2' }}
+            onClick={() => setFitMode('fit-width')}
+            title="Fit Width (Scrollable for close-up reading)"
+          >
+            Fit Width
+          </button>
+          <button
+            type="button"
+            className={`btn btn-sm ${fitMode === 'fit-page' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ padding: '0.25rem 0.6rem', fontSize: '0.72rem', height: 'auto', lineHeight: '1.2' }}
+            onClick={() => setFitMode('fit-page')}
+            title="Fit Entire Page (100% visible on screen)"
+          >
+            Fit Page
+          </button>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            style={{ padding: '0.2rem 0.4rem', fontSize: '0.72rem', height: 'auto', minWidth: '24px' }}
+            onClick={() => {
+              setFitMode('custom');
+              setZoomLevel(prev => Math.max(0.3, Number((prev - 0.1).toFixed(2))));
+            }}
+            title="Zoom Out"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>remove</span>
+          </button>
+          <span style={{ minWidth: '42px', textAlign: 'center', fontVariantNumeric: 'tabular-nums', fontWeight: '700', fontSize: '0.75rem', color: '#fff' }}>
+            {Math.round(activeScale * 100)}%
+          </span>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            style={{ padding: '0.2rem 0.4rem', fontSize: '0.72rem', height: 'auto', minWidth: '24px' }}
+            onClick={() => {
+              setFitMode('custom');
+              setZoomLevel(prev => Math.min(1.8, Number((prev + 0.1).toFixed(2))));
+            }}
+            title="Zoom In"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>add</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Scrollable Canvas Container */}
+      <div
+        ref={containerRef}
+        style={{
+          flex: 1,
+          minHeight: 0,
+          width: '100%',
+          overflowY: 'auto',
+          overflowX: 'auto',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: fitMode === 'fit-page' ? 'center' : 'flex-start',
+          background: '#0d0f18',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderTop: 'none',
+          borderRadius: '0 0 8px 8px',
+          padding: '1.25rem 1rem 3rem 1rem',
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(255,255,255,0.2) transparent'
+        }}
+      >
+        {/* Scaling Wrapper that takes exact transformed layout dimensions */}
+        <div
+          style={{
+            width: `${794 * activeScale}px`,
+            height: `${1123 * activeScale}px`,
+            flexShrink: 0,
+            position: 'relative',
+            boxShadow: '0 15px 40px rgba(0,0,0,0.6)',
+            borderRadius: '4px',
+            background: '#ffffff',
+            overflow: 'hidden'
+          }}
+        >
+          <div
+            style={{
+              width: '794px',
+              height: '1123px',
+              transform: `scale(${activeScale})`,
+              transformOrigin: 'top left',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+            }}
+          >
+            <iframe
+              srcDoc={html}
+              title="Resume Preview"
+              style={{
+                width: '794px',
+                height: '1123px',
+                border: 'none',
+                display: 'block',
+                overflow: 'hidden',
+                background: '#ffffff'
+              }}
+              scrolling="no"
+              sandbox="allow-same-origin"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -307,7 +588,6 @@ function TemplateCard({ templateKey, item, defaultData, themeColor, themeFont, s
         });
       }
     }}>
-      <div className="cv-template-badge">{item.badge}</div>
       <div ref={ref} className="cv-template-preview-wrapper">
         <iframe
           srcDoc={previewMarkup}
@@ -326,9 +606,12 @@ function TemplateCard({ templateKey, item, defaultData, themeColor, themeFont, s
           </button>
         </div>
       </div>
-      <div className="cv-template-card-label">
-        <span>{item.label.replace(/^[^\w]*/, '')}</span>
-        <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--color-primary)' }}>arrow_forward</span>
+      <div className="cv-template-card-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.65rem 0.85rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', overflow: 'hidden' }}>
+          <span style={{ fontWeight: '700', fontSize: '0.85rem', color: 'var(--text-primary)', whiteSpace: 'normal', lineHeight: '1.2' }}>{item.label.replace(/^[^\w]*/, '')}</span>
+          <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{item.badge}</span>
+        </div>
+        <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'var(--color-primary)', flexShrink: 0 }}>arrow_forward</span>
       </div>
     </div>
   );
@@ -337,7 +620,7 @@ function TemplateCard({ templateKey, item, defaultData, themeColor, themeFont, s
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function ResumeBuilder() {
   const [data, setData] = useState(defaultData);
-  const [activeTemplate, setActiveTemplate] = useState('mariana');
+  const [activeTemplate, setActiveTemplate] = useState('adeline_palmerston');
   const [previewHtml, setPreviewHtml] = useState('');
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -916,7 +1199,7 @@ export default function ResumeBuilder() {
 
       {/* ═══ Result Screen ══════════════════════════════════════════════════════ */}
       {result ? (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '4rem 1rem', gap: '1.5rem', textAlign: 'center' }}>
+        <div className="flex-1 overflow-y-auto w-full flex flex-col items-center justify-center p-8 gap-6 text-center">
           <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: 'rgba(0, 110, 45, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span className="material-symbols-outlined" style={{ fontSize: '40px', color: 'var(--color-success)', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
           </div>
@@ -939,8 +1222,7 @@ export default function ResumeBuilder() {
         <>
           {/* ══ SCREEN 1: Template Gallery ══════════════════════════════════════ */}
           {screen === 'gallery' && (
-            <div style={{ maxWidth: '1500px', margin: '0.25rem auto 1.5rem', padding: '0 1.5rem' }}>
-
+            <div style={{ maxWidth: '1500px', margin: '0 auto', padding: '0.5rem 1.5rem 2rem' }}>
 
               <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 <h2 style={{ fontSize: '1.6rem', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Select Your Template</h2>
@@ -993,7 +1275,6 @@ export default function ResumeBuilder() {
           {/* ══ SCREEN 2: How to Start ══════════════════════════════════════════ */}
           {screen === 'start' && (
             <div style={{ maxWidth: '800px', margin: '0.5rem auto 2rem', padding: '0 1rem' }}>
-
 
               <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
                 <h2 style={{ fontSize: '1.6rem', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Choose how to start your resume</h2>
@@ -1542,7 +1823,7 @@ export default function ResumeBuilder() {
                   )}
 
                   {/* Preview Paper */}
-                  <div className="cv-preview-paper">
+                  <div className="cv-preview-paper" style={{ flex: 1, minHeight: 0, height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                     <ResumePreview html={previewHtml} />
                   </div>
                 </div>

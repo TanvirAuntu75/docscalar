@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile>
+ <version>LibreOffice v1</version>
+ <device>
+  <type>opencl</type>
+  <name>Intel(R) Iris(R) Xe Graphics</name>
+  <driver>31.0.101.4032</driver>
+  <time>max</time>
+  <errors>false</errors>
+ </device>
+ <device>
+  <type>opencl</type>
+  <name>NVIDIA GeForce RTX 2050</name>
+  <driver>591.74</driver>
+  <time>56164</time>
+  <errors>false</errors>
+ </device>
+ <device>
+  <type>native</type>
+  <time>4139520</time>
+  <errors>false</errors>
+ </device>
+</profile>

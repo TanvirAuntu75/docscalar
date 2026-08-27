@@ -1,5 +1,5 @@
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
-import { cleanTextForWinAnsi } from '../../utils/pdfSanitizer';
+import { cleanTextForWinAnsi } from '../../utils/pdfSanitizer.js';
 
 // Helper to convert hex strings to pdf-lib rgb objects
 const hexToRgb = (hex) => {
@@ -18,12 +18,23 @@ const hexToRgb = (hex) => {
  * @param {function} onProgress - Progress reporting callback.
  * @returns {Promise<Blob>} Annotated PDF.
  */
-export async function editPdf(file, annotations, onProgress) {
+export async function editPdf(file, annotations = [], onProgress = null) {
   if (onProgress) onProgress(10);
-  const pdfBytes = await file.arrayBuffer();
+  
+  let pdfBytes;
+  if (file instanceof ArrayBuffer) {
+    pdfBytes = file;
+  } else if (file instanceof Uint8Array || (typeof Buffer !== 'undefined' && Buffer.isBuffer(file))) {
+    pdfBytes = file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);
+  } else if (file && typeof file.arrayBuffer === 'function') {
+    pdfBytes = await file.arrayBuffer();
+  } else {
+    throw new Error('Invalid file passed to editPdf engine.');
+  }
+
   if (onProgress) onProgress(35);
   
-  const pdfDoc = await PDFDocument.load(pdfBytes);
+  const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
   if (onProgress) onProgress(50);
 
   const pages = pdfDoc.getPages();

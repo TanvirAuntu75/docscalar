@@ -25,17 +25,24 @@ export async function organizePdf(files, pageConfigs, onProgress) {
     const config = pageConfigs[i];
     const sourceDoc = pdfDocs[config.fileIndex];
     
-    // Copy the single page
-    const [copiedPage] = await newPdfDoc.copyPages(sourceDoc, [config.originalIndex]);
-    
-    // Apply rotation
-    const targetRotation = config.rotation || 0;
-    if (targetRotation !== 0) {
-      const currentRotation = copiedPage.getRotation().angle;
-      copiedPage.setRotation(degrees(currentRotation + targetRotation));
+    if (config.isBlank) {
+      newPdfDoc.addPage([595.27, 841.89]);
+    } else {
+      const sourceDoc = pdfDocs[config.fileIndex];
+      if (sourceDoc) {
+        // Copy the single page
+        const [copiedPage] = await newPdfDoc.copyPages(sourceDoc, [config.originalIndex]);
+        
+        // Apply rotation
+        const targetRotation = config.rotation || 0;
+        if (targetRotation !== 0) {
+          const currentRotation = copiedPage.getRotation().angle;
+          copiedPage.setRotation(degrees((currentRotation + targetRotation + 360) % 360));
+        }
+        
+        newPdfDoc.addPage(copiedPage);
+      }
     }
-    
-    newPdfDoc.addPage(copiedPage);
     
     if (onProgress) {
       onProgress(Math.round(40 + ((i + 1) / pageConfigs.length) * 55));

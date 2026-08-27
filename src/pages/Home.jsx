@@ -1489,7 +1489,7 @@ export default function Home() {
                 <div className="flex flex-col gap-6 text-left p-5 md:p-6 lg:p-8 min-h-full">
                   
                   {/* Centered Welcome Header */}
-                  <div className="flex flex-col items-center text-center gap-5 mt-4 mb-2">
+                  <div className="flex flex-col items-center text-center gap-4 mt-4 mb-2">
                     <div className="max-w-xl">
                       <h2 className="font-h2 text-3xl font-extrabold text-on-background tracking-tight">
                         Welcome, <span className="text-primary">{userName}</span> 👋
@@ -1497,30 +1497,6 @@ export default function Home() {
                       <p className="font-body-md text-xs text-on-surface-variant mt-1.5 leading-relaxed">
                         Launch any local conversion tool directly from your workspace studio to start working
                       </p>
-                    </div>
-                    
-                    {/* Centered Search Bar */}
-                    <div className="relative w-full max-w-[420px]">
-                      <input
-                        ref={toolsSearchRef}
-                        type="text"
-                        placeholder="Search tools (e.g. compress, convert)..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full py-2.5 pl-10 pr-10 bg-surface border border-outline-variant/60 rounded-2xl text-on-background text-xs focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all shadow-sm"
-                      />
-                      <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[18px] select-none">
-                        search
-                      </span>
-                      {searchQuery && (
-                        <button
-                          onClick={() => setSearchQuery('')}
-                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-outline hover:text-on-background flex items-center justify-center"
-                          title="Clear search"
-                        >
-                          <span className="material-symbols-outlined text-[16px]">close</span>
-                        </button>
-                      )}
                     </div>
 
                     {/* Category Filter Tabs (Centered Capsule Style) */}
@@ -1633,8 +1609,8 @@ export default function Home() {
                     {/* GPU Acceleration */}
                     <div className="flex justify-between items-center gap-4 pb-5 border-b border-outline-variant/60">
                       <div>
-                        <h4 className="font-body-md text-sm font-bold text-on-background mb-1">WASM GPU Cloud Acceleration</h4>
-                        <p className="font-body-sm text-xs text-on-surface-variant font-medium">Utilize parallel GPU processing where available for larger files</p>
+                        <h4 className="font-body-md text-sm font-bold text-on-background mb-1">Hardware Graphics Acceleration</h4>
+                        <p className="font-body-sm text-xs text-on-surface-variant font-medium">Utilize device hardware acceleration for faster rendering</p>
                       </div>
                       <button 
                         onClick={() => {
@@ -1726,7 +1702,7 @@ export default function Home() {
             <div className="max-w-[1400px] mx-auto w-full px-5 md:px-6 lg:px-8 py-10 min-h-full">
               
               {/* Centered Welcome Header */}
-              <div className="flex flex-col items-center text-center gap-5 mt-4 mb-2">
+              <div className="flex flex-col items-center text-center gap-4 mt-4 mb-2">
                 <div className="max-w-xl">
                   <h2 className="font-h2 text-3xl font-extrabold text-on-background tracking-tight">
                     Welcome, <span className="text-primary">{userName}</span> 👋
@@ -1734,30 +1710,6 @@ export default function Home() {
                   <p className="font-body-md text-xs text-on-surface-variant mt-1.5 leading-relaxed">
                     Launch any local conversion tool directly from your workspace studio to start working
                   </p>
-                </div>
-                
-                {/* Centered Search Bar */}
-                <div className="relative w-full max-w-[420px]">
-                  <input
-                    ref={toolsSearchRef}
-                    type="text"
-                    placeholder="Search tools (e.g. compress, convert)..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full py-2.5 pl-10 pr-10 bg-surface border border-outline-variant/60 rounded-2xl text-on-background text-xs focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all shadow-sm"
-                  />
-                  <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[18px] select-none">
-                    search
-                  </span>
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-outline hover:text-on-background flex items-center justify-center"
-                      title="Clear search"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">close</span>
-                    </button>
-                  )}
                 </div>
 
                 {/* Category Filter Tabs (Centered Capsule Style) */}

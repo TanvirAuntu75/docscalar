@@ -1,16 +1,20 @@
 // Web Worker for client-side semantic intent classification using Xenova/all-MiniLM-L6-v2
-importScripts('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
-
-// Configure environment
-self.ort.env.wasm.numThreads = 1; // Keep it lightweight
-self.ort.env.wasm.simd = true;
-
-// Configure Xenova environment variables
-const env = self.transformers.env;
-env.allowLocalModels = true;
-env.localModelPath = '/models/'; // Path relative to root of website
-env.remoteHost = 'https://huggingface.co/';
-env.remotePathTemplate = '{model}/resolve/{revision}/';
+try {
+  importScripts('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+  if (self.ort && self.ort.env) {
+    self.ort.env.wasm.numThreads = 1; // Keep it lightweight
+    self.ort.env.wasm.simd = true;
+  }
+  if (self.transformers && self.transformers.env) {
+    const env = self.transformers.env;
+    env.allowLocalModels = true;
+    env.localModelPath = '/models/';
+    env.remoteHost = 'https://huggingface.co/';
+    env.remotePathTemplate = '{model}/resolve/{revision}/';
+  }
+} catch (err) {
+  console.warn('[Classifier Worker] CDN Transformers library unavailable:', err.message || err);
+}
 
 let extractorInstance = null;
 let prototypeEmbeddings = null;
@@ -86,7 +90,29 @@ async function initializeModel() {
   try {
     self.postMessage({ type: 'status', message: 'Loading all-MiniLM-L6-v2 model...' });
     
-    extractorInstance = await self.transformers.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+    extractorInstance = await self.transformers.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
+      progress_callback: (data) => {
+        if (data.status === 'download' || data.status === 'progress') {
+          self.postMessage({
+            type: 'loading',
+            file: data.file || '',
+            progress: data.progress || 0,
+            loaded: data.loaded || 0,
+            total: data.total || 0,
+            status: data.status
+          });
+        } else if (data.status === 'done') {
+          self.postMessage({
+            type: 'loading',
+            file: data.file || '',
+            progress: 100,
+            loaded: data.total || 0,
+            total: data.total || 0,
+            status: 'done'
+          });
+        }
+      }
+    });
     
     self.postMessage({ type: 'status', message: 'Generating intent semantic anchors...' });
 

@@ -3,7 +3,7 @@ import {
   FileText, Presentation, Table, ShieldCheck, Lock, Unlock, EyeOff, Eye,
   GitCompare, Stamp, Hash, Sparkles, Languages, RefreshCw, Maximize2, QrCode, 
   FileImage, Workflow, FolderOpen, Link2, Briefcase, Image as ImageIcon, Wrench, LayoutGrid, Gauge, ArrowLeftRight, ShieldAlert,
-  FileSpreadsheet, FileCode, FilePenLine, FileCheck, FileUp
+  FileSpreadsheet, FileCode, FilePenLine, FileCheck, FileUp, RotateCw, Crop
 } from 'lucide-react';
 
 import SignatureIcon from '../components/SignatureIcon';
@@ -13,7 +13,9 @@ export const categoryIcons = {
   optimize: Gauge,
   'convert-to': FileUp,
   'convert-from': FileDown,
-  'security-ai': ShieldAlert
+  security: ShieldAlert,
+  'security-ai': ShieldAlert,
+  'image-utility': Wrench
 };
 
 export const toolIconsMap = {
@@ -24,11 +26,19 @@ export const toolIconsMap = {
   'extract-pages': FileDown,
   'organize-pdf': Grid,
   'scan-to-pdf': Camera,
+  'rotate-pdf': RotateCw,
+  'crop-pdf': Crop,
   
-  // Optimize PDF
+  // Optimize & Edit PDF
   'compress-pdf': FileArchive,
   'repair-pdf': Hammer,
   'ocr-pdf': ScanText,
+  'un-ocr-pdf': ScanText,
+  'edit-pdf': FilePenLine,
+  'pdf-forms': FileText,
+  'bates-numbering': Hash,
+  'add-watermark': Stamp,
+  'add-page-numbers': Hash,
   
   // Convert PDF
   'image-to-pdf': FileImage,
@@ -51,8 +61,6 @@ export const toolIconsMap = {
   'sign-pdf': SignatureIcon,
   'redact-pdf': EyeOff,
   'compare-pdf': GitCompare,
-  'add-watermark': Stamp,
-  'add-page-numbers': Hash,
   'ai-summarizer': Sparkles,
   'ai-translator': Languages,
   

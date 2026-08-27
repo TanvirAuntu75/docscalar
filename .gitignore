@@ -11,6 +11,12 @@ node_modules
 dist
 dist-ssr
 *.local
+repo_map.md
+.agents/repo_map.md
+scratch/
+pnpm-lock.yaml
+yarn.lock
+*.bak
 
 # Editor directories and files
 .vscode/*
@@ -48,9 +54,19 @@ backend/models/
 public/models/
 *.zip
 docforge-studio/
-build/
 src-tauri/target/
 src-tauri/binaries/
 src-tauri/wix-bin/
 src-tauri/*.exe
 src-tauri/docforge-backend-*
+
+# Secrets, Tokens and Credentials
+backend/.jwt_secret
+.jwt_secret
+*.jwt_secret
+mcp_config.json
+*.pat
+*.token
+*.key
+*.pem
+

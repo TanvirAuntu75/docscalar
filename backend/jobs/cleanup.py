@@ -1,6 +1,7 @@
 import time
-from pathlib import Path
+
 from backend import config
+
 
 def cleanup_expired_files():
     """
@@ -18,7 +19,7 @@ def cleanup_expired_files():
             # Skip hidden/system files
             if file_path.name.startswith("."):
                 continue
-            
+
             try:
                 # Check modification time
                 file_age = now - file_path.stat().st_mtime
@@ -29,13 +30,28 @@ def cleanup_expired_files():
                     elif file_path.is_dir():
                         # Recurse clean directories (e.g. split chunks)
                         import shutil
+
                         # Calculate total size of directory contents
-                        dir_size = sum(f.stat().st_size for f in file_path.rglob('*') if f.is_file())
+                        dir_size = sum(
+                            f.stat().st_size
+                            for f in file_path.rglob("*")
+                            if f.is_file()
+                        )
                         size_freed += dir_size
                         shutil.rmtree(file_path)
                     cleaned_count += 1
             except Exception as e:
                 print(f"Failed to clean path {file_path}: {e}")
 
+    # Also evict expired in-memory thread pool jobs
+    try:
+        from backend.jobs.queue import evict_expired_in_memory_jobs
+
+        evict_expired_in_memory_jobs(expiry_threshold)
+    except Exception:
+        pass
+
     if cleaned_count > 0:
-        print(f"Cleanup Job: Removed {cleaned_count} expired files. Freed {size_freed / (1024*1024):.2f} MB.")
+        print(
+            f"Cleanup Job: Removed {cleaned_count} expired files. Freed {size_freed / (1024 * 1024):.2f} MB."
+        )

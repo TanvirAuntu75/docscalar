@@ -587,41 +587,41 @@ function TiltCard({ children, className = '', style = {} }) {
 // 12. FloatingDecorations — randomly distributed floating background indicators
 function FloatingDecorations() {
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
       <motion.div
         animate={{ y: [0, -20, 0], rotate: [0, 10, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[15%] left-[10%] text-on-background opacity-5"
+        className="absolute top-[12%] left-[8%] text-on-background opacity-5"
       >
-        <FileType size={120} />
+        <FileType size={110} />
       </motion.div>
       <motion.div
         animate={{ y: [0, 30, 0], rotate: [0, -15, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute top-[40%] right-[15%] text-on-background opacity-5"
+        className="absolute top-[35%] right-[10%] text-on-background opacity-5"
       >
-        <ImageIcon size={100} />
+        <ImageIcon size={90} />
       </motion.div>
       <motion.div
         animate={{ y: [0, -25, 0], rotate: [0, 5, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        className="absolute bottom-[20%] left-[20%] text-on-background opacity-5"
+        className="absolute bottom-[20%] left-[15%] text-on-background opacity-5"
       >
-        <Shield size={80} />
+        <Shield size={75} />
       </motion.div>
       <motion.div
         animate={{ y: [0, 20, 0], rotate: [0, -10, 0] }}
         transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-        className="absolute bottom-[30%] right-[25%] text-on-background opacity-5"
+        className="absolute bottom-[25%] right-[20%] text-on-background opacity-5"
       >
-        <SearchCode size={90} />
+        <SearchCode size={85} />
       </motion.div>
       <motion.div
         animate={{ y: [0, -15, 0], rotate: [0, 8, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-        className="absolute top-[20%] right-[30%] text-on-background opacity-5"
+        className="absolute top-[18%] right-[25%] text-on-background opacity-5"
       >
-        <Database size={70} />
+        <Database size={65} />
       </motion.div>
     </div>
   );
@@ -917,6 +917,572 @@ function Resume3DCarousel({ templates, navigate }) {
   );
 }
 
+// 8. StudioCanvasSection — Exact Match to Original User Canvas Visuals
+function StudioCanvasSection() {
+  const navigate = useNavigate();
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: false, amount: 0.2 });
+
+  const [presetIdx, setPresetIdx] = useState(0);
+  const [stage, setStage] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+
+  const presets = useMemo(() => [
+    {
+      id: 'format-auto-healing',
+      title: 'Format Auto-Healing',
+      input1: { name: 'raw_scan.jpg', size: '1.4 MB', tag: 'JPG', bg: 'bg-orange-500' },
+      input2: { name: 'contract.pdf', size: '2.8 MB', tag: 'PDF', bg: 'bg-rose-500' },
+      op1: { title: 'Auto-Heal Adapter', icon: 'auto_fix_high', param: 'Image -> PDF Auto-Insert', border: 'border-indigo-500', text: 'text-indigo-600 dark:text-indigo-400' },
+      op2: { title: 'Merge & Optimize', icon: 'join_inner', param: 'Multi-Format Pipeline', border: 'border-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' },
+      outputNode: { name: 'healed_pipeline.pdf', size: '1.2 MB', suffix: 'Auto-Healed', tag: 'OUTPUT', bg: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' }
+    },
+    {
+      id: 'type-safe-guard',
+      title: 'Type-Safe Cable Guard',
+      input1: { name: 'annual_report.pdf', size: '4.2 MB', tag: 'PDF', bg: 'bg-rose-500' },
+      input2: { name: 'receipt.png', size: '610 KB', tag: 'PNG', bg: 'bg-emerald-500' },
+      op1: { title: 'MIME Validator', icon: 'verified_user', param: 'Port Type Validation ✓', border: 'border-indigo-500', text: 'text-indigo-600 dark:text-indigo-400' },
+      op2: { title: 'Cycle Guard', icon: 'block', param: 'Loop & Cycle Prevented', border: 'border-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' },
+      outputNode: { name: 'validated_output.pdf', size: '1.1 MB', suffix: 'Type Safe', tag: 'OUTPUT', bg: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' }
+    },
+    {
+      id: 'multibranch-dag',
+      title: 'Multi-Branch DAG Engine',
+      input1: { name: 'master_bundle.pdf', size: '5.1 MB', tag: 'PDF', bg: 'bg-rose-500' },
+      input2: { name: 'appendix.pdf', size: '820 KB', tag: 'PDF', bg: 'bg-rose-500' },
+      op1: { title: 'Recursive DAG', icon: 'account_tree', param: 'Multi-Branch Parallel', border: 'border-indigo-500', text: 'text-indigo-600 dark:text-indigo-400' },
+      op2: { title: 'Fast Processing', icon: 'bolt', param: 'Instant Local Execution', border: 'border-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' },
+      outputNode: { name: 'cascade_result.pdf', size: '1.8 MB', suffix: 'Zero Latency', tag: 'OUTPUT', bg: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' }
+    }
+  ], []);
+
+  const currentPreset = presets[presetIdx];
+
+  const runSimulation = useCallback(() => {
+    setIsRunning(true);
+    setStage(0);
+
+    const t1 = setTimeout(() => setStage(1), 150);
+    const t2 = setTimeout(() => setStage(2), 600);
+    const t3 = setTimeout(() => setStage(3), 1800);
+    const t4 = setTimeout(() => {
+      setStage(4);
+      setIsRunning(false);
+    }, 2800);
+
+    return () => {
+      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isInView && stage === 0 && !isRunning) {
+      runSimulation();
+    }
+  }, [isInView]);
+
+  const handlePresetSelect = (idx) => {
+    setPresetIdx(idx);
+    setStage(0);
+    setTimeout(() => {
+      setIsRunning(true);
+      setStage(1);
+      setTimeout(() => setStage(2), 500);
+      setTimeout(() => setStage(3), 1600);
+      setTimeout(() => {
+        setStage(4);
+        setIsRunning(false);
+      }, 2500);
+    }, 80);
+  };
+
+  return (
+    <section
+      id="canvas"
+      ref={sectionRef}
+      className="py-20 px-6 sm:px-8 max-w-[1400px] mx-auto"
+      style={{ scrollMarginTop: 120 }}
+    >
+      <style>{`
+        @keyframes flow-march {
+          to { stroke-dashoffset: -20; }
+        }
+        .animated-pipeline-flow {
+          stroke-dasharray: 6 4;
+          animation: flow-march 1s linear infinite;
+        }
+      `}</style>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+        {/* ── Left Column: Canvas Superpowers Features List ── */}
+        <ScrollReveal className="flex flex-col gap-6 lg:col-span-4 text-left">
+          <div className="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+            CANVAS SUPERPOWERS
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+            Design Pipelines Visually
+          </h2>
+
+          <p className="text-[13px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+            The Studio Canvas lets you drag document nodes, draw Bezier cable connections between operations, and execute the entire chain locally with zero server latency.
+          </p>
+
+          <ul className="flex flex-col gap-5 my-2">
+            {[
+              [Zap, 'Format Auto-Healing', 'Dynamically inserts format converter adapters when wiring incompatible ports.'],
+              [Shield, 'Type-Safe Cable Guard', 'Real-time MIME format validation and cycle loop prevention on drag-wires.'],
+              [Workflow, 'Multi-Branch DAG Engine', 'Recursive execution engine automatically triggers downstream nodes in parallel.'],
+              [Database, 'Auto-Persistent Workbench', 'Graph coordinates, wire connections, and tool settings save locally to IndexedDB.'],
+            ].map(([Icon, title, desc]) => (
+              <li key={title} className="flex items-start gap-3 text-left">
+                <div
+                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+                  style={{
+                    background: 'rgba(99, 102, 241, 0.1)',
+                  }}
+                >
+                  <Icon className="w-4 h-4 text-indigo-500" />
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-bold text-[13px]" style={{ color: 'var(--text-primary)' }}>{title}</span>
+                  <span className="text-[11px] leading-relaxed opacity-80" style={{ color: 'var(--text-secondary)' }}>{desc}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <motion.button
+            onClick={() => navigate('/canvas')}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="self-start flex items-center gap-2 px-6 py-3 rounded-lg text-xs font-bold cursor-pointer border-none select-none shadow-md transition-all duration-300 bg-indigo-600 hover:bg-indigo-700 text-white mt-2"
+          >
+            <span>Open Studio Canvas Workspace</span>
+            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+          </motion.button>
+        </ScrollReveal>
+
+        {/* ── Right Column: Authentic Clean Canvas Viewport ── */}
+        <ScrollReveal delay={0.15} className="lg:col-span-8 w-full">
+          <div
+            className="relative rounded-2xl overflow-hidden shadow-2xl border transition-colors duration-300 bg-white dark:bg-[#0f1115]"
+            style={{
+              borderColor: 'var(--border-subtle)',
+            }}
+          >
+            {/* Window Chrome Header */}
+            <div
+              className="px-4 py-3 border-b flex items-center justify-between gap-3 select-none"
+              style={{ borderColor: 'var(--border-subtle)' }}
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
+                <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+                <span className="ml-2 text-[10px] font-mono tracking-wider opacity-70 hidden sm:inline-block" style={{ color: 'var(--text-primary)' }}>
+                  DocForge Studio Canvas
+                </span>
+              </div>
+
+              {/* Workflow Presets Selector */}
+              <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 p-1 rounded-lg border border-black/5 dark:border-white/5">
+                {presets.map((preset, idx) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => handlePresetSelect(idx)}
+                    className={`px-3 py-1 rounded-md text-[10px] font-semibold transition-all cursor-pointer border-none ${
+                      presetIdx === idx
+                        ? 'bg-indigo-600 text-white shadow-sm'
+                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    {preset.title}
+                  </button>
+                ))}
+              </div>
+
+              {/* Simulation Trigger */}
+              <button
+                onClick={runSimulation}
+                disabled={isRunning}
+                className="flex items-center justify-center w-7 h-7 rounded-lg text-white transition-all shadow-sm cursor-pointer border-none bg-indigo-600 hover:bg-indigo-700"
+                style={{ opacity: isRunning ? 0.6 : 1 }}
+              >
+                <span className="material-symbols-outlined text-[14px]">{isRunning ? 'sync' : 'play_arrow'}</span>
+              </button>
+            </div>
+
+            {/* Canvas Surface with Scaled Vector Graphic Coordinate System (viewBox 0 0 1000 440) */}
+            <div className="relative w-full aspect-[16/9] overflow-hidden">
+              {/* Subtle Dot Grid Layer matching the authentic image */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  backgroundImage: 'radial-gradient(rgba(156, 163, 175, 0.4) 1.2px, transparent 1.2px)',
+                  backgroundSize: '24px 24px',
+                }}
+              />
+
+              {/* Vector SVG Space */}
+              <svg
+                className="absolute inset-0 w-full h-full z-0"
+                viewBox="0 0 1000 440"
+                preserveAspectRatio="xMidYMid meet"
+              >
+                {/* SVG Connecting Cables */}
+                <g>
+                  {presetIdx === 0 && (
+                    <>
+                      {/* Preset 0: Format Auto-Healing Wiring */}
+                      {/* Cable 1: raw_scan.jpg (Top Left) -> Auto-Heal Adapter (Top Center) */}
+                      <path
+                        d="M 180 140 C 270 140, 270 145, 360 145"
+                        fill="none"
+                        stroke={stage >= 1 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        className={stage >= 1 && stage < 2 ? "animated-pipeline-flow" : ""}
+                      />
+                      {/* Cable 2: Auto-Heal Adapter -> Merge & Optimize */}
+                      <path
+                        d="M 500 145 C 560 145, 560 205, 620 205"
+                        fill="none"
+                        stroke={stage >= 2 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="2"
+                        className={stage >= 2 && stage < 3 ? "animated-pipeline-flow" : ""}
+                      />
+                      {/* Cable 3: contract.pdf (Bottom Left) -> Merge & Optimize */}
+                      <path
+                        d="M 180 300 C 400 300, 450 235, 620 235"
+                        fill="none"
+                        stroke={stage >= 1 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        className={stage >= 1 && stage < 3 ? "animated-pipeline-flow" : ""}
+                      />
+                      {/* Cable 4: Merge & Optimize -> Final Output */}
+                      <path
+                        d="M 760 220 L 830 220"
+                        fill="none"
+                        stroke={stage >= 3 ? "#10b981" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="1.5"
+                        className={stage >= 3 && stage < 4 ? "animated-pipeline-flow" : ""}
+                      />
+                    </>
+                  )}
+
+                  {presetIdx === 1 && (
+                    <>
+                      {/* Preset 1: Type-Safe Cable Guard Wiring */}
+                      {/* Cable 1: Valid PDF -> MIME Validator */}
+                      <path
+                        d="M 180 140 C 270 140, 270 220, 360 220"
+                        fill="none"
+                        stroke={stage >= 1 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        className={stage >= 1 && stage < 2 ? "animated-pipeline-flow" : ""}
+                      />
+                      {/* Cable 2: REJECTED Incompatible MP4 -> Stopped by Cable Guard */}
+                      <path
+                        d="M 180 300 C 240 300, 250 270, 280 270"
+                        fill="none"
+                        stroke="#ef4444"
+                        strokeWidth="2.5"
+                        strokeDasharray="4 4"
+                        strokeLinecap="round"
+                      />
+                      {/* Cable 3: MIME Validator -> Cycle Guard */}
+                      <path
+                        d="M 500 220 L 620 220"
+                        fill="none"
+                        stroke={stage >= 2 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="1.5"
+                        className={stage >= 2 && stage < 3 ? "animated-pipeline-flow" : ""}
+                      />
+                      {/* Cable 4: Cycle Guard -> Output */}
+                      <path
+                        d="M 760 220 L 830 220"
+                        fill="none"
+                        stroke={stage >= 3 ? "#10b981" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="1.5"
+                        className={stage >= 3 && stage < 4 ? "animated-pipeline-flow" : ""}
+                      />
+                    </>
+                  )}
+
+                  {presetIdx === 2 && (
+                    <>
+                      {/* Preset 2: Multi-Branch DAG Engine Wiring */}
+                      {/* Cable 1: Input 1 -> Recursive DAG */}
+                      <path
+                        d="M 180 140 C 270 140, 270 220, 360 220"
+                        fill="none"
+                        stroke={stage >= 1 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      />
+                      {/* Cable 2: Input 2 -> Recursive DAG */}
+                      <path
+                        d="M 180 300 C 270 300, 270 220, 360 220"
+                        fill="none"
+                        stroke={stage >= 1 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      />
+                      {/* Branch A: Recursive DAG -> Top WASM Worker 1 */}
+                      <path
+                        d="M 500 220 C 560 220, 560 140, 620 140"
+                        fill="none"
+                        stroke={stage >= 2 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="2"
+                        className={stage >= 2 && stage < 3 ? "animated-pipeline-flow" : ""}
+                      />
+                      {/* Branch B: Recursive DAG -> Bottom WASM Worker 2 */}
+                      <path
+                        d="M 500 220 C 560 220, 560 300, 620 300"
+                        fill="none"
+                        stroke={stage >= 2 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="2"
+                        className={stage >= 2 && stage < 3 ? "animated-pipeline-flow" : ""}
+                      />
+                      {/* Top Worker Output */}
+                      <path
+                        d="M 760 140 L 830 140"
+                        fill="none"
+                        stroke={stage >= 3 ? "#10b981" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="1.5"
+                      />
+                      {/* Bottom Worker Output */}
+                      <path
+                        d="M 760 300 L 830 300"
+                        fill="none"
+                        stroke={stage >= 3 ? "#10b981" : "rgba(156, 163, 175, 0.3)"}
+                        strokeWidth="1.5"
+                      />
+                    </>
+                  )}
+                </g>
+
+                {/* Node Cards */}
+
+                {/* Node 1: Input File 1 */}
+                <foreignObject x="40" y="105" width="140" height="70" className="overflow-visible">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: stage >= 1 ? 1 : 0.7, scale: 1 }}
+                    className="w-full h-full p-2.5 rounded-xl border bg-white dark:bg-[#1a1d24] flex flex-col justify-center shadow-sm select-none"
+                    style={{ borderColor: 'var(--border-subtle)' }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className={`px-1.5 py-0.5 rounded flex-shrink-0 flex items-center justify-center font-bold text-[8px] text-white ${currentPreset.input1.bg}`}>
+                        {currentPreset.input1.tag}
+                      </div>
+                      <span className="text-[10px] font-bold truncate" style={{ color: 'var(--text-primary)' }}>
+                        {currentPreset.input1.name}
+                      </span>
+                    </div>
+                    <span className="text-[8px] font-mono opacity-60" style={{ color: 'var(--text-secondary)' }}>
+                      {currentPreset.input1.size}
+                    </span>
+                  </motion.div>
+                </foreignObject>
+
+                {/* Node 2: Input File 2 */}
+                <foreignObject x="40" y="265" width="140" height="70" className="overflow-visible">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: stage >= 1 ? 1 : 0.7, scale: 1 }}
+                    className="w-full h-full p-2.5 rounded-xl border bg-white dark:bg-[#1a1d24] flex flex-col justify-center shadow-sm select-none"
+                    style={{ borderColor: 'var(--border-subtle)' }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className={`px-1.5 py-0.5 rounded flex-shrink-0 flex items-center justify-center font-bold text-[8px] text-white ${currentPreset.input2.bg}`}>
+                        {currentPreset.input2.tag}
+                      </div>
+                      <span className="text-[10px] font-bold truncate" style={{ color: 'var(--text-primary)' }}>
+                        {presetIdx === 1 ? 'video_clip.mp4' : currentPreset.input2.name}
+                      </span>
+                    </div>
+                    <span className="text-[8px] font-mono opacity-60" style={{ color: 'var(--text-secondary)' }}>
+                      {presetIdx === 1 ? '18.4 MB' : currentPreset.input2.size}
+                    </span>
+                  </motion.div>
+                </foreignObject>
+
+                {/* Type-Safe Cable Guard Rejected Badge for Preset 1 */}
+                {presetIdx === 1 && (
+                  <foreignObject x="220" y="250" width="125" height="40" className="overflow-visible">
+                    <div className="px-2 py-1 rounded-md bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 font-extrabold text-[8px] flex items-center gap-1 shadow-sm">
+                      <span className="material-symbols-outlined text-[10px]">block</span>
+                      <span>MIME Blocked</span>
+                    </div>
+                  </foreignObject>
+                )}
+
+                {/* Node 3: Operator 1 */}
+                <foreignObject x="360" y={presetIdx === 0 ? 105 : 180} width="140" height="80" className="overflow-visible">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: stage >= 2 ? 1 : 0.6, scale: 1 }}
+                    className={`w-full h-full p-2 rounded-xl border bg-white dark:bg-[#1a1d24] flex flex-col justify-between shadow-sm select-none ${stage === 2 ? currentPreset.op1.border : ''}`}
+                    style={{ borderColor: stage === 2 ? undefined : 'var(--border-subtle)' }}
+                  >
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className={`w-5 h-5 rounded-md bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center ${currentPreset.op1.text}`}>
+                        <span className="material-symbols-outlined text-[12px]">{currentPreset.op1.icon}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold" style={{ color: 'var(--text-primary)' }}>
+                          {currentPreset.op1.title}
+                        </span>
+                        <span className={`text-[8px] font-mono ${currentPreset.op1.text}`}>
+                          {currentPreset.op1.param}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="w-full flex items-center justify-between px-1 text-[7px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                      <span>Status</span>
+                      <span className={stage === 2 ? "text-indigo-500 animate-pulse font-bold" : stage > 2 ? "text-emerald-500 font-bold" : ""}>
+                        {stage === 2 ? "RUNNING" : stage > 2 ? "DONE ✓" : "-"}
+                      </span>
+                    </div>
+                  </motion.div>
+                </foreignObject>
+
+                {/* Node 4: Operator 2 */}
+                <foreignObject x="620" y={presetIdx === 2 ? 105 : 180} width="140" height="80" className="overflow-visible">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: stage >= 3 ? 1 : 0.6, scale: 1 }}
+                    className={`w-full h-full p-2 rounded-xl border bg-white dark:bg-[#1a1d24] flex flex-col justify-between shadow-sm select-none ${stage === 3 ? currentPreset.op2.border : ''}`}
+                    style={{ borderColor: stage === 3 ? undefined : 'var(--border-subtle)' }}
+                  >
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className={`w-5 h-5 rounded-md bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center ${currentPreset.op2.text}`}>
+                        <span className="material-symbols-outlined text-[12px]">{currentPreset.op2.icon}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold" style={{ color: 'var(--text-primary)' }}>
+                          {currentPreset.op2.title}
+                        </span>
+                        <span className={`text-[8px] font-mono ${currentPreset.op2.text}`}>
+                          {currentPreset.op2.param}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="w-full flex items-center justify-between px-1 text-[7px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                      <span>Status</span>
+                      <span className={stage === 3 ? "text-emerald-500 animate-pulse font-bold" : stage > 3 ? "text-emerald-500 font-bold" : ""}>
+                        {stage === 3 ? "RUNNING" : stage > 3 ? "DONE ✓" : "READY"}
+                      </span>
+                    </div>
+                  </motion.div>
+                </foreignObject>
+
+                {/* Optional Second Parallel Worker for Multi-Branch DAG (Preset 2) */}
+                {presetIdx === 2 && (
+                  <foreignObject x="620" y="265" width="140" height="80" className="overflow-visible">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: stage >= 3 ? 1 : 0.6, scale: 1 }}
+                      className={`w-full h-full p-2 rounded-xl border bg-white dark:bg-[#1a1d24] flex flex-col justify-between shadow-sm select-none ${stage === 3 ? 'border-emerald-500' : ''}`}
+                      style={{ borderColor: stage === 3 ? undefined : 'var(--border-subtle)' }}
+                    >
+                      <div className="flex items-center gap-2 mt-1">
+                        <div className="w-5 h-5 rounded-md bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
+                          <span className="material-symbols-outlined text-[12px]">description</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-bold" style={{ color: 'var(--text-primary)' }}>
+                            Extract Text
+                          </span>
+                          <span className="text-[8px] font-mono text-emerald-600">
+                            Parallel Branch 2
+                          </span>
+                        </div>
+                      </div>
+                      <div className="w-full flex items-center justify-between px-1 text-[7px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                        <span>Status</span>
+                        <span className={stage === 3 ? "text-emerald-500 animate-pulse font-bold" : stage > 3 ? "text-emerald-500 font-bold" : "READY"}>
+                          {stage === 3 ? "RUNNING" : stage > 3 ? "DONE ✓" : "READY"}
+                        </span>
+                      </div>
+                    </motion.div>
+                  </foreignObject>
+                )}
+
+                {/* Node 5: Output */}
+                <foreignObject x="830" y={presetIdx === 2 ? 105 : 180} width="100" height="80" className="overflow-visible">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: stage >= 4 ? 1 : 0.4, scale: 1 }}
+                    className={`w-full h-full p-2.5 rounded-xl border flex flex-col justify-center shadow-sm select-none ${currentPreset.outputNode.bg}`}
+                  >
+                    <div className="flex flex-col text-left gap-0.5">
+                      <span className="text-[7px] font-black uppercase tracking-widest opacity-80">{currentPreset.outputNode.tag}</span>
+                      <span className="text-[9px] font-bold truncate">
+                        {currentPreset.outputNode.name}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 mt-2 text-[7px] font-mono opacity-80">
+                      <span>{currentPreset.outputNode.size}</span>
+                      <span>{currentPreset.outputNode.suffix}</span>
+                    </div>
+                  </motion.div>
+                </foreignObject>
+
+                {/* Second Output for Parallel Branching (Preset 2) */}
+                {presetIdx === 2 && (
+                  <foreignObject x="830" y="265" width="100" height="80" className="overflow-visible">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: stage >= 4 ? 1 : 0.4, scale: 1 }}
+                      className="w-full h-full p-2.5 rounded-xl border flex flex-col justify-center shadow-sm select-none bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
+                    >
+                      <div className="flex flex-col text-left gap-0.5">
+                        <span className="text-[7px] font-black uppercase tracking-widest opacity-80">TEXT</span>
+                        <span className="text-[9px] font-bold truncate">
+                          extracted.txt
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 mt-2 text-[7px] font-mono opacity-80">
+                        <span>42 KB</span>
+                        <span>Parallel</span>
+                      </div>
+                    </motion.div>
+                  </foreignObject>
+                )}
+              </svg>
+            </div>
+
+            {/* Bottom Status Bar */}
+            <div
+              className="px-4 py-1.5 border-t flex items-center justify-between text-[9px] font-mono"
+              style={{
+                background: 'var(--bg-glass)',
+                borderColor: 'var(--border-subtle)',
+                color: 'var(--text-secondary)',
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span>Client-Side Execution Engine (Web Workers)</span>
+              </div>
+              <span className="text-emerald-500 font-bold">0 Server Logs</span>
+            </div>
+          </div>
+        </ScrollReveal>
+
+      </div>
+    </section>
+  );
+}
+
 
 export default function LandingPage({
   onUploadClick,
@@ -974,22 +1540,22 @@ export default function LandingPage({
 
   return (
     <div className="relative w-full overflow-x-clip" style={{ color: 'var(--text-primary)' }}>
-      <FloatingDecorations />
 
       {/* ═══════════════════════════════════════════════════════════
           SECTION 1 — HERO
       ═══════════════════════════════════════════════════════════ */}
       <section className="relative min-h-[100svh] flex flex-col items-center justify-center px-6 sm:px-8 pt-24 pb-16 overflow-hidden">
         <ParallaxOrbs />
+        <FloatingDecorations />
 
-        {/* Dot grid — theme-adaptive via CSS class */}
-        <div className="absolute inset-0 pointer-events-none z-0 hero-dot-grid" aria-hidden />
-
-        {/* Radial vignette fade */}
-        <div
-          className="absolute inset-0 pointer-events-none z-0"
-          style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 50%, transparent 40%, var(--bg-primary) 100%)' }}
-          aria-hidden
+        {/* Dot grid — theme-adaptive with smooth radial fade mask */}
+        <div 
+          className="absolute inset-0 pointer-events-none z-0 hero-dot-grid" 
+          style={{
+            maskImage: 'radial-gradient(ellipse 75% 75% at 50% 40%, black 20%, transparent 85%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 75% 75% at 50% 40%, black 20%, transparent 85%)'
+          }}
+          aria-hidden 
         />
 
         <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center gap-6 text-center">
@@ -1285,368 +1851,7 @@ export default function LandingPage({
       {/* ═══════════════════════════════════════════════════════════
           SECTION 5 — STUDIO CANVAS VISUAL DEMO
       ═══════════════════════════════════════════════════════════ */}
-      <section
-        id="canvas"
-        className="py-20 px-6 sm:px-8 max-w-[1400px] mx-auto"
-        style={{ scrollMarginTop: 120 }}
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
-
-          {/* Text side */}
-          <ScrollReveal className="flex flex-col gap-5 lg:col-span-5">
-            <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--color-accent)' }}>
-              Visual Workflow DAGs
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              <WaveText text="Design Pipelines Visually" />
-            </h2>
-            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              The Studio Canvas lets you drag document nodes, draw cable connections between operations, and execute the entire chain with one click. The recursive engine resolves all upstream dependencies automatically.
-            </p>
-            <ul className="flex flex-col gap-4">
-              {[
-                [Workflow, 'No-Code Document Workspaces', 'Link multiple files and tools into a single visual execution pipeline.'],
-                [Shield, 'Type-Safe Path Checking', 'Intelligent real-time validation of input formats and cycle loop prevention.'],
-                [Wand2, 'Interactive Focus Settings', 'Open dedicated canvas panels to configure page ranges, signatures, and crops per node.'],
-                [Zap, 'One-Click Local Execution', 'Execute the entire compiled pipeline at once using Client Side Web Workers.'],
-                [Database, 'Auto-Persistent Sessions', 'Your workbench graph layout and configuration states are saved locally to IndexedDB.'],
-              ].map(([Icon, title, desc]) => (
-                <li key={title} className="flex items-start gap-3.5 text-xs text-left" style={{ color: 'var(--text-secondary)' }}>
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(var(--color-primary-rgb), 0.1)', border: '1px solid rgba(var(--color-primary-rgb), 0.2)' }}>
-                    <Icon className="w-4 h-4 text-primary" style={{ color: 'var(--color-primary)' }} />
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-bold text-sm" style={{ color: 'var(--text-primary)', tracking: '-0.01em' }}>{title}</span>
-                    <span className="text-[11.5px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{desc}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-
-            <motion.button
-              onClick={() => navigate('/canvas')}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="self-start flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer border-none select-none transition-all duration-300"
-              style={{
-                background: 'rgba(255,127,28,0.08)',
-                border: '1px solid rgba(255,127,28,0.25)',
-                color: 'var(--color-accent)',
-              }}
-            >
-              Open Studio Canvas
-              <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-            </motion.button>
-          </ScrollReveal>
-          {/* Animated canvas mockup — light themed to match landing page, reflecting true StitchCanvas visual styles */}
-          <ScrollReveal delay={0.18} className="lg:col-span-7">
-            <div
-              className="relative rounded-3xl overflow-hidden"
-              style={{
-                aspectRatio: '16/9',
-                background: 'linear-gradient(135deg, #ffffff 0%, #faf5eb 100%)',
-                border: '1px solid rgba(249, 115, 22, 0.2)',
-                boxShadow: '0 20px 48px rgba(0, 0, 0, 0.06), 0 0 30px rgba(249, 115, 22, 0.02)',
-                '--color-primary': '#f97316',
-                '--color-primary-light': '#ff9843',
-                '--color-primary-rgb': '249, 115, 22',
-              }}
-            >
-              <style>{`
-                @keyframes march {
-                  to {
-                    stroke-dashoffset: -20;
-                  }
-                }
-                .animated-cable {
-                  stroke-dasharray: 6 4;
-                  animation: march 1.2s linear infinite;
-                }
-              `}</style>
-
-              {/* Orange dot grid */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage: 'radial-gradient(rgba(249, 115, 22, 0.15) 1.2px, transparent 1.2px)',
-                  backgroundSize: '24px 24px',
-                }}
-                aria-hidden
-              />
-
-              {/* SVG cables & Nodes in a unified coordinate system */}
-              <svg
-                className="absolute inset-0 w-full h-full z-0"
-                viewBox="0 0 840 280"
-                preserveAspectRatio="xMidYMid meet"
-              >
-                {/* SVG Glow Filter Defs */}
-                <defs>
-                  <filter id="cable-glow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="3.5" result="blur" />
-                    <feMerge>
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                  </filter>
-                </defs>
-
-                {/* Cables with glow */}
-                {[
-                  { d: 'M 150 64 C 172 64, 172 134, 195 134', color: 'var(--color-primary-light)' },
-                  { d: 'M 150 134 C 172 134, 172 134, 195 134', color: 'var(--color-primary-light)' },
-                  { d: 'M 150 204 C 172 204, 172 134, 195 134', color: 'var(--color-primary-light)' },
-                  { d: 'M 310 134 C 332 134, 332 134, 355 134', color: 'var(--color-primary-light)' },
-                  { d: 'M 485 134 C 507 134, 507 134, 530 134', color: 'var(--color-primary-light)' },
-                  { d: 'M 645 134 C 667 134, 667 88, 690 88', color: 'var(--color-primary-light)' },
-                  { d: 'M 645 134 C 667 134, 667 193, 690 193', color: 'var(--color-primary-light)' },
-                ].map((cable, i) => (
-                  <g key={i}>
-                    {/* Shadow Glow layer */}
-                    <path
-                      d={cable.d}
-                      fill="none"
-                      stroke="var(--color-primary)"
-                      strokeWidth="3.5"
-                      filter="url(#cable-glow)"
-                      className="opacity-20"
-                    />
-                    {/* Marching Cable layer */}
-                    <path
-                      d={cable.d}
-                      fill="none"
-                      stroke={cable.color}
-                      strokeWidth="1.8"
-                      className="animated-cable opacity-90"
-                    />
-                  </g>
-                ))}
-
-                {/* Sockets rendered as visual circles */}
-                {[
-                  // Output ports (Primary Accent fill, White border)
-                  { x: 150, y: 64, fill: 'var(--color-primary)' },
-                  { x: 150, y: 134, fill: 'var(--color-primary)' },
-                  { x: 150, y: 204, fill: 'var(--color-primary)' },
-                  { x: 310, y: 134, fill: 'var(--color-primary)' },
-                  { x: 485, y: 134, fill: 'var(--color-primary)' },
-                  { x: 645, y: 134, fill: 'var(--color-primary)' },
-                  { x: 820, y: 88, fill: 'var(--color-primary)' },
-                  { x: 820, y: 193, fill: 'var(--color-primary)' },
-                  // Input ports (Slate Grey fill, White border)
-                  { x: 195, y: 134, fill: '#cbd5e1' },
-                  { x: 355, y: 134, fill: '#cbd5e1' },
-                  { x: 530, y: 134, fill: '#cbd5e1' },
-                  { x: 690, y: 88, fill: '#cbd5e1' },
-                  { x: 690, y: 193, fill: '#cbd5e1' },
-                ].map((port, idx) => (
-                  <circle
-                    key={idx}
-                    cx={port.x}
-                    cy={port.y}
-                    r="3.5"
-                    fill={port.fill}
-                    stroke="#ffffff"
-                    strokeWidth="1.5"
-                    style={{ filter: 'drop-shadow(0 0 3px rgba(249, 115, 22, 0.4))' }}
-                  />
-                ))}
-
-                {/* Nodes inside foreignObjects so they perfectly align with paths at any scale */}
-                {[
-                  // Document Nodes (Inputs)
-                  {
-                    id: 'doc-1',
-                    x: 20,
-                    y: 40,
-                    w: 130,
-                    h: 48,
-                    label: 'docforge_ecosystem.pdf',
-                    sub: '54.2 KB',
-                    tag: 'PDF',
-                    tagBg: 'from-red-500 to-rose-600',
-                    tagColor: '#ffffff',
-                    num: '1',
-                    isOut: false,
-                    delay: 0.1
-                  },
-                  {
-                    id: 'doc-2',
-                    x: 20,
-                    y: 110,
-                    w: 130,
-                    h: 48,
-                    label: 'docforge_architecture.pdf',
-                    sub: '12.3 KB',
-                    tag: 'PDF',
-                    tagBg: 'from-red-500 to-rose-600',
-                    tagColor: '#ffffff',
-                    num: '2',
-                    isOut: false,
-                    delay: 0.2
-                  },
-                  {
-                    id: 'doc-3',
-                    x: 20,
-                    y: 180,
-                    w: 130,
-                    h: 48,
-                    label: 'tax_receipt_scans.png',
-                    sub: '238.8 KB',
-                    tag: 'PNG',
-                    tagBg: 'from-teal-400 to-emerald-500',
-                    tagColor: '#ffffff',
-                    num: '3',
-                    isOut: false,
-                    delay: 0.3
-                  },
-                  // Merge Operator Node
-                  {
-                    id: 'op-1',
-                    x: 195,
-                    y: 110,
-                    w: 115,
-                    h: 48,
-                    label: 'Merge PDF',
-                    sub: 'COMPLETED',
-                    icon: 'join_inner',
-                    isOp: true,
-                    delay: 0.4
-                  },
-                  // Document Node (Intermediate Output)
-                  {
-                    id: 'doc-4',
-                    x: 355,
-                    y: 110,
-                    w: 130,
-                    h: 48,
-                    label: 'merged_financials.pdf',
-                    sub: '1.92 MB',
-                    tag: 'PDF',
-                    tagBg: 'from-red-500 to-rose-600',
-                    tagColor: '#ffffff',
-                    num: '4',
-                    isOut: false,
-                    delay: 0.5
-                  },
-                  // Split Operator Node
-                  {
-                    id: 'op-2',
-                    x: 530,
-                    y: 110,
-                    w: 115,
-                    h: 48,
-                    label: 'Split PDF',
-                    sub: 'COMPLETED',
-                    icon: 'content_cut',
-                    isOp: true,
-                    delay: 0.6
-                  },
-                  // Document Nodes (Final Outputs)
-                  {
-                    id: 'doc-5',
-                    x: 690,
-                    y: 50,
-                    w: 130,
-                    h: 76, // Taller because of download button
-                    label: 'investor_summary.pdf',
-                    sub: '420 KB',
-                    tag: 'PDF',
-                    tagBg: 'from-red-500 to-rose-600',
-                    tagColor: '#ffffff',
-                    num: '5',
-                    isOut: true,
-                    delay: 0.7
-                  },
-                  {
-                    id: 'doc-6',
-                    x: 690,
-                    y: 155,
-                    w: 130,
-                    h: 76, // Taller because of download button
-                    label: 'financial_appendix.pdf',
-                    sub: '1.5 MB',
-                    tag: 'PDF',
-                    tagBg: 'from-red-500 to-rose-600',
-                    tagColor: '#ffffff',
-                    num: '6',
-                    isOut: true,
-                    delay: 0.8
-                  }
-                ].map((node) => (
-                  <foreignObject key={node.id} x={node.x} y={node.y} width={node.w} height={node.h} className="overflow-visible">
-                    <motion.div
-                      className="relative w-full h-full flex flex-col rounded-2xl select-none pointer-events-auto border"
-                      style={{
-                        background: node.isOp ? 'rgba(249, 115, 22, 0.03)' : '#ffffff',
-                        borderColor: node.isOp ? 'rgba(249, 115, 22, 0.3)' : 'rgba(15, 23, 42, 0.08)',
-                        boxShadow: node.isOp ? '0 4px 16px rgba(249, 115, 22, 0.04)' : '0 4px 20px rgba(15, 23, 42, 0.03), 0 2px 6px rgba(15, 23, 42, 0.02)',
-                      }}
-                      initial={{ opacity: 0, scale: 0.85 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: node.delay, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                      {/* Ordinal Position Badge for document nodes */}
-                      {!node.isOp && (
-                        <div className="absolute -top-2 -left-2 z-40 flex items-center justify-center pointer-events-none">
-                          <span 
-                            className="rounded-full flex items-center justify-center font-bold text-[8.5px] select-none border border-white text-white shadow-sm"
-                            style={{
-                              width: '18px',
-                              height: '18px',
-                              backgroundColor: 'var(--color-primary)',
-                              boxShadow: '0 2px 5px rgba(249, 115, 22, 0.2)',
-                            }}
-                          >
-                            {node.num}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Main card body flex container */}
-                      <div className="flex items-center gap-2 p-2 w-full min-w-0">
-                        {/* Left icon or badge */}
-                        {node.isOp ? (
-                          <div className="w-7 h-7 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-600 shrink-0">
-                            <span className="material-symbols-outlined text-[15px]">{node.icon}</span>
-                          </div>
-                        ) : (
-                          <div
-                            className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-[8.5px] text-white shrink-0 bg-gradient-to-br ${node.tagBg} shadow-sm`}
-                          >
-                            {node.tag}
-                          </div>
-                        )}
-
-                        {/* Text stack */}
-                        <div className="flex flex-col min-w-0 flex-grow">
-                          <span className="text-[10px] font-bold text-slate-800 truncate leading-tight">
-                            {node.label}
-                          </span>
-                          <span className={`text-[8.5px] font-bold leading-none mt-0.5 ${node.isOp ? 'text-orange-600 font-bold uppercase tracking-wider' : 'text-slate-400'}`}>
-                            {node.sub}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Download action section (only for intermediate and final outputs) */}
-                      {!node.isOp && node.isOut && (
-                        <div className="px-2.5 pb-2.5 border-t border-orange-100 pt-2 flex flex-col gap-1 w-full mt-auto">
-                          <button className="w-full py-1 rounded bg-orange-50/20 border border-orange-100 hover:border-primary hover:text-primary text-[9px] font-bold transition-all flex items-center justify-center gap-1 cursor-default text-slate-600">
-                            <span className="material-symbols-outlined text-[10px]">download</span>
-                            Download
-                          </button>
-                        </div>
-                      )}
-                    </motion.div>
-                  </foreignObject>
-                ))}
-              </svg>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+      <StudioCanvasSection />
 
       {/* ═══════════════════════════════════════════════════════════
           SECTION 6 — PRIVACY ARCHITECTURE (ShimmerCards)

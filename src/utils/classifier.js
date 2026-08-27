@@ -1,4 +1,33 @@
-import weights from './classifier_weights.json';
+let cachedWeights = null;
+let vocabUnigrams = [];
+let weightsPromise = null;
+
+/**
+ * Lazily loads the heavy classifier weights dictionary (1.77 MB) on-demand,
+ * preventing it from bloating the main application bundle.
+ */
+export async function loadClassifierWeights() {
+  if (cachedWeights) return cachedWeights;
+  if (!weightsPromise) {
+    weightsPromise = import('./classifier_weights.json')
+      .then((mod) => {
+        cachedWeights = mod.default || mod;
+        if (cachedWeights && cachedWeights.vocabulary) {
+          vocabUnigrams = Object.keys(cachedWeights.vocabulary).filter(k => !k.includes(' '));
+        }
+        return cachedWeights;
+      })
+      .catch((err) => {
+        console.warn('[Classifier] Failed to load classifier weights dynamically:', err);
+        return null;
+      });
+  }
+  return weightsPromise;
+}
+
+export function getClassifierWeightsSync() {
+  return cachedWeights;
+}
 
 /**
  * Stem a word by stripping common suffixes, matching the python stemmer.
@@ -38,35 +67,33 @@ function getLevenshteinDistance(a, b) {
   return matrix[b.length][a.length];
 }
 
-const vocabUnigrams = Object.keys(weights.vocabulary).filter(k => !k.includes(' '));
 const correctionsCache = {};
 const STOPWORDS = new Set([
   "would", "could", "should", "mind", "have", "with", "this", "that", "them", "then",
   "their", "there", "some", "from", "your", "want", "need", "about", "here", "work",
   "make", "does", "even", "more", "really", "please"
-  // NOTE: "file", "page", "document", "pdf" removed — they ARE in vocab so correctWord
-  // early-returns them anyway, but keeping them in STOPWORDS blocked the corrector
-  // from fixing typos like "pfd" → "pdf" when the guard fired.
 ]);
 
 function correctWord(word) {
   if (word.length <= 3) return word;
   if (STOPWORDS.has(word)) return word;
-  if (weights.vocabulary[word] !== undefined) return word;
+  if (cachedWeights && cachedWeights.vocabulary && cachedWeights.vocabulary[word] !== undefined) return word;
   if (correctionsCache[word] !== undefined) return correctionsCache[word];
 
   let bestWord = word;
   const maxAllowed = word.length <= 5 ? 1 : 2;
   let minDist = maxAllowed + 1;
 
-  for (const vWord of vocabUnigrams) {
-    if (Math.abs(vWord.length - word.length) >= minDist) continue;
-    if (vWord[0] !== word[0] && vWord[vWord.length - 1] !== word[word.length - 1]) continue;
+  if (vocabUnigrams.length > 0) {
+    for (const vWord of vocabUnigrams) {
+      if (Math.abs(vWord.length - word.length) >= minDist) continue;
+      if (vWord[0] !== word[0] && vWord[vWord.length - 1] !== word[word.length - 1]) continue;
 
-    const dist = getLevenshteinDistance(word, vWord);
-    if (dist < minDist) {
-      minDist = dist;
-      bestWord = vWord;
+      const dist = getLevenshteinDistance(word, vWord);
+      if (dist < minDist) {
+        minDist = dist;
+        bestWord = vWord;
+      }
     }
   }
 
@@ -127,9 +154,10 @@ function tokenizeNgrams(text) {
  * Transform input tokens to a sparse L2-normalized TF-IDF vector.
  */
 function getSparseTfidfVector(tokens) {
+  if (!cachedWeights || !cachedWeights.vocabulary) return [];
   const tf = {};
   for (const t of tokens) {
-    if (weights.vocabulary[t] !== undefined) {
+    if (cachedWeights.vocabulary[t] !== undefined) {
       tf[t] = (tf[t] || 0) + 1;
     }
   }
@@ -138,8 +166,8 @@ function getSparseTfidfVector(tokens) {
   let squaredSum = 0.0;
 
   for (const t in tf) {
-    const featIdx = weights.vocabulary[t];
-    const idfVal = weights.idf[featIdx];
+    const featIdx = cachedWeights.vocabulary[t];
+    const idfVal = cachedWeights.idf[featIdx];
     const val = tf[t] * idfVal;
     sparse.push({ index: featIdx, value: val });
     squaredSum += val * val;
@@ -248,6 +276,12 @@ export function predictIntent(text) {
     return earlyBoost;
   }
 
+  if (!cachedWeights) {
+    // Trigger lazy background load for subsequent calls
+    loadClassifierWeights();
+    return { classLabel: 'unknown', confidence: 1.0 };
+  }
+
   const tokens = tokenizeNgrams(text);
   if (tokens.length === 0) {
     return { classLabel: 'unknown', confidence: 1.0 };
@@ -258,13 +292,13 @@ export function predictIntent(text) {
     return { classLabel: 'unknown', confidence: 1.0 };
   }
 
-  const numClasses = weights.classes.length;
+  const numClasses = cachedWeights.classes.length;
   const rawZ = new Array(numClasses);
   let maxZ = -Infinity;
 
   for (let c = 0; c < numClasses; c++) {
-    const coef = weights.coef[c];
-    const intercept = weights.intercept[c];
+    const coef = cachedWeights.coef[c];
+    const intercept = cachedWeights.intercept[c];
 
     // Compute sparse dot product: z = x * w + b
     let z = intercept;
@@ -296,7 +330,7 @@ export function predictIntent(text) {
     const prob = probs[c] / sumExp;
     if (prob > maxScore) {
       maxScore = prob;
-      topClass = weights.classes[c];
+      topClass = cachedWeights.classes[c];
     }
   }
 
@@ -331,8 +365,28 @@ export function initClassifierWorker() {
       if (data.type === 'ready') {
         workerReady = true;
         console.log('[Classifier] Semantic ONNX worker initialized and ready.');
+        // Dispatch global event so UI components know the model is ready
+        window.dispatchEvent(new CustomEvent('model-download-progress', {
+          detail: { type: 'ready', model: 'all-MiniLM-L6-v2' }
+        }));
       } else if (data.type === 'status') {
         console.log('[Classifier Worker Status]:', data.message);
+        window.dispatchEvent(new CustomEvent('model-download-progress', {
+          detail: { type: 'status', message: data.message, model: 'all-MiniLM-L6-v2' }
+        }));
+      } else if (data.type === 'loading') {
+        // Forward byte-level download progress to UI
+        window.dispatchEvent(new CustomEvent('model-download-progress', {
+          detail: {
+            type: 'loading',
+            model: 'all-MiniLM-L6-v2',
+            file: data.file,
+            progress: data.progress,
+            loaded: data.loaded,
+            total: data.total,
+            status: data.status
+          }
+        }));
       } else if (data.type === 'result') {
         const resolver = pendingClassifierResolvers.shift();
         if (resolver) {
@@ -344,7 +398,7 @@ export function initClassifierWorker() {
           resolver(data.embedding);
         }
       } else if (data.type === 'error') {
-        console.error('[Classifier Worker Error]:', data.error);
+        console.warn('[Classifier Worker Error Message]:', data.error);
         if (pendingClassifierResolvers.length > 0) {
           const resolver = pendingClassifierResolvers.shift();
           if (resolver) resolver(null);
@@ -352,6 +406,22 @@ export function initClassifierWorker() {
           const resolver = pendingEmbedResolvers.shift();
           if (resolver) resolver(null);
         }
+      }
+    };
+
+    classifierWorker.onerror = (err) => {
+      console.warn('[Classifier Worker Non-Fatal Error]:', err?.message || err);
+      if (err && typeof err.preventDefault === 'function') {
+        err.preventDefault();
+      }
+      workerReady = false;
+      while (pendingClassifierResolvers.length > 0) {
+        const resolver = pendingClassifierResolvers.shift();
+        if (resolver) resolver(null);
+      }
+      while (pendingEmbedResolvers.length > 0) {
+        const resolver = pendingEmbedResolvers.shift();
+        if (resolver) resolver(null);
       }
     };
   } catch (err) {
@@ -364,6 +434,11 @@ export function initClassifierWorker() {
  * Falls back immediately to the local TF-IDF model if the worker is not ready.
  */
 export async function predictIntentAsync(text) {
+  // Ensure classifier weights are loaded for local TF-IDF inference
+  if (!cachedWeights) {
+    await loadClassifierWeights();
+  }
+
   // 1. Run local TF-IDF first
   const tfidfResult = predictIntent(text);
 
@@ -421,26 +496,24 @@ export function isClassifierWorkerReady() {
 
 /**
  * Generates vector embeddings for a given query text using the background ONNX worker.
- * Returns null if the worker is not ready or fails.
+ * Returns null immediately if the worker is not ready, allowing BM25 hybrid fallback.
  */
 export async function embedQueryText(text) {
   if (!classifierWorker) {
     initClassifierWorker();
   }
 
-  // If the worker exists but is not ready yet, wait for up to 15 seconds
+  // Fast check: wait up to 400ms if worker is initializing, otherwise gracefully fall back to BM25
   if (!workerReady) {
-    console.log('[Classifier] Semantic worker not ready. Waiting for initialization...');
     let checkCount = 0;
-    while (!workerReady && checkCount < 150) {
-      await new Promise(r => setTimeout(r, 100)); // check every 100ms
+    while (!workerReady && checkCount < 4) {
+      await new Promise(r => setTimeout(r, 100));
       checkCount++;
     }
   }
 
   if (!workerReady || !classifierWorker) {
-    console.warn('[Classifier] Cannot embed query. Semantic worker is not ready after timeout.');
-    return null;
+    return null; // Gracefully fall back to BM25 keyword matching
   }
 
   return new Promise((resolve) => {

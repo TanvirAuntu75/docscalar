@@ -18,7 +18,7 @@ const hexToRgb = (hex) => {
  * @param {function} onProgress - Progress callback.
  * @returns {Promise<Blob>} The watermarked PDF.
  */
-export async function addWatermark(file, options, onProgress) {
+export async function addWatermark(file, options = {}, onProgress) {
   if (onProgress) onProgress(10);
   const pdfBytes = await file.arrayBuffer();
   if (onProgress) onProgress(30);
@@ -27,12 +27,21 @@ export async function addWatermark(file, options, onProgress) {
   if (onProgress) onProgress(45);
 
   const pages = pdfDoc.getPages();
-  const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  // Select font family
+  let font;
+  if (options.fontFamily === 'Times') {
+    font = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+  } else if (options.fontFamily === 'Courier') {
+    font = await pdfDoc.embedFont(StandardFonts.CourierBold);
+  } else {
+    font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  }
   
   let embeddedImage = null;
   if (options.type === 'image' && options.imageFile) {
     const imgBytes = await options.imageFile.arrayBuffer();
-    const isPng = options.imageFile.name.toLowerCase().endsWith('.png') || options.imageFile.type === 'image/png';
+    const isPng = options.imageFile.name?.toLowerCase().endsWith('.png') || options.imageFile.type === 'image/png';
     if (isPng) {
       embeddedImage = await pdfDoc.embedPng(imgBytes);
     } else {
@@ -45,8 +54,14 @@ export async function addWatermark(file, options, onProgress) {
   const scaleSize = parseFloat(options.size ?? 50); // FontSize for text, scale % for image
   const position = options.position || 'center';
   const margin = 36; // Padding from borders in points
+  const targetPages = Array.isArray(options.targetPages) ? options.targetPages : null;
+  const isTileRepeat = Boolean(options.repeatTile);
 
   pages.forEach((page, idx) => {
+    if (targetPages && !targetPages.includes(idx)) {
+      return; // Skip pages not in target scope
+    }
+
     const { width, height } = page.getSize();
     
     if (options.type === 'text') {
@@ -56,33 +71,53 @@ export async function addWatermark(file, options, onProgress) {
       const textWidth = font.widthOfTextAtSize(safeText, scaleSize);
       const textHeight = scaleSize * 0.8;
 
-      let x = (width - textWidth) / 2;
-      let y = (height - textHeight) / 2;
+      const rad = (rotationAngle * Math.PI) / 180;
+      const cos = Math.cos(rad);
+      const sin = Math.sin(rad);
 
-      if (options.xPercent !== undefined && options.yPercent !== undefined) {
-        x = options.xPercent * width - textWidth / 2;
-        y = (1 - options.yPercent) * height - textHeight / 2;
+      const renderTextAtCenter = (cx, cy) => {
+        const x = cx - (textWidth / 2) * cos + (textHeight / 2) * sin;
+        const y = cy - (textWidth / 2) * sin - (textHeight / 2) * cos;
+        page.drawText(safeText, {
+          x,
+          y,
+          size: scaleSize,
+          font,
+          color: rgb(colorVals.r, colorVals.g, colorVals.b),
+          opacity,
+          rotate: degrees(rotationAngle),
+        });
+      };
+
+      if (isTileRepeat) {
+        // 3x3 repeating grid
+        const cols = [width * 0.2, width * 0.5, width * 0.8];
+        const rows = [height * 0.2, height * 0.5, height * 0.8];
+        cols.forEach(cx => {
+          rows.forEach(cy => {
+            renderTextAtCenter(cx, cy);
+          });
+        });
       } else {
-        if (position === 'top-left') {
-          x = margin; y = height - margin - textHeight;
-        } else if (position === 'top-right') {
-          x = width - margin - textWidth; y = height - margin - textHeight;
-        } else if (position === 'bottom-left') {
-          x = margin; y = margin;
-        } else if (position === 'bottom-right') {
-          x = width - margin - textWidth; y = margin;
-        }
-      }
+        let cx = width / 2;
+        let cy = height / 2;
 
-      page.drawText(safeText, {
-        x,
-        y,
-        size: scaleSize,
-        font,
-        color: rgb(colorVals.r, colorVals.g, colorVals.b),
-        opacity,
-        rotate: degrees(rotationAngle),
-      });
+        if (options.xPercent !== undefined && options.yPercent !== undefined) {
+          cx = options.xPercent * width;
+          cy = (1 - options.yPercent) * height;
+        } else {
+          if (position === 'top-left') {
+            cx = margin + textWidth / 2; cy = height - margin - textHeight / 2;
+          } else if (position === 'top-right') {
+            cx = width - margin - textWidth / 2; cy = height - margin - textHeight / 2;
+          } else if (position === 'bottom-left') {
+            cx = margin + textWidth / 2; cy = margin + textHeight / 2;
+          } else if (position === 'bottom-right') {
+            cx = width - margin - textWidth / 2; cy = margin + textHeight / 2;
+          }
+        }
+        renderTextAtCenter(cx, cy);
+      }
 
     } else if (options.type === 'image' && embeddedImage) {
       // Scale image to fit requested percentage size of page width
@@ -90,32 +125,47 @@ export async function addWatermark(file, options, onProgress) {
       const displayWidth = width * imgScale;
       const displayHeight = (embeddedImage.height / embeddedImage.width) * displayWidth;
 
-      let x = (width - displayWidth) / 2;
-      let y = (height - displayHeight) / 2;
+      const renderImageAtCenter = (cx, cy) => {
+        const x = cx - displayWidth / 2;
+        const y = cy - displayHeight / 2;
+        page.drawImage(embeddedImage, {
+          x,
+          y,
+          width: displayWidth,
+          height: displayHeight,
+          opacity,
+          rotate: degrees(rotationAngle),
+        });
+      };
 
-      if (options.xPercent !== undefined && options.yPercent !== undefined) {
-        x = options.xPercent * width - displayWidth / 2;
-        y = (1 - options.yPercent) * height - displayHeight / 2;
+      if (isTileRepeat) {
+        const cols = [width * 0.25, width * 0.75];
+        const rows = [height * 0.25, height * 0.75];
+        cols.forEach(cx => {
+          rows.forEach(cy => {
+            renderImageAtCenter(cx, cy);
+          });
+        });
       } else {
-        if (position === 'top-left') {
-          x = margin; y = height - margin - displayHeight;
-        } else if (position === 'top-right') {
-          x = width - margin - displayWidth; y = height - margin - displayHeight;
-        } else if (position === 'bottom-left') {
-          x = margin; y = margin;
-        } else if (position === 'bottom-right') {
-          x = width - margin - displayWidth; y = margin;
-        }
-      }
+        let cx = width / 2;
+        let cy = height / 2;
 
-      page.drawImage(embeddedImage, {
-        x,
-        y,
-        width: displayWidth,
-        height: displayHeight,
-        opacity,
-        rotate: degrees(rotationAngle),
-      });
+        if (options.xPercent !== undefined && options.yPercent !== undefined) {
+          cx = options.xPercent * width;
+          cy = (1 - options.yPercent) * height;
+        } else {
+          if (position === 'top-left') {
+            cx = margin + displayWidth / 2; cy = height - margin - displayHeight / 2;
+          } else if (position === 'top-right') {
+            cx = width - margin - displayWidth / 2; cy = height - margin - displayHeight / 2;
+          } else if (position === 'bottom-left') {
+            cx = margin + displayWidth / 2; cy = margin + displayHeight / 2;
+          } else if (position === 'bottom-right') {
+            cx = width - margin - displayWidth / 2; cy = margin + displayHeight / 2;
+          }
+        }
+        renderImageAtCenter(cx, cy);
+      }
     }
 
     if (onProgress) {
@@ -128,3 +178,4 @@ export async function addWatermark(file, options, onProgress) {
   
   return new Blob([savedBytes], { type: 'application/pdf' });
 }
+
