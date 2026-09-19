@@ -152,6 +152,9 @@ _COMMON_PASSWORDS = [
     "haslo",
     "parol",
     # App name patterns
+    "docscalar",
+    "DocScalar",
+    "DOCSCALAR",
     "docforge",
     "DocForge",
     "DOCFORGE",
@@ -350,7 +353,7 @@ def unlock_pdf(input_path: str, password: str) -> ConversionResult:
     Decrypt a password-protected PDF document.
 
     Unlock strategy (zero-click first, prompt only as last resort):
-      Layer 1  DB lookup   : DocForge-protected files instant recovery
+      Layer 1  DB lookup   : DocScalar-protected files instant recovery
       Layer 2  Empty pwd   : Owner-only / permissions PDFs pikepdf opens freely
       Layer 3  Dictionary  : 500+ common passwords tried silently
       Layer 4  Heuristics  : Filename-derived + date-pattern candidates
@@ -389,7 +392,7 @@ def unlock_pdf(input_path: str, password: str) -> ConversionResult:
         # Auto-bypass pipeline (no password from user)
         effective_password = None
 
-        # Layer 1: DB hash lookup (DocForge-protected files)
+        # Layer 1: DB hash lookup (DocScalar-protected files)
         try:
             import hashlib
 

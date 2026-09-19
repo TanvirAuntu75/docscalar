@@ -3,11 +3,11 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export function generateAustinAmberHtml(
-  data,
+  data = {},
   themeColor = '#042f2e',
   themeFont = 'Inter',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
@@ -15,40 +15,65 @@ export function generateAustinAmberHtml(
   const amberAccent = '#f59e0b';
   const fontFam = themeFont === 'Playfair Display' ? "'Playfair Display', Georgia, serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : "'Inter', -apple-system, sans-serif";
 
-  const expHtml = data.experience && data.experience.length ? `
+  const safeData = data && typeof data === 'object' ? data : {};
+  const name = safeData.name !== undefined && safeData.name !== null ? String(safeData.name).trim() : '';
+  const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';
+  const summaryText = (safeData.summary || safeData.profile || safeData.about || '').trim();
+  const phoneText = (safeData.phone || '').trim();
+  const emailText = (safeData.email || '').trim();
+  const locationText = (safeData.location || safeData.address || '').trim();
+  const linkedinText = (safeData.linkedin || '').trim();
+  const websiteText = (safeData.website || '').trim();
+  const photoSrc = (safeData.photoUrl || '').trim();
+
+  const experienceList = Array.isArray(safeData.experience) ? safeData.experience : [];
+  const educationList = Array.isArray(safeData.education) ? safeData.education : [];
+  const skillsList = Array.isArray(safeData.skills) ? safeData.skills : [];
+  const projectList = Array.isArray(safeData.projects) ? safeData.projects : [];
+  const certList = Array.isArray(safeData.certifications) ? safeData.certifications : [];
+  const referenceList = Array.isArray(safeData.references) ? safeData.references : [];
+  const customSections = Array.isArray(safeData.customSections) ? safeData.customSections : [];
+
+  const langSection = customSections.find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');
+  const otherCustomSections = customSections.filter(cs => cs !== langSection);
+  const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);
+
+  const hasContact = Boolean(phoneText || emailText || locationText || linkedinText || websiteText);
+
+  const expHtml = experienceList.length ? `
     <section class="main-section">
-      <h3 class="section-title">Work Experience</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'Work Experience'}</h3>
       <div class="amber-bar"></div>
       <div class="timeline-wrap">
-        ${data.experience.map(e => `
+        ${experienceList.map((e, idx) => `
           <div class="timeline-item">
             <div class="amber-dot"></div>
             <div class="entry-header">
-              <span class="entry-role">${e.role}</span>
-              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
-            </div>
-            <div class="entry-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+              <span class="entry-role" data-df-field="exp:${idx}:role">${e.role || ''}</span>
+              <span class="entry-date" ><span data-df-field="exp:${idx}:company">${e.company || ''}</span>${(e.company && (e.start || e.end)) ? ' | ' : ''}<span data-df-field="exp:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span></span>${locationText ? ` · ${locationText}` : ''}</div>
             ${e.highlights && e.highlights.filter(Boolean).length ? `
               <ul class="entry-desc">
-                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+                ${e.highlights.filter(Boolean).map((h, hIdx) => `<li data-df-field="exp:${idx}:highlight:${hIdx}">${h}</li>`).join('')}
               </ul>
-            ` : ''}
+            ` : (e.description ? `
+              <div class="entry-desc" data-df-field="exp:${idx}:highlight:0" style="font-size: 8.8pt; color: #475569; margin-top: 4px;">${e.description}</div>
+            ` : '')}
           </div>
         `).join('')}
       </div>
     </section>
   ` : '';
 
-  const eduHtml = data.education && data.education.length ? `
+  const eduHtml = educationList.length ? `
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Education</h3>
+      <h3 class="sidebar-title section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'Education'}</h3>
       <div class="sidebar-line"></div>
       <div class="edu-list">
-        ${data.education.map(e => `
+        ${educationList.map((e, idx) => `
           <div class="edu-item">
-            <div class="edu-degree">${e.degree}</div>
-            <div class="edu-school">${e.school}</div>
-            <div class="edu-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
+            <div class="edu-degree" data-df-field="edu:${idx}:degree">${e.degree || ''}</div>
+            <div class="edu-school" data-df-field="edu:${idx}:school">${e.school || ''}</div>
+            <div class="edu-date" data-df-field="edu:${idx}:date">${e.date || (e.start ? `${e.start}${e.end ? ` – ${e.end}` : ''}` : '')}</div>
             ${e.note ? `<div class="edu-note">${e.note}</div>` : ''}
           </div>
         `).join('')}
@@ -56,23 +81,23 @@ export function generateAustinAmberHtml(
     </div>
   ` : '';
 
-  const skillsHtml = data.skills && data.skills.length ? `
+  const skillsHtml = skillsList.length ? `
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Core Skills</h3>
+      <h3 class="sidebar-title section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Core Skills'}</h3>
       <div class="sidebar-line"></div>
       <div class="skills-grid">
-        ${data.skills.map((s) => {
-          let name = s;
+        ${skillsList.map((s, idx) => {
+          let sName = typeof s === 'string' ? s : s.name || '';
           let levelText = '';
-          if (s.includes(' - ')) {
+          if (typeof s === 'string' && s.includes(' - ')) {
             const parts = s.split(' - ');
-            name = parts[0];
+            sName = parts[0];
             levelText = parts[1];
           }
           return `
             <div class="skill-item">
               <span class="amber-bullet">▪</span>
-              <span class="skill-name">${name}</span>
+              <span class="skill-name" data-df-field="skill:${idx}">${sName}</span>
               ${levelText ? `<span class="skill-level">${levelText}</span>` : ''}
             </div>
           `;
@@ -81,54 +106,104 @@ export function generateAustinAmberHtml(
     </div>
   ` : '';
 
-  const projHtml = data.projects && data.projects.length ? `
+  const projHtml = projectList.length ? `
     <section class="main-section">
-      <h3 class="section-title">Projects</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'Projects'}</h3>
       <div class="amber-bar"></div>
       <div class="timeline-wrap">
-        ${data.projects.map(p => `
+        ${projectList.map((p, idx) => `
           <div class="timeline-item">
             <div class="amber-dot"></div>
             <div class="entry-header">
-              <span class="entry-role">${p.name}</span>
-              ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: ${amberAccent}; text-decoration: none;">${p.url}</a></span>` : ''}
+              <span class="entry-role" data-df-field="proj:${idx}:name">${p.name || ''}</span>
+              ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="proj:${idx}:url" style="color: ${amberAccent}; text-decoration: none;">${p.url}</a></span>` : ''}
             </div>
-            ${p.description ? `<div class="proj-desc">${p.description}</div>` : ''}
+            ${p.description ? `<div class="proj-desc" data-df-field="proj:${idx}:description">${p.description}</div>` : ''}
           </div>
         `).join('')}
       </div>
     </section>
   ` : '';
 
-  const certHtml = data.certifications && data.certifications.length ? `
+  const refHtml = referenceList.length ? `
+    <section class="main-section">
+      <h3 class="section-title section-heading" data-df-field="heading:references">${data.sectionTitles?.references || 'References'}</h3>
+      <div class="amber-bar"></div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
+        ${referenceList.map((r, idx) => `
+          <div style="font-size: 8.8pt; color: #475569;">
+            <div data-df-field="ref:${idx}:name" style="font-weight: 700; color: #0f172a;">${r.name || ''}</div>
+            <div data-df-field="ref:${idx}:relation" style="font-style: italic;">${r.relation || ''}</div>
+            <div data-df-field="ref:${idx}:contact">${r.phone ? `Phone: ${r.phone} · ` : ''}${r.email ? `Email: ${r.email}` : ''}</div>
+          </div>
+        `).join('')}
+      </div>
+    </section>
+  ` : '';
+
+  const certHtml = certList.length ? `
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Certifications</h3>
+      <h3 class="sidebar-title section-heading" data-df-field="heading:certifications">${data.sectionTitles?.certifications || 'Certifications'}</h3>
       <div class="sidebar-line"></div>
       <ul class="cert-list">
-        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+        ${certList.map((c, idx) => `<li data-df-field="cert:${idx}">${typeof c === 'string' ? c : c.name || ''}</li>`).join('')}
       </ul>
     </div>
   ` : '';
 
-  const contactHtml = `
+  const langHtml = langList.length ? `
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Contact</h3>
+      <h3 class="sidebar-title" data-df-field="custom:${langSection.id}:title">${langSection.title || 'Languages'}</h3>
       <div class="sidebar-line"></div>
-      <div class="contact-list">
-        ${data.phone ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>${data.phone}</span></div>` : ''}
-        ${data.email ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:${data.email}" style="color: inherit; text-decoration: none; word-break: break-all;">${data.email}</a></div>` : ''}
-        ${data.location ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>${data.location}</span></div>` : ''}
-        ${data.linkedin ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
-        ${data.website ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
+      <div class="skills-grid">
+        ${langList.map((l, idx) => `
+          <div class="skill-item">
+            <span class="amber-bullet">▪</span>
+            <span class="skill-name" data-df-field="custom:${langSection ? langSection.id : 'custom_languages'}:${idx}:title">${typeof l === 'string' ? l : (l.title || l.name || '')}</span>
+            ${l.value ? `<span class="skill-level" data-df-field="custom:${langSection ? langSection.id : 'custom_languages'}:${idx}:value">${l.value}</span>` : ''}
+          </div>
+        `).join('')}
       </div>
     </div>
-  `;
+  ` : '';
+
+  const customHtml = otherCustomSections.map(cs => {
+    if (!cs || !cs.items || !cs.items.length) return '';
+    return `
+      <section class="main-section">
+        <h3 class="section-title" data-df-field="custom:${cs.id}:title">${cs.title || 'Additional Information'}</h3>
+        <div class="amber-bar"></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          ${cs.items.map((i, idx) => `
+            <div style="font-size: 8.8pt;">
+              <strong data-df-field="custom:${cs.id}:${idx}:title">${typeof i === 'string' ? i : (i.title || i.name || '')}</strong>${typeof i === 'object' && i !== null && i.value ? `: <span data-df-field="custom:${cs.id}:${idx}:value">${i.value}</span>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </section>
+    `;
+  }).join('');
+
+  const contactHtml = hasContact ? `
+    <div class="sidebar-section">
+      <h3 class="sidebar-title section-heading" data-df-field="heading:contact">${data.sectionTitles?.contact || 'Contact'}</h3>
+      <div class="sidebar-line"></div>
+      <div class="contact-list">
+        ${phoneText ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span data-df-field="phone">${phoneText}</span></div>` : ''}
+        ${emailText ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:${emailText}" data-df-field="email" style="color: inherit; text-decoration: none; word-break: break-all;">${emailText}</a></div>` : ''}
+        ${locationText ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-df-field="location">${locationText}</span></div>` : ''}
+        ${linkedinText ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><a data-df-field="linkedin" href="https://${linkedinText.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${linkedinText.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${websiteText ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><a data-df-field="website" href="https://${websiteText.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${websiteText.replace(/^https?:\/\//, '')}</a></div>` : ''}
+      </div>
+    </div>
+  ` : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${name ? `${name} - Resume` : 'Resume'}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
@@ -138,25 +213,39 @@ export function generateAustinAmberHtml(
     html, body {
       font-family: ${fontFam};
       background: #ffffff;
+      margin: 0;
+      padding: 0;
       color: #1e293b;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
     
-    #main-container {
-      width: 210mm;
-      min-height: 297mm;
+    .cv-page, #main-container {
+      width: 794px;
+      height: 1123px;
+      min-height: 1123px;
+      max-height: 1123px;
       margin: 0 auto;
       background: #ffffff;
       display: flex;
       flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-sizing: border-box;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .cv-page:last-child, #main-container:last-child {
+      page-break-after: avoid !important;
+      break-after: avoid !important;
     }
     
-    /* Top Dark Teal Header Block */
+    /* Top Teal Header Block */
     .teal-header {
       background: ${accent};
       color: #ffffff;
-      padding: ${30 + pageMargin}px 40px;
+      padding: ${25 + pageMargin}px 40px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -179,19 +268,31 @@ export function generateAustinAmberHtml(
       color: #fde68a;
       margin-top: 4px;
     }
-    .avatar {
-      width: 90px;
-      height: 90px;
+    .avatar-mask {
+      width: 135px;
+      height: 135px;
       border-radius: 50%;
       border: 3px solid ${amberAccent};
-      object-fit: cover;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: #ffffff;
       flex-shrink: 0;
+    }
+    .avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
     
     /* Content Columns */
     .content-columns {
       display: flex;
-      padding: ${32 + pageMargin}px 36px;
+      padding: ${24 + pageMargin}px 36px;
       flex: 1;
       gap: 36px;
     }
@@ -199,16 +300,16 @@ export function generateAustinAmberHtml(
       width: 65%;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
     }
     .sidebar-col {
       width: 35%;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
     }
     
-    .main-section, .sidebar-section {
+    .main-section {
       break-inside: auto;
     }
     .section-title {
@@ -222,7 +323,7 @@ export function generateAustinAmberHtml(
     .amber-bar {
       border-bottom: 2px solid ${amberAccent};
       width: 35px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .summary-text {
       font-size: 9pt;
@@ -237,7 +338,7 @@ export function generateAustinAmberHtml(
       padding-left: 16px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
     .timeline-item {
       position: relative;
@@ -272,7 +373,7 @@ export function generateAustinAmberHtml(
     }
     .entry-company {
       font-size: 8.8pt;
-      color: #475569;
+      color: ${amberAccent};
       font-weight: 600;
       margin-top: 1px;
       margin-bottom: 3px;
@@ -288,11 +389,16 @@ export function generateAustinAmberHtml(
       text-align: justify;
     }
     .proj-desc {
-      font-size: 8.5pt;
+      font-size: 8.8pt;
       color: #475569;
+      line-height: ${lineSpacing};
       margin-top: 2px;
     }
     
+    .sidebar-section {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
     .sidebar-title {
       font-size: 9.5pt;
       font-weight: 800;
@@ -302,7 +408,7 @@ export function generateAustinAmberHtml(
       margin-bottom: 4px;
     }
     .sidebar-line {
-      border-bottom: 1.5px solid #fef3c7;
+      border-bottom: 1.5px solid #e2e8f0;
       margin-bottom: 10px;
     }
     .contact-list {
@@ -314,13 +420,13 @@ export function generateAustinAmberHtml(
     .contact-row {
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
       color: #475569;
       word-break: break-all;
     }
     .c-icon {
-      width: 12px;
-      height: 12px;
+      width: 13px;
+      height: 13px;
       color: ${amberAccent};
       flex-shrink: 0;
     }
@@ -360,14 +466,16 @@ export function generateAustinAmberHtml(
     }
     .amber-bullet {
       color: ${amberAccent};
-      font-size: 6pt;
+      font-size: 7pt;
     }
     .skill-name {
-      flex: 1;
+      font-weight: 600;
+      color: #1e293b;
     }
     .skill-level {
       font-size: 7.8pt;
-      color: #b45309;
+      color: #64748b;
+      margin-left: auto;
     }
     .cert-list {
       padding-left: 16px;
@@ -377,36 +485,68 @@ export function generateAustinAmberHtml(
     .cert-list li {
       margin-bottom: 3px;
     }
+
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page, #main-container {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .cv-page:last-child, #main-container:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+    }
   </style>
 </head>
 <body>
-<div id="main-container">
+<div class="cv-page" id="main-container">
   <div class="teal-header">
     <div class="header-text">
-      <h1>${data.name || 'Candidate Name'}</h1>
-      ${data.title ? `<div class="title">${data.title}</div>` : ''}
+      <h1 data-df-field="name">${name}</h1>
+      <div class="candidate-title title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${title || ''}</div>
     </div>
-    ${data.photoUrl ? `<img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />` : ''}
+    ${photoSrc ? `
+      <div class="avatar-mask">
+        <img class="avatar" src="${photoSrc}" alt="${name || 'Profile Photo'}" />
+      </div>
+    ` : ''}
   </div>
   
   <div class="content-columns">
     <div class="main-col">
-      ${data.summary ? `
+      ${summaryText ? `
         <section class="main-section">
-          <h3 class="section-title">Professional Summary</h3>
+          <h3 class="section-title section-heading" data-df-field="heading:summary">${data.sectionTitles?.summary || data.sectionTitles?.profile || 'Profile'}</h3>
           <div class="amber-bar"></div>
-          <div class="summary-text">${data.summary}</div>
+          <div class="summary-text" data-df-field="summary">${summaryText}</div>
         </section>
       ` : ''}
       
       ${expHtml}
       ${projHtml}
+      ${refHtml}
+      ${customHtml}
     </div>
     
     <div class="sidebar-col">
       ${contactHtml}
-      ${skillsHtml}
       ${eduHtml}
+      ${skillsHtml}
+      ${langHtml}
       ${certHtml}
     </div>
   </div>

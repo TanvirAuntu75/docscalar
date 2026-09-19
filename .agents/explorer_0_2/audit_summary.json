@@ -1,0 +1,3695 @@
+[
+  {
+    "file": "adam_fletcher.js",
+    "fnName": "generateAdamFletcherHtml",
+    "params": "data,\r\n  themeColor = '#32353e',\r\n  themeFont = 'Montserrat',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 15,
+    "stampedFields": [
+      "name",
+      "title",
+      "summary",
+      "phone",
+      "email",
+      "location",
+      "skill:${idx}",
+      "custom:custom_languages:${idx}:title",
+      "edu:${idx}:date",
+      "edu:${idx}:school",
+      "edu:${idx}:degree",
+      "exp:${idx}:date",
+      "exp:${idx}:role",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${bIdx}"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Adam Fletcher'",
+        "full": "data.name || 'Adam Fletcher'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Adam Fletcher'",
+        "full": "data.name || 'Adam Fletcher'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Language'",
+        "full": "name || 'Language'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || [",
+      "data.custom_languages || ["
+    ],
+    "foundMockStrings": [
+      "Adam",
+      "Fletcher",
+      "Slate"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 482
+  },
+  {
+    "file": "adeline_palmerston.js",
+    "fnName": "generateAdelinePalmerstonHtml",
+    "params": "data,\n  themeColor = '#212f3d',\n  themeFont = 'Montserrat',\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\n  themeLayout = 'single',\n  pageMargin = 0,\n  lineSpacing = 1.45",
+    "usesPagination": true,
+    "stampedCount": 26,
+    "stampedFields": [
+      "exp:${actualIdx}:date",
+      "exp:${actualIdx}:company",
+      "exp:${actualIdx}:role",
+      "exp:${actualIdx}:highlight:${hIdx}",
+      "proj:${actualIdx}:name",
+      "proj:${actualIdx}:url",
+      "proj:${actualIdx}:description",
+      "cert:${actualIdx}",
+      "ref:${actualIdx}:name",
+      "ref:${actualIdx}:relation",
+      "ref:${actualIdx}:contact",
+      "custom:${cs.id}:${idx}:title",
+      "custom:${cs.id}:${idx}:value",
+      "phone",
+      "email",
+      "location",
+      "website",
+      "linkedin",
+      "skill:${idx}",
+      "custom:custom_languages:${idx}:title",
+      "name",
+      "title",
+      "summary",
+      "edu:${idx}:date",
+      "edu:${idx}:school",
+      "edu:${idx}:degree"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Adeline Palmerston'",
+        "full": "data.name || 'Adeline Palmerston'"
+      },
+      {
+        "varName": "title",
+        "defaultVal": "'Additional Information'",
+        "full": "title || 'Additional Information'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Adeline Palmerston'",
+        "full": "data.name || 'Adeline Palmerston'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Adeline Palmerston'",
+        "full": "data.name || 'Adeline Palmerston'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "sectionOrder || [",
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Adeline",
+      "Palmerston",
+      "Ren"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 741
+  },
+  {
+    "file": "adora_diagonal.js",
+    "fnName": "generateAdoraDiagonalHtml",
+    "params": "data,\r\n  themeColor = '#0284c7',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 14,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Languages'",
+        "full": "title || 'Languages'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Adora"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 421
+  },
+  {
+    "file": "adora_montminy.js",
+    "fnName": "generateAdoraMontminyHtml",
+    "params": "data,\n  themeColor = '#1d8cf8',\n  themeFont = 'Inter',\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\n  themeLayout = 'single',\n  pageMargin = 0,\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 15,
+    "stampedFields": [
+      "summary",
+      "phone",
+      "email",
+      "location",
+      "skill:${idx}",
+      "custom:custom_languages:${idx}:title",
+      "edu:${idx}:date",
+      "edu:${idx}:school",
+      "edu:${idx}:degree",
+      "exp:${idx}:date",
+      "exp:${idx}:role",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${bIdx}",
+      "name",
+      "title"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Language'",
+        "full": "name || 'Language'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || [",
+      "data.custom_languages || ["
+    ],
+    "foundMockStrings": [
+      "Adora",
+      "Montminy",
+      "Slate"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 492
+  },
+  {
+    "file": "alfredo_torres.js",
+    "fnName": "generateAlfredoTorresHtml",
+    "params": "data = {},\r\n  themeColor = '#b89358',\r\n  themeFont = 'Plus Jakarta Sans',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "name",
+      "title",
+      "phone",
+      "email",
+      "location",
+      "website",
+      "edu:${idx}:date",
+      "edu:${idx}:school",
+      "edu:${idx}:degree",
+      "skill:${idx}",
+      "summary",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:role",
+      "exp:${idx}:highlight:${bIdx}",
+      "ref:${idx}:name",
+      "ref:${idx}:relation",
+      "ref:${idx}:contact"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "end",
+        "defaultVal": "'PRESENT'",
+        "full": "end || 'PRESENT'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Alfredo Torres'",
+        "full": "data.name || 'Alfredo Torres'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Alfredo Torres'",
+        "full": "data.name || 'Alfredo Torres'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Alfredo Torres'",
+        "full": "data.name || 'Alfredo Torres'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Slate",
+      "Alfredo",
+      "Torres"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 607
+  },
+  {
+    "file": "alvarado_slate.js",
+    "fnName": "generateAlvaradoSlateHtml",
+    "params": "data,\r\n  themeColor = '#5c6e73',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:role",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:highlight:0",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Alvarado",
+      "Slate"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 422
+  },
+  {
+    "file": "amsterdam_orange.js",
+    "fnName": "generateAmsterdamOrangeHtml",
+    "params": "data,\r\n  themeColor = '#1e1b4b',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 444
+  },
+  {
+    "file": "arthur_pendelton.js",
+    "fnName": "generateArthurPendeltonHtml",
+    "params": "data = {},\r\n  themeColor = '#0f172a',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "name",
+      "title",
+      "phone",
+      "email",
+      "location",
+      "website",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "summary",
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${bIdx}",
+      "ref:${idx}:name",
+      "ref:${idx}:relation",
+      "ref:${idx}:contact"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "end",
+        "defaultVal": "'PRESENT'",
+        "full": "end || 'PRESENT'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Arthur Pendelton'",
+        "full": "data.name || 'Arthur Pendelton'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Arthur Pendelton'",
+        "full": "data.name || 'Arthur Pendelton'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Arthur Pendelton'",
+        "full": "data.name || 'Arthur Pendelton'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Arthur",
+      "Pendelton"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 566
+  },
+  {
+    "file": "austin_amber.js",
+    "fnName": "generateAustinAmberHtml",
+    "params": "data,\r\n  themeColor = '#042f2e',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 444
+  },
+  {
+    "file": "barcelona_cyan.js",
+    "fnName": "generateBarcelonaCyanHtml",
+    "params": "data,\r\n  themeColor = '#06b6d4',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 424
+  },
+  {
+    "file": "berlin_two_tone.js",
+    "fnName": "generateBerlinTwoToneHtml",
+    "params": "data,\n  themeColor = '#d4a373',\n  themeFont = 'Inter',\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\n  themeLayout = 'single',\n  pageMargin = 0,\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 375
+  },
+  {
+    "file": "bordeaux_wine.js",
+    "fnName": "generateBordeauxWineHtml",
+    "params": "data,\r\n  themeColor = '#4c0519',\r\n  themeFont = 'Playfair Display',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Bordeaux"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 430
+  },
+  {
+    "file": "boston_crimson.js",
+    "fnName": "generateBostonCrimsonHtml",
+    "params": "data,\r\n  themeColor = '#881337',\r\n  themeFont = 'Merriweather',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Slate"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 419
+  },
+  {
+    "file": "buenos_aires_tango.js",
+    "fnName": "generateBuenosAiresTangoHtml",
+    "params": "data,\r\n  themeColor = '#581c87',\r\n  themeFont = 'Playfair Display',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 452
+  },
+  {
+    "file": "cairo_gold.js",
+    "fnName": "generateCairoGoldHtml",
+    "params": "data,\r\n  themeColor = '#0a0a0a',\r\n  themeFont = 'Playfair Display',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 451
+  },
+  {
+    "file": "cambridge_rose.js",
+    "fnName": "generateCambridgeRoseHtml",
+    "params": "data,\r\n  themeColor = '#4a6b63',\r\n  themeFont = 'Playfair Display',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 440
+  },
+  {
+    "file": "cape_town_sunset.js",
+    "fnName": "generateCapeTownSunsetHtml",
+    "params": "data,\r\n  themeColor = '#c2410c',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 439
+  },
+  {
+    "file": "card_matrix.js",
+    "fnName": "generateCardMatrixHtml",
+    "params": "data,\r\n  themeColor = '#4f46e5',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 15,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 368
+  },
+  {
+    "file": "charles.js",
+    "fnName": "generateCharlesHtml",
+    "params": "data,\r\n  themeColor = '#0b7a8a',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:date",
+      "edu:${idx}:school",
+      "proj:${idx}:name",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "location",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "skill:${idx}",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Languages'",
+        "full": "title || 'Languages'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Charles"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 456
+  },
+  {
+    "file": "copenhagen_sand.js",
+    "fnName": "generateCopenhagenSandHtml",
+    "params": "data,\r\n  themeColor = '#44403c',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 427
+  },
+  {
+    "file": "date_capsule.js",
+    "fnName": "generateDateCapsuleHtml",
+    "params": "data,\r\n  themeColor = '#2563eb',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 10,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "email",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 342
+  },
+  {
+    "file": "diagonal_wedge.js",
+    "fnName": "generateDiagonalWedgeHtml",
+    "params": "data,\n  themeColor = '#1e40af',\n  themeFont = 'Inter',\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\n  themeLayout = 'single',\n  pageMargin = 0,\n  lineSpacing = 1.45",
+    "usesPagination": true,
+    "stampedCount": 20,
+    "stampedFields": [
+      "exp:${actualIdx}:role",
+      "exp:${actualIdx}:date",
+      "exp:${actualIdx}:company",
+      "exp:${actualIdx}:highlight:${hIdx}",
+      "proj:${actualIdx}:name",
+      "proj:${actualIdx}:url",
+      "proj:${actualIdx}:description",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "skill:${sIdx}",
+      "edu:${eIdx}:degree",
+      "edu:${eIdx}:school",
+      "edu:${eIdx}:date",
+      "cert:${cIdx}",
+      "summary",
+      "name",
+      "title"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Ren"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 593
+  },
+  {
+    "file": "donna_stroupe.js",
+    "fnName": "generateDonnaStroupeHtml",
+    "params": "data,\r\n  themeColor = '#2b211d',\r\n  themeFont = 'Montserrat',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "name",
+      "title",
+      "email",
+      "phone",
+      "location",
+      "website",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "summary",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:role",
+      "exp:${idx}:highlight:${bIdx}",
+      "ref:${idx}:name",
+      "ref:${idx}:relation",
+      "ref:${idx}:contact"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Donna Stroupe'",
+        "full": "data.name || 'Donna Stroupe'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Language'",
+        "full": "name || 'Language'"
+      },
+      {
+        "varName": "dates",
+        "defaultVal": "`${e.start || '",
+        "full": "dates || `${e.start || '"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || [",
+      "data.custom_languages || ["
+    ],
+    "foundMockStrings": [
+      "Donna",
+      "Stroupe"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 518
+  },
+  {
+    "file": "dublin_forest.js",
+    "fnName": "generateDublinForestHtml",
+    "params": "data,\r\n  themeColor = '#064e3b',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 424
+  },
+  {
+    "file": "edinburgh_navy.js",
+    "fnName": "generateEdinburghNavyHtml",
+    "params": "data,\r\n  themeColor = '#1e3a8a',\r\n  themeFont = 'Merriweather',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 14,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 352
+  },
+  {
+    "file": "emerald_prestige.js",
+    "fnName": "generateEmeraldPrestigeHtml",
+    "params": "data,\r\n  themeColor = '#064e3b',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 428
+  },
+  {
+    "file": "emma.js",
+    "fnName": "generateEmmaHtml",
+    "params": "data,\n  themeColor = '#3c3530',\n  themeFont = 'Playfair Display',\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\n  themeLayout = 'single',\n  pageMargin = 0,\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 15,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "proj:${idx}:description",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "name",
+      "title",
+      "summary",
+      "email",
+      "website",
+      "linkedin"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Languages'",
+        "full": "title || 'Languages'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Emma"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 429
+  },
+  {
+    "file": "floating_card_matrix.js",
+    "fnName": "generateFloatingCardMatrixHtml",
+    "params": "data,\r\n  themeColor = '#0284c7',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 485
+  },
+  {
+    "file": "florence_terracotta.js",
+    "fnName": "generateFlorenceTerracottaHtml",
+    "params": "data,\r\n  themeColor = '#9a3412',\r\n  themeFont = 'Playfair Display',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 424
+  },
+  {
+    "file": "geneva_charcoal.js",
+    "fnName": "generateGenevaCharcoalHtml",
+    "params": "data,\r\n  themeColor = '#18181b',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 424
+  },
+  {
+    "file": "helsinki_frost.js",
+    "fnName": "generateHelsinkiFrostHtml",
+    "params": "data,\r\n  themeColor = '#0284c7',\r\n  themeFont = 'Playfair Display',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 14,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 355
+  },
+  {
+    "file": "helsinki_navy.js",
+    "fnName": "generateHelsinkiNavyHtml",
+    "params": "data,\r\n  themeColor = '#0a192f',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 444
+  },
+  {
+    "file": "howard_ong.js",
+    "fnName": "generateHowardOngHtml",
+    "params": "data,\r\n  themeColor = '#7e444b',\r\n  themeFont = 'Montserrat',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "name",
+      "title",
+      "email",
+      "phone",
+      "location",
+      "website",
+      "skill:${idx}",
+      "skill:${hardSkills.length + idx}",
+      "edu:${idx}:school",
+      "edu:${idx}:degree",
+      "edu:${idx}:date",
+      "summary",
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "cert:${idx}"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Howard Ong'",
+        "full": "data.name || 'Howard Ong'"
+      },
+      {
+        "varName": "header",
+        "defaultVal": "`${e.company || '",
+        "full": "header || `${e.company || '"
+      },
+      {
+        "varName": "date",
+        "defaultVal": "`${e.dates || (e.start ? `",
+        "full": "date || `${e.dates || (e.start ? `"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.certifications || ["
+    ],
+    "foundMockStrings": [
+      "Howard"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 505
+  },
+  {
+    "file": "isabel_mercado.js",
+    "fnName": "generateIsabelMercadoHtml",
+    "params": "data,\r\n  themeColor = '#31353d',\r\n  themeFont = 'Montserrat',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 15,
+    "stampedFields": [
+      "name",
+      "title",
+      "location",
+      "phone",
+      "website",
+      "email",
+      "skill:${idx}",
+      "summary",
+      "edu:${idx}:degree",
+      "edu:${idx}:date",
+      "edu:${idx}:school",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:role",
+      "exp:${idx}:highlight:${bIdx}"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'ISABEL MERCADO'",
+        "full": "data.name || 'ISABEL MERCADO'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Isabel Mercado'",
+        "full": "data.name || 'Isabel Mercado'"
+      },
+      {
+        "varName": "dates",
+        "defaultVal": "`${e.start || '",
+        "full": "dates || `${e.start || '"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Isabel"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 588
+  },
+  {
+    "file": "isabel_schumacher.js",
+    "fnName": "generateIsabelSchumacherHtml",
+    "params": "data,\r\n  themeColor = '#312f2e',\r\n  themeFont = 'Montserrat',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 15,
+    "stampedFields": [
+      "summary",
+      "phone",
+      "email",
+      "location",
+      "skill:${idx}",
+      "custom:custom_languages:${idx}:title",
+      "name",
+      "title",
+      "edu:${idx}:date",
+      "edu:${idx}:school",
+      "edu:${idx}:degree",
+      "exp:${idx}:date",
+      "exp:${idx}:role",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${bIdx}"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Isabel Schumacher'",
+        "full": "data.name || 'Isabel Schumacher'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Isabel Schumacher'",
+        "full": "data.name || 'Isabel Schumacher'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Language'",
+        "full": "name || 'Language'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || [",
+      "data.custom_languages || ["
+    ],
+    "foundMockStrings": [
+      "Schumacher",
+      "Isabel"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 510
+  },
+  {
+    "file": "jonathan.js",
+    "fnName": "generateJonathanHtml",
+    "params": "data,\n  themeColor = '#1a1a1a',\n  themeFont = 'Playfair Display',\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\n  themeLayout = 'single',\n  pageMargin = 0,\n  lineSpacing = 1.45",
+    "usesPagination": true,
+    "stampedCount": 27,
+    "stampedFields": [
+      "email",
+      "phone",
+      "location",
+      "linkedin",
+      "website",
+      "summary",
+      "exp:${actualIdx}:company",
+      "exp:${actualIdx}:location",
+      "exp:${actualIdx}:date",
+      "exp:${actualIdx}:role",
+      "exp:${actualIdx}:highlight:${hIdx}",
+      "edu:${actualIdx}:school",
+      "edu:${actualIdx}:date",
+      "edu:${actualIdx}:degree",
+      "skill:${sIdx}",
+      "proj:${actualIdx}:name",
+      "proj:${actualIdx}:url",
+      "proj:${actualIdx}:description",
+      "cert:${idx}",
+      "ref:${idx}:name",
+      "ref:${idx}:relation",
+      "ref:${idx}:contact",
+      "custom:${cs.id}:title",
+      "custom:${cs.id}:${idx}:title",
+      "custom:${cs.id}:${idx}:value",
+      "name",
+      "title"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Additional Information'",
+        "full": "title || 'Additional Information'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Jonathan",
+      "Jonathan"
+    ],
+    "hasAvatarMask": false,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 473
+  },
+  {
+    "file": "jonathan_patterson.js",
+    "fnName": "generateJonathanPattersonHtml",
+    "params": "data,\r\n  themeColor = '#1b324d',\r\n  themeFont = 'Montserrat',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.4",
+    "usesPagination": false,
+    "stampedCount": 19,
+    "stampedFields": [
+      "name",
+      "title",
+      "summary",
+      "phone",
+      "email",
+      "website",
+      "location",
+      "skill:${idx}",
+      "custom:custom_languages:${idx}:title",
+      "exp:${idx}:role",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "ref:${idx}:name",
+      "ref:${idx}:relation",
+      "ref:${idx}:contact"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Language'",
+        "full": "name || 'Language'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Jonathan Patterson'",
+        "full": "data.name || 'Jonathan Patterson'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Jonathan Patterson'",
+        "full": "data.name || 'Jonathan Patterson'"
+      },
+      {
+        "varName": "dates",
+        "defaultVal": "`${e.start || '",
+        "full": "dates || `${e.start || '"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || [",
+      "data.custom_languages || ["
+    ],
+    "foundMockStrings": [
+      "Jonathan",
+      "Jonathan",
+      "Patterson"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 617
+  },
+  {
+    "file": "kathleen.js",
+    "fnName": "generateKathleenHtml",
+    "params": "data,\r\n  themeColor = '#d97706',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 15,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Languages'",
+        "full": "title || 'Languages'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Kathleen"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 457
+  },
+  {
+    "file": "kelly_mint.js",
+    "fnName": "generateKellyMintHtml",
+    "params": "data,\r\n  themeColor = '#0d9488',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Kelly Blackwell'",
+        "full": "data.name || 'Kelly Blackwell'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Kelly",
+      "Blackwell"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 427
+  },
+  {
+    "file": "korina_villanueva.js",
+    "fnName": "generateKorinaVillanuevaHtml",
+    "params": "data,\r\n  themeColor = '#112338',\r\n  themeFont = 'Montserrat',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 19,
+    "stampedFields": [
+      "name",
+      "title",
+      "summary",
+      "phone",
+      "email",
+      "website",
+      "location",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${bIdx}",
+      "custom:custom_languages:${idx}:title",
+      "ref:${idx}:name",
+      "ref:${idx}:relation",
+      "ref:${idx}:contact"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Language'",
+        "full": "name || 'Language'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Korina Villanueva'",
+        "full": "data.name || 'Korina Villanueva'"
+      },
+      {
+        "varName": "date",
+        "defaultVal": "`${e.start || '",
+        "full": "date || `${e.start || '"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || [",
+      "data.custom_languages || ["
+    ],
+    "foundMockStrings": [
+      "Korina",
+      "Villanueva"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 608
+  },
+  {
+    "file": "kyiv_golden.js",
+    "fnName": "generateKyivGoldenHtml",
+    "params": "data,\r\n  themeColor = '#1d4ed8',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 425
+  },
+  {
+    "file": "kyoto_coral.js",
+    "fnName": "generateKyotoCoralHtml",
+    "params": "data,\r\n  themeColor = '#e11d48',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 432
+  },
+  {
+    "file": "lilac_sidebar.js",
+    "fnName": "generateLilacSidebarHtml",
+    "params": "data,\r\n  themeColor = '#581c87',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 397
+  },
+  {
+    "file": "lorna_alvarado.js",
+    "fnName": "generateLornaAlvaradoHtml",
+    "params": "data,\r\n  themeColor = '#232628',\r\n  themeFont = 'Montserrat',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "phone",
+      "email",
+      "location",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "custom:custom_languages:${idx}:title",
+      "name",
+      "title",
+      "exp:${idx}:date",
+      "exp:${idx}:role",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${bIdx}",
+      "ref:${idx}:name",
+      "ref:${idx}:relation",
+      "ref:${idx}:contact"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Lorna Alvarado'",
+        "full": "data.name || 'Lorna Alvarado'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Lorna Alvarado'",
+        "full": "data.name || 'Lorna Alvarado'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Language'",
+        "full": "name || 'Language'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || [",
+      "data.custom_languages || ["
+    ],
+    "foundMockStrings": [
+      "Lorna",
+      "Alvarado"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 502
+  },
+  {
+    "file": "lyon_lavender.js",
+    "fnName": "generateLyonLavenderHtml",
+    "params": "data,\r\n  themeColor = '#7c3aed',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 440
+  },
+  {
+    "file": "madrid_sun.js",
+    "fnName": "generateMadridSunHtml",
+    "params": "data,\r\n  themeColor = '#1e293b',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 444
+  },
+  {
+    "file": "manhattan_noir.js",
+    "fnName": "generateManhattanNoirHtml",
+    "params": "data,\r\n  themeColor = '#000000',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 427
+  },
+  {
+    "file": "marcus_vance.js",
+    "fnName": "generateMarcusVanceHtml",
+    "params": "data = {},\r\n  themeColor = '#0d9488',\r\n  themeFont = 'Space Grotesk',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "name",
+      "title",
+      "phone",
+      "email",
+      "location",
+      "skill:${idx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "summary",
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${bIdx}",
+      "proj:${idx}:name",
+      "proj:${idx}:description"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "end",
+        "defaultVal": "'PRESENT'",
+        "full": "end || 'PRESENT'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Marcus Vance'",
+        "full": "data.name || 'Marcus Vance'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Marcus Vance'",
+        "full": "data.name || 'Marcus Vance'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Marcus Vance'",
+        "full": "data.name || 'Marcus Vance'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Marcus",
+      "Marcus",
+      "Slate",
+      "Vance"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 673
+  },
+  {
+    "file": "mariana.js",
+    "fnName": "generateMarianaHtml",
+    "params": "data,\r\n  themeColor = '#2c3549',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": true,
+    "stampedCount": 26,
+    "stampedFields": [
+      "phone",
+      "email",
+      "location",
+      "website",
+      "linkedin",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "skill:${idx}",
+      "custom:${langSection.id}:${idx}:title",
+      "exp:${actualIdx}:role",
+      "exp:${actualIdx}:date",
+      "exp:${actualIdx}:company",
+      "exp:${actualIdx}:highlight:${hIdx}",
+      "proj:${actualIdx}:name",
+      "proj:${actualIdx}:url",
+      "proj:${actualIdx}:description",
+      "cert:${actualIdx}",
+      "ref:${actualIdx}:name",
+      "ref:${actualIdx}:relation",
+      "ref:${actualIdx}:contact",
+      "custom:${cs.id}:${idx}:title",
+      "custom:${cs.id}:${idx}:value",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Languages'",
+        "full": "title || 'Languages'"
+      },
+      {
+        "varName": "title",
+        "defaultVal": "'Additional Information'",
+        "full": "title || 'Additional Information'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || [",
+      "sectionOrder || [",
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Mariana",
+      "Ren"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 671
+  },
+  {
+    "file": "milan_blush.js",
+    "fnName": "generateMilanBlushHtml",
+    "params": "data,\r\n  themeColor = '#be185d',\r\n  themeFont = 'Playfair Display',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 423
+  },
+  {
+    "file": "montreal_frost.js",
+    "fnName": "generateMontrealFrostHtml",
+    "params": "data,\r\n  themeColor = '#2563eb',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 439
+  },
+  {
+    "file": "ocean_block.js",
+    "fnName": "generateOceanBlockHtml",
+    "params": "data,\r\n  themeColor = '#0369a1',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 403
+  },
+  {
+    "file": "olivia.js",
+    "fnName": "generateOliviaHtml",
+    "params": "data,\r\n  themeColor = '#b38e70',\r\n  themeFont = 'Playfair Display',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": true,
+    "stampedCount": 29,
+    "stampedFields": [
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "custom:${langSection.id}:${idx}:title",
+      "custom:${langSection.id}:${idx}:value",
+      "exp:${actualIdx}:role",
+      "exp:${actualIdx}:date",
+      "exp:${actualIdx}:company",
+      "exp:${actualIdx}:location",
+      "exp:${actualIdx}:highlight:${hIdx}",
+      "proj:${actualIdx}:name",
+      "proj:${actualIdx}:url",
+      "proj:${actualIdx}:description",
+      "cert:${idx}",
+      "ref:${idx}:name",
+      "ref:${idx}:relation",
+      "ref:${idx}:contact",
+      "custom:${cs.id}:title",
+      "custom:${cs.id}:${idx}:title",
+      "custom:${cs.id}:${idx}:value",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Languages'",
+        "full": "title || 'Languages'"
+      },
+      {
+        "varName": "title",
+        "defaultVal": "'Additional Information'",
+        "full": "title || 'Additional Information'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Olivia"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 633
+  },
+  {
+    "file": "ong_burgundy.js",
+    "fnName": "generateOngBurgundyHtml",
+    "params": "data,\r\n  themeColor = '#802b3e',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 417
+  },
+  {
+    "file": "osaka_minimal.js",
+    "fnName": "generateOsakaMinimalHtml",
+    "params": "data,\r\n  themeColor = '#0f172a',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 432
+  },
+  {
+    "file": "oslo_taupe.js",
+    "fnName": "generateOsloTaupeHtml",
+    "params": "data,\r\n  themeColor = '#6e5a4f',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 408
+  },
+  {
+    "file": "overlapping_badge.js",
+    "fnName": "generateOverlappingBadgeHtml",
+    "params": "data,\r\n  themeColor = '#1e3a8a',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 446
+  },
+  {
+    "file": "oxford_burgundy.js",
+    "fnName": "generateOxfordBurgundyHtml",
+    "params": "data,\r\n  themeColor = '#831843',\r\n  themeFont = 'Playfair Display',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 14,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 394
+  },
+  {
+    "file": "prague_brass.js",
+    "fnName": "generatePragueBrassHtml",
+    "params": "data,\r\n  themeColor = '#3f4f2f',\r\n  themeFont = 'Merriweather',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Olive"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 424
+  },
+  {
+    "file": "reykjavik_slate.js",
+    "fnName": "generateReykjavikSlateHtml",
+    "params": "data,\r\n  themeColor = '#0284c7',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Slate"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 414
+  },
+  {
+    "file": "richard.js",
+    "fnName": "generateRichardHtml",
+    "params": "data,\r\n  themeColor = '#0f3b7d',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 14,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:date",
+      "edu:${idx}:school",
+      "cert:${idx}",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Language'",
+        "full": "title || 'Language'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Richard"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 393
+  },
+  {
+    "file": "richard_sanchez.js",
+    "fnName": "generateRichardSanchezHtml",
+    "params": "data,\r\n  themeColor = '#0b3b8c',\r\n  themeFont = 'Montserrat',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 15,
+    "stampedFields": [
+      "name",
+      "title",
+      "summary",
+      "phone",
+      "email",
+      "location",
+      "custom:custom_languages:${idx}:title",
+      "skill:${idx}",
+      "exp:${idx}:role",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:0",
+      "edu:${idx}:school",
+      "edu:${idx}:degree",
+      "edu:${idx}:date"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Richard Sanchez'",
+        "full": "data.name || 'Richard Sanchez'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Richard Sanchez'",
+        "full": "data.name || 'Richard Sanchez'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Language'",
+        "full": "name || 'Language'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || [",
+      "data.custom_languages || [",
+      "data.skills || ["
+    ],
+    "foundMockStrings": [
+      "Richard",
+      "Sanchez"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 531
+  },
+  {
+    "file": "sage_pastel.js",
+    "fnName": "generateSagePastelHtml",
+    "params": "data,\r\n  themeColor = '#164e63',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 397
+  },
+  {
+    "file": "sanchez_dark.js",
+    "fnName": "generateSanchezDarkHtml",
+    "params": "data,\r\n  themeColor = '#2b3543',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 14,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Languages'",
+        "full": "title || 'Languages'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Sanchez"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 438
+  },
+  {
+    "file": "sanchez_mono.js",
+    "fnName": "generateSanchezMonoHtml",
+    "params": "data,\r\n  themeColor = '#475569',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 14,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Languages'",
+        "full": "title || 'Languages'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Sanchez",
+      "Slate"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 400
+  },
+  {
+    "file": "sanchez_wave.js",
+    "fnName": "generateSanchezWaveHtml",
+    "params": "data,\r\n  themeColor = '#1a365d',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 13,
+    "stampedFields": [
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:role",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "name",
+      "title",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Sanchez"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 357
+  },
+  {
+    "file": "san_francisco_skyline.js",
+    "fnName": "generateSanFranciscoSkylineHtml",
+    "params": "data,\r\n  themeColor = '#0284c7',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 18,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Slate"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 444
+  },
+  {
+    "file": "schumacher_charcoal.js",
+    "fnName": "generateSchumacherCharcoalHtml",
+    "params": "data,\r\n  themeColor = '#2f2e2d',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 14,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Languages'",
+        "full": "title || 'Languages'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Schumacher"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 410
+  },
+  {
+    "file": "seattle_emerald.js",
+    "fnName": "generateSeattleEmeraldHtml",
+    "params": "data,\r\n  themeColor = '#0d9488',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 423
+  },
+  {
+    "file": "sebastian_bennett.js",
+    "fnName": "generateSebastianBennettHtml",
+    "params": "data,\r\n  themeColor = '#222427',\r\n  themeFont = 'Montserrat',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "name",
+      "title",
+      "phone",
+      "email",
+      "location",
+      "summary",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:role",
+      "exp:${idx}:highlight:${bIdx}",
+      "skill:${idx}",
+      "skill:${col1.length + idx}",
+      "skill:${col1.length + col2.length + idx}"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Sebastian Bennett'",
+        "full": "data.name || 'Sebastian Bennett'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Sebastian Bennett'",
+        "full": "data.name || 'Sebastian Bennett'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Sebastian",
+      "Bennett"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 492
+  },
+  {
+    "file": "seoul_neon.js",
+    "fnName": "generateSeoulNeonHtml",
+    "params": "data,\r\n  themeColor = '#8b5cf6',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 425
+  },
+  {
+    "file": "singapore_ruby.js",
+    "fnName": "generateSingaporeRubyHtml",
+    "params": "data,\r\n  themeColor = '#9f1239',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 424
+  },
+  {
+    "file": "split_dual_block.js",
+    "fnName": "generateSplitDualBlockHtml",
+    "params": "data,\r\n  themeColor = '#3d6053',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 476
+  },
+  {
+    "file": "stockholm_monochrome.js",
+    "fnName": "generateStockholmMonochromeHtml",
+    "params": "data,\r\n  themeColor = '#000000',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 403
+  },
+  {
+    "file": "stockholm_yellow.js",
+    "fnName": "generateStockholmYellowHtml",
+    "params": "data,\r\n  themeColor = '#eab308',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 433
+  },
+  {
+    "file": "terracotta_arch.js",
+    "fnName": "generateTerracottaArchHtml",
+    "params": "data,\n  themeColor = '#b87352',\n  themeFont = 'Montserrat',\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\n  themeLayout = 'single',\n  pageMargin = 0,\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 12,
+    "stampedFields": [
+      "name",
+      "title",
+      "phone",
+      "location",
+      "email",
+      "summary",
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "skill:${idx}"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Adeline Palmerston'",
+        "full": "data.name || 'Adeline Palmerston'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate'",
+        "full": "data.name || 'Candidate'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Adeline",
+      "Palmerston",
+      "Slate"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": true,
+    "hasPrintMedia": true,
+    "lineCount": 479
+  },
+  {
+    "file": "tokyo_ice_blue.js",
+    "fnName": "generateTokyoIceBlueHtml",
+    "params": "data,\r\n  themeColor = '#3b82f6',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 431
+  },
+  {
+    "file": "vancouver_pine.js",
+    "fnName": "generateVancouverPineHtml",
+    "params": "data,\r\n  themeColor = '#064e3b',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "skill:${idx}",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 433
+  },
+  {
+    "file": "venice_sand_split.js",
+    "fnName": "generateVeniceSandSplitHtml",
+    "params": "data,\r\n  themeColor = '#d6c7b2',\r\n  themeFont = 'Playfair Display',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 17,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 430
+  },
+  {
+    "file": "vienna_crest.js",
+    "fnName": "generateViennaCrestHtml",
+    "params": "data,\r\n  themeColor = '#1e293b',\r\n  themeFont = 'Merriweather',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 14,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 380
+  },
+  {
+    "file": "violet_modern.js",
+    "fnName": "generateVioletModernHtml",
+    "params": "data,\r\n  themeColor = '#7c3aed',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 402
+  },
+  {
+    "file": "wilson_light.js",
+    "fnName": "generateWilsonLightHtml",
+    "params": "data,\r\n  themeColor = '#1a365d',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 15,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Language'",
+        "full": "title || 'Language'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Wilson"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 432
+  },
+  {
+    "file": "wilson_minimal.js",
+    "fnName": "generateWilsonMinimalHtml",
+    "params": "data,\r\n  themeColor = '#1a1d20',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Wilson"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 389
+  },
+  {
+    "file": "ziv_olive.js",
+    "fnName": "generateZivOliveHtml",
+    "params": "data,\r\n  themeColor = '#8c9586',\r\n  themeFont = 'Playfair Display',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 15,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:date",
+      "proj:${idx}:description",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "title",
+        "defaultVal": "'Languages'",
+        "full": "title || 'Languages'"
+      },
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [
+      "data.customSections || ["
+    ],
+    "foundMockStrings": [
+      "Olive"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 419
+  },
+  {
+    "file": "zurich_slate_block.js",
+    "fnName": "generateZurichSlateBlockHtml",
+    "params": "data,\r\n  themeColor = '#1e293b',\r\n  themeFont = 'Inter',\r\n  sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r\n  themeLayout = 'single',\r\n  pageMargin = 0,\r\n  lineSpacing = 1.45",
+    "usesPagination": false,
+    "stampedCount": 16,
+    "stampedFields": [
+      "exp:${idx}:role",
+      "exp:${idx}:date",
+      "exp:${idx}:company",
+      "exp:${idx}:highlight:${hIdx}",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "edu:${idx}:date",
+      "cert:${idx}",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "fallbackMatches": [
+      {
+        "varName": "name",
+        "defaultVal": "'Candidate Name'",
+        "full": "data.name || 'Candidate Name'"
+      }
+    ],
+    "arrayFallbackMatches": [],
+    "foundMockStrings": [
+      "Slate"
+    ],
+    "hasAvatarMask": true,
+    "hasA4Dimensions": false,
+    "hasPrintMedia": true,
+    "lineCount": 431
+  }
+]

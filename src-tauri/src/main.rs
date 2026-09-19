@@ -9,6 +9,7 @@ fn main() {
     let backend_port: u16 = 8765;
 
     // Set env vars BEFORE anything starts so the sidecar inherits them
+    env::set_var("DOCSCALAR_DESKTOP", "true");
     env::set_var("DOCFORGE_DESKTOP", "true");
     env::set_var("IS_PACKAGED", "true");
     env::set_var("PORT", backend_port.to_string());
@@ -22,9 +23,10 @@ fn main() {
             let handle = app.handle().clone();
 
             // Spawn the backend sidecar with environment variables passed directly
-            match handle.shell().sidecar("docforge-backend") {
+            match handle.shell().sidecar("docscalar-backend") {
                 Ok(sidecar) => {
                     match sidecar
+                        .env("DOCSCALAR_DESKTOP", "true")
                         .env("DOCFORGE_DESKTOP", "true")
                         .env("IS_PACKAGED", "true")
                         .env("PORT", backend_port.to_string())
@@ -32,16 +34,16 @@ fn main() {
                         .spawn()
                     {
                         Ok(_) => {
-                            println!("DocForge: Backend started on port {}", backend_port);
+                            println!("DocScalar: Backend started on port {}", backend_port);
                         }
                         Err(e) => {
-                            eprintln!("DocForge: Backend spawn failed: {}", e);
+                            eprintln!("DocScalar: Backend spawn failed: {}", e);
                             // Do NOT panic - allow the app to open and show an error via the UI
                         }
                     }
                 }
                 Err(e) => {
-                    eprintln!("DocForge: Could not find backend sidecar binary: {}", e);
+                    eprintln!("DocScalar: Could not find backend sidecar binary: {}", e);
                     // Do NOT panic - allow the app to open
                 }
             }
@@ -50,8 +52,8 @@ fn main() {
             if let Some(window) = app.get_webview_window("main") {
                 // This runs before page JS - sets the backend URL globally
                 let init_script = format!(
-                    "window.__DOCFORGE_BACKEND_URL__ = 'http://127.0.0.1:{}';",
-                    backend_port
+                    "window.__DOCSCALAR_BACKEND_URL__ = 'http://127.0.0.1:{}'; window.__DOCFORGE_BACKEND_URL__ = 'http://127.0.0.1:{}';",
+                    backend_port, backend_port
                 );
                 let _ = window.eval(&init_script);
             }

@@ -8,85 +8,49 @@ export function generateSebastianBennettHtml(
   themeColor = '#222427',
   themeFont = 'Montserrat',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
+  const safeData = data || {};
   const slateColor = themeColor === 'default' || !themeColor ? '#222427' : themeColor;
   const fontFam = themeFont === 'Playfair Display' ? "'Playfair Display', Georgia, serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : themeFont === 'Inter' ? "'Inter', sans-serif" : "'Montserrat', sans-serif";
 
   // Split name for Sebastian Bennett uppercase header
-  const nameParts = (data.name || 'Sebastian Bennett').trim().split(' ');
-  const firstName = (nameParts[0] || 'SEBASTIAN').toUpperCase();
-  const lastName = (nameParts.slice(1).join(' ') || 'BENNETT').toUpperCase();
+  const name = (safeData.name !== undefined && safeData.name !== null) ? String(safeData.name).trim() : '';
+  const nameParts = name ? name.split(' ') : [];
+  const firstName = (nameParts[0] || '').toUpperCase();
+  const lastName = (nameParts.slice(1).join(' ') || '').toUpperCase();
 
-  const photoSrc = data.photoUrl || '/images/candidates/sebastian.jpg';
+  const photoSrc = safeData.photoUrl || '';
+  const summaryText = safeData.summary || safeData.profile || '';
 
-  const summaryText = data.summary || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+  const phoneText = safeData.phone || '';
+  const emailText = safeData.email || '';
+  const locationText = safeData.location || '';
+  const websiteText = safeData.website || '';
+  const linkedinText = safeData.linkedin || '';
+  const githubText = safeData.github || '';
 
-  const phoneText = data.phone || '+123-456-7890';
-  const emailText = data.email || 'hello@reallygreatsite.com';
-  const locationText = data.location || '123 Anywhere St., Any City';
-
-  const rawSkills = data.skills && data.skills.length ? data.skills : [
-    'Auditing', 'Financial Accounting', 'Financial Reporting',
-    'Expense Reporting', 'Managerial Accounting', 'Accounts Receivable',
-    'Leadership', 'Management Skills', 'Time Management'
-  ];
-
-  // Distribute skills across columns
-  const cleanSkills = rawSkills.map(s => typeof s === 'string' ? (s.includes(' - ') ? s.split(' - ')[0] : s) : s.name || '');
+  const rawSkills = (safeData.skills && safeData.skills.length) ? safeData.skills : [];
+  const cleanSkills = rawSkills.map(s => typeof s === 'string' ? (s.includes(' - ') ? s.split(' - ')[0] : s) : s.name || '').filter(Boolean);
   const col1 = cleanSkills.slice(0, 3);
   const col2 = cleanSkills.slice(3, 6);
-  const col3 = cleanSkills.slice(6, 9).length ? cleanSkills.slice(6, 9) : ['Leadership', 'Management Skills', 'Time Management'];
+  const col3 = cleanSkills.slice(6);
 
-  const educationList = data.education && data.education.length ? data.education : [
-    {
-      start: '2026',
-      end: '2029',
-      school: 'Borcelle University',
-      degree: 'Master of Business Administration',
-      note: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam'
-    },
-    {
-      start: '2023',
-      end: '2026',
-      school: 'Borcelle University',
-      degree: 'Bachelor of Arts in Accounting',
-      note: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam'
-    }
-  ];
+  const educationList = (safeData.education && safeData.education.length) ? safeData.education : [];
+  const experienceList = (safeData.experience && safeData.experience.length) ? safeData.experience : [];
+  const projectsList = (safeData.projects && safeData.projects.length) ? safeData.projects : [];
+  const referenceList = (safeData.references && safeData.references.length) ? safeData.references : [];
+  const certList = (safeData.certifications && safeData.certifications.length) ? safeData.certifications : [];
 
-  const experienceList = data.experience && data.experience.length ? data.experience : [
-    {
-      start: '2033',
-      end: '2035',
-      company: 'Salford & Co.',
-      role: 'Senior Accountant',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
-    },
-    {
-      start: '2031',
-      end: '2033',
-      company: 'Salford & Co.',
-      role: 'Financial Accountant',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
-    },
-    {
-      start: '2029',
-      end: '2031',
-      company: 'Salford & Co.',
-      role: 'Junior Accountant',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
-    }
-  ];
+  const hasContact = phoneText || emailText || locationText || websiteText || linkedinText || githubText;
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sebastian Bennett - Resume</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -103,16 +67,14 @@ export function generateSebastianBennettHtml(
       font-family: ${fontFam};
       margin: 0;
       padding: 0;
-      width: 794px;
-      height: 1123px;
-      overflow: hidden;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
 
     /* Fixed A4 Canvas with Rounded Outer Corners */
-    .resume-card {
+    .cv-page, .resume-card {
       width: 794px;
+      min-height: 1123px;
       height: 1123px;
       background-color: #ffffff;
       border-radius: 26px;
@@ -153,19 +115,24 @@ export function generateSebastianBennettHtml(
       letter-spacing: 0.2px;
     }
 
-    .photo-wrapper {
-      width: 150px;
-      height: 165px;
+    .avatar-mask {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
       background-color: #8c8f94;
       flex-shrink: 0;
       overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .profile-photo {
+    .profile-photo, .avatar {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 15%;
+      display: block;
       filter: grayscale(100%) contrast(105%);
     }
 
@@ -216,7 +183,7 @@ export function generateSebastianBennettHtml(
 
     .profile-text {
       font-size: 10.2px;
-      line-height: 1.55;
+      line-height: ${lineSpacing};
       color: #3a3c40;
       text-align: justify;
     }
@@ -264,7 +231,7 @@ export function generateSebastianBennettHtml(
 
     .entry-desc {
       font-size: 10.2px;
-      line-height: 1.45;
+      line-height: ${lineSpacing};
       color: #4a4c50;
       text-align: justify;
     }
@@ -361,102 +328,168 @@ export function generateSebastianBennettHtml(
       flex: 1;
     }
 
-    .skill-list li {
-      font-size: 10.2px;
-      color: #3a3c40;
-      font-weight: 500;
-      line-height: 1.35;
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page, .resume-card {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .cv-page:last-child, .resume-card:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="resume-card">
+  <div class="cv-page resume-card" id="page-1">
     <!-- Top Header: Name, Title & Photo -->
     <div class="header-section">
       <div class="header-left">
-        <h1 class="candidate-name">${firstName}<br>${lastName}</h1>
-        <div class="candidate-title">${data.title || 'Professional Accountant'}</div>
+        <h1 class="candidate-name" data-df-field="name">${firstName}${lastName ? `<br>${lastName}` : ''}</h1>
+        <div class="candidate-title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${safeData.title || ''}</div>
       </div>
-      <div class="photo-wrapper">
-        <img class="profile-photo" src="${photoSrc}" alt="${data.name || 'Sebastian Bennett'}">
+      ${photoSrc ? `
+      <div class="avatar-wrap">
+        <div class="avatar-mask">
+          <img class="profile-photo avatar" src="${photoSrc}" alt="Profile Photo">
+        </div>
       </div>
+      ` : ''}
     </div>
 
     <!-- Contact Info Bar -->
+    ${hasContact ? `
     <div class="contact-bar">
-      <span>${phoneText}</span>
-      <span class="separator">|</span>
-      <span>${emailText}</span>
-      <span class="separator">|</span>
-      <span>${locationText}</span>
+      ${phoneText ? `<span data-df-field="phone">${phoneText}</span>` : ''}
+      ${phoneText && emailText ? `<span class="separator">|</span>` : ''}
+      ${emailText ? `<a href="mailto:${emailText}" data-df-field="email" style="color: inherit; text-decoration: none;">${emailText}</a>` : ''}
+      ${(phoneText || emailText) && locationText ? `<span class="separator">|</span>` : ''}
+      ${locationText ? `<span data-df-field="location">${locationText}</span>` : ''}
+      ${(phoneText || emailText || locationText) && websiteText ? `<span class="separator">|</span>` : ''}
+      ${websiteText ? `<a href="https://${websiteText.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="website" style="color: inherit; text-decoration: none;">${websiteText.replace(/^https?:\/\//, '')}</a>` : ''}
+      ${(phoneText || emailText || locationText || websiteText) && linkedinText ? `<span class="separator">|</span>` : ''}
+      ${linkedinText ? `<a href="https://${linkedinText.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="linkedin" style="color: inherit; text-decoration: none;">${linkedinText.replace(/^https?:\/\//, '')}</a>` : ''}
+      ${(phoneText || emailText || locationText || websiteText || linkedinText) && githubText ? `<span class="separator">|</span>` : ''}
+      ${githubText ? `<a href="https://${githubText.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="github" style="color: inherit; text-decoration: none;">${githubText.replace(/^https?:\/\//, '')}</a>` : ''}
     </div>
+    ` : ''}
 
+    ${summaryText ? `
     <!-- Profile Section -->
     <div class="section-block">
       <div class="section-header">
-        <span class="section-title">PROFILE</span>
+        <span class="section-title section-heading" data-df-field="heading:summary">${data.sectionTitles?.summary || 'PROFILE'}</span>
       </div>
-      <p class="profile-text">
+      <p class="profile-text" data-df-field="summary">
         ${summaryText}
       </p>
     </div>
+    ` : ''}
 
+    ${educationList.length > 0 ? `
     <!-- Education Section -->
     <div class="section-block">
       <div class="section-header">
-        <span class="section-title">EDUCATION</span>
+        <span class="section-title section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'EDUCATION'}</span>
         <div class="header-gray-bar"></div>
       </div>
       <div class="entry-grid">
-        ${educationList.map(e => `
+        ${educationList.map((e, idx) => `
           <div class="entry-row">
             <div class="entry-meta">
-              <div class="entry-org">${e.school || 'Borcelle University'}</div>
-              <div class="entry-date">${e.start || '2026'}-${e.end || '2029'}</div>
+              <div class="entry-org" data-df-field="edu:${idx}:school">${e.school || ''}</div>
+              <div class="entry-date" data-df-field="edu:${idx}:date">${e.date || (e.start ? `${e.start} – ${e.end || ''}` : '')}</div>
             </div>
             <div class="entry-main">
-              <div class="entry-role">${e.degree || 'Bachelor of Arts'}</div>
+              <div class="entry-role" data-df-field="edu:${idx}:degree">${e.degree || ''}</div>
+              ${e.note || e.description ? `
               <p class="entry-desc">
-                ${e.note || e.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam'}
+                ${e.note || e.description}
               </p>
+              ` : ''}
             </div>
           </div>
         `).join('')}
       </div>
     </div>
+    ` : ''}
 
+    ${experienceList.length > 0 ? `
     <!-- Work Experience Section -->
     <div class="section-block">
       <div class="section-header">
-        <span class="section-title">WORK EXPERIENCE</span>
+        <span class="section-title section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'WORK EXPERIENCE'}</span>
         <div class="header-gray-bar"></div>
       </div>
       <div class="entry-grid">
-        ${experienceList.map(e => {
-          const desc = e.description || (e.highlights && e.highlights.filter(Boolean).length ? e.highlights.filter(Boolean).join('. ') : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
+        ${experienceList.map((e, idx) => {
+          const bullets = e.highlights && e.highlights.filter(Boolean).length ? e.highlights.filter(Boolean) : (e.description ? [e.description] : []);
           return `
             <div class="entry-row">
               <div class="entry-meta">
-                <div class="entry-org">${e.company || 'Salford & Co.'}</div>
-                <div class="entry-date">${e.start || '2033'} - ${e.end || '2035'}</div>
+                <div class="entry-org" data-df-field="exp:${idx}:company">${e.company || ''}</div>
+                <div class="entry-date" data-df-field="exp:${idx}:date">${e.dates || (e.start ? `${e.start} – ${e.end || ''}` : '')}</div>
               </div>
               <div class="entry-main">
-                <div class="entry-role">${e.role || 'Senior Accountant'}</div>
-                <p class="entry-desc">${desc}</p>
+                <div class="entry-role" data-df-field="exp:${idx}:role">${e.role || ''}</div>
+                ${bullets.length > 0 ? `
+                <div class="entry-desc">
+                  ${bullets.map((b, bIdx) => `<div data-df-field="exp:${idx}:highlight:${bIdx}">${b.replace(/^[•\-\*]\s*/, '')}</div>`).join('')}
+                </div>
+                ` : ''}
               </div>
             </div>
           `;
         }).join('')}
       </div>
     </div>
+    ` : ''}
 
+    ${projectsList.length > 0 ? `
+    <!-- Projects Section -->
+    <div class="section-block">
+      <div class="section-header">
+        <span class="section-title section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'PROJECTS'}</span>
+        <div class="header-gray-bar"></div>
+      </div>
+      <div class="entry-grid">
+        ${projectsList.map((p, idx) => `
+          <div class="entry-row">
+            <div class="entry-meta">
+              <div class="entry-org" data-df-field="proj:${idx}:name">${p.name || ''}</div>
+              ${p.url ? `<div class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="proj:${idx}:url" style="color: inherit; text-decoration: none;">${p.url}</a></div>` : ''}
+            </div>
+            <div class="entry-main">
+              ${p.description ? `<p class="entry-desc" data-df-field="proj:${idx}:description">${p.description}</p>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    ` : ''}
+
+    ${cleanSkills.length > 0 ? `
     <!-- Skills Section -->
     <div class="skills-section">
       <!-- Skills Header Line -->
       <div class="skills-header-row">
         <div class="skills-meta-col">
-          <span class="section-title">SKILLS</span>
+          <span class="section-title section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'SKILLS'}</span>
           <div class="header-gray-bar"></div>
         </div>
         <div class="skills-sub-headers">
@@ -464,10 +497,12 @@ export function generateSebastianBennettHtml(
             <span class="sub-title">Professional</span>
             <div class="header-gray-bar"></div>
           </div>
+          ${col3.length > 0 ? `
           <div class="skills-sub-box personal">
             <span class="sub-title">Personal</span>
             <div class="header-gray-bar"></div>
           </div>
+          ` : ''}
         </div>
       </div>
 
@@ -477,20 +512,72 @@ export function generateSebastianBennettHtml(
         <div class="skills-columns-container">
           <div class="professional-lists-wrap">
             <ul class="skill-list">
-              ${col1.map(s => `<li>${s}</li>`).join('')}
+              ${col1.map((s, idx) => `<li data-df-field="skill:${idx}">${s}</li>`).join('')}
             </ul>
+            ${col2.length > 0 ? `
             <ul class="skill-list">
-              ${col2.map(s => `<li>${s}</li>`).join('')}
+              ${col2.map((s, idx) => `<li data-df-field="skill:${col1.length + idx}">${s}</li>`).join('')}
             </ul>
+            ` : ''}
           </div>
+          ${col3.length > 0 ? `
           <div class="personal-lists-wrap">
             <ul class="skill-list">
-              ${col3.map(s => `<li>${s}</li>`).join('')}
+              ${col3.map((s, idx) => `<li data-df-field="skill:${col1.length + col2.length + idx}">${s}</li>`).join('')}
             </ul>
           </div>
+          ` : ''}
         </div>
       </div>
     </div>
+    ` : ''}
+
+    ${certList.length > 0 ? `
+    <!-- Certifications Section -->
+    <div class="section-block" style="margin-top: 14px;">
+      <div class="section-header">
+        <span class="section-title section-heading" data-df-field="heading:certifications">${data.sectionTitles?.certifications || 'CERTIFICATIONS'}</span>
+        <div class="header-gray-bar"></div>
+      </div>
+      <div class="entry-grid">
+        ${certList.map((c, idx) => `
+          <div class="entry-row">
+            <div class="entry-meta">
+              <div class="entry-org" data-df-field="cert:${idx}">${typeof c === 'string' ? c : c.name || ''}</div>
+            </div>
+            ${typeof c === 'object' && c !== null && (c.issuer || c.date) ? `
+            <div class="entry-main">
+              <p class="entry-desc">${c.issuer || ''}${c.issuer && c.date ? ' · ' : ''}${c.date || ''}</p>
+            </div>
+            ` : ''}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    ` : ''}
+
+    ${referenceList.length > 0 ? `
+    <!-- References Section -->
+    <div class="section-block" style="margin-top: 14px;">
+      <div class="section-header">
+        <span class="section-title section-heading" data-df-field="heading:references">${data.sectionTitles?.references || 'REFERENCES'}</span>
+        <div class="header-gray-bar"></div>
+      </div>
+      <div class="entry-grid">
+        ${referenceList.map((r, idx) => `
+          <div class="entry-row">
+            <div class="entry-meta">
+              <div class="entry-org" data-df-field="ref:${idx}:name">${r.name || ''}</div>
+              <div class="entry-date" data-df-field="ref:${idx}:relation">${r.relation || ''}</div>
+            </div>
+            <div class="entry-main">
+              <p class="entry-desc" data-df-field="ref:${idx}:contact">${r.phone ? `Phone: ${r.phone} · ` : ''}${r.email ? `Email: ${r.email}` : ''}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    ` : ''}
   </div>
 
 </body>

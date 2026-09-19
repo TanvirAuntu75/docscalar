@@ -78,12 +78,14 @@ def get_current_user_optional(
 
     if IS_DESKTOP_MODE or IS_PACKAGED:
         local_user = (
-            db.query(User).filter(User.email == "local@docforge.internal").first()
+            db.query(User)
+            .filter(User.email.in_(["local@docscalar.internal", "local@docforge.internal"]))
+            .first()
         )
         if not local_user:
             local_user = User(
                 id="desktop-local-user-id",
-                email="local@docforge.internal",
+                email="local@docscalar.internal",
                 password_hash="local-dummy",
                 tier="pro",
             )
@@ -95,7 +97,7 @@ def get_current_user_optional(
                 db.rollback()
                 local_user = (
                     db.query(User)
-                    .filter(User.email == "local@docforge.internal")
+                    .filter(User.email.in_(["local@docscalar.internal", "local@docforge.internal"]))
                     .first()
                 )
         return local_user

@@ -1,5 +1,7 @@
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb, degrees } from 'pdf-lib';
 import { cleanTextForWinAnsi } from '../../utils/pdfSanitizer.js';
+import { cleanAndRefitDocument } from './cleanAndRefitPage.js';
+import { getPageBoxAndRotation, mapVisualToPdfPoint, mapVisualRectToPdfRect } from '../../utils/pdfEditorGeometry.js';
 
 // Helper to convert hex strings to pdf-lib rgb objects
 const hexToRgb = (hex) => {
@@ -11,14 +13,39 @@ const hexToRgb = (hex) => {
   ) : rgb(0, 0, 0);
 };
 
+// Font cache for standard typefaces
+async function resolveEmbeddedFont(pdfDoc, fontMap, family = 'helvetica-bold') {
+  const key = (family || 'helvetica-bold').toLowerCase();
+  if (fontMap.has(key)) return fontMap.get(key);
+
+  let stdFont = StandardFonts.HelveticaBold;
+  if (key.includes('times')) {
+    stdFont = key.includes('bold') ? StandardFonts.TimesRomanBold : StandardFonts.TimesRoman;
+  } else if (key.includes('courier')) {
+    stdFont = key.includes('bold') ? StandardFonts.CourierBold : StandardFonts.Courier;
+  } else if (key.includes('oblique') || key.includes('italic')) {
+    stdFont = key.includes('bold') ? StandardFonts.HelveticaBoldOblique : StandardFonts.HelveticaOblique;
+  } else if (!key.includes('bold')) {
+    stdFont = StandardFonts.Helvetica;
+  }
+
+  const embedded = await pdfDoc.embedFont(stdFont);
+  fontMap.set(key, embedded);
+  return embedded;
+}
+
 /**
  * Injects freehand paths, highlights, shapes, and text callouts into PDF page streams.
- * @param {File} file - The PDF file.
- * @param {Array} annotations - Array of items: { type, pageIndex, points, xPercent, yPercent, text, color, thickness, opacity, size, shapeType, startPt, endPt }
- * @param {function} onProgress - Progress reporting callback.
- * @returns {Promise<Blob>} Annotated PDF.
+ * Handles page rotation (0°, 90°, 180°, 270°), CropBox offsets, pressure dynamics,
+ * and font-preserving inline text replacements.
+ * 
+ * @param {File|ArrayBuffer|Uint8Array} file - The PDF file.
+ * @param {Array} annotations - Array of items: { type, pageIndex, points, xPercent, yPercent, text, color, thickness, opacity, size, shapeType, startPt, endPt, fontFamily }
+ * @param {function} [onProgress] - Progress reporting callback (0-100).
+ * @param {object} [options] - Cropper options and margin controls.
+ * @returns {Promise<Blob>} Annotated PDF Blob.
  */
-export async function editPdf(file, annotations = [], onProgress = null) {
+export async function editPdf(file, annotations = [], onProgress = null, options = {}) {
   if (onProgress) onProgress(10);
   
   let pdfBytes;
@@ -34,46 +61,59 @@ export async function editPdf(file, annotations = [], onProgress = null) {
 
   if (onProgress) onProgress(35);
   
-  const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+  let pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
   if (onProgress) onProgress(50);
 
-  const pages = pdfDoc.getPages();
-  const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const totalAnnotations = annotations.length;
+  // VisionClean: Universal Smart Cropper
+  if (options && options.autoCropBlackBorders) {
+    pdfDoc = await cleanAndRefitDocument(pdfDoc, options.pageCropBoxes || options.cropBox || {}, {
+      margin: options.cleanMargin ?? 0,
+      enabledEdges: options.enabledEdges,
+      pageIndices: options.pageIndices
+    });
+  }
 
-  annotations.forEach((anno, idx) => {
+  const pages = pdfDoc.getPages();
+  const totalAnnotations = annotations.length;
+  const fontMap = new Map();
+  const defaultFont = await resolveEmbeddedFont(pdfDoc, fontMap, 'helvetica-bold');
+
+  for (let idx = 0; idx < totalAnnotations; idx++) {
+    const anno = annotations[idx];
     const pageIndex = anno.pageIndex ?? 0;
-    if (pageIndex < 0 || pageIndex >= pages.length) return;
+    if (pageIndex < 0 || pageIndex >= pages.length) continue;
     
     const page = pages[pageIndex];
-    const { width, height } = page.getSize();
+    const pageBox = getPageBoxAndRotation(page);
+    const rot = pageBox.rotation;
     const color = hexToRgb(anno.color);
 
-    if (anno.type === 'pen' || anno.type === 'highlight') {
+    if (anno.type === 'pen' || anno.type === 'highlight' || anno.type === 'whiteout') {
       const points = anno.points || [];
-      const thickness = anno.thickness || (anno.type === 'highlight' ? 12 : 2.5);
-      const opacity = anno.opacity ?? (anno.type === 'highlight' ? 0.4 : 1.0);
+      const isHl = anno.type === 'highlight';
+      const isWhiteout = anno.type === 'whiteout';
+      const thickness = anno.thickness || (isWhiteout ? 18 : (isHl ? 20 : 2.5));
+      const opacity = isWhiteout ? 1.0 : (anno.opacity ?? (isHl ? 0.38 : 1.0));
+      const strokeColor = isWhiteout ? rgb(1, 1, 1) : color;
 
-      // Draw line segments between consecutive points
+      // Draw line segments between consecutive points with pressure dynamics
       for (let i = 0; i < points.length - 1; i++) {
         const p1 = points[i];
         const p2 = points[i + 1];
 
-        const startX = width * p1.xPercent;
-        const startY = height * (1 - p1.yPercent);
-        const endX = width * p2.xPercent;
-        const endY = height * (1 - p2.yPercent);
+        const startPt = mapVisualToPdfPoint(p1, pageBox, rot);
+        const endPt = mapVisualToPdfPoint(p2, pageBox, rot);
 
         const press1 = p1.pressure ?? 0.5;
         const press2 = p2.pressure ?? 0.5;
         const avgPressure = (press1 + press2) / 2;
-        const segmentThickness = thickness * (anno.type === 'highlight' ? 1.0 : (0.3 + avgPressure * 1.4));
+        const segmentThickness = thickness * ((isHl || isWhiteout) ? 1.0 : (0.3 + avgPressure * 1.4));
 
         page.drawLine({
-          start: { x: startX, y: startY },
-          end: { x: endX, y: endY },
+          start: startPt,
+          end: endPt,
           thickness: segmentThickness,
-          color,
+          color: strokeColor,
           opacity
         });
       }
@@ -81,55 +121,55 @@ export async function editPdf(file, annotations = [], onProgress = null) {
       const thickness = anno.thickness || 2.5;
       
       if (anno.shapeType === 'line') {
-        const startX = width * anno.startPt.xPercent;
-        const startY = height * (1 - anno.startPt.yPercent);
-        const endX = width * anno.endPt.xPercent;
-        const endY = height * (1 - anno.endPt.yPercent);
+        const startPt = mapVisualToPdfPoint(anno.startPt, pageBox, rot);
+        const endPt = mapVisualToPdfPoint(anno.endPt, pageBox, rot);
 
         page.drawLine({
-          start: { x: startX, y: startY },
-          end: { x: endX, y: endY },
+          start: startPt,
+          end: endPt,
           thickness,
           color,
           opacity: 1.0
         });
       } else if (anno.shapeType === 'arrow') {
-        const startX = width * anno.startPt.xPercent;
-        const startY = height * (1 - anno.startPt.yPercent);
-        const endX = width * anno.endPt.xPercent;
-        const endY = height * (1 - anno.endPt.yPercent);
+        const startPt = mapVisualToPdfPoint(anno.startPt, pageBox, rot);
+        const endPt = mapVisualToPdfPoint(anno.endPt, pageBox, rot);
 
         // Main shaft
         page.drawLine({
-          start: { x: startX, y: startY },
-          end: { x: endX, y: endY },
+          start: startPt,
+          end: endPt,
           thickness,
           color,
           opacity: 1.0
         });
 
-        // Arrow head wings math
-        const dx = endX - startX;
-        const dy = endY - startY;
+        // Arrow head wings math directly in unrotated user space
+        const dx = endPt.x - startPt.x;
+        const dy = endPt.y - startPt.y;
         const angle = Math.atan2(dy, dx);
         const headLength = Math.max(10, thickness * 3);
 
-        const wing1X = endX - headLength * Math.cos(angle - Math.PI / 6);
-        const wing1Y = endY - headLength * Math.sin(angle - Math.PI / 6);
-        const wing2X = endX - headLength * Math.cos(angle + Math.PI / 6);
-        const wing2Y = endY - headLength * Math.sin(angle + Math.PI / 6);
+        const wing1 = {
+          x: endPt.x - headLength * Math.cos(angle - Math.PI / 6),
+          y: endPt.y - headLength * Math.sin(angle - Math.PI / 6)
+        };
+        const wing2 = {
+          x: endPt.x - headLength * Math.cos(angle + Math.PI / 6),
+          y: endPt.y - headLength * Math.sin(angle + Math.PI / 6)
+        };
 
         page.drawLine({
-          start: { x: endX, y: endY },
-          end: { x: wing1X, y: wing1Y },
+          start: endPt,
+          end: wing1,
           thickness,
           color,
           opacity: 1.0
         });
 
         page.drawLine({
-          start: { x: endX, y: endY },
-          end: { x: wing2X, y: wing2Y },
+          start: endPt,
+          end: wing2,
           thickness,
           color,
           opacity: 1.0
@@ -140,18 +180,21 @@ export async function editPdf(file, annotations = [], onProgress = null) {
         const minY = Math.min(anno.startPt.yPercent, anno.endPt.yPercent);
         const maxY = Math.max(anno.startPt.yPercent, anno.endPt.yPercent);
 
-        const rectX = width * minX;
-        const rectY = height * (1 - maxY);
-        const rectWidth = width * (maxX - minX);
-        const rectHeight = height * (maxY - minY);
+        const rect = mapVisualRectToPdfRect({
+          xPercent: minX,
+          yPercent: minY,
+          widthPercent: maxX - minX,
+          heightPercent: maxY - minY
+        }, pageBox, rot);
 
         page.drawRectangle({
-          x: rectX,
-          y: rectY,
-          width: rectWidth,
-          height: rectHeight,
+          x: rect.x,
+          y: rect.y,
+          width: rect.width,
+          height: rect.height,
           borderColor: color,
           borderWidth: thickness,
+          color: anno.fillColor ? hexToRgb(anno.fillColor) : undefined,
           opacity: 1.0
         });
       } else if (anno.shapeType === 'circle') {
@@ -160,73 +203,138 @@ export async function editPdf(file, annotations = [], onProgress = null) {
         const minY = Math.min(anno.startPt.yPercent, anno.endPt.yPercent);
         const maxY = Math.max(anno.startPt.yPercent, anno.endPt.yPercent);
 
-        const rx = (width * (maxX - minX)) / 2;
-        const ry = (height * (maxY - minY)) / 2;
-        const cx = width * minX + rx;
-        const cy = height * (1 - maxY) + ry;
+        const rect = mapVisualRectToPdfRect({
+          xPercent: minX,
+          yPercent: minY,
+          widthPercent: maxX - minX,
+          heightPercent: maxY - minY
+        }, pageBox, rot);
 
         page.drawEllipse({
-          x: cx,
-          y: cy,
-          xScale: rx,
-          yScale: ry,
+          x: rect.x + rect.width / 2,
+          y: rect.y + rect.height / 2,
+          xScale: rect.width / 2,
+          yScale: rect.height / 2,
           borderColor: color,
           borderWidth: thickness,
+          color: anno.fillColor ? hexToRgb(anno.fillColor) : undefined,
           opacity: 1.0
         });
       }
     } else if (anno.type === 'text') {
+      const font = anno.fontFamily
+        ? await resolveEmbeddedFont(pdfDoc, fontMap, anno.fontFamily)
+        : defaultFont;
+
       const textVal = anno.text || '';
       const safeTextVal = cleanTextForWinAnsi(textVal, font);
       const size = anno.size || 14;
-      const x = width * anno.xPercent;
-      // Subtract size offset to place baseline correctly relative to click
-      const y = height * (1 - anno.yPercent) - (size * 0.5);
+
+      const visualPt = { xPercent: anno.xPercent, yPercent: anno.yPercent };
+      const pt = mapVisualToPdfPoint(visualPt, pageBox, rot);
+
+      // If whiteout is requested, draw an opaque white rectangle to mask underlying content
+      if (anno.whiteout && safeTextVal.length > 0) {
+        const textWidth = font.widthOfTextAtSize(safeTextVal, size);
+        const textHeight = size * 1.35;
+        const widthPercent = Math.min(1, (textWidth + 8) / (pageBox.width || 595));
+        const heightPercent = Math.min(1, (textHeight + 4) / (pageBox.height || 842));
+        const bgRect = mapVisualRectToPdfRect({
+          xPercent: Math.max(0, anno.xPercent - 4 / (pageBox.width || 595)),
+          yPercent: Math.max(0, anno.yPercent - 2 / (pageBox.height || 842)),
+          widthPercent,
+          heightPercent
+        }, pageBox, rot);
+
+        page.drawRectangle({
+          x: bgRect.x,
+          y: bgRect.y,
+          width: bgRect.width,
+          height: bgRect.height,
+          color: rgb(1, 1, 1),
+          opacity: 1.0
+        });
+      }
+
+      // Adjust text baseline based on rotation angle so text matches on-screen visual placement
+      let textX = pt.x;
+      let textY = pt.y;
+      const textRotationDeg = (360 - rot) % 360;
+
+      if (rot === 0) {
+        textY = pt.y - (size * 0.8);
+      } else if (rot === 90) {
+        textX = pt.x + (size * 0.8);
+      } else if (rot === 180) {
+        textY = pt.y + (size * 0.8);
+      } else if (rot === 270) {
+        textX = pt.x - (size * 0.8);
+      }
 
       page.drawText(safeTextVal, {
-        x,
-        y,
+        x: textX,
+        y: textY,
         size,
         font,
-        color
+        color,
+        rotate: degrees(textRotationDeg)
       });
     } else if (anno.type === 'text-edit') {
-      const x = width * anno.xPercent;
-      const y = height * (1 - anno.yPercent - anno.heightPercent);
-      const rectWidth = width * anno.widthPercent;
-      const rectHeight = height * anno.heightPercent;
+      const font = anno.fontFamily
+        ? await resolveEmbeddedFont(pdfDoc, fontMap, anno.fontFamily)
+        : defaultFont;
 
-      // Draw solid white rectangle to mask out original text (standard PDF background color)
+      const rect = mapVisualRectToPdfRect({
+        xPercent: anno.xPercent,
+        yPercent: anno.yPercent,
+        widthPercent: anno.widthPercent,
+        heightPercent: anno.heightPercent
+      }, pageBox, rot);
+
+      // Mask out original text with opaque white rectangle
       page.drawRectangle({
-        x,
-        y,
-        width: rectWidth,
-        height: rectHeight,
+        x: rect.x,
+        y: rect.y,
+        width: rect.width,
+        height: rect.height,
         color: rgb(1, 1, 1),
         opacity: 1.0
       });
 
-      // Stamp edited text at the exact same location
-      const textVal = anno.newText || '';
+      // Stamp new edited text
+      const textVal = anno.newText ?? '';
       const safeTextVal = cleanTextForWinAnsi(textVal, font);
       const fontSize = anno.fontSize || 10;
-      
-      // Adjust slightly upwards so text baseline sits inside the mask rectangle
-      const textY = y + (rectHeight * 0.15);
+      const textRotationDeg = (360 - rot) % 360;
+
+      let stampX = rect.x;
+      let stampY = rect.y + Math.max(2, fontSize * 0.25);
+
+      if (rot === 90) {
+        stampX = rect.x + Math.max(2, fontSize * 0.25);
+        stampY = rect.y;
+      } else if (rot === 180) {
+        stampX = rect.x + rect.width;
+        stampY = rect.y + rect.height - Math.max(2, fontSize * 0.25);
+      } else if (rot === 270) {
+        stampX = rect.x + rect.width - Math.max(2, fontSize * 0.25);
+        stampY = rect.y + rect.height;
+      }
 
       page.drawText(safeTextVal, {
-        x,
-        y: textY,
+        x: stampX,
+        y: stampY,
         size: fontSize,
         font,
-        color: hexToRgb(anno.color || '#000000')
+        color: hexToRgb(anno.color || '#000000'),
+        rotate: degrees(textRotationDeg)
       });
     }
 
     if (onProgress) {
       onProgress(Math.round(50 + ((idx + 1) / totalAnnotations) * 35));
     }
-  });
+  }
 
   if (onProgress) onProgress(90);
   const savedBytes = await pdfDoc.save();

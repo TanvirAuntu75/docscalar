@@ -8,63 +8,42 @@ export function generateTerracottaArchHtml(
   themeColor = '#b87352',
   themeFont = 'Montserrat',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
+  const safeData = data || {};
   const terracottaColor = themeColor === 'default' || !themeColor ? '#b87352' : themeColor;
   const fontFam = themeFont === 'Playfair Display' ? "'Playfair Display', Georgia, serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : themeFont === 'Inter' ? "'Inter', sans-serif" : "'Montserrat', sans-serif";
 
   // Name splitting for two-line header
-  const nameParts = (data.name || 'Adeline Palmerston').trim().split(' ');
-  const firstName = nameParts[0] || 'Adeline';
-  const lastName = nameParts.slice(1).join(' ') || 'Palmerston';
+  const name = (safeData.name !== undefined && safeData.name !== null) ? String(safeData.name).trim() : '';
+  const nameParts = name ? name.split(' ') : [];
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ') || '';
 
-  const photoSrc = data.photoUrl || '/images/candidates/adeline.jpg';
+  const photoSrc = safeData.photoUrl || '';
+  const summaryText = safeData.summary || safeData.profile || '';
 
-  const summaryText = data.summary || 'I am a sales representative with a proven track record of exceeding sales targets. Adept at building and nurturing client relationships through effective communication and a consultative sales approach. Known for a high level of enthusiasm, resilience, and a passion for delivering exceptional customer experiences.';
+  const phoneText = safeData.phone || '';
+  const locationText = safeData.location || '';
+  const emailText = safeData.email || '';
+  const websiteText = safeData.website || '';
+  const linkedinText = safeData.linkedin || '';
 
-  const phoneText = data.phone || '123-456-7890';
-  const locationText = data.location || '123 Anywhere St., Any City';
-  const emailText = data.email || 'hello@reallygreatsite';
+  const skillsList = (safeData.skills && safeData.skills.length) ? safeData.skills : [];
+  const educationList = (safeData.education && safeData.education.length) ? safeData.education : [];
+  const experienceList = (safeData.experience && safeData.experience.length) ? safeData.experience : [];
+  const projectsList = (safeData.projects && safeData.projects.length) ? safeData.projects : [];
+  const referenceList = (safeData.references && safeData.references.length) ? safeData.references : [];
 
-  const skillsList = data.skills && data.skills.length ? data.skills : [
-    'Prospecting and Lead Generation', 'Consultative Selling', 'Relationship Building',
-    'Customer Retention', 'Negotiation and Closing', 'Product Knowledge'
-  ];
-
-  const educationList = data.education && data.education.length ? data.education : [
-    { degree: 'Master of Business Administration in Sales Management', school: 'Really Great University', years: '(2014 - 2016)' },
-    { degree: 'Bachelor of Business Administration in Sales Management', school: 'Really Great University', years: '(2010 - 2014)' }
-  ];
-
-  const experienceList = data.experience && data.experience.length ? data.experience : [
-    {
-      role: 'Senior Sales Representative',
-      meta: '(2020 - Present) Really Great Company',
-      highlights: [
-        'Exceeded annual sales targets by 20% through strategic prospecting and effective negotiation.',
-        'Cultivated and managed key client accounts, resulting in a 30% increase in customer retention.',
-        'Collaborated with the marketing team to implement successful promotional campaigns, contributing to a 25% boost in lead generation.'
-      ]
-    },
-    {
-      role: 'Sales Specialist',
-      meta: '(2018 - 2020) Really Great Company',
-      highlights: [
-        'Consistently ranked as a top-performing sales representative, achieving monthly sales quotas.',
-        'Conducted product demonstrations and training sessions, enhancing customer understanding and satisfaction.',
-        'Implemented a proactive follow-up system, resulting in a 15% increase in repeat business.'
-      ]
-    }
-  ];
+  const hasContact = phoneText || locationText || emailText || websiteText || linkedinText;
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adeline Palmerston - Resume</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -81,16 +60,14 @@ export function generateTerracottaArchHtml(
       font-family: ${fontFam};
       margin: 0;
       padding: 0;
-      width: 794px;
-      height: 1123px;
-      overflow: hidden;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
 
     /* Fixed A4 Page Container with Rounded Frame */
-    .resume-canvas {
+    .cv-page, .resume-canvas {
       width: 794px;
+      min-height: 1123px;
       height: 1123px;
       background-color: #fbf9f5;
       border-radius: 28px;
@@ -183,7 +160,7 @@ export function generateTerracottaArchHtml(
     }
 
     /* Capsule / Arch Photo Frame */
-    .photo-wrapper {
+    .avatar-mask {
       width: 220px;
       height: 275px;
       border-radius: 110px;
@@ -193,14 +170,18 @@ export function generateTerracottaArchHtml(
       background-color: #ffffff;
       position: relative;
       z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .profile-photo {
+    .profile-photo, .avatar {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center 15%;
       filter: grayscale(100%) contrast(105%);
+      display: block;
     }
 
     /* Sage / Slate Blue Overview Box */
@@ -346,116 +327,181 @@ export function generateTerracottaArchHtml(
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 10px;
-      background-color: ${terracottaColor};
+      height: 14px;
+      background: ${terracottaColor};
+    }
+
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page, .resume-canvas {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .cv-page:last-child, .resume-canvas:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="resume-canvas">
+  <div class="cv-page resume-canvas" id="page-1">
     <!-- Left Terracotta Vertical Tab -->
     <div class="left-accent-block"></div>
 
     <!-- Header Section -->
     <div class="header-section">
       <div class="header-left">
-        <h1 class="candidate-name">${firstName}<br>${lastName}</h1>
+        <h1 class="candidate-name" data-df-field="name">${firstName}${lastName ? `<br>${lastName}` : ''}</h1>
         
         <div class="subtitle-row">
           <div class="subtitle-line"></div>
-          <span class="candidate-title">${data.title || 'Sales Representative'}</span>
+          <div class="candidate-title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${safeData.title || ''}</div>
         </div>
 
+        ${hasContact ? `
         <div class="contact-grid">
+          ${phoneText ? `
           <div class="contact-item">
             <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-            <span>${phoneText}</span>
+            <span data-df-field="phone">${phoneText}</span>
           </div>
+          ` : ''}
+
+          ${locationText ? `
           <div class="contact-item">
             <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-            <span>${locationText}</span>
+            <span data-df-field="location">${locationText}</span>
           </div>
+          ` : ''}
+
+          ${emailText ? `
           <div class="contact-item">
             <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-            <span style="word-break: break-all;">${emailText}</span>
+            <a href="mailto:${emailText}" style="color: inherit; text-decoration: none;" data-df-field="email">${emailText}</a>
           </div>
+          ` : ''}
+
+          ${websiteText ? `
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+            <a href="https://${websiteText.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;" data-df-field="website">${websiteText.replace(/^https?:\/\//, '')}</a>
+          </div>
+          ` : ''}
         </div>
+        ` : ''}
       </div>
 
-      <!-- Pill / Arch Shaped Photo Frame -->
-      <div class="photo-wrapper">
-        <img class="profile-photo" src="${photoSrc}" alt="${data.name || 'Adeline Palmerston'}">
+      <!-- Rounded Arch Frame for Portrait -->
+      ${photoSrc ? `
+      <div class="avatar-mask">
+        <img src="${photoSrc}" alt="Profile Photo" class="profile-photo avatar" />
       </div>
+      ` : ''}
     </div>
 
-    <!-- Sage Blue Overview Section -->
+    <!-- Sage Overview / About Me Box -->
+    ${summaryText ? `
     <div class="overview-box">
-      <div class="overview-title">Overview</div>
-      <p class="overview-text">
+      <div class="overview-title section-heading" data-df-field="heading:summary">${data.sectionTitles?.summary || 'About Me'}</div>
+      <div class="overview-text" data-df-field="summary">
         ${summaryText}
-      </p>
+      </div>
     </div>
+    ` : ''}
 
-    <!-- Two-Column Main Content -->
+    <!-- Two-Column Body Content -->
     <div class="main-content-grid">
-      
       <!-- Left Column: Work Experience -->
-      <div>
-        <div class="section-title">Work Experience</div>
+      <div class="left-col">
+        ${experienceList.length > 0 ? `
+        <div class="section-title section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'Work Experience'}</div>
         <div class="experience-list">
           ${experienceList.map((e, idx) => {
-            const role = e.role || 'Senior Sales Representative';
-            const meta = e.meta || `${e.start ? `(${e.start} - ${e.end || 'Present'})` : ''} ${e.company || 'Really Great Company'}`;
-            const bullets = e.highlights && e.highlights.filter(Boolean).length ? e.highlights.filter(Boolean) : [e.description || 'Exceeded annual sales targets by 20% through strategic prospecting.'];
+            const bullets = e.highlights && e.highlights.filter(Boolean).length ? e.highlights.filter(Boolean) : (e.description ? [e.description] : []);
             return `
-              <div class="exp-entry">
-                <div class="exp-role">${role}</div>
-                <div class="exp-meta">${meta}</div>
-                <ul class="bullet-list">
-                  ${bullets.map(b => `<li>${b.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
-                </ul>
-                ${idx < experienceList.length - 1 ? '<div class="entry-divider"></div>' : ''}
+            <div class="exp-entry">
+              <div class="exp-role" data-df-field="exp:${idx}:role">${e.role || ''}</div>
+              <div class="exp-meta">
+                <span data-df-field="exp:${idx}:company">${e.company || ''}</span>
+                ${e.company && (e.start || e.end || e.dates) ? ' | ' : ''}
+                <span data-df-field="exp:${idx}:date">${e.dates || (e.start ? `${e.start}${e.end ? ` – ${e.end}` : ''}` : '')}</span>
               </div>
+              ${bullets.length > 0 ? `
+              <ul class="bullet-list">
+                ${bullets.map((b, bIdx) => `<li data-df-field="exp:${idx}:highlight:${bIdx}">${b}</li>`).join('')}
+              </ul>
+              ` : ''}
+              ${idx < experienceList.length - 1 ? '<div class="entry-divider"></div>' : ''}
+            </div>
             `;
           }).join('')}
         </div>
+        ` : ''}
+
+        ${projectsList.length > 0 ? `
+        <div class="section-title section-heading" style="margin-top: 16px;" data-df-field="heading:projects">${data.sectionTitles?.projects || 'Projects'}</div>
+        <div class="experience-list">
+          ${projectsList.map((p, idx) => `
+          <div class="exp-entry">
+            <div class="exp-role" data-df-field="proj:${idx}:name">${p.name || ''}</div>
+            ${p.url ? `<div class="exp-meta"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="proj:${idx}:url" style="color: inherit; text-decoration: none;">${p.url}</a></div>` : ''}
+            ${p.description ? `<p class="overview-text" data-df-field="proj:${idx}:description" style="margin-top: 2px;">${p.description}</p>` : ''}
+          </div>
+          `).join('')}
+        </div>
+        ` : ''}
       </div>
 
       <!-- Right Column: Education & Skills -->
       <div class="right-col">
-        <!-- Education -->
+        ${educationList.length > 0 ? `
         <div class="edu-section">
-          <div class="section-title">Education</div>
-          
-          ${educationList.map((e, idx) => {
-            const deg = e.degree || 'Bachelor of Business Administration in Sales Management';
-            const meta = e.years ? `${e.years} ${e.school || 'Really Great University'}` : `${e.start ? `(${e.start} - ${e.end || '2020'})` : ''} ${e.school || 'Really Great University'}`;
-            return `
-              <div class="edu-entry">
-                <div class="edu-degree">${deg}</div>
-                <div class="edu-meta">${meta}</div>
+          <div class="section-title section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'Education History'}</div>
+          <div class="edu-list">
+            ${educationList.map((e, idx) => `
+            <div class="edu-entry">
+              <div class="edu-degree" data-df-field="edu:${idx}:degree">${e.degree || ''}</div>
+              <div class="edu-meta">
+                <span data-df-field="edu:${idx}:school">${e.school || ''}</span>
+                ${e.school && (e.start || e.end || e.date) ? ' | ' : ''}
+                <span data-df-field="edu:${idx}:date">${e.date || (e.start ? `${e.start}${e.end ? ` – ${e.end}` : ''}` : '')}</span>
               </div>
-              ${idx < educationList.length - 1 ? '<div class="entry-divider" style="margin-bottom: 12px; margin-top: 0;"></div>' : ''}
-            `;
-          }).join('')}
+            </div>
+            `).join('')}
+          </div>
         </div>
+        ` : ''}
 
-        <!-- Skills -->
+        ${skillsList.length > 0 ? `
         <div class="skills-section">
-          <div class="section-title">Skills</div>
+          <div class="section-title section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Skills & Expertise'}</div>
           <ul class="skills-list">
-            ${skillsList.map(s => {
-              const name = typeof s === 'string' ? (s.includes(' - ') ? s.split(' - ')[0] : s) : s.name || '';
-              return `<li>${name}</li>`;
+            ${skillsList.map((s, idx) => {
+              const skillName = typeof s === 'string' ? s : (s.name || '');
+              return `<li data-df-field="skill:${idx}">${skillName}</li>`;
             }).join('')}
           </ul>
         </div>
+        ` : ''}
       </div>
-
     </div>
 
-    <!-- Bottom Terracotta Band -->
+    <!-- Bottom Terracotta Accent Stripe -->
     <div class="footer-stripe"></div>
   </div>
 

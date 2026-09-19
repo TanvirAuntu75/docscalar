@@ -13,8 +13,7 @@ import {
   Presentation,
   Sparkles,
   Download,
-  Cpu,
-  Server,
+  Zap,
   FileCheck,
   Tv
 } from 'lucide-react';
@@ -47,7 +46,10 @@ export default function PowerpointToPdf() {
     const checkServer = async () => {
       try {
         const res = await apiFetch(`${BACKEND_URL}/api/meta/conversions`, { signal: AbortSignal.timeout(1500) });
-        if (res.ok) setBackendActive(true);
+        if (res.ok) {
+          setBackendActive(true);
+          setEngineMode('server');
+        }
       } catch (e) {
         setBackendActive(false);
       }
@@ -138,10 +140,10 @@ export default function PowerpointToPdf() {
         });
     } else if (poller.status === 'failed') {
       setProcessing(false);
-      setError(poller.error || 'Server conversion failed.');
+      setError(poller.error || 'Full Precision conversion could not be completed.');
     } else if (poller.status === 'started' || poller.status === 'queued') {
       setProgress(poller.progress || 20);
-      setStatusMessage('Converting presentation layout via LibreOffice engine...');
+      setStatusMessage('Converting presentation layout via desktop rendering engine...');
     }
   }, [poller.status, poller.result, poller.error, poller.progress, files, activeFileIndex]);
 
@@ -159,8 +161,8 @@ export default function PowerpointToPdf() {
 
     try {
       if (engineMode === 'server') {
-        if (!backendActive) throw new Error('Conversion server is unreachable. Please switch to Fast Browser Mode.');
-        setStatusMessage('Uploading presentation for LibreOffice PDF conversion...');
+        if (!backendActive) throw new Error('Cloud conversion engine is currently offline. Please switch to Fast Mode.');
+        setStatusMessage('Preparing presentation for full-precision PDF conversion...');
         const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
         if (!uploadData.success) throw new Error(uploadData.detail || 'Upload failed');
 
@@ -241,7 +243,7 @@ export default function PowerpointToPdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="PowerPoint to PDF Online Free — Convert PPTX to PDF | DocForge"
+        title="PowerPoint to PDF Online Free — Convert PPTX to PDF | DocScalar"
         description="Convert PPTX and PPT presentations to PDF with high formatting fidelity. Fast, secure, and client-side private conversion."
       />
 
@@ -378,7 +380,7 @@ export default function PowerpointToPdf() {
 
                   {/* Footer Bar */}
                   <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">
-                    <span>DocForge Presentation Studio</span>
+                    <span>DocScalar Presentation Studio</span>
                     <span>16:9 Widescreen</span>
                   </div>
                 </div>
@@ -417,8 +419,9 @@ export default function PowerpointToPdf() {
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Cpu size={14} />
-                      <span>Fast Browser (Private)</span>
+                      <Zap size={14} />
+                      <span>Fast Mode</span>
+                      <span className={`text-[10px] ${engineMode === 'client' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>Instant · Private</span>
                     </button>
 
                     <button
@@ -430,8 +433,9 @@ export default function PowerpointToPdf() {
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Server size={14} />
-                      <span>LibreOffice Server</span>
+                      <Sparkles size={14} />
+                      <span>Full Precision</span>
+                      <span className={`text-[10px] ${engineMode === 'server' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>Desktop Fidelity</span>
                     </button>
                   </div>
                 </div>
@@ -505,14 +509,16 @@ export default function PowerpointToPdf() {
                 {/* Progress Bar (While Processing) */}
                 {processing && (
                   <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                    <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                           progress_activity
                         </span>
-                        {statusMessage || 'Compiling PDF slides...'}
-                      </span>
-                      <span>{progress}%</span>
+                        <span className="truncate" title={statusMessage || 'Compiling PDF slides...'}>
+                          {statusMessage || 'Compiling PDF slides...'}
+                        </span>
+                      </div>
+                      <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div
@@ -598,7 +604,7 @@ export default function PowerpointToPdf() {
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Engine</span>
                 <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1 capitalize">
-                  {result.engineMode === 'server' ? 'LibreOffice' : 'Vector Slides'}
+                  {result.engineMode === 'server' ? 'Full Precision' : 'Fast Mode'}
                 </span>
               </div>
             </div>

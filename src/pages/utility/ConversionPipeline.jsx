@@ -192,7 +192,7 @@ export default function ConversionPipeline() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Conversion Workflows & Pipeline Studio — Automated Document Chaining | DocForge"
+        title="Conversion Workflows & Pipeline Studio — Automated Document Chaining | DocScalar"
         description="Automate repetitive file workflows by chaining PDF and image operations together (Merge, Convert, Compress, Resize) in a single sequential execution."
       />
 
@@ -532,9 +532,16 @@ export default function ConversionPipeline() {
                 {/* Progress Bar (While Processing) */}
                 {processing && (
                   <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="truncate max-w-[200px]">{statusMessage || 'Processing...'}</span>
-                      <span>{progress}%</span>
+                    <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
+                          progress_activity
+                        </span>
+                        <span className="truncate" title={statusMessage || 'Processing...'}>
+                          {statusMessage || 'Processing...'}
+                        </span>
+                      </div>
+                      <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div
@@ -645,7 +652,7 @@ export default function ConversionPipeline() {
             {/* Quick Next Steps */}
             <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
-                Continue Working with DocForge
+                Continue Working with DocScalar
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <Link

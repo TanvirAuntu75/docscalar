@@ -4,7 +4,7 @@ import SEOHead from '../components/SEOHead';
 export default function Terms() {
   return (
     <div className="bg-background min-h-[80vh] flex flex-col items-center px-margin-mobile py-xl relative">
-      <SEOHead title="Terms of Service — DocForge" description="Read our terms of service to understand your rights and responsibilities." />
+      <SEOHead title="Terms of Service — DocScalar" description="Read our terms of service to understand your rights and responsibilities." />
       <div className="absolute inset-0 bg-pattern opacity-10 pointer-events-none"></div>
 
       <div className="w-full max-w-3xl mb-4 z-10 text-left">
@@ -22,7 +22,7 @@ export default function Terms() {
           <section className="flex flex-col gap-2">
             <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">1. Agreement to Terms</h2>
             <p>
-              By accessing or using DocForge ("the Service"), you agree to be bound by these Terms of Service. 
+              By accessing or using DocScalar ("the Service"), you agree to be bound by these Terms of Service. 
               If you do not agree to these terms, you may not use the Service.
             </p>
           </section>
@@ -71,7 +71,7 @@ export default function Terms() {
           <section className="flex flex-col gap-2">
             <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">6. Intellectual Property & Document Ownership</h2>
             <p>
-              We claim no ownership over the files, text, images, or documents you convert using our platform. You retain full copyright and ownership of all content processed through DocForge.
+              We claim no ownership over the files, text, images, or documents you convert using our platform. You retain full copyright and ownership of all content processed through DocScalar.
             </p>
           </section>
         </div>

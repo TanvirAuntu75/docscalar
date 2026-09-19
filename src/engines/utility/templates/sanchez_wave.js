@@ -7,7 +7,7 @@ export function generateSanchezWaveHtml(
   themeColor = '#1a365d',
   themeFont = 'Inter',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
@@ -17,18 +17,18 @@ export function generateSanchezWaveHtml(
 
   const expHtml = data.experience && data.experience.length ? `
     <div class="section-container">
-      <div class="pill-title-outline">EXPERIENCE</div>
+      <div class="pill-title-outline section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'EXPERIENCE'}</div>
       <div class="entries-wrapper">
-        ${data.experience.map(e => `
+        ${data.experience.map((e, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="company-name">${e.company}${data.location ? ` · ${data.location}` : ''}</span>
-              <span class="date-badge">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+              <span class="company-name" data-df-field="exp:${idx}:company">${e.company}${data.location ? ` · ${data.location}` : ''}</span>
+              <span class="date-badge" data-df-field="exp:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
             </div>
-            <div class="role-name">${e.role}</div>
+            <div class="role-name" data-df-field="exp:${idx}:role">${e.role}</div>
             ${e.highlights && e.highlights.filter(Boolean).length ? `
               <ul class="highlights-list">
-                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+                ${e.highlights.filter(Boolean).map((h, hIdx) => `<li data-df-field="exp:${idx}:highlight:${hIdx}">${h}</li>`).join('')}
               </ul>
             ` : ''}
           </div>
@@ -39,15 +39,15 @@ export function generateSanchezWaveHtml(
 
   const eduHtml = data.education && data.education.length ? `
     <div class="section-container">
-      <div class="pill-title-outline">EDUCATION</div>
+      <div class="pill-title-outline section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'EDUCATION'}</div>
       <div class="entries-wrapper">
-        ${data.education.map(e => `
+        ${data.education.map((e, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="company-name">${e.degree}</span>
-              <span class="date-badge">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+              <span class="company-name" data-df-field="edu:${idx}:degree">${e.degree}</span>
+              <span class="date-badge" data-df-field="edu:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
             </div>
-            <div class="role-name">${e.school}${e.note ? ` · ${e.note}` : ''}</div>
+            <div class="role-name"><span data-df-field="edu:${idx}:school">${e.school}</span>${e.note ? ` · ${e.note}` : ''}</div>
           </div>
         `).join('')}
       </div>
@@ -56,9 +56,9 @@ export function generateSanchezWaveHtml(
 
   const skillsHtml = data.skills && data.skills.length ? `
     <div class="section-container">
-      <div class="pill-title-outline">SKILLS</div>
+      <div class="pill-title-outline section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'SKILLS'}</div>
       <div class="skills-grid">
-        ${data.skills.map((s) => {
+        ${data.skills.map((s, idx) => {
           let name = s;
           let levelText = '';
           if (s.includes(' - ')) {
@@ -68,7 +68,7 @@ export function generateSanchezWaveHtml(
           }
           return `
             <div class="skill-row">
-              <span class="skill-name">• ${name}</span>
+              <span class="skill-name" data-df-field="skill:${idx}">• ${name}</span>
               ${levelText ? `<span class="skill-level">${levelText}</span>` : ''}
             </div>
           `;
@@ -79,9 +79,9 @@ export function generateSanchezWaveHtml(
 
   const projHtml = data.projects && data.projects.length ? `
     <div class="section-container">
-      <div class="pill-title-outline">PROJECTS</div>
+      <div class="pill-title-outline section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'PROJECTS'}</div>
       <div class="entries-wrapper">
-        ${data.projects.map(p => `
+        ${data.projects.map((p, idx) => `
           <div class="entry-item">
             <div class="entry-header">
               <span class="company-name">${p.name}</span>
@@ -96,9 +96,9 @@ export function generateSanchezWaveHtml(
 
   const certHtml = data.certifications && data.certifications.length ? `
     <div class="section-container">
-      <div class="pill-title-outline">CERTIFICATIONS</div>
+      <div class="pill-title-outline section-heading" data-df-field="heading:certifications">${data.sectionTitles?.certifications || 'CERTIFICATIONS'}</div>
       <ul class="highlights-list" style="margin-top: 8px;">
-        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+        ${data.certifications.map((c, idx) => `<li data-df-field="cert:${idx}">${c}</li>`).join('')}
       </ul>
     </div>
   ` : '';
@@ -108,6 +108,7 @@ export function generateSanchezWaveHtml(
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${data.name ? `${data.name} - Resume` : 'Resume'}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
@@ -123,7 +124,7 @@ export function generateSanchezWaveHtml(
     }
     
     #main-container {
-      width: 210mm;
+      width: 794px;
       min-height: 297mm;
       margin: 0 auto;
       background: #ffffff;
@@ -143,11 +144,30 @@ export function generateSanchezWaveHtml(
       overflow: hidden;
       border-bottom: 4px solid ${secondaryAccent};
     }
+    .avatar-mask {
+      width: 145px;
+      height: 145px;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid ${accent};
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    .avatar-mask .avatar, .avatar-mask img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
     .avatar {
-      width: 100px;
-      height: 100px;
+      width: 145px;
+      height: 145px;
       border-radius: 50%;
       border: 3px solid ${secondaryAccent};
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
       object-fit: cover;
       flex-shrink: 0;
     }
@@ -292,20 +312,46 @@ export function generateSanchezWaveHtml(
       font-size: 8pt;
       color: #64748b;
     }
+  
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        margin-bottom: 0 !important;
+      }
+      #main-container, .page-container, .cv-page, .container, .page {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+    }
   </style>
 </head>
 <body>
-<div id="main-container">
+<div class="cv-page" id="main-container">
   <div class="header-band">
-    ${data.photoUrl ? `<img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />` : ''}
+    ${data.photoUrl ? `<div class="avatar-mask"><img class="avatar" src="${data.photoUrl}" alt="Profile Photo" /></div>` : ''}
     <div class="header-text">
-      <h1>${data.name || 'Candidate Name'}</h1>
-      ${data.title ? `<div class="title">${data.title}</div>` : ''}
+      <h1 data-df-field="name">${data.name || ''}</h1>
+      <div class="candidate-title title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${data.title || ''}</div>
       <div class="contact-strip">
-        ${data.phone ? `<span>${data.phone}</span>` : ''}
-        ${data.email ? `<span><a href="mailto:${data.email}">${data.email}</a></span>` : ''}
-        ${data.location ? `<span>${data.location}</span>` : ''}
-        ${data.linkedin ? `<span><a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank">${data.linkedin.replace(/^https?:\/\//, '')}</a></span>` : ''}
+        ${data.phone ? `<span data-df-field="phone">${data.phone}</span>` : ''}
+        ${data.email ? `<span><a href="mailto:${data.email}" data-df-field="email">${data.email}</a></span>` : ''}
+        ${data.location ? `<span data-df-field="location">${data.location}</span>` : ''}
+        ${data.linkedin ? `<span><a data-df-field="linkedin" href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank">${data.linkedin.replace(/^https?:\/\//, '')}</a></span>` : ''}
       </div>
     </div>
   </div>
@@ -314,8 +360,8 @@ export function generateSanchezWaveHtml(
     <div class="left-col">
       ${data.summary ? `
         <div class="section-container">
-          <div class="pill-title-outline">ABOUT ME</div>
-          <div class="summary-text">${data.summary}</div>
+          <div class="pill-title-outline section-heading" data-df-field="heading:summary">${data.sectionTitles?.summary || 'ABOUT ME'}</div>
+          <div class="summary-text" data-df-field="summary">${data.summary}</div>
         </div>
       ` : ''}
       

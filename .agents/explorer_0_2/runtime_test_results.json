@@ -1,0 +1,2141 @@
+[
+  {
+    "file": "adam_fletcher.js",
+    "fnName": "generateAdamFletcherHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7161,
+      "resurrectedMockStrings": [
+        "Adam Fletcher"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7161,
+      "resurrectedMockStrings": [
+        "Adam Fletcher"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13594
+    }
+  },
+  {
+    "file": "adeline_palmerston.js",
+    "fnName": "generateAdelinePalmerstonHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 10540,
+      "resurrectedMockStrings": [
+        "Adeline Palmerston",
+        "Candidate Name",
+        "Adeline",
+        "Palmerston"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 10540,
+      "resurrectedMockStrings": [
+        "Adeline Palmerston",
+        "Candidate Name",
+        "Adeline",
+        "Palmerston"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 18557
+    }
+  },
+  {
+    "file": "adora_diagonal.js",
+    "fnName": "generateAdoraDiagonalHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6319,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6319,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 12081
+    }
+  },
+  {
+    "file": "adora_montminy.js",
+    "fnName": "generateAdoraMontminyHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7993,
+      "resurrectedMockStrings": []
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7993,
+      "resurrectedMockStrings": []
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 14711
+    }
+  },
+  {
+    "file": "alfredo_torres.js",
+    "fnName": "generateAlfredoTorresHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 9308,
+      "resurrectedMockStrings": [
+        "Alfredo Torres",
+        "Alfredo",
+        "Torres"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 9308,
+      "resurrectedMockStrings": [
+        "Alfredo Torres",
+        "Alfredo",
+        "Torres"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 14742
+    }
+  },
+  {
+    "file": "alvarado_slate.js",
+    "fnName": "generateAlvaradoSlateHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6372,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6372,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11741
+    }
+  },
+  {
+    "file": "amsterdam_orange.js",
+    "fnName": "generateAmsterdamOrangeHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7065,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7065,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13986
+    }
+  },
+  {
+    "file": "arthur_pendelton.js",
+    "fnName": "generateArthurPendeltonHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7978,
+      "resurrectedMockStrings": [
+        "Arthur Pendelton",
+        "Arthur",
+        "Pendelton"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7978,
+      "resurrectedMockStrings": [
+        "Arthur Pendelton",
+        "Arthur",
+        "Pendelton"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13118
+    }
+  },
+  {
+    "file": "austin_amber.js",
+    "fnName": "generateAustinAmberHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7055,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7055,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13978
+    }
+  },
+  {
+    "file": "barcelona_cyan.js",
+    "fnName": "generateBarcelonaCyanHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6725,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6725,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13026
+    }
+  },
+  {
+    "file": "berlin_two_tone.js",
+    "fnName": "generateBerlinTwoToneHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5934,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5934,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 10676
+    }
+  },
+  {
+    "file": "bordeaux_wine.js",
+    "fnName": "generateBordeauxWineHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7045,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7045,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13376
+    }
+  },
+  {
+    "file": "boston_crimson.js",
+    "fnName": "generateBostonCrimsonHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6962,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6962,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13219
+    }
+  },
+  {
+    "file": "buenos_aires_tango.js",
+    "fnName": "generateBuenosAiresTangoHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7425,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7425,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 14355
+    }
+  },
+  {
+    "file": "cairo_gold.js",
+    "fnName": "generateCairoGoldHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7442,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7442,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 14346
+    }
+  },
+  {
+    "file": "cambridge_rose.js",
+    "fnName": "generateCambridgeRoseHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7315,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7315,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13699
+    }
+  },
+  {
+    "file": "cape_town_sunset.js",
+    "fnName": "generateCapeTownSunsetHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6945,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6945,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13862
+    }
+  },
+  {
+    "file": "card_matrix.js",
+    "fnName": "generateCardMatrixHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5282,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5282,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11789
+    }
+  },
+  {
+    "file": "charles.js",
+    "fnName": "generateCharlesHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6731,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6731,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13495
+    }
+  },
+  {
+    "file": "copenhagen_sand.js",
+    "fnName": "generateCopenhagenSandHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6699,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6699,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13447
+    }
+  },
+  {
+    "file": "date_capsule.js",
+    "fnName": "generateDateCapsuleHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5093,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5093,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 9912
+    }
+  },
+  {
+    "file": "diagonal_wedge.js",
+    "fnName": "generateDiagonalWedgeHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 8295,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 8295,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 16761
+    }
+  },
+  {
+    "file": "donna_stroupe.js",
+    "fnName": "generateDonnaStroupeHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7703,
+      "resurrectedMockStrings": [
+        "Donna Stroupe"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7703,
+      "resurrectedMockStrings": [
+        "Donna Stroupe"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 12751
+    }
+  },
+  {
+    "file": "dublin_forest.js",
+    "fnName": "generateDublinForestHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6923,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6923,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13302
+    }
+  },
+  {
+    "file": "edinburgh_navy.js",
+    "fnName": "generateEdinburghNavyHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5286,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5286,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 10578
+    }
+  },
+  {
+    "file": "emerald_prestige.js",
+    "fnName": "generateEmeraldPrestigeHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7116,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7116,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13469
+    }
+  },
+  {
+    "file": "emma.js",
+    "fnName": "generateEmmaHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6705,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6705,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11784
+    }
+  },
+  {
+    "file": "floating_card_matrix.js",
+    "fnName": "generateFloatingCardMatrixHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7450,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7450,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 16380
+    }
+  },
+  {
+    "file": "florence_terracotta.js",
+    "fnName": "generateFlorenceTerracottaHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7096,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7096,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13334
+    }
+  },
+  {
+    "file": "geneva_charcoal.js",
+    "fnName": "generateGenevaCharcoalHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6920,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6920,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13306
+    }
+  },
+  {
+    "file": "helsinki_frost.js",
+    "fnName": "generateHelsinkiFrostHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5356,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5356,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 10633
+    }
+  },
+  {
+    "file": "helsinki_navy.js",
+    "fnName": "generateHelsinkiNavyHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7050,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7050,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13936
+    }
+  },
+  {
+    "file": "howard_ong.js",
+    "fnName": "generateHowardOngHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7387,
+      "resurrectedMockStrings": [
+        "Howard Ong"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7387,
+      "resurrectedMockStrings": [
+        "Howard Ong"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 12572
+    }
+  },
+  {
+    "file": "isabel_mercado.js",
+    "fnName": "generateIsabelMercadoHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 8516,
+      "resurrectedMockStrings": [
+        "Isabel Mercado"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 8516,
+      "resurrectedMockStrings": [
+        "Isabel Mercado"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 17734
+    }
+  },
+  {
+    "file": "isabel_schumacher.js",
+    "fnName": "generateIsabelSchumacherHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7824,
+      "resurrectedMockStrings": [
+        "Isabel Schumacher"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7824,
+      "resurrectedMockStrings": [
+        "Isabel Schumacher"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 14106
+    }
+  },
+  {
+    "file": "jonathan.js",
+    "fnName": "generateJonathanHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5392,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5392,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 10845
+    }
+  },
+  {
+    "file": "jonathan_patterson.js",
+    "fnName": "generateJonathanPattersonHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 8685,
+      "resurrectedMockStrings": [
+        "Jonathan Patterson"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 8685,
+      "resurrectedMockStrings": [
+        "Jonathan Patterson"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 15327
+    }
+  },
+  {
+    "file": "kathleen.js",
+    "fnName": "generateKathleenHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6888,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6888,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 12539
+    }
+  },
+  {
+    "file": "kelly_mint.js",
+    "fnName": "generateKellyMintHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6764,
+      "resurrectedMockStrings": [
+        "Kelly Blackwell"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6764,
+      "resurrectedMockStrings": [
+        "Kelly Blackwell"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13186
+    }
+  },
+  {
+    "file": "korina_villanueva.js",
+    "fnName": "generateKorinaVillanuevaHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 8219,
+      "resurrectedMockStrings": [
+        "Korina Villanueva"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 8219,
+      "resurrectedMockStrings": [
+        "Korina Villanueva"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 17067
+    }
+  },
+  {
+    "file": "kyiv_golden.js",
+    "fnName": "generateKyivGoldenHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6817,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6817,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13157
+    }
+  },
+  {
+    "file": "kyoto_coral.js",
+    "fnName": "generateKyotoCoralHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6824,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6824,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13580
+    }
+  },
+  {
+    "file": "lilac_sidebar.js",
+    "fnName": "generateLilacSidebarHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6314,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6314,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11213
+    }
+  },
+  {
+    "file": "lorna_alvarado.js",
+    "fnName": "generateLornaAlvaradoHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7260,
+      "resurrectedMockStrings": [
+        "Lorna Alvarado"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7260,
+      "resurrectedMockStrings": [
+        "Lorna Alvarado"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 12148
+    }
+  },
+  {
+    "file": "lyon_lavender.js",
+    "fnName": "generateLyonLavenderHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6963,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6963,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13879
+    }
+  },
+  {
+    "file": "madrid_sun.js",
+    "fnName": "generateMadridSunHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7064,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7064,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13924
+    }
+  },
+  {
+    "file": "manhattan_noir.js",
+    "fnName": "generateManhattanNoirHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6915,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6915,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13751
+    }
+  },
+  {
+    "file": "marcus_vance.js",
+    "fnName": "generateMarcusVanceHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 9629,
+      "resurrectedMockStrings": [
+        "Marcus Vance"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 9629,
+      "resurrectedMockStrings": [
+        "Marcus Vance"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 17500
+    }
+  },
+  {
+    "file": "mariana.js",
+    "fnName": "generateMarianaHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 9472,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 9472,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 16027
+    }
+  },
+  {
+    "file": "milan_blush.js",
+    "fnName": "generateMilanBlushHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6987,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6987,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13206
+    }
+  },
+  {
+    "file": "montreal_frost.js",
+    "fnName": "generateMontrealFrostHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7096,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7096,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13852
+    }
+  },
+  {
+    "file": "ocean_block.js",
+    "fnName": "generateOceanBlockHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6343,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6343,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11348
+    }
+  },
+  {
+    "file": "olivia.js",
+    "fnName": "generateOliviaHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 8909,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 8909,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 16659
+    }
+  },
+  {
+    "file": "ong_burgundy.js",
+    "fnName": "generateOngBurgundyHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6581,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6581,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11687
+    }
+  },
+  {
+    "file": "osaka_minimal.js",
+    "fnName": "generateOsakaMinimalHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7077,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7077,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13849
+    }
+  },
+  {
+    "file": "oslo_taupe.js",
+    "fnName": "generateOsloTaupeHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6488,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6488,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 12713
+    }
+  },
+  {
+    "file": "overlapping_badge.js",
+    "fnName": "generateOverlappingBadgeHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6648,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6648,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13323
+    }
+  },
+  {
+    "file": "oxford_burgundy.js",
+    "fnName": "generateOxfordBurgundyHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5821,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5821,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11111
+    }
+  },
+  {
+    "file": "prague_brass.js",
+    "fnName": "generatePragueBrassHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7087,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7087,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13327
+    }
+  },
+  {
+    "file": "reykjavik_slate.js",
+    "fnName": "generateReykjavikSlateHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6623,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6623,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 12805
+    }
+  },
+  {
+    "file": "richard.js",
+    "fnName": "generateRichardHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5846,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5846,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 12565
+    }
+  },
+  {
+    "file": "richard_sanchez.js",
+    "fnName": "generateRichardSanchezHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7756,
+      "resurrectedMockStrings": [
+        "Richard Sanchez"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7756,
+      "resurrectedMockStrings": [
+        "Richard Sanchez"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13301
+    }
+  },
+  {
+    "file": "sage_pastel.js",
+    "fnName": "generateSagePastelHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6313,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6313,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11212
+    }
+  },
+  {
+    "file": "sanchez_dark.js",
+    "fnName": "generateSanchezDarkHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6338,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6338,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 14863
+    }
+  },
+  {
+    "file": "sanchez_mono.js",
+    "fnName": "generateSanchezMonoHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6107,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6107,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11684
+    }
+  },
+  {
+    "file": "sanchez_wave.js",
+    "fnName": "generateSanchezWaveHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5541,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5541,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 10040
+    }
+  },
+  {
+    "file": "san_francisco_skyline.js",
+    "fnName": "generateSanFranciscoSkylineHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7040,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7040,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13920
+    }
+  },
+  {
+    "file": "schumacher_charcoal.js",
+    "fnName": "generateSchumacherCharcoalHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6265,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6265,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11935
+    }
+  },
+  {
+    "file": "seattle_emerald.js",
+    "fnName": "generateSeattleEmeraldHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6918,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6918,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13255
+    }
+  },
+  {
+    "file": "sebastian_bennett.js",
+    "fnName": "generateSebastianBennettHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6388,
+      "resurrectedMockStrings": [
+        "Sebastian Bennett"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6388,
+      "resurrectedMockStrings": [
+        "Sebastian Bennett"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11022
+    }
+  },
+  {
+    "file": "seoul_neon.js",
+    "fnName": "generateSeoulNeonHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6793,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6793,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13094
+    }
+  },
+  {
+    "file": "singapore_ruby.js",
+    "fnName": "generateSingaporeRubyHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6722,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6722,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13002
+    }
+  },
+  {
+    "file": "split_dual_block.js",
+    "fnName": "generateSplitDualBlockHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7456,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7456,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 15155
+    }
+  },
+  {
+    "file": "stockholm_monochrome.js",
+    "fnName": "generateStockholmMonochromeHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6335,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6335,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 12787
+    }
+  },
+  {
+    "file": "stockholm_yellow.js",
+    "fnName": "generateStockholmYellowHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6975,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6975,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13440
+    }
+  },
+  {
+    "file": "terracotta_arch.js",
+    "fnName": "generateTerracottaArchHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7859,
+      "resurrectedMockStrings": [
+        "Adeline Palmerston",
+        "Adeline",
+        "Palmerston"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7859,
+      "resurrectedMockStrings": [
+        "Adeline Palmerston",
+        "Adeline",
+        "Palmerston"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11377
+    }
+  },
+  {
+    "file": "tokyo_ice_blue.js",
+    "fnName": "generateTokyoIceBlueHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6991,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6991,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13303
+    }
+  },
+  {
+    "file": "vancouver_pine.js",
+    "fnName": "generateVancouverPineHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7010,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7010,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13832
+    }
+  },
+  {
+    "file": "venice_sand_split.js",
+    "fnName": "generateVeniceSandSplitHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7044,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7044,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13390
+    }
+  },
+  {
+    "file": "vienna_crest.js",
+    "fnName": "generateViennaCrestHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5779,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 5779,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11013
+    }
+  },
+  {
+    "file": "violet_modern.js",
+    "fnName": "generateVioletModernHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6295,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6295,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11284
+    }
+  },
+  {
+    "file": "wilson_light.js",
+    "fnName": "generateWilsonLightHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7005,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 7005,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 12356
+    }
+  },
+  {
+    "file": "wilson_minimal.js",
+    "fnName": "generateWilsonMinimalHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6046,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6046,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11064
+    }
+  },
+  {
+    "file": "ziv_olive.js",
+    "fnName": "generateZivOliveHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6504,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6504,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 11977
+    }
+  },
+  {
+    "file": "zurich_slate_block.js",
+    "fnName": "generateZurichSlateBlockHtml",
+    "emptyPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6881,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "nullPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 6881,
+      "resurrectedMockStrings": [
+        "Candidate Name"
+      ]
+    },
+    "richPayload": {
+      "ok": true,
+      "error": null,
+      "outputLength": 13356
+    }
+  }
+]

@@ -1,16 +1,16 @@
 import { lazy, Suspense, useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 import PublicOnlyRoute from './components/PublicOnlyRoute'
 import { BACKEND_URL } from './utils/api'
-import AIChatBot from './components/AIChatBot'
+const AIChatBot = lazyWithRetry(() => import('./components/AIChatBot'));
 
 // Resilient dynamic importer that auto-reloads once if a Vite HMR or browser chunk cache error occurs
-const lazyWithRetry = (componentImport) =>
-  lazy(async () => {
+function lazyWithRetry(componentImport) {
+  return lazy(async () => {
     const pageHasBeenForceRefreshed = JSON.parse(
       window.sessionStorage.getItem('page-has-been-force-refreshed') || 'false'
     );
@@ -34,6 +34,7 @@ const lazyWithRetry = (componentImport) =>
       throw error;
     }
   });
+}
 
 const Home = lazyWithRetry(() => import('./pages/Home'))
 const PdfToImage = lazyWithRetry(() => import('./pages/pdf/PdfToImage'))
@@ -150,7 +151,7 @@ export default function App() {
         try {
           const res = await fetch(`${BACKEND_URL}/api/bootstrap/status`);
           if (res.ok) {
-            console.log('[DocForge] Backend connected.');
+            console.log('[DocScalar] Backend connected.');
             return;
           }
         } catch {
@@ -161,7 +162,7 @@ export default function App() {
         }
       }
       if (!cancelled) {
-        console.warn('[DocForge] Backend unreachable after retries. Client-side tools still work.');
+        console.warn('[DocScalar] Backend unreachable after retries. Client-side tools still work.');
       }
     };
     pingBackend();
@@ -239,6 +240,8 @@ export default function App() {
             <Route path="/url-to-pdf" element={<UrlToPdf />} />
             <Route path="/unzip-file" element={<UnzipFile />} />
             <Route path="/document-viewer" element={<DocumentViewer />} />
+            <Route path="/summarize-pdf" element={<Navigate to="/ai-summarizer" replace />} />
+            <Route path="/translate-pdf" element={<Navigate to="/ai-translator" replace />} />
             <Route path="/coming-soon/:toolId" element={<ComingSoon />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
@@ -267,7 +270,9 @@ export default function App() {
           </Suspense>
       </main>
       {!hideFooter && <Footer />}
-      <AIChatBot />
+      <Suspense fallback={null}>
+        <AIChatBot />
+      </Suspense>
     </>
   )
 }

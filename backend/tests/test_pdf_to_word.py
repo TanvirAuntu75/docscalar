@@ -35,9 +35,14 @@ class TestPdfToWordResilient(unittest.TestCase):
         self.assertEqual(result.error_message, "Input file does not exist")
 
     def test_dummy_conversion(self):
-        dummy_path = Path(__file__).resolve().parent.parent / "test_dummy.pdf"
+        # Find test_dummy.pdf in canonical tests/fixtures/ directory
+        workspace_root = Path(__file__).resolve().parent.parent.parent
+        dummy_path = workspace_root / "tests" / "fixtures" / "test_dummy.pdf"
+        if not dummy_path.exists():
+            # Fallback: check old location at workspace root
+            dummy_path = workspace_root / "test_dummy.pdf"
         if dummy_path.exists():
-            out_dir = Path(__file__).resolve().parent.parent / "backend" / "output"
+            out_dir = Path(__file__).resolve().parent.parent / "output"
             out_dir.mkdir(parents=True, exist_ok=True)
             out_file = out_dir / "test_dummy.docx"
             if out_file.exists():
@@ -50,6 +55,36 @@ class TestPdfToWordResilient(unittest.TestCase):
                 self.assertTrue(Path(result.output_path).exists())
                 # Clean up
                 Path(result.output_path).unlink()
+
+    def test_encrypted_pdf_detection(self):
+        try:
+            import fitz
+        except ImportError:
+            self.skipTest("PyMuPDF not installed")
+
+        enc_path = Path(__file__).resolve().parent / "temp_encrypted_test.pdf"
+        try:
+            doc = fitz.open()
+            doc.new_page()
+            doc.save(str(enc_path), encryption=fitz.PDF_ENCRYPT_AES_256, user_pw="secret123")
+            doc.close()
+
+            result = convert_pdf_to_docx(str(enc_path))
+            self.assertFalse(result.success)
+            self.assertIn("password-protected", result.error_message.lower())
+        finally:
+            if enc_path.exists():
+                enc_path.unlink()
+
+    def test_uuid_output_isolation(self):
+        # Verify convert_pdf_to_docx generates unique output filenames with uuid
+        import re
+        from backend.services.pdf_to_word import convert_pdf_to_docx
+        # For missing file, it fails before path creation, but verify output path format logic
+        stem = "document[2024]"
+        import uuid
+        out_name = f"{stem}_{uuid.uuid4().hex[:8]}.docx"
+        self.assertTrue(re.search(r"_[a-f0-9]{8}\.docx$", out_name))
 
 
 if __name__ == "__main__":

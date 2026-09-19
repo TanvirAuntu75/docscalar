@@ -9,6 +9,8 @@ import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
+import { useDpiQuality } from '../../hooks/useDpiQuality';
+import { DpiQualitySelector } from '../../components/DpiQualitySelector';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -20,10 +22,19 @@ export default function PdfToImage() {
   const [activeFileIndex, setActiveFileIndex] = useState(0);
 
   // Conversion Settings
+  const { dpi, setDpi } = useDpiQuality();
   const [format, setFormat] = useState('png'); // 'png' | 'jpeg' | 'webp'
   const [quality, setQuality] = useState(0.92);
-  const [scale, setScale] = useState(2); // 1 = 72dpi, 2 = 150dpi, 3 = 300dpi
+  const [scale, setScale] = useState(dpi === 72 ? 1 : dpi === 300 ? 4 : dpi === 600 ? 8 : 2);
   const [exportMode, setExportMode] = useState(SUPPORTS_DIR_PICKER ? 'folder' : 'zip');
+
+  // Synchronize scale multiplier with unified studio DPI preset
+  useEffect(() => {
+    if (dpi === 72) setScale(1);
+    else if (dpi === 150) setScale(2);
+    else if (dpi === 300) setScale(4);
+    else if (dpi === 600) setScale(8);
+  }, [dpi]);
   const [pageScope, setPageScope] = useState('all'); // 'all' | 'custom'
   const [customRange, setCustomRange] = useState('');
   const [selectedPages, setSelectedPages] = useState(new Set());
@@ -282,7 +293,7 @@ export default function PdfToImage() {
           totalPages: savedCount,
           folderName,
           format: format.toUpperCase(),
-          scale: `${scale}x (${scale * 72} DPI)`,
+          scale: `${scale}× (${dpi} DPI)`,
           previews: previewBlobsRef.current,
           previewUrls
         });
@@ -316,7 +327,7 @@ export default function PdfToImage() {
           size: zipBlob.size,
           totalPages: blobs.length,
           format: format.toUpperCase(),
-          scale: `${scale}x (${scale * 72} DPI)`,
+          scale: `${scale}× (${dpi} DPI)`,
           previewUrls
         });
 
@@ -367,7 +378,7 @@ export default function PdfToImage() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="PDF to Images Online Free — High-Resolution Page Converter | DocForge"
+        title="PDF to Images Online Free — High-Resolution Page Converter | DocScalar"
         description="Convert PDF pages to lossless PNG, JPG, or WebP images. Stream directly to disk or download as a ZIP archive."
       />
 
@@ -387,12 +398,12 @@ export default function PdfToImage() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
               {/* Sticky Canvas Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2 flex-wrap">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2.5">
+                  <div className="flex items-center gap-2.5 flex-wrap">
                     {/* Active File Switcher */}
                     {files.length > 1 ? (
-                      <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
-                        <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">description</span>
+                      <div className="h-8 flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-medium)] shrink-0">
+                        <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
                         <select
                           value={activeFileIndex}
                           onChange={(e) => setActiveFileIndex(parseInt(e.target.value))}
@@ -406,7 +417,7 @@ export default function PdfToImage() {
                         </select>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
+                      <div className="h-8 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)] shrink-0">
                         <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
                         <span className="truncate max-w-[200px]">{files[0]?.name}</span>
                         <span className="text-[var(--text-secondary)] font-normal">({formatFileSize(files[0]?.size || 0)})</span>
@@ -414,7 +425,7 @@ export default function PdfToImage() {
                     )}
 
                     {totalPages > 0 && (
-                      <div className="flex items-center gap-1 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-secondary)]">
+                      <div className="h-8 flex items-center gap-1.5 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-secondary)] shrink-0">
                         <span className="material-symbols-outlined text-[14px]">auto_stories</span>
                         <span>{targetPageIndices.length} / {totalPages} Selected</span>
                       </div>
@@ -424,14 +435,14 @@ export default function PdfToImage() {
                     <button
                       type="button"
                       onClick={selectAllPages}
-                      className="px-2 py-1 text-xs font-semibold rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] border border-[var(--border-subtle)] text-[var(--text-primary)] cursor-pointer transition-colors"
+                      className="h-8 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] border border-[var(--border-subtle)] text-[var(--text-primary)] cursor-pointer transition-colors shrink-0"
                     >
                       Select All
                     </button>
                     <button
                       type="button"
                       onClick={deselectAllPages}
-                      className="px-2 py-1 text-xs font-semibold rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] border border-[var(--border-subtle)] text-[var(--text-secondary)] cursor-pointer transition-colors"
+                      className="h-8 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] border border-[var(--border-subtle)] text-[var(--text-secondary)] cursor-pointer transition-colors shrink-0"
                     >
                       Clear
                     </button>
@@ -449,16 +460,16 @@ export default function PdfToImage() {
                         placeholder="Page #"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-7 pr-2 py-1 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none w-20"
+                        className="h-8 pl-7 pr-2.5 py-1 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none w-24"
                       />
                     </div>
 
                     {/* Grid Density Zoom */}
-                    <div className="flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
+                    <div className="h-8 flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)] shrink-0">
                       <button
                         type="button"
                         onClick={() => setZoomLevel(3)}
-                        className={`p-1 rounded cursor-pointer transition-colors ${zoomLevel === 3 ? 'bg-[var(--bg-primary)] text-[var(--color-primary)] shadow-xs' : 'text-[var(--text-secondary)]'}`}
+                        className={`h-7 w-7 flex items-center justify-center rounded cursor-pointer transition-colors ${zoomLevel === 3 ? 'bg-[var(--bg-primary)] text-[var(--color-primary)] shadow-xs' : 'text-[var(--text-secondary)]'}`}
                         title="Compact View"
                       >
                         <span className="material-symbols-outlined text-[16px]">grid_view</span>
@@ -466,7 +477,7 @@ export default function PdfToImage() {
                       <button
                         type="button"
                         onClick={() => setZoomLevel(1)}
-                        className={`p-1 rounded cursor-pointer transition-colors ${zoomLevel === 1 ? 'bg-[var(--bg-primary)] text-[var(--color-primary)] shadow-xs' : 'text-[var(--text-secondary)]'}`}
+                        className={`h-7 w-7 flex items-center justify-center rounded cursor-pointer transition-colors ${zoomLevel === 1 ? 'bg-[var(--bg-primary)] text-[var(--color-primary)] shadow-xs' : 'text-[var(--text-secondary)]'}`}
                         title="Standard View"
                       >
                         <span className="material-symbols-outlined text-[16px]">view_module</span>
@@ -474,7 +485,7 @@ export default function PdfToImage() {
                       <button
                         type="button"
                         onClick={() => setZoomLevel(2)}
-                        className={`p-1 rounded cursor-pointer transition-colors ${zoomLevel === 2 ? 'bg-[var(--bg-primary)] text-[var(--color-primary)] shadow-xs' : 'text-[var(--text-secondary)]'}`}
+                        className={`h-7 w-7 flex items-center justify-center rounded cursor-pointer transition-colors ${zoomLevel === 2 ? 'bg-[var(--bg-primary)] text-[var(--color-primary)] shadow-xs' : 'text-[var(--text-secondary)]'}`}
                         title="Large View"
                       >
                         <span className="material-symbols-outlined text-[16px]">crop_free</span>
@@ -484,7 +495,7 @@ export default function PdfToImage() {
                     <button
                       type="button"
                       onClick={resetWorkspace}
-                      className="p-1 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer"
+                      className="h-8 w-8 flex items-center justify-center hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-red-500/20"
                       title="Reset workspace"
                     >
                       <span className="material-symbols-outlined text-[18px]">restart_alt</span>
@@ -627,27 +638,17 @@ export default function PdfToImage() {
                   <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
                     Resolution / DPI Scale
                   </span>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {[
-                      { val: 1, label: '1×', dpi: '72 DPI' },
-                      { val: 2, label: '2×', dpi: '150 DPI' },
-                      { val: 3, label: '3×', dpi: '300 DPI' }
-                    ].map((sc) => (
-                      <button
-                        key={sc.val}
-                        type="button"
-                        onClick={() => setScale(sc.val)}
-                        className={`p-2.5 rounded-xl border flex flex-col items-center gap-0.5 transition-all cursor-pointer ${
-                          scale === sc.val
-                            ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold shadow-xs'
-                            : 'border-[var(--border-subtle)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'
-                        }`}
-                      >
-                        <span className="text-xs font-extrabold">{sc.label}</span>
-                        <span className="text-[9px] opacity-75">{sc.dpi}</span>
-                      </button>
-                    ))}
-                  </div>
+                  <DpiQualitySelector
+                    dpi={dpi}
+                    onChange={(newDpi) => {
+                      setDpi(newDpi);
+                      if (newDpi === 72) setScale(1);
+                      else if (newDpi === 150) setScale(2);
+                      else if (newDpi === 300) setScale(4);
+                      else if (newDpi === 600) setScale(8);
+                    }}
+                    mode="segmented"
+                  />
                 </div>
 
                 {/* 3. Page Selection Scope */}
@@ -766,14 +767,16 @@ export default function PdfToImage() {
                 {/* Progress Bar (While Processing) */}
                 {processing && (
                   <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                    <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                           progress_activity
                         </span>
-                        {progressStage || 'Converting...'}
-                      </span>
-                      <span>{progress}%</span>
+                        <span className="truncate" title={progressStage || 'Converting...'}>
+                          {progressStage || 'Converting...'}
+                        </span>
+                      </div>
+                      <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div

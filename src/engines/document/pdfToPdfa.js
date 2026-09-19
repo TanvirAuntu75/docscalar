@@ -47,10 +47,10 @@ function createXmpMetadata(conformanceLevel = '2b', colorProfile = 'sRGB IEC6196
       <xmp:CreateDate>${dateStr}</xmp:CreateDate>
       <xmp:ModifyDate>${dateStr}</xmp:ModifyDate>
       <xmp:MetadataDate>${dateStr}</xmp:MetadataDate>
-      <xmp:CreatorTool>DocForge ISO-19005 PDF/A Engine</xmp:CreatorTool>
+      <xmp:CreatorTool>DocScalar ISO-19005 PDF/A Engine</xmp:CreatorTool>
     </rdf:Description>
     <rdf:Description rdf:about="" xmlns:pdf="http://ns.adobe.com/pdf/1.3/">
-      <pdf:Producer>DocForge PDF/A Archival Distiller</pdf:Producer>
+      <pdf:Producer>DocScalar PDF/A Archival Distiller</pdf:Producer>
     </rdf:Description>
   </rdf:RDF>
 </x:xmpmeta>
@@ -81,8 +81,8 @@ export async function directPdfToPdfa(file, options = {}, onProgress = () => {})
 
   // Set document standard metadata
   pdfDoc.setTitle(pdfDoc.getTitle() || 'Archival Document');
-  pdfDoc.setProducer('DocForge PDF/A Archival Distiller');
-  pdfDoc.setCreator('DocForge ISO-19005 Engine');
+  pdfDoc.setProducer('DocScalar PDF/A Archival Distiller');
+  pdfDoc.setCreator('DocScalar ISO-19005 Engine');
   pdfDoc.setModificationDate(new Date());
 
   // Inject ISO 19005 OutputIntent into Catalog

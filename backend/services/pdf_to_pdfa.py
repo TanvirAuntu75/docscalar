@@ -1,16 +1,26 @@
+import logging
+import os
 import subprocess
-import sys
-import tempfile
+import uuid
 from pathlib import Path
 
 from backend import config
-from backend.services.libreoffice import ConversionResult
+from backend.services.libreoffice import (
+    ConversionResult,
+    is_valid_pdf_structure,
+    kill_process_tree,
+    resolve_ghostscript_binary,
+)
 from backend.services.utils import validate_pdf
+
+logger = logging.getLogger("pdf_to_pdfa")
 
 
 def convert_pdf_to_pdfa(input_path: str) -> ConversionResult:
     """
-    Converts a PDF file to ISO-compliant PDF/A format using LibreOffice Draw writer filters.
+    Converts a PDF file to ISO 19005-2 (PDF/A-2b) compliant archival format using Ghostscript CLI.
+    Operating directly on the PostScript/PDF stream avoids LibreOffice Draw vector-to-drawing distortion.
+    Includes process tree termination safety and output concurrency isolation.
     """
     try:
         input_file = Path(input_path)
@@ -23,84 +33,86 @@ def convert_pdf_to_pdfa(input_path: str) -> ConversionResult:
         if validation_err:
             return ConversionResult(success=False, error_message=validation_err)
 
-        output_dir = config.OUTPUT_DIR
-        temp_profile_dir = Path(tempfile.mkdtemp(prefix="lo_profile_"))
-        env_uri = temp_profile_dir.resolve().as_uri()
-
-        try:
-            # Build draw_pdf_Export command with PDF/A-1b compliance filter
-            cmd = [
-                config.LIBREOFFICE_PATH,
-                "--headless",
-                "--invisible",
-                "--nologo",
-                "--nodefault",
-                "--norestore",
-                "--nofirststartwizard",
-                f"-env:UserInstallation={env_uri}",
-                "--convert-to",
-                'pdf:draw_pdf_Export:{"SelectPdfVersion":{"type":"long","value":"1"}}',
-                "--outdir",
-                str(output_dir),
-                str(input_file),
-            ]
-
-            creation_flags = 0
-            if sys.platform == "win32":
-                creation_flags = 0x08000000  # CREATE_NO_WINDOW
-
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=120,
-                creationflags=creation_flags,
-            )
-
-            if result.returncode != 0:
-                return ConversionResult(
-                    success=False,
-                    error_message=f"LibreOffice PDF/A conversion failed: {result.stderr or result.stdout}",
-                )
-
-            # Expected output filename (usually input_file.stem + .pdf)
-            # To avoid colliding with original file names, let's rename it to stem + _pdfa.pdf
-            original_output = output_dir / f"{input_file.stem}.pdf"
-            target_output = output_dir / f"{input_file.stem}_pdfa.pdf"
-
-            if not original_output.exists():
-                # Search for any matches excluding already converted _pdfa.pdf
-                matches = [
-                    f
-                    for f in output_dir.glob(f"*{input_file.stem}*.pdf")
-                    if not f.name.endswith("_pdfa.pdf")
-                ]
-                if matches:
-                    original_output = matches[0]
-                else:
-                    return ConversionResult(
-                        success=False,
-                        error_message="Conversion finished but output PDF/A could not be found",
-                    )
-
-            # Rename output to specify it as PDF/A using os.replace
-            if original_output.exists():
-                import os
-
-                os.replace(str(original_output), str(target_output))
-
+        gs_exec = resolve_ghostscript_binary()
+        if not gs_exec:
             return ConversionResult(
-                success=True,
-                output_path=str(target_output),
-                file_size_bytes=target_output.stat().st_size,
+                success=False,
+                error_message="Ghostscript binary not found on host system. Please install Ghostscript (gswin64c / gs) for ISO-compliant PDF/A conversion.",
             )
-        finally:
-            import shutil
 
-            shutil.rmtree(temp_profile_dir, ignore_errors=True)
-    except subprocess.TimeoutExpired:
+        output_dir = config.OUTPUT_DIR
+        output_dir.mkdir(parents=True, exist_ok=True)
+        # Use collision-safe unique filename with entropy
+        entropy = uuid.uuid4().hex[:8]
+        target_output = output_dir / f"{input_file.stem}_{entropy}_pdfa.pdf"
+
+        # Build Ghostscript PDF/A-2b compliance command
+        cmd = [
+            gs_exec,
+            "-dBATCH",
+            "-dNOPAUSE",
+            "-dNOOUTERSAVE",
+            "-sDEVICE=pdfwrite",
+            "-dPDFA=2",  # PDF/A-2b ISO 19005-2 compliance
+            "-dPDFACompatibilityPolicy=1",  # Strict conformance policy
+            "-sColorConversionStrategy=UseDeviceIndependentColor",
+            "-dAutoRotatePages=/None",
+            "-dEmbedAllFonts=true",
+            "-dSubsetFonts=true",
+            "-dCompressFonts=true",
+            f"-sOutputFile={target_output!s}",
+            str(input_file),
+        ]
+
+        popen_kw = dict(stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if os.name == "posix":
+            popen_kw["preexec_fn"] = os.setsid
+        else:
+            popen_kw["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+
+        proc = subprocess.Popen(cmd, **popen_kw)
+        try:
+            stdout_bytes, stderr_bytes = proc.communicate(timeout=120)
+            stdout = stdout_bytes.decode("utf-8", errors="replace")
+            stderr = stderr_bytes.decode("utf-8", errors="replace")
+        except subprocess.TimeoutExpired:
+            logger.error("Ghostscript PDF/A conversion timed out after 120s; terminating process tree")
+            kill_process_tree(proc, grace_s=3.0)
+            try:
+                proc.communicate(timeout=2.0)
+            except Exception:
+                pass
+            return ConversionResult(
+                success=False, error_message="Ghostscript PDF/A conversion timed out after 120s"
+            )
+
+        if proc.returncode != 0:
+            error_detail = (stderr or stdout or "").strip()
+            return ConversionResult(
+                success=False,
+                error_message=f"Ghostscript PDF/A conversion failed (exit code {proc.returncode}): {error_detail}",
+            )
+
+        if not target_output.exists() or target_output.stat().st_size == 0:
+            return ConversionResult(
+                success=False,
+                error_message="Ghostscript finished but output PDF/A file was not generated",
+            )
+
+        if not is_valid_pdf_structure(target_output):
+            return ConversionResult(
+                success=False,
+                error_message="Generated PDF/A failed structural integrity validation",
+            )
+
         return ConversionResult(
-            success=False, error_message="LibreOffice PDF/A conversion timed out"
+            success=True,
+            output_path=str(target_output),
+            file_size_bytes=target_output.stat().st_size,
         )
+
     except Exception as e:
+        logger.exception("Unexpected error in PDF/A conversion")
         return ConversionResult(success=False, error_message=str(e))
+
+

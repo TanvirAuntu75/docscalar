@@ -1,0 +1,852 @@
+[
+  {
+    "file": "adam_fletcher.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "adeline_palmerston.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "adora_diagonal.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "adora_montminy.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "alfredo_torres.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "alvarado_slate.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "amsterdam_orange.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "arthur_pendelton.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "austin_amber.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "barcelona_cyan.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "berlin_two_tone.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "bordeaux_wine.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "boston_crimson.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "buenos_aires_tango.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "cairo_gold.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "cambridge_rose.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "cape_town_sunset.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "card_matrix.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "charles.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "copenhagen_sand.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "date_capsule.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "diagonal_wedge.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "donna_stroupe.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "dublin_forest.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "edinburgh_navy.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "emerald_prestige.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "emma.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "floating_card_matrix.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "florence_terracotta.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "geneva_charcoal.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "helsinki_frost.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "helsinki_navy.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "howard_ong.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "isabel_mercado.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "isabel_schumacher.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "jonathan.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "jonathan_patterson.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "kathleen.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "kelly_mint.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "korina_villanueva.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "kyiv_golden.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "kyoto_coral.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "lilac_sidebar.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "lorna_alvarado.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "lyon_lavender.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "madrid_sun.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "manhattan_noir.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "marcus_vance.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "mariana.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "milan_blush.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "montreal_frost.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "ocean_block.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "olivia.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "ong_burgundy.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "osaka_minimal.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "oslo_taupe.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "overlapping_badge.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "oxford_burgundy.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "prague_brass.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "reykjavik_slate.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "richard.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "richard_sanchez.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "sage_pastel.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "sanchez_dark.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "sanchez_mono.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "sanchez_wave.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "san_francisco_skyline.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "schumacher_charcoal.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "seattle_emerald.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "sebastian_bennett.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "seoul_neon.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "singapore_ruby.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "split_dual_block.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "stockholm_monochrome.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "stockholm_yellow.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "terracotta_arch.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "tokyo_ice_blue.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "vancouver_pine.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "venice_sand_split.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "vienna_crest.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": false,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "violet_modern.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "wilson_light.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "wilson_minimal.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "ziv_olive.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  },
+  {
+    "file": "zurich_slate_block.js",
+    "hasEmptyExpHeader": false,
+    "hasEmptyEduHeader": false,
+    "hasEmptySkillsHeader": false,
+    "hasEmptyContactHeader": true,
+    "hasEmptySummaryHeader": false,
+    "hasOrphanPhone": false,
+    "hasOrphanEmail": false
+  }
+]

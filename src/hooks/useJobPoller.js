@@ -33,9 +33,20 @@ export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
 
     const MAX_POLL_TIME = 15 * 60 * 1000; // 15 minutes max duration for large scanned documents
 
+    const stopPollingWorker = () => {
+      if (pollWorkerRef.current) {
+        try {
+          pollWorkerRef.current.postMessage('stop');
+          pollWorkerRef.current.terminate();
+        } catch {}
+        pollWorkerRef.current = null;
+      }
+    };
+
     const pollJob = async () => {
       // Check for timeout
       if (startTimeRef.current && (Date.now() - startTimeRef.current > MAX_POLL_TIME)) {
+        stopPollingWorker();
         setStatus('failed');
         setError('Processing timed out. Please try again.');
         return;
@@ -51,6 +62,7 @@ export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
         consecutiveFailuresRef.current = 0; // reset on successful fetch
         
         if (data.status === 'finished') {
+          stopPollingWorker();
           setStatus('finished');
           setProgress(100);
           setStatusMessage('Completed');
@@ -58,9 +70,12 @@ export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
             success: true,
             downloadUrl: `${apiBaseUrl}${data.download_url}`
           });
+          return;
         } else if (data.status === 'failed') {
+          stopPollingWorker();
           setStatus('failed');
           setError(data.error || 'Conversion task failed on server');
+          return;
         } else if (data.status === 'started') {
           setStatus('started');
           setProgress(data.progress || 30);
@@ -73,6 +88,7 @@ export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
       } catch (err) {
         consecutiveFailuresRef.current += 1;
         if (consecutiveFailuresRef.current >= 8) {
+          stopPollingWorker();
           setStatus('failed');
           setError('Network connection lost. The server is unreachable after multiple attempts.');
         }
@@ -131,6 +147,13 @@ export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
   }, [jobId, apiBaseUrl]);
 
   const resetPoller = useCallback(() => {
+    if (pollWorkerRef.current) {
+      try {
+        pollWorkerRef.current.postMessage('stop');
+        pollWorkerRef.current.terminate();
+      } catch {}
+      pollWorkerRef.current = null;
+    }
     setJobId(null);
     setStatus('idle');
     setProgress(0);

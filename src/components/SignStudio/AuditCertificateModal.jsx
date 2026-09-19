@@ -52,7 +52,7 @@ export default function AuditCertificateModal({
               <span className="font-mono text-[10px] text-on-surface-variant">ID: {certificateId}</span>
             </div>
             <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-primary text-white shadow-xs">
-              ✓ Verified Stamped
+              Verified Stamped
             </span>
           </div>
 

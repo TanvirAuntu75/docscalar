@@ -173,28 +173,50 @@ export default function RedactStudio({ file, params, onChange, nlpOp }) {
     }
   };
 
-  // Drag-and-draw bounding boxes
-  const handleMouseDown = (e) => {
+  // Drag-and-draw bounding boxes with subpixel coordinate scaling
+  const getCanvasCoords = (e) => {
     const overlay = overlayCanvasRef.current;
-    if (!overlay) return;
+    if (!overlay) return null;
     const rect = overlay.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    if (rect.width === 0 || rect.height === 0) return null;
+
+    const scaleX = overlay.width / rect.width;
+    const scaleY = overlay.height / rect.height;
+
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else if (e.changedTouches && e.changedTouches.length > 0) {
+      clientX = e.changedTouches[0].clientX;
+      clientY = e.changedTouches[0].clientY;
+    }
+
+    if (clientX === undefined || clientY === undefined) return null;
+
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    };
+  };
+
+  const handleMouseDown = (e) => {
+    const coords = getCanvasCoords(e);
+    if (!coords) return;
 
     setIsDragging(true);
-    setDragStart({ x, y });
-    setDragEnd({ x, y });
+    setDragStart(coords);
+    setDragEnd(coords);
   };
 
   const handleMouseMove = (e) => {
     if (!isDragging) return;
-    const overlay = overlayCanvasRef.current;
-    if (!overlay) return;
-    const rect = overlay.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const coords = getCanvasCoords(e);
+    if (!coords) return;
 
-    setDragEnd({ x, y });
+    setDragEnd(coords);
   };
 
   const handleMouseUp = () => {
@@ -206,6 +228,7 @@ export default function RedactStudio({ file, params, onChange, nlpOp }) {
 
     const w = overlay.width;
     const h = overlay.height;
+    if (w <= 0 || h <= 0) return;
 
     const x0 = Math.min(dragStart.x, dragEnd.x) / w;
     const y0 = Math.min(dragStart.y, dragEnd.y) / h;
@@ -229,6 +252,24 @@ export default function RedactStudio({ file, params, onChange, nlpOp }) {
       setRedactions([...redactions, newRedact]);
     }
   };
+
+  // Keyboard navigation & quick delete
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target?.tagName) || e.target?.isContentEditable) {
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setActivePageIndex(prev => Math.max(0, prev - 1));
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        setActivePageIndex(prev => Math.min(totalPages - 1, prev + 1));
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [totalPages]);
 
   const removeRedaction = (id) => {
     setRedactions(prev => prev.filter(r => r.id !== id));
@@ -274,7 +315,10 @@ export default function RedactStudio({ file, params, onChange, nlpOp }) {
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
-              className="absolute top-0 left-0 w-full h-full z-10 rounded-lg"
+              onTouchStart={handleMouseDown}
+              onTouchMove={handleMouseMove}
+              onTouchEnd={handleMouseUp}
+              className="absolute top-0 left-0 w-full h-full z-10 rounded-lg touch-none"
             />
           </div>
         </div>

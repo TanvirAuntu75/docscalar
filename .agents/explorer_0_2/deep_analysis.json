@@ -1,0 +1,2522 @@
+{
+  "stats": {
+    "total": 85,
+    "usesPagination": 5,
+    "noPagination": 80,
+    "withFallbackMockStrings": 0,
+    "mockNamesDetected": {
+      "'Adam Fletcher'": 2,
+      "'Language'": 8,
+      "'Adeline Palmerston'": 4,
+      "'Candidate Name'": 68,
+      "'Alfredo Torres'": 3,
+      "'Arthur Pendelton'": 3,
+      "'Donna Stroupe'": 1,
+      "'Howard Ong'": 1,
+      "'ISABEL MERCADO'": 1,
+      "'Isabel Mercado'": 1,
+      "'Isabel Schumacher'": 2,
+      "'Jonathan Patterson'": 2,
+      "'Kelly Blackwell'": 1,
+      "'Korina Villanueva'": 1,
+      "'Lorna Alvarado'": 2,
+      "'Marcus Vance'": 3,
+      "'Richard Sanchez'": 2,
+      "'Sebastian Bennett'": 2,
+      "'Candidate'": 1
+    },
+    "mockContactDetected": {},
+    "templatePatterns": {},
+    "missingDfFields": [],
+    "arrayResurrections": []
+  },
+  "detailedFindings": [
+    {
+      "file": "adam_fletcher.js",
+      "fnName": "generateAdamFletcherHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Adam Fletcher'",
+        "data.name || 'Adam Fletcher'",
+        "name || 'Language'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 15,
+      "sampleDfFields": [
+        "name",
+        "title",
+        "summary",
+        "phone",
+        "email",
+        "location",
+        "skill:${idx}",
+        "custom:custom_languages:${idx}:title"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 482
+    },
+    {
+      "file": "adeline_palmerston.js",
+      "fnName": "generateAdelinePalmerstonHtml",
+      "usesPagination": true,
+      "nameFallbacks": [
+        "data.name || 'Adeline Palmerston'",
+        "data.name || 'Adeline Palmerston'",
+        "data.name || 'Adeline Palmerston'"
+      ],
+      "titleFallbacks": [
+        "title || 'Additional Information'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 26,
+      "sampleDfFields": [
+        "exp:${actualIdx}:date",
+        "exp:${actualIdx}:company",
+        "exp:${actualIdx}:role",
+        "exp:${actualIdx}:highlight:${hIdx}",
+        "proj:${actualIdx}:name",
+        "proj:${actualIdx}:url",
+        "proj:${actualIdx}:description",
+        "cert:${actualIdx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 741
+    },
+    {
+      "file": "adora_diagonal.js",
+      "fnName": "generateAdoraDiagonalHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 14,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 421
+    },
+    {
+      "file": "adora_montminy.js",
+      "fnName": "generateAdoraMontminyHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "name || 'Language'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 15,
+      "sampleDfFields": [
+        "summary",
+        "phone",
+        "email",
+        "location",
+        "skill:${idx}",
+        "custom:custom_languages:${idx}:title",
+        "edu:${idx}:date",
+        "edu:${idx}:school"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 492
+    },
+    {
+      "file": "alfredo_torres.js",
+      "fnName": "generateAlfredoTorresHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Alfredo Torres'",
+        "data.name || 'Alfredo Torres'",
+        "data.name || 'Alfredo Torres'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "name",
+        "title",
+        "phone",
+        "email",
+        "location",
+        "website",
+        "edu:${idx}:date",
+        "edu:${idx}:school"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 607
+    },
+    {
+      "file": "alvarado_slate.js",
+      "fnName": "generateAlvaradoSlateHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "exp:${idx}:company",
+        "exp:${idx}:date",
+        "exp:${idx}:role",
+        "exp:${idx}:highlight:${bIdx}",
+        "exp:${idx}:highlight:0",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 422
+    },
+    {
+      "file": "amsterdam_orange.js",
+      "fnName": "generateAmsterdamOrangeHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 444
+    },
+    {
+      "file": "arthur_pendelton.js",
+      "fnName": "generateArthurPendeltonHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Arthur Pendelton'",
+        "data.name || 'Arthur Pendelton'",
+        "data.name || 'Arthur Pendelton'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "name",
+        "title",
+        "phone",
+        "email",
+        "location",
+        "website",
+        "edu:${idx}:degree",
+        "edu:${idx}:school"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 566
+    },
+    {
+      "file": "austin_amber.js",
+      "fnName": "generateAustinAmberHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 444
+    },
+    {
+      "file": "barcelona_cyan.js",
+      "fnName": "generateBarcelonaCyanHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 424
+    },
+    {
+      "file": "berlin_two_tone.js",
+      "fnName": "generateBerlinTwoToneHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 375
+    },
+    {
+      "file": "bordeaux_wine.js",
+      "fnName": "generateBordeauxWineHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 430
+    },
+    {
+      "file": "boston_crimson.js",
+      "fnName": "generateBostonCrimsonHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 419
+    },
+    {
+      "file": "buenos_aires_tango.js",
+      "fnName": "generateBuenosAiresTangoHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 452
+    },
+    {
+      "file": "cairo_gold.js",
+      "fnName": "generateCairoGoldHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 451
+    },
+    {
+      "file": "cambridge_rose.js",
+      "fnName": "generateCambridgeRoseHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 440
+    },
+    {
+      "file": "cape_town_sunset.js",
+      "fnName": "generateCapeTownSunsetHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 439
+    },
+    {
+      "file": "card_matrix.js",
+      "fnName": "generateCardMatrixHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 15,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 368
+    },
+    {
+      "file": "charles.js",
+      "fnName": "generateCharlesHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:date",
+        "edu:${idx}:school",
+        "proj:${idx}:name",
+        "proj:${idx}:description"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 456
+    },
+    {
+      "file": "copenhagen_sand.js",
+      "fnName": "generateCopenhagenSandHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 427
+    },
+    {
+      "file": "date_capsule.js",
+      "fnName": "generateDateCapsuleHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 10,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "email",
+        "name"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 342
+    },
+    {
+      "file": "diagonal_wedge.js",
+      "fnName": "generateDiagonalWedgeHtml",
+      "usesPagination": true,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 20,
+      "sampleDfFields": [
+        "exp:${actualIdx}:role",
+        "exp:${actualIdx}:date",
+        "exp:${actualIdx}:company",
+        "exp:${actualIdx}:highlight:${hIdx}",
+        "proj:${actualIdx}:name",
+        "proj:${actualIdx}:url",
+        "proj:${actualIdx}:description",
+        "phone"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 593
+    },
+    {
+      "file": "donna_stroupe.js",
+      "fnName": "generateDonnaStroupeHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Donna Stroupe'",
+        "name || 'Language'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "name",
+        "title",
+        "email",
+        "phone",
+        "location",
+        "website",
+        "edu:${idx}:degree",
+        "edu:${idx}:school"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 518
+    },
+    {
+      "file": "dublin_forest.js",
+      "fnName": "generateDublinForestHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 424
+    },
+    {
+      "file": "edinburgh_navy.js",
+      "fnName": "generateEdinburghNavyHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 14,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 352
+    },
+    {
+      "file": "emerald_prestige.js",
+      "fnName": "generateEmeraldPrestigeHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 428
+    },
+    {
+      "file": "emma.js",
+      "fnName": "generateEmmaHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 15,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "proj:${idx}:description",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 429
+    },
+    {
+      "file": "floating_card_matrix.js",
+      "fnName": "generateFloatingCardMatrixHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 485
+    },
+    {
+      "file": "florence_terracotta.js",
+      "fnName": "generateFlorenceTerracottaHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 424
+    },
+    {
+      "file": "geneva_charcoal.js",
+      "fnName": "generateGenevaCharcoalHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 424
+    },
+    {
+      "file": "helsinki_frost.js",
+      "fnName": "generateHelsinkiFrostHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 14,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 355
+    },
+    {
+      "file": "helsinki_navy.js",
+      "fnName": "generateHelsinkiNavyHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 444
+    },
+    {
+      "file": "howard_ong.js",
+      "fnName": "generateHowardOngHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Howard Ong'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.certifications || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "name",
+        "title",
+        "email",
+        "phone",
+        "location",
+        "website",
+        "skill:${idx}",
+        "skill:${hardSkills.length + idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 505
+    },
+    {
+      "file": "isabel_mercado.js",
+      "fnName": "generateIsabelMercadoHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'ISABEL MERCADO'",
+        "data.name || 'Isabel Mercado'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 15,
+      "sampleDfFields": [
+        "name",
+        "title",
+        "location",
+        "phone",
+        "website",
+        "email",
+        "skill:${idx}",
+        "summary"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 588
+    },
+    {
+      "file": "isabel_schumacher.js",
+      "fnName": "generateIsabelSchumacherHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Isabel Schumacher'",
+        "data.name || 'Isabel Schumacher'",
+        "name || 'Language'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 15,
+      "sampleDfFields": [
+        "summary",
+        "phone",
+        "email",
+        "location",
+        "skill:${idx}",
+        "custom:custom_languages:${idx}:title",
+        "name",
+        "title"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 510
+    },
+    {
+      "file": "jonathan.js",
+      "fnName": "generateJonathanHtml",
+      "usesPagination": true,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Additional Information'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 27,
+      "sampleDfFields": [
+        "email",
+        "phone",
+        "location",
+        "linkedin",
+        "website",
+        "summary",
+        "exp:${actualIdx}:company",
+        "exp:${actualIdx}:location"
+      ],
+      "hasAvatarMask": false,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 473
+    },
+    {
+      "file": "jonathan_patterson.js",
+      "fnName": "generateJonathanPattersonHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "name || 'Language'",
+        "data.name || 'Jonathan Patterson'",
+        "data.name || 'Jonathan Patterson'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 19,
+      "sampleDfFields": [
+        "name",
+        "title",
+        "summary",
+        "phone",
+        "email",
+        "website",
+        "location",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 617
+    },
+    {
+      "file": "kathleen.js",
+      "fnName": "generateKathleenHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 15,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "proj:${idx}:description"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 457
+    },
+    {
+      "file": "kelly_mint.js",
+      "fnName": "generateKellyMintHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Kelly Blackwell'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 427
+    },
+    {
+      "file": "korina_villanueva.js",
+      "fnName": "generateKorinaVillanuevaHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "name || 'Language'",
+        "data.name || 'Korina Villanueva'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 19,
+      "sampleDfFields": [
+        "name",
+        "title",
+        "summary",
+        "phone",
+        "email",
+        "website",
+        "location",
+        "edu:${idx}:degree"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 608
+    },
+    {
+      "file": "kyiv_golden.js",
+      "fnName": "generateKyivGoldenHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 425
+    },
+    {
+      "file": "kyoto_coral.js",
+      "fnName": "generateKyotoCoralHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 432
+    },
+    {
+      "file": "lilac_sidebar.js",
+      "fnName": "generateLilacSidebarHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 397
+    },
+    {
+      "file": "lorna_alvarado.js",
+      "fnName": "generateLornaAlvaradoHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Lorna Alvarado'",
+        "data.name || 'Lorna Alvarado'",
+        "name || 'Language'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "phone",
+        "email",
+        "location",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "custom:custom_languages:${idx}:title"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 502
+    },
+    {
+      "file": "lyon_lavender.js",
+      "fnName": "generateLyonLavenderHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 440
+    },
+    {
+      "file": "madrid_sun.js",
+      "fnName": "generateMadridSunHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 444
+    },
+    {
+      "file": "manhattan_noir.js",
+      "fnName": "generateManhattanNoirHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 427
+    },
+    {
+      "file": "marcus_vance.js",
+      "fnName": "generateMarcusVanceHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Marcus Vance'",
+        "data.name || 'Marcus Vance'",
+        "data.name || 'Marcus Vance'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "name",
+        "title",
+        "phone",
+        "email",
+        "location",
+        "skill:${idx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 673
+    },
+    {
+      "file": "mariana.js",
+      "fnName": "generateMarianaHtml",
+      "usesPagination": true,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'",
+        "title || 'Additional Information'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 26,
+      "sampleDfFields": [
+        "phone",
+        "email",
+        "location",
+        "website",
+        "linkedin",
+        "edu:${idx}:date",
+        "edu:${idx}:degree",
+        "edu:${idx}:school"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 671
+    },
+    {
+      "file": "milan_blush.js",
+      "fnName": "generateMilanBlushHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 423
+    },
+    {
+      "file": "montreal_frost.js",
+      "fnName": "generateMontrealFrostHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 439
+    },
+    {
+      "file": "ocean_block.js",
+      "fnName": "generateOceanBlockHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 403
+    },
+    {
+      "file": "olivia.js",
+      "fnName": "generateOliviaHtml",
+      "usesPagination": true,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'",
+        "title || 'Additional Information'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 29,
+      "sampleDfFields": [
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 633
+    },
+    {
+      "file": "ong_burgundy.js",
+      "fnName": "generateOngBurgundyHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 417
+    },
+    {
+      "file": "osaka_minimal.js",
+      "fnName": "generateOsakaMinimalHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 432
+    },
+    {
+      "file": "oslo_taupe.js",
+      "fnName": "generateOsloTaupeHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 408
+    },
+    {
+      "file": "overlapping_badge.js",
+      "fnName": "generateOverlappingBadgeHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 446
+    },
+    {
+      "file": "oxford_burgundy.js",
+      "fnName": "generateOxfordBurgundyHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 14,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 394
+    },
+    {
+      "file": "prague_brass.js",
+      "fnName": "generatePragueBrassHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 424
+    },
+    {
+      "file": "reykjavik_slate.js",
+      "fnName": "generateReykjavikSlateHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 414
+    },
+    {
+      "file": "richard.js",
+      "fnName": "generateRichardHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Language'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 14,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:date",
+        "edu:${idx}:school",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 393
+    },
+    {
+      "file": "richard_sanchez.js",
+      "fnName": "generateRichardSanchezHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Richard Sanchez'",
+        "data.name || 'Richard Sanchez'",
+        "name || 'Language'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || [",
+        "data.skills || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 15,
+      "sampleDfFields": [
+        "name",
+        "title",
+        "summary",
+        "phone",
+        "email",
+        "location",
+        "custom:custom_languages:${idx}:title",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 531
+    },
+    {
+      "file": "sage_pastel.js",
+      "fnName": "generateSagePastelHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 397
+    },
+    {
+      "file": "sanchez_dark.js",
+      "fnName": "generateSanchezDarkHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 14,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 438
+    },
+    {
+      "file": "sanchez_mono.js",
+      "fnName": "generateSanchezMonoHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 14,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 400
+    },
+    {
+      "file": "sanchez_wave.js",
+      "fnName": "generateSanchezWaveHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 13,
+      "sampleDfFields": [
+        "exp:${idx}:company",
+        "exp:${idx}:date",
+        "exp:${idx}:role",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "name",
+        "title"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 357
+    },
+    {
+      "file": "san_francisco_skyline.js",
+      "fnName": "generateSanFranciscoSkylineHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 18,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 444
+    },
+    {
+      "file": "schumacher_charcoal.js",
+      "fnName": "generateSchumacherCharcoalHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 14,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 410
+    },
+    {
+      "file": "seattle_emerald.js",
+      "fnName": "generateSeattleEmeraldHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 423
+    },
+    {
+      "file": "sebastian_bennett.js",
+      "fnName": "generateSebastianBennettHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Sebastian Bennett'",
+        "data.name || 'Sebastian Bennett'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "name",
+        "title",
+        "phone",
+        "email",
+        "location",
+        "summary",
+        "edu:${idx}:school",
+        "edu:${idx}:date"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 492
+    },
+    {
+      "file": "seoul_neon.js",
+      "fnName": "generateSeoulNeonHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 425
+    },
+    {
+      "file": "singapore_ruby.js",
+      "fnName": "generateSingaporeRubyHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 424
+    },
+    {
+      "file": "split_dual_block.js",
+      "fnName": "generateSplitDualBlockHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 476
+    },
+    {
+      "file": "stockholm_monochrome.js",
+      "fnName": "generateStockholmMonochromeHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 403
+    },
+    {
+      "file": "stockholm_yellow.js",
+      "fnName": "generateStockholmYellowHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 433
+    },
+    {
+      "file": "terracotta_arch.js",
+      "fnName": "generateTerracottaArchHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Adeline Palmerston'",
+        "data.name || 'Candidate'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 12,
+      "sampleDfFields": [
+        "name",
+        "title",
+        "phone",
+        "location",
+        "email",
+        "summary",
+        "exp:${idx}:role",
+        "exp:${idx}:date"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": true,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 479
+    },
+    {
+      "file": "tokyo_ice_blue.js",
+      "fnName": "generateTokyoIceBlueHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 431
+    },
+    {
+      "file": "vancouver_pine.js",
+      "fnName": "generateVancouverPineHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 433
+    },
+    {
+      "file": "venice_sand_split.js",
+      "fnName": "generateVeniceSandSplitHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 17,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 430
+    },
+    {
+      "file": "vienna_crest.js",
+      "fnName": "generateViennaCrestHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 14,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 380
+    },
+    {
+      "file": "violet_modern.js",
+      "fnName": "generateVioletModernHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 402
+    },
+    {
+      "file": "wilson_light.js",
+      "fnName": "generateWilsonLightHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Language'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 15,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 432
+    },
+    {
+      "file": "wilson_minimal.js",
+      "fnName": "generateWilsonMinimalHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 389
+    },
+    {
+      "file": "ziv_olive.js",
+      "fnName": "generateZivOliveHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 15,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 419
+    },
+    {
+      "file": "zurich_slate_block.js",
+      "fnName": "generateZurichSlateBlockHtml",
+      "usesPagination": false,
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [],
+      "ternaryArrayFallbacks": [],
+      "uniqueDfFieldsCount": 16,
+      "sampleDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}"
+      ],
+      "hasAvatarMask": true,
+      "has794x1123": false,
+      "hasPrintAdjust": true,
+      "hasPageBreak": true,
+      "lineCount": 431
+    }
+  ]
+}

@@ -24,11 +24,11 @@ def test_concurrent_user_auth_requests():
     # Create test user and token
     db = SessionLocal()
     try:
-        user = db.query(User).filter(User.email == "stress@docforge.internal").first()
+        user = db.query(User).filter(User.email == "stress@docscalar.internal").first()
         if not user:
             user = User(
                 id="stress-user-id",
-                email="stress@docforge.internal",
+                email="stress@docscalar.internal",
                 password_hash="dummy_hash",
                 tier="pro",
             )
@@ -38,7 +38,7 @@ def test_concurrent_user_auth_requests():
         db.close()
 
     token = create_access_token(
-        {"user_id": "stress-user-id", "email": "stress@docforge.internal"}
+        {"user_id": "stress-user-id", "email": "stress@docscalar.internal"}
     )
     headers = {"Authorization": f"Bearer {token}"}
 
@@ -58,7 +58,7 @@ def test_concurrent_user_auth_requests():
             f"Request {idx} returned status {resp.status_code}: {resp.text}"
         )
         data = resp.json()
-        assert data.get("email") == "stress@docforge.internal"
+        assert data.get("email") == "stress@docscalar.internal"
 
 
 def test_ocr_thread_safety_mutex():

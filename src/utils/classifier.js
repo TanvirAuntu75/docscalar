@@ -9,18 +9,30 @@ let weightsPromise = null;
 export async function loadClassifierWeights() {
   if (cachedWeights) return cachedWeights;
   if (!weightsPromise) {
-    weightsPromise = import('./classifier_weights.json')
-      .then((mod) => {
+    weightsPromise = (async () => {
+      try {
+        const mod = await import('./classifier_weights.json');
         cachedWeights = mod.default || mod;
-        if (cachedWeights && cachedWeights.vocabulary) {
-          vocabUnigrams = Object.keys(cachedWeights.vocabulary).filter(k => !k.includes(' '));
+      } catch (err) {
+        if (typeof process !== 'undefined' && process.versions && process.versions.node) {
+          try {
+            const { createRequire } = await import('node:module');
+            const require = createRequire(import.meta.url);
+            cachedWeights = require('./classifier_weights.json');
+          } catch (reqErr) {
+            console.warn('[Classifier] Failed to load classifier weights via require fallback:', reqErr);
+            return null;
+          }
+        } else {
+          console.warn('[Classifier] Failed to load classifier weights dynamically:', err);
+          return null;
         }
-        return cachedWeights;
-      })
-      .catch((err) => {
-        console.warn('[Classifier] Failed to load classifier weights dynamically:', err);
-        return null;
-      });
+      }
+      if (cachedWeights && cachedWeights.vocabulary) {
+        vocabUnigrams = Object.keys(cachedWeights.vocabulary).filter(k => !k.includes(' '));
+      }
+      return cachedWeights;
+    })();
   }
   return weightsPromise;
 }
@@ -246,7 +258,9 @@ function boostIntent(text, intent, originalConfidence) {
     return { classLabel: 'compress-pdf', confidence: 1.0 };
   }
 
-  // 4. Exclusive English keyword direct routing
+  if (/\b(unlock|unprotect|strip(?:\s+the)?\s+security|remove(?:\s+the)?\s+security)\b/i.test(text)) {
+    return { classLabel: 'unlock-pdf', confidence: 1.0 };
+  }
   if (/\b(rotate|turn)\b/i.test(text)) {
     return { classLabel: 'rotate-pdf', confidence: 1.0 };
   }
@@ -367,19 +381,19 @@ export function initClassifierWorker() {
         console.log('[Classifier] Semantic ONNX worker initialized and ready.');
         // Dispatch global event so UI components know the model is ready
         window.dispatchEvent(new CustomEvent('model-download-progress', {
-          detail: { type: 'ready', model: 'all-MiniLM-L6-v2' }
+          detail: { type: 'ready', model: 'docforge-intent' }
         }));
       } else if (data.type === 'status') {
         console.log('[Classifier Worker Status]:', data.message);
         window.dispatchEvent(new CustomEvent('model-download-progress', {
-          detail: { type: 'status', message: data.message, model: 'all-MiniLM-L6-v2' }
+          detail: { type: 'status', message: data.message, model: 'docforge-intent' }
         }));
       } else if (data.type === 'loading') {
         // Forward byte-level download progress to UI
         window.dispatchEvent(new CustomEvent('model-download-progress', {
           detail: {
             type: 'loading',
-            model: 'all-MiniLM-L6-v2',
+            model: 'docforge-intent',
             file: data.file,
             progress: data.progress,
             loaded: data.loaded,
@@ -390,7 +404,7 @@ export function initClassifierWorker() {
       } else if (data.type === 'result') {
         const resolver = pendingClassifierResolvers.shift();
         if (resolver) {
-          resolver({ classLabel: data.classLabel, confidence: data.confidence });
+          resolver({ classLabel: data.classLabel, confidence: data.confidence, raw: data.raw });
         }
       } else if (data.type === 'embed_result') {
         const resolver = pendingEmbedResolvers.shift();
@@ -472,6 +486,12 @@ export async function predictIntentAsync(text) {
   }
 
   let finalPredict = semanticResult.classLabel;
+
+  // Cleanly reject out-of-domain requests if the neural model predicted 'unsupported'
+  if (finalPredict === 'unsupported') {
+    return { classLabel: 'unknown', confidence: 1.0 };
+  }
+
   // Apply fallback heuristic to Semantic output
   if (finalPredict === 'image-compressor') {
     const imageKeywords = /\b(image|photo|jpg|jpeg|png|webp|pic|picture|gif)\b/i;
@@ -482,7 +502,7 @@ export async function predictIntentAsync(text) {
 
   const boostedSemantic = boostIntent(text, finalPredict, semanticResult.confidence);
 
-  const semanticThreshold = 0.55;
+  const semanticThreshold = semanticResult.confidence < 0.2 ? 0.025 : 0.55;
   if (boostedSemantic.confidence < semanticThreshold) {
     return { classLabel: 'unknown', confidence: 1.0 };
   }

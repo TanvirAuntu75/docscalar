@@ -8,6 +8,8 @@ import { repairPdf } from '../../engines/pdf/repairPdf';
 import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
+import useCanvasPinchZoom from '../../hooks/useCanvasPinchZoom';
+import { BACKEND_URL } from '../../utils/api';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -26,17 +28,106 @@ export default function RepairPdf() {
 
   // Canvas Viewport State
   const [zoomScale, setZoomScale] = useState(1.0);
+  const [debouncedRenderZoom, setDebouncedRenderZoom] = useState(zoomScale);
   const [pageDimensions, setPageDimensions] = useState({ width: 595, height: 842 });
   const [canvasLoading, setCanvasLoading] = useState(false);
   const [renderError, setRenderError] = useState(null);
+  const viewportContainerRef = useRef(null);
+
+  // Debounce high-DPI PDF rasterization to decouple smooth 120 FPS GPU scaling from heavy canvas redraws
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedRenderZoom(zoomScale);
+    }, 200);
+    return () => clearTimeout(handler);
+  }, [zoomScale]);
+
+  // Universal 2-finger touchpad/touchscreen canvas pinch-to-zoom
+  useCanvasPinchZoom({
+    containerRef: viewportContainerRef,
+    zoomScale,
+    setZoomScale,
+    minZoom: 0.3,
+    maxZoom: 3.0
+  });
 
   // Processing State
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [backendActive, setBackendActive] = useState(false);
 
   const canvasRef = useRef(null);
+  const currentRenderTaskRef = useRef(null);
+
+  // Backend Health Check
+  useEffect(() => {
+    let isMounted = true;
+    fetch(`${BACKEND_URL}/health`)
+      .then((res) => {
+        if (res.ok && isMounted) setBackendActive(true);
+      })
+      .catch(() => {
+        if (isMounted) setBackendActive(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Keyboard Arrow Page Navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        setCurrentPage((p) => Math.max(1, p - 1));
+      } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        setCurrentPage((p) => Math.min(totalPages, p + 1));
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [totalPages]);
+
+  // Touchscreen / Trackpad horizontal swipe
+  useEffect(() => {
+    const el = viewportContainerRef.current;
+    if (!el) return;
+    let startX = 0;
+    let startY = 0;
+    let startTime = 0;
+
+    const onTouchStart = (e) => {
+      if (e.touches.length === 1) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        startTime = Date.now();
+      }
+    };
+
+    const onTouchEnd = (e) => {
+      if (e.changedTouches.length === 1) {
+        const deltaX = e.changedTouches[0].clientX - startX;
+        const deltaY = e.changedTouches[0].clientY - startY;
+        const elapsed = Date.now() - startTime;
+        if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.4 && elapsed < 600) {
+          if (deltaX < 0) {
+            setCurrentPage((p) => Math.min(totalPages, p + 1));
+          } else {
+            setCurrentPage((p) => Math.max(1, p - 1));
+          }
+        }
+      }
+    };
+
+    el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchend', onTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [totalPages]);
 
   // 1. Restore Draft Session on Mount
   useEffect(() => {
@@ -112,13 +203,23 @@ export default function RepairPdf() {
         const baseViewport = page.getViewport({ scale: 1.0 });
         setPageDimensions({ width: baseViewport.width, height: baseViewport.height });
 
-        const viewport = page.getViewport({ scale: 1.5 * zoomScale });
+        const viewport = page.getViewport({ scale: 1.5 * debouncedRenderZoom });
         const canvas = canvasRef.current;
         if (canvas) {
           canvas.width = viewport.width;
           canvas.height = viewport.height;
           const ctx = canvas.getContext('2d');
-          await page.render({ canvasContext: ctx, viewport }).promise;
+
+          if (currentRenderTaskRef.current) {
+            try {
+              currentRenderTaskRef.current.cancel();
+            } catch (e) {}
+            currentRenderTaskRef.current = null;
+          }
+
+          const renderTask = page.render({ canvasContext: ctx, viewport });
+          currentRenderTaskRef.current = renderTask;
+          await renderTask.promise;
         }
 
         if (!isCancelled) {
@@ -129,7 +230,7 @@ export default function RepairPdf() {
           }
         }
       } catch (err) {
-        if (!isCancelled) {
+        if (!isCancelled && err?.name !== 'RenderingCancelledException') {
           console.warn('PDF Page rendering error on damaged document:', err);
           setRenderError(err.message || 'Damaged stream detected');
           setCanvasLoading(false);
@@ -138,6 +239,8 @@ export default function RepairPdf() {
             setOutputFileName(`${base}_repaired.pdf`);
           }
         }
+      } finally {
+        currentRenderTaskRef.current = null;
       }
     };
 
@@ -145,8 +248,14 @@ export default function RepairPdf() {
 
     return () => {
       isCancelled = true;
+      if (currentRenderTaskRef.current) {
+        try {
+          currentRenderTaskRef.current.cancel();
+        } catch (e) {}
+        currentRenderTaskRef.current = null;
+      }
     };
-  }, [files, activeFileIndex, currentPage, zoomScale]);
+  }, [files, activeFileIndex, currentPage, debouncedRenderZoom]);
 
   // Handle PDF Repair Execution
   const handleRepair = async () => {
@@ -215,15 +324,15 @@ export default function RepairPdf() {
   return (
     <ToolPageLayout
       toolId="repair-pdf"
-      title="Repair Damaged PDF"
-      description="Reconstruct broken cross-reference tables, fix offset corruption, and salvage unreadable PDF streams."
+      title="Repair PDF"
+      description="Fix damaged, corrupted, or unreadable PDF documents and restore clean structure."
       files={files}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Repair PDF Online Free — Fix Corrupted PDFs | DocForge"
-        description="Fix corrupted, damaged, or unreadable PDF structures. Rebuild cross-reference tables and recover document objects Client Side."
+        title="Repair PDF Online Free — Fix Corrupted PDFs | DocScalar"
+        description="Fix corrupted, damaged, or unreadable PDF structures. Rebuild index tables and recover document pages securely."
       />
 
       {!result ? (
@@ -242,12 +351,12 @@ export default function RepairPdf() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
               {/* Sticky Canvas Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2 flex-wrap">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2.5">
+                  <div className="flex items-center gap-2.5 flex-wrap">
                     {/* Active File Switcher */}
                     {files.length > 1 ? (
-                      <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
-                        <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">description</span>
+                      <div className="h-8 flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-medium)] shrink-0">
+                        <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
                         <select
                           value={activeFileIndex}
                           onChange={(e) => {
@@ -264,20 +373,21 @@ export default function RepairPdf() {
                         </select>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
+                      <div className="h-8 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)] shrink-0">
                         <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
                         <span className="truncate max-w-[180px]">{files[0]?.name}</span>
+                        <span className="text-[var(--text-secondary)] font-normal">({formatFileSize(files[0]?.size || 0)})</span>
                       </div>
                     )}
 
                     {/* Page Navigation Capsule */}
                     {totalPages > 0 && (
-                      <div className="flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] px-1 py-0.5">
+                      <div className="h-8 flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] px-2.5 py-1 shrink-0">
                         <button
                           type="button"
                           onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                           disabled={currentPage <= 1}
-                          className="p-1 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                          className="p-0.5 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
                           title="Previous Page"
                         >
                           <span className="material-symbols-outlined text-[16px]">chevron_left</span>
@@ -289,7 +399,7 @@ export default function RepairPdf() {
                           type="button"
                           onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                           disabled={currentPage >= totalPages}
-                          className="p-1 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                          className="p-0.5 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
                           title="Next Page"
                         >
                           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
@@ -297,37 +407,58 @@ export default function RepairPdf() {
                       </div>
                     )}
 
-                    {/* Structure Diagnostic Pill */}
-                    <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-bold">
-                      <span className="material-symbols-outlined text-[15px]">build_circle</span>
-                      <span>XREF Engine Ready</span>
-                    </div>
+                    {/* Document Status Pill */}
+                    {renderError ? (
+                      <div className="h-8 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-semibold shrink-0">
+                        <span className="material-symbols-outlined text-[15px]">warning</span>
+                        <span>Damaged Stream</span>
+                      </div>
+                    ) : (
+                      <div className="h-8 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-semibold shrink-0">
+                        <span className="material-symbols-outlined text-[15px]">check_circle</span>
+                        <span>Document Loaded</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Zoom Controls & Reset */}
                   <div className="flex items-center gap-2">
                     {totalPages > 0 && !renderError && (
-                      <div className="flex items-center gap-1 bg-[var(--bg-secondary)] px-2 py-1 rounded-lg border border-[var(--border-subtle)]">
-                        <span className="material-symbols-outlined text-[15px] text-[var(--text-secondary)]">zoom_in</span>
-                        <input
-                          type="range"
-                          min="0.5"
-                          max="1.5"
-                          step="0.1"
-                          value={zoomScale}
-                          onChange={(e) => setZoomScale(parseFloat(e.target.value))}
-                          className="w-16 h-1 bg-[var(--border-subtle)] accent-[var(--color-primary)] rounded-lg cursor-pointer"
-                        />
-                        <span className="text-[11px] font-semibold text-[var(--text-secondary)] w-9 text-right select-none">
+                      <div className="h-8 flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] p-0.5 shrink-0 select-none">
+                        <button
+                          type="button"
+                          onClick={() => setZoomScale((z) => Math.max(0.3, parseFloat((z - 0.1).toFixed(2))))}
+                          className="h-7 w-7 flex items-center justify-center rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+                          title="Zoom Out"
+                          aria-label="Zoom Out"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">remove</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setZoomScale(1.0)}
+                          className="px-2 text-xs font-bold text-[var(--text-primary)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
+                          title="Reset Zoom to 100%"
+                          aria-label="Reset Zoom"
+                        >
                           {Math.round(zoomScale * 100)}%
-                        </span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setZoomScale((z) => Math.min(3.0, parseFloat((z + 0.1).toFixed(2))))}
+                          className="h-7 w-7 flex items-center justify-center rounded hover:bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+                          title="Zoom In"
+                          aria-label="Zoom In"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">add</span>
+                        </button>
                       </div>
                     )}
 
                     <button
                       type="button"
                       onClick={resetWorkspace}
-                      className="p-1 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer"
+                      className="h-8 w-8 flex items-center justify-center hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-red-500/20"
                       title="Reset workspace"
                     >
                       <span className="material-symbols-outlined text-[18px]">restart_alt</span>
@@ -337,10 +468,10 @@ export default function RepairPdf() {
               </div>
 
               {/* Viewport Canvas Frame */}
-              <div className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center relative bg-pattern select-none">
+              <div ref={viewportContainerRef} className="flex-1 overflow-auto p-4 sm:p-8 pb-24 sm:pb-32 flex items-start justify-center relative bg-pattern select-none">
                 {renderError ? (
                   /* Corrupted File Stream Diagnostic Card */
-                  <div className="max-w-md w-full p-8 rounded-3xl bg-[var(--bg-primary)] border border-amber-500/30 shadow-xl shadow-amber-500/5 flex flex-col items-center text-center gap-5 animate-[scaleIn_0.2s_ease-out]">
+                  <div className="max-w-md w-full p-8 rounded-3xl bg-[var(--bg-primary)] border border-amber-500/30 shadow-xl shadow-amber-500/5 flex flex-col items-center text-center gap-5 animate-[scaleIn_0.2s_ease-out] m-auto">
                     <div className="w-18 h-18 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/10">
                       <span className="material-symbols-outlined text-[36px]">warning</span>
                     </div>
@@ -364,7 +495,7 @@ export default function RepairPdf() {
                 ) : (
                   /* High-DPI Document Canvas */
                   <div
-                    className="relative bg-white shadow-2xl rounded-sm border border-slate-300 dark:border-slate-700 overflow-hidden transition-transform duration-150"
+                    className="relative bg-white shadow-2xl rounded-sm border border-slate-300 dark:border-slate-700 overflow-hidden transition-transform duration-150 m-auto shrink-0"
                     style={{
                       width: (pageDimensions.width || 595) * zoomScale,
                       height: (pageDimensions.height || 842) * zoomScale
@@ -400,8 +531,8 @@ export default function RepairPdf() {
                     Repair Studio
                   </span>
                 </div>
-                <span className="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full">
-                  XREF Engine
+                <span className="text-xs font-bold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2 py-0.5 rounded-full">
+                  {totalPages > 0 ? `Page ${currentPage} of ${totalPages}` : 'Ready'}
                 </span>
               </div>
 
@@ -422,7 +553,7 @@ export default function RepairPdf() {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-[var(--text-primary)]">Standard XREF Re-indexing</span>
+                      <span className="text-xs font-bold text-[var(--text-primary)]">Standard Structure Repair</span>
                       {repairMode === 'standard' && (
                         <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">check_circle</span>
                       )}
@@ -442,13 +573,13 @@ export default function RepairPdf() {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-[var(--text-primary)]">Deep Stream Extraction</span>
+                      <span className="text-xs font-bold text-[var(--text-primary)]">Deep Reconstruction</span>
                       {repairMode === 'deep' && (
                         <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">check_circle</span>
                       )}
                     </div>
                     <p className="text-[10px] text-[var(--text-secondary)] leading-relaxed">
-                      Extracts all salvageable objects into a freshly compiled PDF container. Best for severely truncated files.
+                      Extracts all salvageable objects into a freshly compiled PDF container. Best for severely damaged files.
                     </p>
                   </button>
                 </div>
@@ -506,7 +637,7 @@ export default function RepairPdf() {
                     info
                   </span>
                   <div className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
-                    <strong className="text-[var(--text-primary)]">How PDF Repair works:</strong> Cross-reference tables (XREFs) index byte locations of objects. If offsets shift, standard viewers fail. DocForge scans the byte stream, constructs a fresh XREF index, and saves an ISO 32000 compliant file locally.
+                    <strong className="text-[var(--text-primary)]">How PDF repair works:</strong> PDFs rely on internal index tables to locate text and graphics. When offsets shift or streams get damaged, standard viewers fail to open the file. DocScalar reconstructs the object hierarchy and writes a clean, standards-compliant PDF.
                   </div>
                 </div>
 
@@ -518,7 +649,7 @@ export default function RepairPdf() {
                         <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
                           progress_activity
                         </span>
-                        Reconstructing object xref index...
+                        Reconstructing document structure...
                       </span>
                       <span>{progress}%</span>
                     </div>

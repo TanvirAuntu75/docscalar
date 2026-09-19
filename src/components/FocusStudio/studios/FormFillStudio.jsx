@@ -194,6 +194,7 @@ export default function FormFillStudio({ file, params, onChange, nlpOp }) {
                           key={`${field.name}-${wIdx}`}
                           value={currentValue}
                           onChange={(e) => handleValueChange(field.name, e.target.value)}
+                          aria-label={field.name}
                           className="bg-slate-900 border border-cyan-500/40 text-white rounded focus:border-cyan-400 text-xs px-1 cursor-pointer"
                           style={baseStyle}
                         >
@@ -205,6 +206,28 @@ export default function FormFillStudio({ file, params, onChange, nlpOp }) {
                       );
                     }
 
+                    if (field.type === 'radio') {
+                      const radioVal = widget.onValue || (field.options && field.options[wIdx]) || widget.name || field.name;
+                      return (
+                        <div
+                          key={`${field.name}-${wIdx}`}
+                          style={baseStyle}
+                          className="flex items-center justify-center bg-blue-500/10 border border-blue-400/40 rounded-full cursor-pointer"
+                        >
+                          <input
+                            type="radio"
+                            name={field.name}
+                            value={radioVal}
+                            checked={currentValue === radioVal}
+                            onChange={() => handleValueChange(field.name, radioVal)}
+                            title={`${field.name}: ${radioVal}`}
+                            aria-label={`${field.name}: ${radioVal}`}
+                            className="w-3/4 h-3/4 accent-[var(--color-primary)] cursor-pointer"
+                          />
+                        </div>
+                      );
+                    }
+
                     // Default text input
                     return (
                       <input
@@ -212,6 +235,7 @@ export default function FormFillStudio({ file, params, onChange, nlpOp }) {
                         type="text"
                         value={currentValue}
                         onChange={(e) => handleValueChange(field.name, e.target.value)}
+                        aria-label={field.name}
                         className="bg-primary/10 hover:bg-primary/20 border border-primary/30 focus:border-primary text-white rounded px-1 text-xs"
                         style={baseStyle}
                       />
@@ -260,7 +284,8 @@ export default function FormFillStudio({ file, params, onChange, nlpOp }) {
                         type="checkbox"
                         checked={!!(fieldValues[field.name] ?? false)}
                         onChange={(e) => handleValueChange(field.name, e.target.checked)}
-                        className="w-4 h-4 accent-primary rounded bg-slate-900 border-white/10"
+                        className="w-4 h-4 accent-primary rounded bg-slate-900 border-white/10 cursor-pointer"
+                        aria-label={field.name}
                       />
                       <span>Active</span>
                     </label>
@@ -268,6 +293,7 @@ export default function FormFillStudio({ file, params, onChange, nlpOp }) {
                     <select
                       value={fieldValues[field.name] ?? ''}
                       onChange={(e) => handleValueChange(field.name, e.target.value)}
+                      aria-label={field.name}
                       className="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-primary cursor-pointer"
                     >
                       <option value="">- Select -</option>
@@ -275,11 +301,34 @@ export default function FormFillStudio({ file, params, onChange, nlpOp }) {
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
+                  ) : field.type === 'radio' ? (
+                    <div className="flex flex-col gap-1.5 pt-1">
+                      {(field.options && field.options.length > 0
+                        ? field.options
+                        : (field.widgets && field.widgets.length > 0
+                            ? field.widgets.map((w, idx) => w.onValue || `Option ${idx + 1}`)
+                            : [field.value || 'Option 1'])
+                      ).map((opt) => (
+                        <label key={opt} className="flex items-center gap-2 cursor-pointer text-slate-200 text-xs">
+                          <input
+                            type="radio"
+                            name={`sidebar-${field.name}`}
+                            value={opt}
+                            checked={(fieldValues[field.name] ?? '') === opt}
+                            onChange={() => handleValueChange(field.name, opt)}
+                            className="w-4 h-4 accent-primary bg-slate-900 border-white/10 cursor-pointer"
+                            aria-label={`${field.name}: ${opt}`}
+                          />
+                          <span>{opt}</span>
+                        </label>
+                      ))}
+                    </div>
                   ) : (
                     <input
                       type="text"
                       value={fieldValues[field.name] ?? ''}
                       onChange={(e) => handleValueChange(field.name, e.target.value)}
+                      aria-label={field.name}
                       className="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-primary"
                     />
                   )}

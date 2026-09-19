@@ -18,7 +18,7 @@ from backend.services.libreoffice import ConversionResult
 
 
 def generate_self_signed_pfx(
-    email: str = "security@docforge.com", common_name: str = "DocForge Trust Seal"
+    email: str = "security@docscalar.com", common_name: str = "DocScalar Trust Seal"
 ) -> bytes:
     """
     Generate an offline, self-signed X.509 certificate and private key in PKCS#12 format.
@@ -32,7 +32,7 @@ def generate_self_signed_pfx(
         [
             x509.NameAttribute(NameOID.COMMON_NAME, common_name),
             x509.NameAttribute(NameOID.EMAIL_ADDRESS, email),
-            x509.NameAttribute(NameOID.ORGANIZATION_NAME, "DocForge Privacy First LLC"),
+            x509.NameAttribute(NameOID.ORGANIZATION_NAME, "DocScalar Privacy First LLC"),
             x509.NameAttribute(NameOID.COUNTRY_NAME, "US"),
         ]
     )
@@ -58,11 +58,11 @@ def generate_self_signed_pfx(
     )
 
     pfx_data = pkcs12.serialize_key_and_certificates(
-        name=b"DocForge Key",
+        name=b"DocScalar Key",
         key=private_key,
         cert=cert,
         cas=None,
-        encryption_algorithm=pkcs12.BestAvailableEncryption(b"docforge"),
+        encryption_algorithm=pkcs12.BestAvailableEncryption(b"docscalar"),
     )
     return pfx_data
 
@@ -93,7 +93,7 @@ def digitally_sign_pdf(
             try:
                 with open(input_pdf_path, "rb") as inf:
                     w = IncrementalPdfFileWriter(inf)
-                    field_name = "DocForgeSignatureField"
+                    field_name = "DocScalarSignatureField"
                     fields.append_signature_field(
                         w,
                         sig_field_spec=fields.SigFieldSpec(
@@ -130,8 +130,8 @@ def digitally_sign_pdf(
         with open(input_pdf_path, "rb") as inf:
             w = IncrementalPdfFileWriter(inf)
             meta = signers.PdfSignatureMetadata(
-                field_name="DocForgeSignature",
-                reason="Digitally Sealed via DocForge Security Service",
+                field_name="DocScalarSignature",
+                reason="Digitally Sealed via DocScalar Security Service",
             )
 
             out = signers.sign_pdf(
@@ -172,7 +172,7 @@ def sign_pdf(
         if not pfx_bytes_hex:
             # Generate self-signed cert
             pfx_bytes = generate_self_signed_pfx()
-            passphrase = b"docforge"
+            passphrase = b"docscalar"
         else:
             pfx_bytes = bytes.fromhex(pfx_bytes_hex)
             passphrase = passphrase_str.encode("utf-8")

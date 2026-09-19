@@ -1,0 +1,829 @@
+[
+  {
+    "file": "adam_fletcher.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "wrapperBorderRadius": null,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "NONE",
+    "imgCSS": "position: absolute; top: 25px; left: 38px; width: 236px; height: 236px; border-radius: 50%; border: 9px solid #ffffff; object-fit: cover; object-position: center 15%; filter: grayscale(100%) contrast(105%); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); z-index: 5; background-color: #ffffff;"
+  },
+  {
+    "file": "adeline_palmerston.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "wrapperBorderRadius": null,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "NONE",
+    "imgCSS": "width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center 15%; display: block;"
+  },
+  {
+    "file": "adora_diagonal.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid #ffffff; object-fit: cover; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "adora_montminy.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "width: 38%; display: flex; justify-content: center; flex-shrink: 0; padding-top: 10px;",
+    "imgCSS": "width: 140px; height: 140px; border-radius: 50%; border: 5px solid #ffffff; box-shadow: 0 8px 22px rgba(0,0,0,0.12); object-fit: cover; background: #ffffff;"
+  },
+  {
+    "file": "alfredo_torres.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "wrapperBorderRadius": null,
+    "wrapperCSS": "NONE",
+    "imgCSS": "width: 100%; height: 100%; object-fit: cover; object-position: center top; filter: grayscale(100%) contrast(105%);"
+  },
+  {
+    "file": "alvarado_slate.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": false,
+    "wrapperBorderRadius": null,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "NONE",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.4); object-fit: cover; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "amsterdam_orange.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${orangeAccent"
+  },
+  {
+    "file": "arthur_pendelton.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "wrapperBorderRadius": null,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "NONE",
+    "imgCSS": "width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center top; filter: grayscale(100%) contrast(105%);"
+  },
+  {
+    "file": "austin_amber.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${amberAccent"
+  },
+  {
+    "file": "barcelona_cyan.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "8px",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 8px; border: 3px solid ${accent"
+  },
+  {
+    "file": "berlin_two_tone.js",
+    "hasPhotoHandling": false,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": null,
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "NONE"
+  },
+  {
+    "file": "bordeaux_wine.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid #ffffff; object-fit: cover; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "boston_crimson.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid #ffffff; object-fit: cover; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "buenos_aires_tango.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${champagne"
+  },
+  {
+    "file": "cairo_gold.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${gold"
+  },
+  {
+    "file": "cambridge_rose.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.4); object-fit: cover; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "cape_town_sunset.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${solarGold"
+  },
+  {
+    "file": "card_matrix.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "8px",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 135px; height: 135px; border-radius: 8px; border: 2px solid ${accent"
+  },
+  {
+    "file": "charles.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "display: flex; justify-content: center; margin-bottom: 8px;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${accent"
+  },
+  {
+    "file": "copenhagen_sand.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid #d6d3d1; object-fit: cover; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "date_capsule.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 135px; height: 135px; border-radius: 50%; border: 2px solid ${accent"
+  },
+  {
+    "file": "diagonal_wedge.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "position: relative; flex-shrink: 0; width: 135px; height: 135px; border-radius: 50%; border: 4px solid #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); overflow: hidden; background: #ffffff;",
+    "imgCSS": "width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;"
+  },
+  {
+    "file": "donna_stroupe.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": false,
+    "wrapperBorderRadius": null,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "NONE",
+    "imgCSS": "position: absolute; top: 65px; left: 45px; width: 185px; height: 185px; border-radius: 50%; border: 9px solid #ffffff; object-fit: cover; object-position: center 15%; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); z-index: 5; background-color: #ffffff;"
+  },
+  {
+    "file": "dublin_forest.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid ${ochreAccent"
+  },
+  {
+    "file": "edinburgh_navy.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 135px; height: 135px; border-radius: 50%; border: 2.5px solid ${accent"
+  },
+  {
+    "file": "emerald_prestige.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid rgba(255, 255, 255, 0.4); object-fit: cover; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "emma.js",
+    "hasPhotoHandling": false,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": null,
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "NONE"
+  },
+  {
+    "file": "floating_card_matrix.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "10px",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 135px; height: 135px; border-radius: 10px; border: 2.5px solid ${accent"
+  },
+  {
+    "file": "florence_terracotta.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid ${linenBg"
+  },
+  {
+    "file": "geneva_charcoal.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid ${goldAccent"
+  },
+  {
+    "file": "helsinki_frost.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 135px; height: 135px; border-radius: 50%; border: 2.5px solid ${accent"
+  },
+  {
+    "file": "helsinki_navy.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${mintAccent"
+  },
+  {
+    "file": "howard_ong.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "wrapperBorderRadius": null,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "NONE",
+    "imgCSS": "position: absolute; top: 45px; left: 48px; width: 220px; height: 220px; border-radius: 50%; border: 9px solid #ffffff; object-fit: cover; object-position: center 15%; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); z-index: 5; background-color: #ffffff;"
+  },
+  {
+    "file": "isabel_mercado.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "wrapperCSS": "width: 195px; height: 215px; background-color: #ede9e3; padding: 6px; margin-bottom: 24px;",
+    "imgCSS": "width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block;"
+  },
+  {
+    "file": "isabel_schumacher.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": false,
+    "wrapperBorderRadius": null,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "NONE",
+    "imgCSS": "position: absolute; top: 45px; left: 28px; width: 220px; height: 220px; border-radius: 50%; border: 9px solid #ffffff; object-fit: cover; object-position: center 15%; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); z-index: 5; background-color: #ffffff;"
+  },
+  {
+    "file": "jonathan.js",
+    "hasPhotoHandling": false,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": false,
+    "wrapperBorderRadius": null,
+    "imgBorderRadius": null,
+    "wrapperCSS": "NONE",
+    "imgCSS": "NONE"
+  },
+  {
+    "file": "jonathan_patterson.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "100px",
+    "wrapperCSS": "position: absolute; top: 90px; right: 85px; width: 195px; height: 255px; border-radius: 100px; overflow: hidden; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); z-index: 5; background-color: #ffffff;",
+    "imgCSS": "width: 100%; height: 100%; object-fit: cover; object-position: center 15%;"
+  },
+  {
+    "file": "kathleen.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "display: flex; justify-content: center; margin-bottom: 8px;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${accent"
+  },
+  {
+    "file": "kelly_mint.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "8px",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 8px; border: 2.5px solid ${accent"
+  },
+  {
+    "file": "korina_villanueva.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": true,
+    "wrapperCSS": "width: 185px; height: 250px; clip-path: polygon(0 0, 100% 0, 100% 84%, 50% 100%, 0 84%); background-color: #e2e8f0; flex-shrink: 0; overflow: hidden;",
+    "imgCSS": "width: 100%; height: 100%; object-fit: cover; object-position: center 15%; filter: grayscale(100%) contrast(105%);"
+  },
+  {
+    "file": "kyiv_golden.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid ${accent"
+  },
+  {
+    "file": "kyoto_coral.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 135px; height: 135px; border-radius: 50%; border: 3px solid ${accent"
+  },
+  {
+    "file": "lilac_sidebar.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "display: flex; justify-content: center; margin-bottom: 6px;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid #581c87; object-fit: cover; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "lorna_alvarado.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "display: flex; justify-content: center; margin-bottom: 30px; padding: 0 25px;",
+    "imgCSS": "width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center 15%; background-color: #ffffff;"
+  },
+  {
+    "file": "lyon_lavender.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${accent"
+  },
+  {
+    "file": "madrid_sun.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid ${solarGold"
+  },
+  {
+    "file": "manhattan_noir.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "4px",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 4px; border: 2px solid #ffffff; object-fit: cover; flex-shrink: 0;"
+  },
+  {
+    "file": "marcus_vance.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "20px",
+    "wrapperCSS": "position: relative; width: 140px; height: 140px; flex-shrink: 0;",
+    "imgCSS": "position: relative; width: 100%; height: 100%; border-radius: 20px; object-fit: cover; object-position: center top; z-index: 2; background-color: #ffffff; border: 4px solid #ffffff; box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);"
+  },
+  {
+    "file": "mariana.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "display: flex; justify-content: center; margin-bottom: 8px;",
+    "imgCSS": "width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;"
+  },
+  {
+    "file": "milan_blush.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${accent"
+  },
+  {
+    "file": "montreal_frost.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid ${accent"
+  },
+  {
+    "file": "ocean_block.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.4); object-fit: cover; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "olivia.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "display: flex; justify-content: center; margin-bottom: 8px;",
+    "imgCSS": "width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;"
+  },
+  {
+    "file": "ong_burgundy.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.4); object-fit: cover; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "osaka_minimal.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "4px",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 135px; height: 135px; border-radius: 4px; border: 2px solid #0f172a; object-fit: cover; flex-shrink: 0;"
+  },
+  {
+    "file": "oslo_taupe.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${accent"
+  },
+  {
+    "file": "overlapping_badge.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 5px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18); object-fit: cover; background: #ffffff;"
+  },
+  {
+    "file": "oxford_burgundy.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 135px; height: 135px; border-radius: 50%; border: 3px solid ${accent"
+  },
+  {
+    "file": "prague_brass.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid ${linenBg"
+  },
+  {
+    "file": "reykjavik_slate.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid ${accent"
+  },
+  {
+    "file": "richard.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "display: flex; justify-content: center; margin-bottom: 8px;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${accent"
+  },
+  {
+    "file": "richard_sanchez.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": false,
+    "wrapperBorderRadius": null,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "NONE",
+    "imgCSS": "position: absolute; top: 78px; left: 82px; width: 175px; height: 175px; border-radius: 50%; border: 6px solid #ffffff; object-fit: cover; object-position: center 15%; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); z-index: 5; background-color: #ffffff;"
+  },
+  {
+    "file": "sage_pastel.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "display: flex; justify-content: center; margin-bottom: 6px;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid #164e63; object-fit: cover; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "sanchez_dark.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "display: flex; justify-content: center; margin-bottom: 8px;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${accent"
+  },
+  {
+    "file": "sanchez_mono.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "display: flex; justify-content: center; margin-bottom: 8px;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${accent"
+  },
+  {
+    "file": "sanchez_wave.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "wrapperBorderRadius": null,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "NONE",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${secondaryAccent"
+  },
+  {
+    "file": "san_francisco_skyline.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid #ffffff; object-fit: cover; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "schumacher_charcoal.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "display: flex; justify-content: center; margin-bottom: 8px;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.3); object-fit: cover; display: block; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "seattle_emerald.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid #ccfbf1; object-fit: cover; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "sebastian_bennett.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": true,
+    "wrapperCSS": "width: 150px; height: 165px; background-color: #8c8f94; flex-shrink: 0; overflow: hidden;",
+    "imgCSS": "width: 100%; height: 100%; object-fit: cover; object-position: center 15%; filter: grayscale(100%) contrast(105%);"
+  },
+  {
+    "file": "seoul_neon.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid ${accent"
+  },
+  {
+    "file": "singapore_ruby.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "4px",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 4px; border: 2px solid #ffffff; object-fit: cover; flex-shrink: 0;"
+  },
+  {
+    "file": "split_dual_block.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid #ffffff; object-fit: cover; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "stockholm_monochrome.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 135px; height: 135px; border-radius: 50%; border: 2px solid #000000; object-fit: cover; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "stockholm_yellow.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid ${accent"
+  },
+  {
+    "file": "terracotta_arch.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "110px",
+    "wrapperCSS": "width: 220px; height: 275px; border-radius: 110px; overflow: hidden; flex-shrink: 0; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12); background-color: #ffffff; position: relative; z-index: 3;",
+    "imgCSS": "width: 100%; height: 100%; object-fit: cover; object-position: center 15%; filter: grayscale(100%) contrast(105%);"
+  },
+  {
+    "file": "tokyo_ice_blue.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); object-fit: cover;"
+  },
+  {
+    "file": "vancouver_pine.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3.5px solid #a7f3d0; object-fit: cover; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "venice_sand_split.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid #ffffff; object-fit: cover; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "vienna_crest.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 135px; height: 135px; border-radius: 50%; border: 2px solid ${accent"
+  },
+  {
+    "file": "violet_modern.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 135px; height: 135px; border-radius: 50%; border: 2.5px solid ${accent"
+  },
+  {
+    "file": "wilson_light.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": false,
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "display: flex; justify-content: center; margin-bottom: 8px;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.4); object-fit: cover; display: block; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "wilson_minimal.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 135px; height: 135px; border-radius: 50%; border: 2px solid #e2e8f0; object-fit: cover; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "ziv_olive.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": true,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.4); object-fit: cover; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  },
+  {
+    "file": "zurich_slate_block.js",
+    "hasPhotoHandling": true,
+    "hasDedicatedWrapper": false,
+    "wrapperHasOverflowHidden": true,
+    "wrapperBorderRadius": "50%",
+    "imgBorderRadius": "50%",
+    "wrapperCSS": "border-radius: 50%; overflow: hidden;",
+    "imgCSS": "width: 145px; height: 145px; border-radius: 50%; border: 3px solid #ffffff; object-fit: cover; flex-shrink: 0; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);"
+  }
+]

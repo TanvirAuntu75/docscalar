@@ -33,7 +33,7 @@ try:
     # Ping to verify active connection
     redis_conn.ping()
     # Use RQ Queue
-    task_queue = Queue("docforge_conversions", connection=redis_conn)
+    task_queue = Queue("docscalar_conversions", connection=redis_conn)
     USE_REDIS = True
     print("Background Job Queue: Connected to Redis successfully.")
 except Exception:

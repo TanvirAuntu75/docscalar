@@ -19,23 +19,23 @@ if (typeof Promise.withResolvers === 'undefined') {
  * Supported Language Directory
  */
 export const SUPPORTED_LANGUAGES = [
-  { code: 'es', name: 'Spanish (Español)', flag: '🇪🇸' },
-  { code: 'fr', name: 'French (Français)', flag: '🇫🇷' },
-  { code: 'de', name: 'German (Deutsch)', flag: '🇩🇪' },
-  { code: 'it', name: 'Italian (Italiano)', flag: '🇮🇹' },
-  { code: 'pt', name: 'Portuguese (Português)', flag: '🇵🇹' },
-  { code: 'nl', name: 'Dutch (Nederlands)', flag: '🇳🇱' },
-  { code: 'ru', name: 'Russian (Русский)', flag: '🇷🇺' },
-  { code: 'zh', name: 'Chinese (Simplified)', flag: '🇨🇳' },
-  { code: 'ja', name: 'Japanese (日本語)', flag: '🇯🇵' },
-  { code: 'ko', name: 'Korean (한국어)', flag: '🇰🇷' },
-  { code: 'ar', name: 'Arabic (العربية)', flag: '🇸🇦' },
-  { code: 'hi', name: 'Hindi (हिन्दी)', flag: '🇮🇳' },
-  { code: 'bn', name: 'Bengali (বাংলা)', flag: '🇧🇩' },
-  { code: 'tr', name: 'Turkish (Türkçe)', flag: '🇹🇷' },
-  { code: 'pl', name: 'Polish (Polski)', flag: '🇵🇱' },
-  { code: 'vi', name: 'Vietnamese (Tiếng Việt)', flag: '🇻🇳' },
-  { code: 'en', name: 'English', flag: '🇺🇸' }
+  { code: 'es', name: 'Spanish (Español)' },
+  { code: 'fr', name: 'French (Français)' },
+  { code: 'de', name: 'German (Deutsch)' },
+  { code: 'it', name: 'Italian (Italiano)' },
+  { code: 'pt', name: 'Portuguese (Português)' },
+  { code: 'nl', name: 'Dutch (Nederlands)' },
+  { code: 'ru', name: 'Russian (Русский)' },
+  { code: 'zh', name: 'Chinese (Simplified)' },
+  { code: 'ja', name: 'Japanese (日本語)' },
+  { code: 'ko', name: 'Korean (한국어)' },
+  { code: 'ar', name: 'Arabic (العربية)' },
+  { code: 'hi', name: 'Hindi (हिन्दी)' },
+  { code: 'bn', name: 'Bengali (বাংলা)' },
+  { code: 'tr', name: 'Turkish (Türkçe)' },
+  { code: 'pl', name: 'Polish (Polski)' },
+  { code: 'vi', name: 'Vietnamese (Tiếng Việt)' },
+  { code: 'en', name: 'English' }
 ];
 
 /**
@@ -107,6 +107,47 @@ const CMAP_URL = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.8.69/cmaps/';
 const STANDARD_FONT_DATA_URL = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.8.69/standard_fonts/';
 
 /**
+ * Sanitize common Unicode punctuation and symbols into safe standard characters
+ */
+export function sanitizeForPdfFont(text) {
+  if (!text || typeof text !== 'string') return '';
+  return text
+    .replace(/[\u2018\u2019\u201A\u201B]/g, "'")
+    .replace(/[\u201C\u201D\u201E\u201F]/g, '"')
+    .replace(/[\u2013\u2014\u2015]/g, '-')
+    .replace(/\u2026/g, '...')
+    .replace(/[\u2022\u25AA\u25BA\u25CF\u25CB]/g, '-')
+    .replace(/\u00A0/g, ' ')
+    .replace(/\u2264/g, '<=')
+    .replace(/\u2265/g, '>=')
+    .replace(/\u2260/g, '!=')
+    .replace(/\u00B1/g, '+/-')
+    .replace(/\u00D7/g, 'x')
+    .replace(/\u00F7/g, '/')
+    .replace(/[\u2190-\u2193]/g, '->')
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+}
+
+/**
+ * Filter text to ensure 100% compatibility with standard font WinAnsi encoding
+ */
+export function safeEncodeForFont(font, text) {
+  if (!text) return '';
+  const sanitized = sanitizeForPdfFont(String(text));
+  let safeStr = '';
+  for (let i = 0; i < sanitized.length; i++) {
+    const char = sanitized[i];
+    try {
+      font.encodeText(char);
+      safeStr += char;
+    } catch {
+      safeStr += ' ';
+    }
+  }
+  return safeStr;
+}
+
+/**
  * Direct in-thread fallback PDF Translator.
  * Extracts text from PDF pages, translates sentences, and typesets translated vector PDF.
  * @param {File|Blob|ArrayBuffer|Uint8Array} file 
@@ -137,6 +178,36 @@ export async function directTranslatePdf(file, options = {}, onProgress = () => 
   const font = await translatedDoc.embedFont(StandardFonts.Helvetica);
   const fontBold = await translatedDoc.embedFont(StandardFonts.HelveticaBold);
 
+  const drawHeader = (targetPage, label) => {
+    const { width, height } = targetPage.getSize();
+    targetPage.drawRectangle({
+      x: 36,
+      y: height - 42,
+      width: width - 72,
+      height: 24,
+      color: rgb(0.95, 0.96, 0.98)
+    });
+
+    targetPage.drawText(safeEncodeForFont(fontBold, `DocScalar AI Translation: ${label}`), {
+      x: 44,
+      y: height - 34,
+      size: 8,
+      font: fontBold,
+      color: rgb(0.3, 0.35, 0.45)
+    });
+  };
+
+  const drawFooter = (targetPage, currentP, totalP) => {
+    const { width } = targetPage.getSize();
+    targetPage.drawText(safeEncodeForFont(font, `Page ${currentP} of ${totalP}`), {
+      x: width / 2 - 25,
+      y: 20,
+      size: 9,
+      font,
+      color: rgb(0.5, 0.5, 0.5)
+    });
+  };
+
   for (let pageNum = 1; pageNum <= numPages; pageNum++) {
     const page = await pdfDoc.getPage(pageNum);
     const viewport = page.getViewport({ scale: 1.0 });
@@ -161,30 +232,15 @@ export async function directTranslatePdf(file, options = {}, onProgress = () => 
     const translatedParagraphs = [];
     for (const para of paragraphs) {
       const translated = await translateTextSnippet(para, targetLang, sourceLang);
-      const sanitized = (translated || '').replace(/[^\x20-\x7E\xA0-\xFF]/g, ' ');
-      translatedParagraphs.push(sanitized);
+      const safe = safeEncodeForFont(font, translated || '');
+      translatedParagraphs.push(safe);
     }
 
     // Synthesize translated PDF page
-    const newPage = translatedDoc.addPage([viewport.width || 595.28, viewport.height || 841.89]);
-    const { width, height } = newPage.getSize();
+    let activePage = translatedDoc.addPage([viewport.width || 595.28, viewport.height || 841.89]);
+    const { width, height } = activePage.getSize();
 
-    // Draw header banner
-    newPage.drawRectangle({
-      x: 36,
-      y: height - 42,
-      width: width - 72,
-      height: 24,
-      color: rgb(0.95, 0.96, 0.98)
-    });
-
-    newPage.drawText(`DocForge AI Translation: ${targetLang.toUpperCase()}`, {
-      x: 44,
-      y: height - 34,
-      size: 8,
-      font: fontBold,
-      color: rgb(0.3, 0.35, 0.45)
-    });
+    drawHeader(activePage, targetLang.toUpperCase());
 
     let currentY = height - 70;
     const margin = 40;
@@ -201,8 +257,13 @@ export async function directTranslatePdf(file, options = {}, onProgress = () => 
         const testLine = line ? `${line} ${word}` : word;
         const textWidth = font.widthOfTextAtSize(testLine, fontSize);
         if (textWidth > maxWidth && line) {
-          if (currentY < 45) break;
-          newPage.drawText(line, {
+          if (currentY < 45) {
+            drawFooter(activePage, pageNum, numPages);
+            activePage = translatedDoc.addPage([viewport.width || 595.28, viewport.height || 841.89]);
+            currentY = height - 70;
+            drawHeader(activePage, `${targetLang.toUpperCase()} (Cont.)`);
+          }
+          activePage.drawText(line, {
             x: margin,
             y: currentY,
             size: fontSize,
@@ -216,8 +277,14 @@ export async function directTranslatePdf(file, options = {}, onProgress = () => 
         }
       }
 
-      if (line && currentY >= 45) {
-        newPage.drawText(line, {
+      if (line) {
+        if (currentY < 45) {
+          drawFooter(activePage, pageNum, numPages);
+          activePage = translatedDoc.addPage([viewport.width || 595.28, viewport.height || 841.89]);
+          currentY = height - 70;
+          drawHeader(activePage, `${targetLang.toUpperCase()} (Cont.)`);
+        }
+        activePage.drawText(line, {
           x: margin,
           y: currentY,
           size: fontSize,
@@ -229,13 +296,7 @@ export async function directTranslatePdf(file, options = {}, onProgress = () => 
     }
 
     // Page Number Footer
-    newPage.drawText(`Page ${pageNum} of ${numPages}`, {
-      x: width / 2 - 25,
-      y: 20,
-      size: 9,
-      font,
-      color: rgb(0.5, 0.5, 0.5)
-    });
+    drawFooter(activePage, pageNum, numPages);
 
     onProgress(25 + Math.round((pageNum / numPages) * 70));
   }

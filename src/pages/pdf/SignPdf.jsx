@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
 import { loadPdfDocument } from '../../utils/pdfConfig';
+import * as pdfjsLib from 'pdfjs-dist';
+
+const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import AdPlaceholder from '../../components/AdPlaceholder';
@@ -17,6 +21,9 @@ import SignCanvasViewport from '../../components/SignStudio/SignCanvasViewport';
 import SignOptionsSidebar from '../../components/SignStudio/SignOptionsSidebar';
 import SignatureCreatorModal from '../../components/SignStudio/SignatureCreatorModal';
 import AuditCertificateModal from '../../components/SignStudio/AuditCertificateModal';
+import useSmartCropper from '../../hooks/useSmartCropper';
+import { useAuth } from '../../context/AuthContext';
+import { scanDocumentSignatureZones } from '../../engines/pdf/signatureLineDetector';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
@@ -35,6 +42,8 @@ export default function SignPdf() {
     reset
   } = useFileProcessor();
 
+  const { isPro, userEmail } = useAuth();
+
   // Multi-field state hook
   const {
     fields,
@@ -52,14 +61,14 @@ export default function SignPdf() {
     undo,
     redo,
     canUndo,
-    canRedo,
-    getFieldCountForPage
+    canRedo
   } = useSignStudioState([]);
 
   // Document & Page state
   const [pdfDocument, setPdfDocument] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
   const [activePageIndex, setActivePageIndex] = useState(0);
+  const cropper = useSmartCropper({ totalPages });
 
   // Active signature & initials memory
   const [signatureData, setSignatureData] = useState(null);
@@ -76,10 +85,21 @@ export default function SignPdf() {
   const [securityMode, setSecurityMode] = useState('simple'); // 'simple' | 'digital'
   const [flattenDocument, setFlattenDocument] = useState(true);
   const [generateCertificate, setGenerateCertificate] = useState(true);
+  const [detectedZones, setDetectedZones] = useState([]);
   const [digitalCertSettings, setDigitalCertSettings] = useState({
-    commonName: 'DocForge Verified Signer',
-    email: 'signer@docforge.local'
+    commonName: 'DocScalar Verified Signer',
+    email: userEmail || 'signer@docscalar.local'
   });
+
+  // Sync userEmail if auth loaded after mount
+  useEffect(() => {
+    if (userEmail) {
+      setDigitalCertSettings((prev) => ({
+        ...prev,
+        email: prev.email === 'signer@docscalar.local' ? userEmail : prev.email
+      }));
+    }
+  }, [userEmail]);
 
   // Poller for Backend X.509 pyHanko signing
   const poller = useJobPoller(BACKEND_URL);
@@ -168,6 +188,29 @@ export default function SignPdf() {
     };
   }, [files]);
 
+  // Background signature line & AcroForm detection
+  useEffect(() => {
+    if (!pdfDocument) {
+      setDetectedZones([]);
+      return;
+    }
+
+    let isCancelled = false;
+    scanDocumentSignatureZones(pdfDocument)
+      .then((scanRes) => {
+        if (!isCancelled && scanRes?.zones) {
+          setDetectedZones(scanRes.zones);
+        }
+      })
+      .catch((scanErr) => {
+        console.warn('Signature line detection non-fatal error:', scanErr);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [pdfDocument]);
+
   // Handle poller results for backend digital signature job
   useEffect(() => {
     if (poller.status === 'finished' && poller.result) {
@@ -200,7 +243,7 @@ export default function SignPdf() {
               originalHash,
               signedHash,
               signerName: digitalCertSettings.commonName || 'Verified Signer',
-              signerEmail: digitalCertSettings.email || 'signer@docforge.local',
+              signerEmail: digitalCertSettings.email || 'signer@docscalar.local',
               securityTier: 'X.509 Digital Cryptographic Seal',
               fieldsCount: fields.length,
               timestamp: new Date()
@@ -211,6 +254,7 @@ export default function SignPdf() {
           }
         })
         .catch(() => {
+          setProcessing(false);
           setError('Failed to fetch digitally signed PDF from backend.');
         });
     } else if (poller.status === 'failed') {
@@ -241,12 +285,49 @@ export default function SignPdf() {
     });
   };
 
+  // Auto-apply detected signature zone
+  const handleApplyDetectedZone = (zone) => {
+    if (!zone) return;
+    if (zone.pageIndex !== activePageIndex) {
+      setActivePageIndex(zone.pageIndex);
+    }
+
+    const fieldType = zone.type || 'signature';
+    const fieldData = {
+      pageIndex: zone.pageIndex,
+      x: zone.x,
+      y: zone.y,
+      width: zone.width,
+      height: zone.height,
+      signerRole: 'signer_1'
+    };
+
+    if (fieldType === 'signature') {
+      fieldData.type = 'signature';
+      fieldData.dataUrl = signatureData?.dataUrl;
+      fieldData.value = signatureData?.value || 'Signature';
+    } else if (fieldType === 'initials') {
+      fieldData.type = 'initials';
+      fieldData.dataUrl = initialsData?.dataUrl;
+      fieldData.value = initialsData?.value || 'Initials';
+    } else if (fieldType === 'date') {
+      fieldData.type = 'date';
+      fieldData.value = new Date().toLocaleDateString('en-US');
+    } else {
+      fieldData.type = 'text';
+      fieldData.value = zone.label || 'Signer Name';
+    }
+
+    addField(fieldData);
+  };
+
   // Replace PDF file handler
   const handleReplacePdf = (e) => {
     const file = e.target.files?.[0];
     if (file) {
       setFiles([file]);
-      setFields([]);
+      clearAllFields();
+      setDetectedZones([]);
     }
   };
 
@@ -273,18 +354,30 @@ export default function SignPdf() {
           onProgress: (pct) => setProgress(Math.round(20 + pct * 0.4))
         });
 
-        const stampedFile = new File([clientStampedBlob], file.name, { type: 'application/pdf' });
-        const formData = new FormData();
-        formData.append('file', stampedFile);
-        formData.append('common_name', digitalCertSettings.commonName);
-        formData.append('email', digitalCertSettings.email);
-
-        const uploadRes = await uploadFileSecure(`${BACKEND_URL}/api/security/sign`, formData);
-        if (!uploadRes.ok) {
-          throw new Error('Backend digital signing service failed to initialize.');
+        const stampedFile = new File([clientStampedBlob], finalFileName, { type: 'application/pdf' });
+        const uploadData = await uploadFileSecure(BACKEND_URL, stampedFile, (pct) => setProgress(Math.round(40 + pct * 0.2)));
+        
+        const signFormData = new FormData();
+        signFormData.append('file_id', uploadData.file_id);
+        signFormData.append('filename', uploadData.filename);
+        if (digitalCertSettings.commonName) signFormData.append('common_name', digitalCertSettings.commonName);
+        if (digitalCertSettings.email) signFormData.append('email', digitalCertSettings.email);
+        if (digitalCertSettings.passphrase) signFormData.append('passphrase', digitalCertSettings.passphrase);
+        if (digitalCertSettings.customCertificateFile) {
+          signFormData.append('certificate', digitalCertSettings.customCertificateFile);
         }
 
-        const data = await uploadRes.json();
+        const signRes = await apiFetch(`${BACKEND_URL}/api/pdf/digitally-sign`, {
+          method: 'POST',
+          body: signFormData
+        });
+
+        if (!signRes.ok) {
+          const errData = await signRes.json().catch(() => ({}));
+          throw new Error(errData.detail || 'Backend digital signing service failed to initialize.');
+        }
+
+        const data = await signRes.json();
         if (data.job_id) {
           poller.startPolling(data.job_id);
         } else {
@@ -294,9 +387,14 @@ export default function SignPdf() {
       }
 
       // 2. Simple Electronic Signature Mode (100% Client-Side WASM)
+      const cropperOptions = await (cropper.getEngineOptionsAsync
+        ? cropper.getEngineOptionsAsync(file, pdfjsLib, (pct) => setProgress(Math.round(pct * 0.25)))
+        : cropper.getEngineOptions());
+
       const signedBlob = await signPdf(file, fields, {
         flatten: flattenDocument,
-        onProgress: (pct) => setProgress(pct)
+        onProgress: (pct) => setProgress(pct),
+        ...cropperOptions
       });
 
       setSignedPdfBlob(signedBlob);
@@ -321,7 +419,7 @@ export default function SignPdf() {
           originalHash,
           signedHash,
           signerName: signatureData?.value || digitalCertSettings.commonName || 'Signer',
-          signerEmail: digitalCertSettings.email || 'signer@docforge.local',
+          signerEmail: digitalCertSettings.email || 'signer@docscalar.local',
           securityTier: 'Simple Electronic Signature (SES)',
           fieldsCount: fields.length,
           timestamp: new Date()
@@ -360,9 +458,11 @@ export default function SignPdf() {
   const handleReset = () => {
     reset();
     setFields([]);
+    setDetectedZones([]);
     setResult(null);
     setCertificateData(null);
     setSignedPdfBlob(null);
+    cropper.revert();
   };
 
   return (
@@ -374,7 +474,7 @@ export default function SignPdf() {
       hasResult={Boolean(result)}
     >
       <SEOHead
-        title="Sign PDF Online Free (100% Local & Private) | DocForge"
+        title="Sign PDF Online Free (100% Local & Private) | DocScalar"
         description="Sign PDF documents securely online. Draw or type handwritten signatures, place initials, dates, and stamps with 100% client-side privacy and tamper-evident SHA-256 audit certificates."
       />
 
@@ -387,7 +487,7 @@ export default function SignPdf() {
               {/* Studio Canvas Viewport (Left / Center) */}
               {pdfDocument ? (
                 <SignCanvasViewport
-                  fileName={files[0]?.name}
+                  cropper={cropper}
                   pdfDocument={pdfDocument}
                   totalPages={totalPages}
                   activePageIndex={activePageIndex}
@@ -409,6 +509,8 @@ export default function SignPdf() {
                   onAddField={addField}
                   onReplacePdf={handleReplacePdf}
                   onOpenSignatureModal={handleOpenSigModal}
+                  detectedZones={detectedZones}
+                  onApplyDetectedZone={handleApplyDetectedZone}
                 />
               ) : (
                 <div className="flex-1 flex flex-col items-center justify-center p-12 bg-[var(--bg-tertiary)] text-[var(--text-secondary)]">
@@ -419,6 +521,7 @@ export default function SignPdf() {
 
               {/* Studio Options & Actions Sidebar (Right) */}
               <SignOptionsSidebar
+                cropper={cropper}
                 signatureData={signatureData}
                 initialsData={initialsData}
                 onOpenSignatureModal={() => handleOpenSigModal('signature')}
@@ -447,6 +550,9 @@ export default function SignPdf() {
                 processing={processing}
                 progress={progress}
                 error={error}
+                isPro={isPro}
+                detectedZones={detectedZones}
+                onApplyDetectedZone={handleApplyDetectedZone}
               />
             </div>
           )}

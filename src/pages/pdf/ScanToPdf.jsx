@@ -16,8 +16,7 @@ import {
   ChevronRight,
   Upload,
   Layers,
-  Sparkles,
-  Download
+  Sparkles
 } from 'lucide-react';
 
 export default function ScanToPdf() {
@@ -25,13 +24,14 @@ export default function ScanToPdf() {
   const [cameraActive, setCameraActive] = useState(false);
   const [facingMode, setFacingMode] = useState('environment'); // 'environment' | 'user'
   const [stream, setStream] = useState(null);
-  const [cameraError, setCameraError] = useState(null);
+  const [, setCameraError] = useState(null);
 
   // Layout & Formatting Options
   const [pageSize, setPageSize] = useState('a4'); // 'a4' | 'letter' | 'fit'
   const [orientation, setOrientation] = useState('auto'); // 'auto' | 'portrait' | 'landscape'
   const [margin, setMargin] = useState(0); // 0 | 15 | 30
   const [enhanceFilter, setEnhanceFilter] = useState('enhance'); // 'enhance' | 'grayscale' | 'normal'
+  const [autoCropBorders, setAutoCropBorders] = useState(true);
   const [pdfName, setPdfName] = useState('scanned_document.pdf');
 
   // Processing & Results
@@ -153,7 +153,7 @@ export default function ScanToPdf() {
         }
       ]);
       setError(null);
-    } catch (err) {
+    } catch {
       setError('Snapshot capture failed.');
     }
   };
@@ -229,7 +229,9 @@ export default function ScanToPdf() {
         pageSize,
         orientation,
         margin: parseInt(margin, 10),
-        filter: enhanceFilter
+        filter: enhanceFilter,
+        autoCropBlackBorders: autoCropBorders,
+        cleanMargin: 18
       });
 
       setProgress(100);
@@ -274,7 +276,7 @@ export default function ScanToPdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Scan to PDF Online Free — Camera Document Scanner | DocForge"
+        title="Scan to PDF Online Free — Camera Document Scanner | DocScalar"
         description="Capture documents with your webcam or mobile camera, adjust rotations, apply scan enhancements, and bundle into a clean PDF. 100% Client-side."
       />
 
@@ -286,10 +288,10 @@ export default function ScanToPdf() {
           <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
             {/* Sticky Canvas Toolbar */}
             <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-              <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-2 flex-wrap">
+              <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2.5">
+                <div className="flex items-center gap-2.5 flex-wrap">
                   {/* Camera Status Capsule */}
-                  <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)]">
+                  <div className="h-8 flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)] shrink-0">
                     <span className={`w-2 h-2 rounded-full ${cameraActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
                     <span>{cameraActive ? 'Camera Live' : 'Camera Off'}</span>
                   </div>
@@ -300,7 +302,7 @@ export default function ScanToPdf() {
                       <button
                         type="button"
                         onClick={stopCamera}
-                        className="px-2.5 py-1 rounded-lg bg-[var(--bg-secondary)] hover:bg-red-500/10 text-red-500 border border-[var(--border-subtle)] text-xs font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                        className="h-8 px-3.5 py-1.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-red-500/10 text-red-500 border border-[var(--border-subtle)] text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors shrink-0"
                       >
                         <VideoOff size={13} />
                         <span>Stop</span>
@@ -309,7 +311,7 @@ export default function ScanToPdf() {
                       <button
                         type="button"
                         onClick={toggleFacingMode}
-                        className="px-2.5 py-1 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-subtle)] text-xs font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                        className="h-8 px-3.5 py-1.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-subtle)] text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors shrink-0"
                         title="Switch Camera (Front / Back)"
                       >
                         <FlipHorizontal size={13} />
@@ -320,7 +322,7 @@ export default function ScanToPdf() {
                     <button
                       type="button"
                       onClick={() => startCamera(facingMode)}
-                      className="px-3 py-1 rounded-lg bg-[var(--color-primary)] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs hover:opacity-90 transition-opacity"
+                      className="h-8 px-3.5 py-1.5 rounded-lg bg-[var(--color-primary)] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs hover:opacity-90 transition-opacity shrink-0"
                     >
                       <Camera size={14} />
                       <span>Open Camera</span>
@@ -328,7 +330,7 @@ export default function ScanToPdf() {
                   )}
 
                   {/* Scanned Pages Counter */}
-                  <span className="px-2.5 py-1 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)]">
+                  <span className="h-8 flex items-center px-3 py-1.5 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)] shrink-0">
                     {capturedPages.length} Scanned {capturedPages.length === 1 ? 'Page' : 'Pages'}
                   </span>
                 </div>
@@ -347,7 +349,7 @@ export default function ScanToPdf() {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-2.5 py-1 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-subtle)] text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
+                    className="h-8 px-3.5 py-1.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-medium)] text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors shrink-0"
                   >
                     <Upload size={13} />
                     <span>Upload Images</span>
@@ -356,7 +358,7 @@ export default function ScanToPdf() {
                   <button
                     type="button"
                     onClick={resetWorkspace}
-                    className="p-1 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer"
+                    className="h-8 w-8 flex items-center justify-center hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-red-500/20"
                     title="Reset workspace"
                   >
                     <span className="material-symbols-outlined text-[18px]">restart_alt</span>
@@ -380,8 +382,9 @@ export default function ScanToPdf() {
 
                     {/* Alignment Guidelines Frame */}
                     <div className="absolute inset-8 border-2 border-dashed border-white/60 pointer-events-none rounded-xl flex items-center justify-center shadow-lg">
-                      <span className="text-[11px] font-extrabold uppercase tracking-widest text-white/70 bg-black/40 px-3 py-1 rounded-full backdrop-blur-xs">
-                        [ ⛶ ] Align Document Frame
+                      <span className="text-[11px] font-extrabold uppercase tracking-widest text-white/70 bg-black/40 px-3 py-1 rounded-full backdrop-blur-xs flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[14px]">crop_free</span>
+                        Align Document Frame
                       </span>
                     </div>
 
@@ -687,6 +690,27 @@ export default function ScanToPdf() {
                 </div>
               </div>
 
+              {/* VisionClean: Universal Smart Cropper */}
+              <div className="flex flex-col gap-1.5 pt-2 border-t border-[var(--border-subtle)]">
+                <label className="flex items-start justify-between gap-2 p-2.5 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] cursor-pointer hover:border-[var(--border-strong)] transition-colors">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-xs font-bold text-[var(--text-primary)] flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[15px] text-emerald-500">auto_fix_high</span>
+                      Auto-Crop Shadows & Borders
+                    </span>
+                    <span className="text-[10px] text-[var(--text-secondary)] leading-tight">
+                      Content-aware detection trims scan deskew artifacts while preserving all writing.
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={autoCropBorders}
+                    onChange={(e) => setAutoCropBorders(e.target.checked)}
+                    className="w-4 h-4 rounded accent-[var(--color-primary)] cursor-pointer mt-0.5"
+                  />
+                </label>
+              </div>
+
               {/* 5. Custom Output Filename */}
               <div className="flex flex-col gap-1 pt-2 border-t border-[var(--border-subtle)]">
                 <label className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
@@ -704,14 +728,16 @@ export default function ScanToPdf() {
               {/* Progress Bar (While Processing) */}
               {processing && (
                 <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                  <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                    <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                      <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                  <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                         progress_activity
                       </span>
-                      {statusMessage || 'Compiling PDF document...'}
-                    </span>
-                    <span>{progress}%</span>
+                      <span className="truncate" title={statusMessage || 'Compiling PDF document...'}>
+                        {statusMessage || 'Compiling PDF document...'}
+                      </span>
+                    </div>
+                    <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                   </div>
                   <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div

@@ -17,7 +17,7 @@ from backend.services.ai_service import (
 class TestZeroCostAIService(unittest.TestCase):
     def test_extractive_summarizer(self):
         sample_doc = (
-            "DocForge is a privacy-first document processing platform. "
+            "DocScalar is a privacy-first document processing platform. "
             "It runs entirely client-side in the browser using WebAssembly and Web Workers. "
             "No sensitive user files are ever uploaded to cloud servers by default. "
             "Users can merge, split, compress, convert, and sign PDF documents locally. "

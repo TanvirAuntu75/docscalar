@@ -1,0 +1,774 @@
+{
+  "totalPages": 2,
+  "pageSize": {
+    "width": 595.276,
+    "height": 841.89
+  },
+  "pages": [
+    {
+      "pageIndex": 0,
+      "fields": [
+        {
+          "name": "full_legal_name",
+          "type": "text",
+          "rect": [
+            50.0,
+            122.0,
+            330.0,
+            146.0
+          ],
+          "archetype": "shaded_box"
+        },
+        {
+          "name": "preferred_name",
+          "type": "text",
+          "rect": [
+            345.0,
+            122.0,
+            545.0,
+            146.0
+          ],
+          "archetype": "outline_box"
+        },
+        {
+          "name": "taxpayer_id_comb",
+          "type": "comb",
+          "rect": [
+            50.0,
+            168.0,
+            220.0,
+            188.0
+          ],
+          "cells": [
+            [
+              50.0,
+              168.0,
+              66.0,
+              188.0
+            ],
+            [
+              66.0,
+              168.0,
+              82.0,
+              188.0
+            ],
+            [
+              82.0,
+              168.0,
+              98.0,
+              188.0
+            ],
+            [
+              111.0,
+              168.0,
+              127.0,
+              188.0
+            ],
+            [
+              127.0,
+              168.0,
+              143.0,
+              188.0
+            ],
+            [
+              156.0,
+              168.0,
+              172.0,
+              188.0
+            ],
+            [
+              172.0,
+              168.0,
+              188.0,
+              188.0
+            ],
+            [
+              188.0,
+              168.0,
+              204.0,
+              188.0
+            ],
+            [
+              204.0,
+              168.0,
+              220.0,
+              188.0
+            ]
+          ],
+          "archetype": "comb_field"
+        },
+        {
+          "name": "dob",
+          "type": "text",
+          "rect": [
+            345.0,
+            168.0,
+            545.0,
+            188.0
+          ],
+          "archetype": "shaded_box"
+        },
+        {
+          "name": "street_address",
+          "type": "text",
+          "rect": [
+            50.0,
+            240.0,
+            285.0,
+            264.0
+          ],
+          "archetype": "outline_box"
+        },
+        {
+          "name": "relocation_history",
+          "type": "text",
+          "multiline": true,
+          "rect": [
+            50.0,
+            286.0,
+            285.0,
+            366.0
+          ],
+          "archetype": "multiline_shaded"
+        },
+        {
+          "name": "city",
+          "type": "text",
+          "rect": [
+            300.0,
+            240.0,
+            420.0,
+            264.0
+          ],
+          "archetype": "outline_box"
+        },
+        {
+          "name": "state",
+          "type": "text",
+          "rect": [
+            435.0,
+            240.0,
+            545.0,
+            264.0
+          ],
+          "archetype": "outline_box"
+        },
+        {
+          "name": "zip_code",
+          "type": "text",
+          "rect": [
+            300.0,
+            286.0,
+            420.0,
+            310.0
+          ],
+          "archetype": "shaded_box"
+        },
+        {
+          "name": "phone",
+          "type": "text",
+          "rect": [
+            435.0,
+            286.0,
+            545.0,
+            310.0
+          ],
+          "archetype": "shaded_box"
+        },
+        {
+          "name": "email",
+          "type": "text",
+          "rect": [
+            300.0,
+            332.0,
+            545.0,
+            356.0
+          ],
+          "archetype": "outline_box"
+        },
+        {
+          "name": "survey_q1",
+          "type": "radio",
+          "option": "opt_1",
+          "rect": [
+            275.0,
+            428.0,
+            285.0,
+            438.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q1",
+          "type": "radio",
+          "option": "opt_2",
+          "rect": [
+            345.0,
+            428.0,
+            355.0,
+            438.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q1",
+          "type": "radio",
+          "option": "opt_3",
+          "rect": [
+            415.0,
+            428.0,
+            425.0,
+            438.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q1",
+          "type": "radio",
+          "option": "opt_4",
+          "rect": [
+            485.0,
+            428.0,
+            495.0,
+            438.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q2",
+          "type": "radio",
+          "option": "opt_1",
+          "rect": [
+            275.0,
+            448.0,
+            285.0,
+            458.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q2",
+          "type": "radio",
+          "option": "opt_2",
+          "rect": [
+            345.0,
+            448.0,
+            355.0,
+            458.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q2",
+          "type": "radio",
+          "option": "opt_3",
+          "rect": [
+            415.0,
+            448.0,
+            425.0,
+            458.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q2",
+          "type": "radio",
+          "option": "opt_4",
+          "rect": [
+            485.0,
+            448.0,
+            495.0,
+            458.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q3",
+          "type": "radio",
+          "option": "opt_1",
+          "rect": [
+            275.0,
+            468.0,
+            285.0,
+            478.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q3",
+          "type": "radio",
+          "option": "opt_2",
+          "rect": [
+            345.0,
+            468.0,
+            355.0,
+            478.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q3",
+          "type": "radio",
+          "option": "opt_3",
+          "rect": [
+            415.0,
+            468.0,
+            425.0,
+            478.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q3",
+          "type": "radio",
+          "option": "opt_4",
+          "rect": [
+            485.0,
+            468.0,
+            495.0,
+            478.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q4",
+          "type": "radio",
+          "option": "opt_1",
+          "rect": [
+            275.0,
+            488.0,
+            285.0,
+            498.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q4",
+          "type": "radio",
+          "option": "opt_2",
+          "rect": [
+            345.0,
+            488.0,
+            355.0,
+            498.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q4",
+          "type": "radio",
+          "option": "opt_3",
+          "rect": [
+            415.0,
+            488.0,
+            425.0,
+            498.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "survey_q4",
+          "type": "radio",
+          "option": "opt_4",
+          "rect": [
+            485.0,
+            488.0,
+            495.0,
+            498.0
+          ],
+          "archetype": "radio_circle"
+        },
+        {
+          "name": "certify_checkbox",
+          "type": "checkbox",
+          "rect": [
+            50.0,
+            540.0,
+            64.0,
+            554.0
+          ],
+          "archetype": "checkbox"
+        },
+        {
+          "name": "signature_underline",
+          "type": "underline",
+          "rect": [
+            210.0,
+            568.0,
+            400.0,
+            584.0
+          ],
+          "archetype": "underline"
+        },
+        {
+          "name": "date_underline",
+          "type": "underline",
+          "rect": [
+            450.0,
+            568.0,
+            545.0,
+            584.0
+          ],
+          "archetype": "underline"
+        }
+      ]
+    },
+    {
+      "pageIndex": 1,
+      "fields": [
+        {
+          "name": "tbl_desc_r1",
+          "type": "text",
+          "rect": [
+            95.0,
+            115.0,
+            260.0,
+            139.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_cat_r1",
+          "type": "text",
+          "rect": [
+            260.0,
+            115.0,
+            355.0,
+            139.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_qty_r1",
+          "type": "text",
+          "rect": [
+            355.0,
+            115.0,
+            400.0,
+            139.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_val_r1",
+          "type": "text",
+          "rect": [
+            400.0,
+            115.0,
+            475.0,
+            139.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_taxable_r1",
+          "type": "checkbox",
+          "rect": [
+            504.0,
+            121.0,
+            516.0,
+            133.0
+          ],
+          "archetype": "checkbox"
+        },
+        {
+          "name": "tbl_desc_r2",
+          "type": "text",
+          "rect": [
+            95.0,
+            139.0,
+            260.0,
+            163.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_cat_r2",
+          "type": "text",
+          "rect": [
+            260.0,
+            139.0,
+            355.0,
+            163.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_qty_r2",
+          "type": "text",
+          "rect": [
+            355.0,
+            139.0,
+            400.0,
+            163.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_val_r2",
+          "type": "text",
+          "rect": [
+            400.0,
+            139.0,
+            475.0,
+            163.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_taxable_r2",
+          "type": "checkbox",
+          "rect": [
+            504.0,
+            145.0,
+            516.0,
+            157.0
+          ],
+          "archetype": "checkbox"
+        },
+        {
+          "name": "tbl_desc_r3",
+          "type": "text",
+          "rect": [
+            95.0,
+            163.0,
+            260.0,
+            187.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_cat_r3",
+          "type": "text",
+          "rect": [
+            260.0,
+            163.0,
+            355.0,
+            187.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_qty_r3",
+          "type": "text",
+          "rect": [
+            355.0,
+            163.0,
+            400.0,
+            187.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_val_r3",
+          "type": "text",
+          "rect": [
+            400.0,
+            163.0,
+            475.0,
+            187.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_taxable_r3",
+          "type": "checkbox",
+          "rect": [
+            504.0,
+            169.0,
+            516.0,
+            181.0
+          ],
+          "archetype": "checkbox"
+        },
+        {
+          "name": "tbl_desc_r4",
+          "type": "text",
+          "rect": [
+            95.0,
+            187.0,
+            260.0,
+            211.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_cat_r4",
+          "type": "text",
+          "rect": [
+            260.0,
+            187.0,
+            355.0,
+            211.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_qty_r4",
+          "type": "text",
+          "rect": [
+            355.0,
+            187.0,
+            400.0,
+            211.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_val_r4",
+          "type": "text",
+          "rect": [
+            400.0,
+            187.0,
+            475.0,
+            211.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_taxable_r4",
+          "type": "checkbox",
+          "rect": [
+            504.0,
+            193.0,
+            516.0,
+            205.0
+          ],
+          "archetype": "checkbox"
+        },
+        {
+          "name": "tbl_desc_r5",
+          "type": "text",
+          "rect": [
+            95.0,
+            211.0,
+            260.0,
+            235.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_cat_r5",
+          "type": "text",
+          "rect": [
+            260.0,
+            211.0,
+            355.0,
+            235.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_qty_r5",
+          "type": "text",
+          "rect": [
+            355.0,
+            211.0,
+            400.0,
+            235.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_val_r5",
+          "type": "text",
+          "rect": [
+            400.0,
+            211.0,
+            475.0,
+            235.0
+          ],
+          "archetype": "table_cell"
+        },
+        {
+          "name": "tbl_taxable_r5",
+          "type": "checkbox",
+          "rect": [
+            504.0,
+            217.0,
+            516.0,
+            229.0
+          ],
+          "archetype": "checkbox"
+        },
+        {
+          "name": "summary_val_1",
+          "type": "underline",
+          "rect": [
+            430,
+            248.0,
+            545,
+            262.0
+          ],
+          "archetype": "underline"
+        },
+        {
+          "name": "summary_val_2",
+          "type": "underline",
+          "rect": [
+            430,
+            270.0,
+            545,
+            284.0
+          ],
+          "archetype": "underline"
+        },
+        {
+          "name": "summary_val_3",
+          "type": "underline",
+          "rect": [
+            430,
+            292.0,
+            545,
+            306.0
+          ],
+          "archetype": "underline"
+        },
+        {
+          "name": "official_audit_stamp",
+          "type": "text",
+          "rect": [
+            160.0,
+            369.0,
+            320.0,
+            391.0
+          ],
+          "archetype": "outline_box"
+        },
+        {
+          "name": "official_approval_code",
+          "type": "text",
+          "rect": [
+            415.0,
+            369.0,
+            535.0,
+            391.0
+          ],
+          "archetype": "outline_box"
+        },
+        {
+          "name": "auditor_sig_underline",
+          "type": "underline",
+          "rect": [
+            140,
+            403.0,
+            250,
+            417.0
+          ],
+          "archetype": "underline"
+        },
+        {
+          "name": "auditor_date_underline",
+          "type": "underline",
+          "rect": [
+            370,
+            403.0,
+            460,
+            417.0
+          ],
+          "archetype": "underline"
+        }
+      ]
+    }
+  ]
+}

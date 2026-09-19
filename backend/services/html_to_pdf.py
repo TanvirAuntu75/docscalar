@@ -1,221 +1,220 @@
+import asyncio
+import logging
+import re
 import urllib.parse
+import uuid
 from pathlib import Path
+from typing import Any, Dict, Optional, Union
 
-from playwright.sync_api import sync_playwright
+from playwright.async_api import async_playwright
 
 from backend import config
 from backend.services.libreoffice import ConversionResult
 
+logger = logging.getLogger("docscalar.html_to_pdf")
 
-def convert_html_to_pdf(input_path: str) -> ConversionResult:
+
+async def convert_html_to_pdf(
+    html_or_path: str,
+    output_path: Optional[str] = None,
+    options: Optional[Dict[str, Any]] = None,
+    as_bytes: Optional[bool] = None,
+) -> Union[bytes, ConversionResult]:
     """
-    Convert HTML document to PDF using headless Playwright Chromium.
+    Convert HTML document or raw HTML string to PDF using headless Playwright Chromium.
 
     Key requirements for correct rendering:
-      - emulate_media("print") must be called so @media print and @page CSS rules fire.
-      - document.fonts.ready must be awaited so Google Fonts render before capture.
-      - Margins must NOT be overridden in Python — let the HTML @page CSS control them.
-      - LibreOffice fallback is intentionally NOT used for HTML: its HTML renderer
-        does not support CSS Grid, custom properties, or modern print layout.
-        A LibreOffice fallback would produce output worse than a broken Playwright render.
+      - Accepts raw HTML string directly or local file path.
+      - Launches headless Playwright/Chromium with --no-sandbox, --disable-setuid-sandbox,
+        and --disable-gpu, searching Chrome, Edge, and bundled Chromium channels.
+      - Emulates 'print' media so @media print and @page CSS rules fire deterministically.
+      - Awaits network idle and document.fonts.ready for Google Fonts decode.
+      - Renders A4 portrait with zero margins by default (respecting @page CSS and options).
+      - Returns raw PDF bytes when converting raw HTML (or when as_bytes=True).
+      - Writes to output path and returns ConversionResult when converting a file (or when as_bytes=False).
     """
+    if not html_or_path or not str(html_or_path).strip():
+        if as_bytes:
+            raise ValueError("HTML content cannot be empty")
+        return ConversionResult(success=False, error_message="HTML content cannot be empty")
+
+    source_str = str(html_or_path).strip()
+    is_file = False
     try:
-        input_file = Path(input_path)
-        if not input_file.exists():
-            return ConversionResult(
-                success=False, error_message="Input file does not exist"
-            )
+        # If it doesn't contain HTML tags and isn't too long, check if it's an existing file
+        if "<" not in source_str and len(source_str) < 1024:
+            p = Path(source_str)
+            if p.is_file():
+                is_file = True
+    except (OSError, ValueError):
+        is_file = False
 
-        output_pdf_path = config.OUTPUT_DIR / f"{input_file.stem}.pdf"
+    # Determine return type: bytes if raw HTML and no explicit output_path, else ConversionResult
+    return_bytes = as_bytes if as_bytes is not None else (not is_file and output_path is None)
 
-        # Calculate dynamic timeout based on file size (30s base + 6s per MB, max 3 mins)
-        file_size_mb = input_file.stat().st_size / (1024 * 1024)
-        dynamic_timeout_ms = min(180000, int(30000 + (file_size_mb * 6000)))
-        print(
-            f"[HTML_TO_PDF] File size: {file_size_mb:.2f} MB. Calculated timeout: {dynamic_timeout_ms / 1000:.1f}s"
-        )
+    output_pdf_path: Optional[Path] = None
+    if not return_bytes:
+        if output_path:
+            output_pdf_path = Path(output_path)
+        elif is_file:
+            output_pdf_path = config.OUTPUT_DIR / f"{Path(source_str).stem}.pdf"
+        else:
+            output_pdf_path = config.OUTPUT_DIR / f"{uuid.uuid4().hex}.pdf"
+        output_pdf_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with sync_playwright() as p:
-            # Launch Chromium, prioritizing system Chrome or Edge to ensure all system fonts render correctly
+    try:
+        if is_file:
+            input_file = Path(source_str)
+            file_size_mb = input_file.stat().st_size / (1024 * 1024)
+            dynamic_timeout_ms = min(180000, int(30000 + (file_size_mb * 6000)))
+            with open(input_file, "r", encoding="utf-8", errors="replace") as f:
+                html_content = f.read()
+        else:
+            html_content = source_str
+            payload_size_mb = len(html_content.encode("utf-8")) / (1024 * 1024)
+            dynamic_timeout_ms = min(180000, int(30000 + (payload_size_mb * 6000)))
+
+        args = [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-gpu",
+            "--disable-dev-shm-usage",
+        ]
+
+        async with async_playwright() as p:
             browser = None
             for channel in ["chrome", "msedge", None]:
                 try:
-                    # Pass --no-sandbox to avoid permission blocks on Windows font folders
-                    args = ["--no-sandbox", "--disable-setuid-sandbox"]
                     if channel:
-                        browser = p.chromium.launch(
+                        browser = await p.chromium.launch(
                             headless=True, channel=channel, args=args
                         )
                     else:
-                        browser = p.chromium.launch(headless=True, args=args)
+                        browser = await p.chromium.launch(headless=True, args=args)
                     if browser:
                         break
                 except Exception as launch_err:
-                    print(
-                        f"[HTML_TO_PDF] Failed to launch Chromium with channel '{channel}': {launch_err}"
+                    logger.debug(
+                        f"[HTML_TO_PDF] Chromium launch failed with channel '{channel}': {launch_err}"
                     )
 
             if not browser:
-                return ConversionResult(
-                    success=False, error_message="Could not launch Chromium browser"
-                )
+                err_msg = "Could not launch Chromium browser. Please ensure Chrome or Edge is installed."
+                if return_bytes:
+                    raise RuntimeError(err_msg)
+                return ConversionResult(success=False, error_message=err_msg)
 
             try:
-                page = browser.new_page()
+                context = await browser.new_context()
+                page = await context.new_page()
                 page.set_default_timeout(dynamic_timeout_ms)
-                page.on("console", lambda msg: print(f"[Browser Console] {msg.text}"))
 
-                # ── SECURITY: Route interceptor to prevent Local File Inclusion (LFI) ──
-                def handle_route(route):
+                # ── SECURITY: Route interceptor to prevent Local File Inclusion (LFI) & SSRF ──
+                async def handle_route(route):
                     url = route.request.url
                     if url.startswith("file://"):
-                        try:
-                            raw_path = urllib.parse.unquote(
-                                url.replace("file:///", "").replace("file://", "")
-                            )
-                            resolved_target = Path(raw_path).resolve()
-                            resolved_upload_dir = config.UPLOAD_DIR.resolve()
-                            is_main_file = resolved_target == input_file.resolve()
-                            is_in_upload_dir = (
-                                resolved_upload_dir in resolved_target.parents
-                            )
-                            if not is_main_file and not is_in_upload_dir:
-                                print(
-                                    f"Security Warning: Blocked local file access: {url}"
+                        allowed = False
+                        if is_file:
+                            try:
+                                raw_path = urllib.parse.unquote(
+                                    url.replace("file:///", "").replace("file://", "")
                                 )
-                                route.abort()
-                                return
-                        except Exception as route_err:
-                            print(f"Error validating route path: {route_err}")
-                            route.abort()
+                                resolved_target = Path(raw_path).resolve()
+                                if (
+                                    resolved_target == Path(source_str).resolve()
+                                    or config.UPLOAD_DIR.resolve() in resolved_target.parents
+                                ):
+                                    allowed = True
+                            except Exception:
+                                allowed = False
+                        if not allowed:
+                            logger.warning(f"[HTML_TO_PDF Security] Blocked local file access: {url}")
+                            await route.abort()
                             return
-                    elif not (
-                        url.startswith("http://")
-                        or url.startswith("https://")
-                        or url.startswith("data:")
-                    ):
-                        print(
-                            f"Security Warning: Blocked invalid request scheme: {url}"
-                        )
-                        route.abort()
+                    elif url.startswith("data:"):
+                        await route.continue_()
                         return
-                    route.continue_()
+                    elif url.startswith("http://") or url.startswith("https://"):
+                        try:
+                            from backend.services.url_to_pdf import is_safe_url
 
-                page.route("**/*", handle_route)
+                            safe, reason = is_safe_url(url)
+                            if not safe:
+                                logger.warning(
+                                    f"[HTML_TO_PDF Security] Blocked unsafe network request: {url} ({reason})"
+                                )
+                                await route.abort()
+                                return
+                        except Exception:
+                            pass
+                    else:
+                        await route.abort()
+                        return
+                    await route.continue_()
 
-                # ── FIX 1: Emulate print media BEFORE loading the page ──────────────
-                # Without this, @media print CSS and @page rules are never applied.
-                # The browser renders in "screen" mode by default, which is wrong for PDF.
-                print("[PLAYWRIGHT_DEBUG] Emulating print media for HTML conversion")
-                page.emulate_media(media="print")
+                await page.route("**/*", handle_route)
 
-                # Load the HTML file
-                # Load the HTML file with dynamic timeout
-                page.goto(
-                    f"file:///{input_file.absolute().as_posix()}",
-                    timeout=dynamic_timeout_ms,
+                # ── Emulate print media BEFORE loading page so @media print and @page fire ──
+                await page.emulate_media(media="print")
+
+                # Load the HTML content
+                await page.set_content(
+                    html_content, wait_until="load", timeout=dynamic_timeout_ms
                 )
 
-                # Inject global print CSS overrides to control page breaks and prevent cut elements
-                page.add_style_tag(
-                    content="""
-                    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;600;800&family=Sora:wght@400;600;800&display=swap');
-                    
-                    @media print {
-                        .card, .warning, .success, .code, tr, td, th, li, pre, blockquote {
-                            break-inside: avoid !important;
-                            page-break-inside: avoid !important;
-                        }
-                        h1, h2, h3, h4, h5, h6 {
-                            break-after: avoid !important;
-                            page-break-after: avoid !important;
-                        }
-                        hr {
-                            break-before: page !important;
-                            page-break-before: always !important;
-                            border: none !important;
-                            margin: 0 !important;
-                            height: 0 !important;
-                        }
-                    }
-                """
-                )
-
-                # Wait for network to be idle (external resources like Google Fonts CDN)
-                # Set a 5s timeout so offline/sandboxed environments do not hang.
+                # Wait for external network assets (Google Fonts CDN, etc.) with 5s timeout
                 try:
-                    page.wait_for_load_state("networkidle", timeout=5000)
-                except Exception as net_err:
-                    print(f"Network idle wait timed out (continuing anyway): {net_err}")
+                    await page.wait_for_load_state("networkidle", timeout=5000)
+                except Exception:
+                    pass
 
-                # ── FIX 2: Wait for fonts to be decoded and ready ─────────────────
-                # networkidle catches the HTTP response for fonts, but not their decode.
-                # document.fonts.ready resolves when all fonts are fully available.
+                # Wait for all fonts to be decoded and rendered
                 try:
-                    page.wait_for_function("document.fonts.ready", timeout=5000)
-                except Exception as font_err:
-                    print(
-                        f"Font ready check timed out or failed (continuing anyway): {font_err}"
-                    )
+                    await page.wait_for_function("document.fonts.ready", timeout=5000)
+                except Exception:
+                    pass
 
-                # ── AUTOMATED LAYOUT OPTIMIZER ─────────────────────────────────────
-                # Inject a child wrapper and zoom the content wrapper so page-breaks
-                # are computed correctly by the browser printing engine.
-                page.evaluate("""
-                    () => {
-                        const maxPageHeight = 940; // Safe printable A4 height threshold
-                        const containers = document.querySelectorAll('.page-wrapper, .cover, [class*="page-break"]');
-                        containers.forEach((container, index) => {
-                            if (container.classList.contains('cover')) {
-                                return; // Skip cover page (uses absolute 297mm height)
-                            }
-                            
-                            // 1. Create content wrapper
-                            const wrapper = document.createElement('div');
-                            wrapper.className = 'page-content-optimizer';
-                            wrapper.style.display = 'flow-root'; // Prevent margin collapsing
-                            
-                            // 2. Move children into wrapper
-                            while (container.firstChild) {
-                                wrapper.appendChild(container.firstChild);
-                            }
-                            container.appendChild(wrapper);
-                            
-                            // 3. Compute actual padding of container
-                            const style = window.getComputedStyle(container);
-                            const paddingTop = parseFloat(style.paddingTop) || 0;
-                            const paddingBottom = parseFloat(style.paddingBottom) || 0;
-                            const maxContentHeight = maxPageHeight - paddingTop - paddingBottom;
-                            
-                            // 4. Measure wrapper height
-                            const currentHeight = wrapper.getBoundingClientRect().height;
-                            if (currentHeight > maxContentHeight) {
-                                const scale = maxContentHeight / currentHeight;
-                                const finalScale = Math.max(0.65, scale);
-                                wrapper.style.zoom = finalScale.toString();
-                                console.log(`[OPTIMIZER] Page ${index + 1} content height was ${currentHeight}px. Scaled by ${finalScale.toFixed(3)} to fit.`);
-                            }
-                        });
-                    }
-                """)
+                # ── Render A4 PDF with Zero Margins by Default ──
+                pdf_options: Dict[str, Any] = {
+                    "format": "A4",
+                    "landscape": False,
+                    "print_background": True,
+                    "prefer_css_page_size": True,
+                    "margin": {
+                        "top": "0px",
+                        "right": "0px",
+                        "bottom": "0px",
+                        "left": "0px",
+                    },
+                }
 
-                # ── FIX 3: Do NOT set margins here — let CSS @page rules control them ──
-                # Setting margin in page.pdf() overrides the CSS @page margin rules.
-                # If your HTML has `@page { margin: 20mm 18mm 22mm 18mm }`, Python
-                # margin:"0" silently wins and your CSS margin is ignored entirely.
-                # Omitting the margin parameter lets CSS take full control.
-                page.pdf(
-                    path=str(output_pdf_path),
-                    format="A4",
-                    print_background=True,  # Required: renders background-color, background-image
-                    prefer_css_page_size=True,  # Respect CSS @page size declarations
-                    # margin intentionally omitted — controlled by CSS @page rules
-                )
+                # Apply client options override if specified
+                if options and isinstance(options, dict):
+                    if "format" in options and options["format"]:
+                        pdf_options["format"] = options["format"]
+                    if "landscape" in options:
+                        pdf_options["landscape"] = bool(options["landscape"])
+                    if "printBackground" in options:
+                        pdf_options["print_background"] = bool(options["printBackground"])
+                    elif "print_background" in options:
+                        pdf_options["print_background"] = bool(options["print_background"])
+                    if "margin" in options and isinstance(options["margin"], dict):
+                        pdf_options["margin"] = options["margin"]
+                    if "prefer_css_page_size" in options:
+                        pdf_options["prefer_css_page_size"] = bool(options["prefer_css_page_size"])
+
+                if not return_bytes and output_pdf_path:
+                    pdf_bytes = await page.pdf(path=str(output_pdf_path), **pdf_options)
+                else:
+                    pdf_bytes = await page.pdf(**pdf_options)
 
             finally:
-                browser.close()
+                await browser.close()
 
-        if output_pdf_path.exists():
+        if return_bytes:
+            return pdf_bytes
+
+        if output_pdf_path and output_pdf_path.exists():
             return ConversionResult(
                 success=True,
                 output_path=str(output_pdf_path),
@@ -224,14 +223,40 @@ def convert_html_to_pdf(input_path: str) -> ConversionResult:
 
         return ConversionResult(
             success=False,
-            error_message="Playwright finished but output PDF was not created.",
+            error_message="Playwright completed but output PDF was not generated.",
         )
 
     except Exception as e:
-        # NOTE: No LibreOffice fallback here.
-        # LibreOffice does not support CSS Grid, CSS custom properties, SVG inline,
-        # or modern @page print layout. For HTML → PDF, a failed Playwright render
-        # is better than a LibreOffice render. Surface the error to the user instead.
+        logger.error(f"[HTML_TO_PDF] Conversion failed: {e}", exc_info=True)
+        if return_bytes:
+            raise RuntimeError(f"HTML to PDF conversion failed: {e!s}") from e
         return ConversionResult(
             success=False, error_message=f"HTML to PDF conversion failed: {e!s}"
         )
+
+
+def convert_html_to_pdf_sync(
+    html_or_path: str,
+    output_path: Optional[str] = None,
+    options: Optional[Dict[str, Any]] = None,
+    as_bytes: Optional[bool] = None,
+) -> Union[bytes, ConversionResult]:
+    """
+    Synchronous wrapper for convert_html_to_pdf.
+    """
+    return asyncio.run(
+        convert_html_to_pdf(
+            html_or_path=html_or_path,
+            output_path=output_path,
+            options=options,
+            as_bytes=as_bytes,
+        )
+    )
+
+
+async def convert_html_file_to_pdf(input_path: str) -> ConversionResult:
+    """
+    Explicit file-to-PDF conversion helper for background job queues.
+    """
+    return await convert_html_to_pdf(input_path, as_bytes=False)
+

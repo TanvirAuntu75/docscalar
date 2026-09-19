@@ -14,11 +14,11 @@ import {
   Table,
   Sparkles,
   Download,
-  Cpu,
-  Server,
+  Zap,
   FileCheck,
   Layout,
-  Grid
+  Grid,
+  Eye
 } from 'lucide-react';
 
 export default function ExcelToPdf() {
@@ -55,7 +55,10 @@ export default function ExcelToPdf() {
     const checkServer = async () => {
       try {
         const res = await apiFetch(`${BACKEND_URL}/api/meta/conversions`, { signal: AbortSignal.timeout(1500) });
-        if (res.ok) setBackendActive(true);
+        if (res.ok) {
+          setBackendActive(true);
+          setEngineMode('server');
+        }
       } catch (e) {
         setBackendActive(false);
       }
@@ -203,10 +206,10 @@ export default function ExcelToPdf() {
         });
     } else if (poller.status === 'failed') {
       setProcessing(false);
-      setError(poller.error || 'Server conversion failed.');
+      setError(poller.error || 'Full Precision conversion could not be completed.');
     } else if (poller.status === 'started' || poller.status === 'queued') {
       setProgress(poller.progress || 20);
-      setStatusMessage('Converting spreadsheet layout via LibreOffice engine...');
+      setStatusMessage('Converting spreadsheet layout via desktop rendering engine...');
     }
   }, [poller.status, poller.result, poller.error, poller.progress, files, activeFileIndex]);
 
@@ -224,8 +227,8 @@ export default function ExcelToPdf() {
 
     try {
       if (engineMode === 'server') {
-        if (!backendActive) throw new Error('Conversion server is unreachable. Please switch to Fast Browser Mode.');
-        setStatusMessage('Uploading spreadsheet for LibreOffice PDF conversion...');
+        if (!backendActive) throw new Error('Cloud conversion engine is currently offline. Please switch to Fast Mode.');
+        setStatusMessage('Preparing spreadsheet for full-precision PDF conversion...');
         const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
         if (!uploadData.success) throw new Error(uploadData.detail || 'Upload failed');
 
@@ -235,9 +238,11 @@ export default function ExcelToPdf() {
         const convertFormData = new FormData();
         convertFormData.append('file_id', uploadData.file_id);
         convertFormData.append('filename', uploadData.filename);
-        convertFormData.append('target_format', 'pdf');
+        convertFormData.append('page_size', pageSize);
+        convertFormData.append('orientation', orientation);
+        convertFormData.append('gridlines', gridlines ? 'true' : 'false');
 
-        const convertRes = await apiFetch(`${BACKEND_URL}/api/convert`, {
+        const convertRes = await apiFetch(`${BACKEND_URL}/api/convert/excel-to-pdf`, {
           method: 'POST',
           body: convertFormData
         });
@@ -270,6 +275,16 @@ export default function ExcelToPdf() {
     } catch (err) {
       setProcessing(false);
       setError(err.message || 'An error occurred during Excel to PDF conversion.');
+    }
+  };
+
+  const previewPdf = () => {
+    if (!result) return;
+    if (result.blob) {
+      const url = URL.createObjectURL(result.blob);
+      window.open(url, '_blank');
+    } else if (result.downloadUrl) {
+      window.open(result.downloadUrl, '_blank');
     }
   };
 
@@ -319,7 +334,7 @@ export default function ExcelToPdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Excel to PDF Online Free — Convert XLSX to PDF | DocForge"
+        title="Excel to PDF Online Free — Convert XLSX to PDF | DocScalar"
         description="Convert Excel spreadsheets (.xlsx, .xls, .csv) into PDF with customized orientation, gridlines, and page margins. 100% private in-browser conversion."
       />
 
@@ -524,8 +539,9 @@ export default function ExcelToPdf() {
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Cpu size={14} />
-                      <span>Fast Browser (Private)</span>
+                      <Zap size={14} />
+                      <span>Fast Mode</span>
+                      <span className={`text-[10px] ${engineMode === 'client' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>Instant · Private</span>
                     </button>
 
                     <button
@@ -537,8 +553,9 @@ export default function ExcelToPdf() {
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Server size={14} />
-                      <span>LibreOffice Server</span>
+                      <Sparkles size={14} />
+                      <span>Full Precision</span>
+                      <span className={`text-[10px] ${engineMode === 'server' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>Desktop Fidelity</span>
                     </button>
                   </div>
                 </div>
@@ -627,14 +644,16 @@ export default function ExcelToPdf() {
                 {/* Progress Bar (While Processing) */}
                 {processing && (
                   <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                    <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                           progress_activity
                         </span>
-                        {statusMessage || 'Compiling PDF document...'}
-                      </span>
-                      <span>{progress}%</span>
+                        <span className="truncate" title={statusMessage || 'Compiling PDF document...'}>
+                          {statusMessage || 'Compiling PDF document...'}
+                        </span>
+                      </div>
+                      <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div
@@ -720,7 +739,7 @@ export default function ExcelToPdf() {
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Engine</span>
                 <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1 capitalize">
-                  {result.engineMode === 'server' ? 'LibreOffice' : 'Vector Grid'}
+                  {result.engineMode === 'server' ? 'Full Precision' : 'Fast Mode'}
                 </span>
               </div>
             </div>
@@ -729,11 +748,20 @@ export default function ExcelToPdf() {
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center pt-2">
               <button
                 type="button"
-                className="btn btn-success btn-lg flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 w-full sm:w-auto min-w-[200px] text-sm sm:text-base font-bold py-3 px-6 whitespace-nowrap cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+                className="btn btn-success btn-lg flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 w-full sm:w-auto min-w-[180px] text-sm sm:text-base font-bold py-3 px-5 whitespace-nowrap cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
                 onClick={downloadFile}
               >
                 <Download size={18} />
                 <span>Download PDF</span>
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-primary btn-lg flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20 w-full sm:w-auto min-w-[160px] text-sm sm:text-base font-bold py-3 px-5 whitespace-nowrap cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+                onClick={previewPdf}
+              >
+                <Eye size={18} />
+                <span>Preview PDF</span>
               </button>
 
               <button

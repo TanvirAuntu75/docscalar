@@ -5,7 +5,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { loadPdfDocument } from '../../utils/pdfConfig';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
-import { translatePdf, SUPPORTED_LANGUAGES } from '../../engines/document/translatePdf';
+import { translatePdf, translateTextSnippet, SUPPORTED_LANGUAGES } from '../../engines/document/translatePdf';
 import { apiFetch, uploadFileSecure, BACKEND_URL } from '../../utils/api';
 import { useJobPoller } from '../../hooks/useJobPoller';
 import { formatFileSize } from '../../utils/constants';
@@ -15,8 +15,9 @@ import {
   Languages,
   Sparkles,
   Download,
-  Cpu,
-  Server,
+  Copy,
+  Check,
+  Zap,
   FileCheck,
   LayoutGrid,
   Maximize2,
@@ -228,6 +229,40 @@ export default function TranslatePdf() {
     };
   }, [pdfDoc, activePage, viewMode, zoomScale]);
 
+  // 5b. Debounced Live Translation Preview for Active Page
+  const [translatedPreviewText, setTranslatedPreviewText] = useState('');
+  const [translatingPreview, setTranslatingPreview] = useState(false);
+  const [previewCopied, setPreviewCopied] = useState(false);
+
+  useEffect(() => {
+    if (!extractedPageText || extractedPageText.includes('No readable text content detected')) {
+      setTranslatedPreviewText('');
+      return;
+    }
+
+    let isCancelled = false;
+    setTranslatingPreview(true);
+
+    const timer = setTimeout(async () => {
+      try {
+        const snippet = extractedPageText.slice(0, 450);
+        const translated = await translateTextSnippet(snippet, targetLang, sourceLang);
+        if (!isCancelled) {
+          setTranslatedPreviewText(translated || '');
+        }
+      } catch (e) {
+        if (!isCancelled) setTranslatedPreviewText('');
+      } finally {
+        if (!isCancelled) setTranslatingPreview(false);
+      }
+    }, 300);
+
+    return () => {
+      isCancelled = true;
+      clearTimeout(timer);
+    };
+  }, [extractedPageText, targetLang, sourceLang]);
+
   // 6. Monitor Backend Poller (Server Mode)
   useEffect(() => {
     if (poller.status === 'finished' && poller.result) {
@@ -263,7 +298,7 @@ export default function TranslatePdf() {
         });
     } else if (poller.status === 'failed') {
       setProcessing(false);
-      setError(poller.error || 'Server translation failed.');
+      setError(poller.error || 'Deep Neural translation could not be completed.');
     } else if (poller.status === 'started' || poller.status === 'queued') {
       setProgress(poller.progress || 20);
       setStatusMessage('Translating document via neural language model...');
@@ -286,8 +321,8 @@ export default function TranslatePdf() {
 
     try {
       if (engineMode === 'server') {
-        if (!backendActive) throw new Error('Translation server is unreachable. Please switch to Fast Client Mode.');
-        setStatusMessage('Uploading PDF for server neural translation...');
+        if (!backendActive) throw new Error('High-precision translation engine is currently offline. Please switch to Fast Mode.');
+        setStatusMessage('Preparing document for deep neural translation...');
         const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
         if (!uploadData.success) throw new Error(uploadData.detail || 'Upload failed');
 
@@ -358,6 +393,10 @@ export default function TranslatePdf() {
     setOutputFileName('');
     setPdfDoc(null);
     setNumPages(0);
+    setExtractedPageText('');
+    setTranslatedPreviewText('');
+    setTranslatingPreview(false);
+    setPreviewCopied(false);
     poller.resetPoller();
   };
 
@@ -366,7 +405,7 @@ export default function TranslatePdf() {
 
   return (
     <ToolPageLayout
-      toolId="translate-pdf"
+      toolId="ai-translator"
       title="AI Document Translator Studio"
       description="Translate entire PDF documents across 20+ languages while preserving layout, structure, and vector typography."
       files={files}
@@ -374,7 +413,7 @@ export default function TranslatePdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="PDF Translator Online Free — Translate PDF Documents | DocForge"
+        title="PDF Translator Online Free — Translate PDF Documents | DocScalar"
         description="Translate PDF documents into Spanish, French, German, Chinese, Japanese, and 20+ languages online with 100% private in-browser translation."
       />
 
@@ -426,10 +465,7 @@ export default function TranslatePdf() {
                     <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[var(--bg-secondary)] rounded-lg text-xs font-bold text-[var(--text-primary)] border border-[var(--border-subtle)]">
                       <span>{sourceLang === 'auto' ? 'Auto-Detect' : sourceLang.toUpperCase()}</span>
                       <ArrowRight size={12} className="text-[var(--color-primary)]" />
-                      <span className="flex items-center gap-1">
-                        <span>{targetLangObj.flag}</span>
-                        <span>{targetLangObj.name.split(' ')[0]}</span>
-                      </span>
+                      <span>{targetLangObj.name.split(' ')[0]}</span>
                     </div>
 
                     <div className="h-5 w-px bg-[var(--border-subtle)] mx-1" />
@@ -561,18 +597,44 @@ export default function TranslatePdf() {
                       >
                         <div className="p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] flex items-center justify-between">
                           <span className="text-xs font-bold text-[var(--text-primary)] flex items-center gap-2">
-                            <span>{targetLangObj.flag}</span>
+                            <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">language</span>
                             <span>Target: {targetLangObj.name}</span>
                           </span>
-                          <span className="text-[10px] text-[var(--text-secondary)]">Neural NMT</span>
+                          <div className="flex items-center gap-2">
+                            {translatedPreviewText && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(translatedPreviewText);
+                                  setPreviewCopied(true);
+                                  setTimeout(() => setPreviewCopied(false), 2000);
+                                }}
+                                className="flex items-center gap-1 text-[11px] font-semibold text-[var(--text-secondary)] hover:text-[var(--color-primary)] transition-colors cursor-pointer px-2 py-0.5 rounded-md hover:bg-[var(--bg-primary)]"
+                                title="Copy translated preview snippet"
+                              >
+                                {previewCopied ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} />}
+                                <span>{previewCopied ? 'Copied' : 'Copy'}</span>
+                              </button>
+                            )}
+                            <span className="text-[10px] text-[var(--text-secondary)]">Neural NMT</span>
+                          </div>
                         </div>
 
                         <div className="flex-1 text-xs text-[var(--text-primary)] leading-relaxed space-y-3 font-sans">
-                          <p className="font-semibold text-slate-700 dark:text-slate-300 italic border-l-2 border-[var(--color-primary)] pl-3">
-                            "{extractedPageText.slice(0, 450)}..."
-                          </p>
+                          {translatingPreview ? (
+                            <div className="flex items-center gap-2 text-slate-500 italic py-4">
+                              <span className="material-symbols-outlined text-[16px] animate-spin text-[var(--color-primary)]">
+                                progress_activity
+                              </span>
+                              <span>Translating page preview to {targetLangObj.name.split(' ')[0]}...</span>
+                            </div>
+                          ) : (
+                            <p className="font-semibold text-slate-700 dark:text-slate-300 italic border-l-2 border-[var(--color-primary)] pl-3">
+                              "{translatedPreviewText || extractedPageText.slice(0, 450)}..."
+                            </p>
+                          )}
                           <div className="pt-2 border-t border-[var(--border-subtle)] text-[11px] text-[var(--text-secondary)]">
-                            ⚡ High-precision vector typesetting will render translated text with identical formatting and paragraph boundaries upon export.
+                            High-precision vector typesetting will render translated text with identical formatting and paragraph boundaries upon export.
                           </div>
                         </div>
                       </div>
@@ -648,7 +710,7 @@ export default function TranslatePdf() {
                     >
                       {SUPPORTED_LANGUAGES.map((lang) => (
                         <option key={lang.code} value={lang.code} className="bg-[var(--bg-primary)]">
-                          {lang.flag} {lang.name}
+                          {lang.name}
                         </option>
                       ))}
                     </select>
@@ -665,10 +727,10 @@ export default function TranslatePdf() {
                     onChange={(e) => setSourceLang(e.target.value)}
                     className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none cursor-pointer"
                   >
-                    <option value="auto">🌐 Auto-Detect Language</option>
+                    <option value="auto">Auto-Detect Language</option>
                     {SUPPORTED_LANGUAGES.map((lang) => (
                       <option key={lang.code} value={lang.code} className="bg-[var(--bg-primary)]">
-                        {lang.flag} {lang.name}
+                        {lang.name}
                       </option>
                     ))}
                   </select>
@@ -689,8 +751,9 @@ export default function TranslatePdf() {
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Cpu size={14} />
-                      <span>Fast Client NMT</span>
+                      <Zap size={14} />
+                      <span>Fast Translate</span>
+                      <span className={`text-[10px] ${engineMode === 'client' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>Instant · Private</span>
                     </button>
 
                     <button
@@ -702,8 +765,9 @@ export default function TranslatePdf() {
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Server size={14} />
-                      <span>AI Cloud Server</span>
+                      <Sparkles size={14} />
+                      <span>Deep Neural</span>
+                      <span className={`text-[10px] ${engineMode === 'server' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>High Precision</span>
                     </button>
                   </div>
                 </div>
@@ -725,14 +789,16 @@ export default function TranslatePdf() {
                 {/* Progress Bar (While Processing) */}
                 {processing && (
                   <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                    <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                           progress_activity
                         </span>
-                        {statusMessage || 'Translating document...'}
-                      </span>
-                      <span>{progress}%</span>
+                        <span className="truncate" title={statusMessage || 'Translating document...'}>
+                          {statusMessage || 'Translating document...'}
+                        </span>
+                      </div>
+                      <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div
@@ -809,7 +875,7 @@ export default function TranslatePdf() {
             <div className="grid grid-cols-3 gap-2.5 w-full">
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Target Language</span>
-                <span className="text-base font-extrabold text-[var(--color-primary)]">{targetLangObj.flag} {targetLang.toUpperCase()}</span>
+                <span className="text-base font-extrabold text-[var(--color-primary)]">{targetLang.toUpperCase()}</span>
               </div>
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Pages</span>
@@ -818,7 +884,7 @@ export default function TranslatePdf() {
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Engine</span>
                 <span className="text-xs font-bold text-[var(--color-primary)] mt-1 capitalize">
-                  {result.engineMode === 'server' ? 'AI Cloud' : 'Neural NMT'}
+                  {result.engineMode === 'server' ? 'Deep Neural' : 'Fast Mode'}
                 </span>
               </div>
             </div>
@@ -847,11 +913,11 @@ export default function TranslatePdf() {
             {/* Quick Next Steps */}
             <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
-                Continue Working with DocForge
+                Continue Working with DocScalar
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <Link
-                  to="/summarize-pdf"
+                  to="/ai-summarizer"
                   className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[20px] text-purple-500">auto_awesome</span>

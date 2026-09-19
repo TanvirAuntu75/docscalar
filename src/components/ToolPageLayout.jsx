@@ -37,7 +37,7 @@ export default function ToolPageLayout({
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": seoData.title,
-    "url": `https://docforge.app${tool?.path || ''}`,
+    "url": `https://docscalar.app${tool?.path || ''}`,
     "description": seoData.description,
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "Web, Windows, macOS, Linux",
@@ -72,8 +72,6 @@ export default function ToolPageLayout({
   const isServer = tool?.executionType === 'server' || toolId === 'pdf-to-word' || toolId === 'pdf-to-excel' || toolId === 'url-to-pdf';
   
   const DEDICATED_STUDIO_TOOLS = [
-    'document-viewer',
-    'conversion-pipeline',
     'qr-generator',
     'canvas',
     'workspace'
@@ -96,7 +94,7 @@ export default function ToolPageLayout({
 
   if (isStudioMode) {
     return (
-      <div className="studio-viewport w-full h-[calc(100dvh-64px)] max-h-[calc(100dvh-64px)] overflow-hidden flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)]">
+      <div className="studio-viewport w-full h-[calc(100dvh-56px)] max-h-[calc(100dvh-56px)] overflow-hidden flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <SEOHead
           title={seoData.title}
           description={seoData.description}
@@ -113,12 +111,12 @@ export default function ToolPageLayout({
               {minTier === 'pro' ? 'workspace_premium' : 'account_circle'}
             </span>
             <h2 className="font-h2 text-lg font-bold text-on-background mb-3">
-              {minTier === 'pro' ? 'DocForge Pro Feature' : 'Account Required'}
+              {minTier === 'pro' ? 'DocScalar Pro Feature' : 'Account Required'}
             </h2>
             <p className="font-body-md text-xs text-on-surface-variant max-w-md mx-auto mb-6 leading-relaxed">
               {minTier === 'pro' 
-                ? `The ${title} tool requires a DocForge Pro subscription. Upgrade to unlock this feature along with unlimited parallel batch queues and 1 GB file limits.`
-                : `The ${title} tool requires a free DocForge account. Sign up in seconds to access advanced document utilities and local conversion engines.`
+                ? `The ${title} tool requires a DocScalar Pro subscription. Upgrade to access this feature along with unlimited parallel batch queues and 1 GB file limits.`
+                : `The ${title} tool requires a free DocScalar account. Sign up in seconds to access advanced document utilities and local conversion engines.`
               }
             </p>
             <div className="flex justify-center gap-3">
@@ -200,7 +198,7 @@ export default function ToolPageLayout({
             >
               {files.map((f, idx) => (
                 <option key={idx} value={idx}>
-                  {idx === 0 ? '👉 ' : ''}{f.name} ({formatFileSize(f.size)})
+                  {f.name} ({formatFileSize(f.size)})
                 </option>
               ))}
             </select>
@@ -216,12 +214,12 @@ export default function ToolPageLayout({
             {minTier === 'pro' ? 'workspace_premium' : 'account_circle'}
           </span>
           <h2 className="font-h2 text-lg font-bold text-on-background mb-3">
-            {minTier === 'pro' ? 'DocForge Pro Feature' : 'Account Required'}
+            {minTier === 'pro' ? 'DocScalar Pro Feature' : 'Account Required'}
           </h2>
           <p className="font-body-md text-xs text-on-surface-variant max-w-md mx-auto mb-6 leading-relaxed">
             {minTier === 'pro' 
-              ? `The ${title} tool requires a DocForge Pro subscription. Upgrade to unlock this feature along with unlimited parallel batch queues and 1 GB file limits.`
-              : `The ${title} tool requires a free DocForge account. Sign up in seconds to access advanced document utilities and local conversion engines.`
+              ? `The ${title} tool requires a DocScalar Pro subscription. Upgrade to access this feature along with unlimited parallel batch queues and 1 GB file limits.`
+              : `The ${title} tool requires a free DocScalar account. Sign up in seconds to access advanced document utilities and local conversion engines.`
             }
           </p>
           <div className="flex justify-center gap-3">

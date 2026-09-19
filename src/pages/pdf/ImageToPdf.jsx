@@ -300,7 +300,7 @@ export default function ImageToPdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Images to PDF Converter (100% Local & Free) | DocForge"
+        title="Images to PDF Converter (100% Local & Free) | DocScalar"
         description="Convert JPG, PNG, WebP, and SVG images to PDF with custom orientation, margins, and page sizes. 100% private in-browser conversion."
       />
 
@@ -320,9 +320,9 @@ export default function ImageToPdf() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-y-auto relative bg-[var(--bg-tertiary)]">
               {/* Sticky Workspace Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <label className="btn btn-primary btn-sm cursor-pointer flex items-center gap-1.5 shadow-xs">
+                <div className="workspace-toolbar px-4 py-2.5 flex items-center justify-between flex-wrap gap-2.5">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <label className="h-8 px-3.5 py-1.5 rounded-lg border border-[var(--color-primary)] bg-[var(--color-primary)] text-white hover:opacity-90 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs text-xs font-semibold select-none shrink-0">
                       <span className="material-symbols-outlined text-[16px]">add_photo_alternate</span>
                       <span>Add Images</span>
                       <input
@@ -332,15 +332,17 @@ export default function ImageToPdf() {
                         accept="image/*,.jpg,.jpeg,.png,.webp,.svg,.bmp,.tiff,.gif"
                         className="hidden"
                         onChange={handleAddMoreFiles}
+                        title=""
+                        tabIndex={-1}
                       />
                     </label>
 
-                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-1" />
+                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-0.5 shrink-0" />
 
                     <button
                       type="button"
                       onClick={() => rotateAll(-90)}
-                      className="btn btn-secondary btn-sm flex items-center gap-1"
+                      className="h-8 px-3 py-1.5 rounded-lg border border-[var(--border-medium)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover,var(--bg-tertiary))] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--color-primary)] transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0"
                       title="Rotate all images left 90°"
                     >
                       <span className="material-symbols-outlined text-[15px]">rotate_left</span>
@@ -350,7 +352,7 @@ export default function ImageToPdf() {
                     <button
                       type="button"
                       onClick={() => rotateAll(90)}
-                      className="btn btn-secondary btn-sm flex items-center gap-1"
+                      className="h-8 px-3 py-1.5 rounded-lg border border-[var(--border-medium)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover,var(--bg-tertiary))] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--color-primary)] transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0"
                       title="Rotate all images right 90°"
                     >
                       <span className="material-symbols-outlined text-[15px]">rotate_right</span>
@@ -360,7 +362,7 @@ export default function ImageToPdf() {
                     <button
                       type="button"
                       onClick={sortByName}
-                      className="btn btn-secondary btn-sm flex items-center gap-1"
+                      className="h-8 px-3 py-1.5 rounded-lg border border-[var(--border-medium)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover,var(--bg-tertiary))] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--color-primary)] transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0"
                       title="Sort images alphabetically"
                     >
                       <span className="material-symbols-outlined text-[15px]">sort_by_alpha</span>
@@ -370,7 +372,7 @@ export default function ImageToPdf() {
                     <button
                       type="button"
                       onClick={reverseOrder}
-                      className="btn btn-secondary btn-sm flex items-center gap-1"
+                      className="h-8 px-3 py-1.5 rounded-lg border border-[var(--border-medium)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover,var(--bg-tertiary))] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--color-primary)] transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0"
                       title="Reverse image sequence"
                     >
                       <span className="material-symbols-outlined text-[15px]">swap_vert</span>
@@ -564,6 +566,8 @@ export default function ImageToPdf() {
                       accept="image/*,.jpg,.jpeg,.png,.webp,.svg,.bmp,.tiff,.gif"
                       className="hidden"
                       onChange={handleAddMoreFiles}
+                      title=""
+                      tabIndex={-1}
                     />
                   </label>
                 </div>

@@ -230,7 +230,7 @@ export default function UnzipFile() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Unzip Files Online — In-Browser ZIP Archive Extractor & Explorer | DocForge"
+        title="Unzip Files Online — In-Browser ZIP Archive Extractor & Explorer | DocScalar"
         description="Inspect and extract files from ZIP archives in-browser with zero upload to external servers. High-speed selective extraction with folder hierarchy preservation."
       />
 
@@ -668,7 +668,7 @@ export default function UnzipFile() {
             {/* Quick Next Steps */}
             <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
-                Continue Working with DocForge
+                Continue Working with DocScalar
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <Link

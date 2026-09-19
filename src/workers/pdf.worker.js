@@ -11,7 +11,8 @@ if (typeof self !== 'undefined' && !self.document) {
   };
 }
 
-import { PDFDocument, PDFName, PDFDict, PDFRef, PDFArray, degrees, rgb } from 'pdf-lib';
+import { PDFDocument, PDFName, degrees, rgb, StandardFonts } from 'pdf-lib';
+import { cleanAndRefitDocument } from '../engines/pdf/cleanAndRefitPage.js';
 import * as pdfjsLib from 'pdfjs-dist';
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 
@@ -34,8 +35,8 @@ self.onmessage = async (e) => {
         break;
       }
       case 'splitPdf': {
-        const { arrayBuffer, mode, range } = payload;
-        const { blobs, names } = await handleSplitPdf(arrayBuffer, mode, range);
+        const { arrayBuffer, mode, range, options } = payload;
+        const { blobs, names } = await handleSplitPdf(arrayBuffer, mode, range, options || {});
         result = { 
           blobs: blobs.map(b => ({ arrayBuffer: b.arrayBuffer, type: b.type })), 
           names 
@@ -82,6 +83,12 @@ self.onmessage = async (e) => {
         transferables = [buffer];
         break;
       }
+      case 'auditBloat': {
+        const { arrayBuffer } = payload;
+        const audit = await handleAuditBloat(arrayBuffer);
+        result = { audit };
+        break;
+      }
       case 'unOcrPdf': {
         const { arrayBuffer, options } = payload;
         const buffer = await handleUnOcrPdf(arrayBuffer, options || {});
@@ -106,40 +113,295 @@ self.onmessage = async (e) => {
   }
 };
 
+// Helper to parse page range strings (e.g. "1-3, 5", "all", "odd", "even") into 0-indexed page indices
+function parsePageRangeIndices(rangeStr, totalPages) {
+  if (!rangeStr || typeof rangeStr !== 'string' || rangeStr.trim().toLowerCase() === 'all') {
+    return Array.from({ length: totalPages }, (_, k) => k);
+  }
+  const clean = rangeStr.trim().toLowerCase();
+  if (clean === 'odd') {
+    return Array.from({ length: totalPages }, (_, k) => k).filter(idx => idx % 2 === 0);
+  }
+  if (clean === 'even') {
+    return Array.from({ length: totalPages }, (_, k) => k).filter(idx => idx % 2 === 1);
+  }
+  const indices = new Set();
+  const parts = clean.split(/[,\s]+/);
+  for (const part of parts) {
+    if (!part) continue;
+    if (part.includes('-')) {
+      const [startStr, endStr] = part.split('-');
+      const start = parseInt(startStr, 10);
+      const end = parseInt(endStr, 10);
+      if (!isNaN(start) && !isNaN(end)) {
+        const s = Math.max(1, Math.min(start, end));
+        const e = Math.min(totalPages, Math.max(start, end));
+        for (let p = s; p <= e; p++) {
+          indices.add(p - 1);
+        }
+      }
+    } else {
+      const p = parseInt(part, 10);
+      if (!isNaN(p) && p >= 1 && p <= totalPages) {
+        indices.add(p - 1);
+      }
+    }
+  }
+  const sorted = Array.from(indices).sort((a, b) => a - b);
+  return sorted.length > 0 ? sorted : Array.from({ length: totalPages }, (_, k) => k);
+}
+
 // 1. Merge PDFs logic
 async function handleMergePdfs(pdfBuffers, rotations = [], options = {}) {
   const mergedDoc = await PDFDocument.create();
-  
-  for (let i = 0; i < pdfBuffers.length; i++) {
-    const srcDoc = await PDFDocument.load(pdfBuffers[i]);
+  const totalFiles = pdfBuffers.length;
+  const pageRanges = (options && options.pageRanges) || [];
+  const fileNames = (options && options.fileNames) || [];
+  const normalizePageSize = (options && options.normalizePageSize) || 'none'; // 'none' | 'a4' | 'letter' | 'match-first'
+  const addPageNumbers = Boolean(options && options.addPageNumbers);
+
+  let targetNormDimensions = null;
+  if (normalizePageSize === 'a4') {
+    targetNormDimensions = [595.28, 841.89];
+  } else if (normalizePageSize === 'letter') {
+    targetNormDimensions = [612.0, 792.0];
+  }
+
+  // Phase 1 & 2: Ingest, slice, and transform
+  for (let i = 0; i < totalFiles; i++) {
+    const fileName = fileNames[i] || `Document ${i + 1}`;
+    self.postMessage({
+      type: 'progress',
+      progress: Math.round((i / totalFiles) * 80),
+      stage: `Slicing & preparing ${fileName}...`,
+      currentFile: fileName,
+      currentIndex: i,
+      totalFiles
+    });
+
+    let srcDoc = await PDFDocument.load(pdfBuffers[i]);
+
+    // VisionClean: Universal Smart Cropper (Auto-Crop Black Scan Borders & Restore Original Dimensions)
+    if (options && (options.autoCropBlackBorders || options.smartCrop)) {
+      const isCropEnabledForDoc = options.cropEnabledFiles ? Boolean(options.cropEnabledFiles[i]) : false;
+      if (isCropEnabledForDoc) {
+        const docCropBox = (options.docCropBoxes && options.docCropBoxes[i]) || null;
+        
+        // Calculate target page indices for cropping based on cropPageRanges (odd, even, all, or custom)
+        let cropPageIndices = null;
+        const docCropRange = (options.cropPageRanges && options.cropPageRanges[i]) || options.cropPageScope || 'all';
+        const srcTotalPages = srcDoc.getPageCount();
+
+        if (docCropRange && docCropRange !== 'all') {
+          cropPageIndices = parsePageRangeIndices(docCropRange, srcTotalPages);
+        }
+
+        // Support both multi-page per-file crop boxes and single-page docCropBox
+        const fileTargetCropBoxes = (options.pageCropBoxes && options.pageCropBoxes[i]) || (docCropBox ? { 0: docCropBox } : {});
+        const hasRealScanBorders = Object.values(fileTargetCropBoxes).some(
+          (b) => b && b.hasBlackBorders === true && (b.cropTop > 0 || b.cropBottom > 0 || b.cropLeft > 0 || b.cropRight > 0)
+        );
+
+        if (hasRealScanBorders) {
+          srcDoc = await cleanAndRefitDocument(srcDoc, fileTargetCropBoxes, {
+            margin: options.cleanMargin ?? 0,
+            enabledEdges: options.enabledEdges || { top: true, bottom: true, left: true, right: true },
+            pageIndices: cropPageIndices
+          });
+        }
+      }
+    }
+
+    const srcTotalPages = srcDoc.getPageCount();
     const rot = (rotations && rotations[i]) || 0;
-    const pages = await mergedDoc.copyPages(srcDoc, srcDoc.getPageIndices());
-    
+
+    // Determine target indices to copy for this document
+    const customRange = pageRanges[i];
+    const targetIndices = parsePageRangeIndices(customRange, srcTotalPages);
+
+    const pages = await mergedDoc.copyPages(srcDoc, targetIndices);
+
+    // If normalize is 'match-first' and this is file 0, record dimensions of page 0
+    if (normalizePageSize === 'match-first' && !targetNormDimensions && pages.length > 0) {
+      const firstSz = pages[0].getSize();
+      targetNormDimensions = [firstSz.width, firstSz.height];
+    }
+
     pages.forEach((page) => {
+      // 1. Apply user rotation if any
       if (rot !== 0) {
         const currentRot = page.getRotation().angle;
         page.setRotation(degrees((currentRot + rot + 360) % 360));
       }
+
+      // 2. Apply dimension normalization if requested
+      if (targetNormDimensions) {
+        const [targetW, targetH] = targetNormDimensions;
+        const { width: origW, height: origH } = page.getSize();
+        if (Math.abs(origW - targetW) > 1 || Math.abs(origH - targetH) > 1) {
+          const scale = Math.min(targetW / origW, targetH / origH);
+          const scaledW = origW * scale;
+          const scaledH = origH * scale;
+          const tx = (targetW - scaledW) / 2;
+          const ty = (targetH - scaledH) / 2;
+          page.scale(scale, scale);
+          page.translateContent(tx, ty);
+          page.setSize(targetW, targetH);
+          // Synchronize CropBox, BleedBox, TrimBox, and ArtBox with new MediaBox dimensions
+          // to prevent PDF viewers from clipping page contents to obsolete dimensions
+          if (page.node.CropBox && page.node.CropBox()) {
+            page.node.delete(PDFName.of('CropBox'));
+          }
+          if (page.node.BleedBox && page.node.BleedBox()) {
+            page.node.delete(PDFName.of('BleedBox'));
+          }
+          if (page.node.TrimBox && page.node.TrimBox()) {
+            page.node.delete(PDFName.of('TrimBox'));
+          }
+          if (page.node.ArtBox && page.node.ArtBox()) {
+            page.node.delete(PDFName.of('ArtBox'));
+          }
+        }
+      }
+
       mergedDoc.addPage(page);
     });
 
     // Blank page separator between documents (for double-sided/duplex printing)
-    if (options && options.blankPageSeparator && i < pdfBuffers.length - 1) {
+    if (options && options.blankPageSeparator && i < totalFiles - 1) {
       const lastPage = pages[pages.length - 1];
-      const { width, height } = lastPage ? lastPage.getSize() : { width: 595.27, height: 841.89 };
-      mergedDoc.addPage([width, height]);
+      const { width, height } = lastPage
+        ? lastPage.getSize()
+        : (targetNormDimensions ? { width: targetNormDimensions[0], height: targetNormDimensions[1] } : { width: 595.28, height: 841.89 });
+      const blankPage = mergedDoc.addPage([width, height]);
+      if (lastPage) {
+        blankPage.setRotation(lastPage.getRotation());
+      }
     }
-    
-    self.postMessage({ type: 'progress', progress: Math.round(((i + 1) / pdfBuffers.length) * 100) });
+
+    self.postMessage({
+      type: 'progress',
+      progress: Math.round(((i + 1) / totalFiles) * 80),
+      stage: `Finished ${fileName} (${pages.length} pages added)`,
+      currentFile: fileName,
+      currentIndex: i,
+      totalFiles
+    });
   }
-  
+
+  // Phase 3: Continuous Running Page Numbers (if enabled)
+  const totalMergedPages = mergedDoc.getPageCount();
+  if (addPageNumbers && totalMergedPages > 0) {
+    self.postMessage({
+      type: 'progress',
+      progress: 88,
+      stage: 'Applying running page numbers...',
+      totalFiles
+    });
+    const font = await mergedDoc.embedFont(StandardFonts.Helvetica);
+    const fontSize = 9;
+    for (let pIdx = 0; pIdx < totalMergedPages; pIdx++) {
+      const p = mergedDoc.getPage(pIdx);
+      const { width: pW, height: pH } = p.getSize();
+      const rot = ((p.getRotation().angle % 360) + 360) % 360;
+      const isSideways = rot === 90 || rot === 270;
+      const vW = isSideways ? pH : pW;
+      const vH = isSideways ? pW : pH;
+      const numText = `Page ${pIdx + 1} of ${totalMergedPages}`;
+      const textW = font.widthOfTextAtSize(numText, fontSize);
+      const visualX = (vW - textW) / 2;
+      const visualY = vH - 18 - fontSize;
+
+      let nx = visualX;
+      let ny = visualY;
+      let angle = 0;
+
+      switch (rot) {
+        case 0:
+          nx = visualX;
+          ny = pH - visualY - fontSize;
+          angle = 0;
+          break;
+        case 90:
+          nx = visualY;
+          ny = visualX + textW;
+          angle = 270;
+          break;
+        case 180:
+          nx = pW - visualX;
+          ny = visualY + fontSize;
+          angle = 180;
+          break;
+        case 270:
+          nx = pW - visualY - fontSize;
+          ny = pH - visualX;
+          angle = 90;
+          break;
+        default:
+          nx = visualX;
+          ny = pH - visualY - fontSize;
+          angle = 0;
+          break;
+      }
+
+      p.drawText(numText, {
+        x: nx,
+        y: ny,
+        size: fontSize,
+        font,
+        rotate: degrees(angle),
+        color: rgb(0.35, 0.35, 0.35)
+      });
+    }
+  }
+
+  self.postMessage({
+    type: 'progress',
+    progress: 95,
+    stage: 'Serializing & compressing merged PDF...',
+    totalFiles
+  });
+
+  // Preserve & set clean document metadata
+  const outputFileName = (options && options.outputFileName) || 'merged.pdf';
+  if (outputFileName) {
+    const cleanTitle = outputFileName.replace(/\.pdf$/i, '');
+    mergedDoc.setTitle(cleanTitle);
+  }
+  mergedDoc.setProducer('DocScalar Lossless PDF Engine');
+  mergedDoc.setCreator('DocScalar Studio');
+
   const pdfBytes = await mergedDoc.save();
+
+  self.postMessage({
+    type: 'progress',
+    progress: 100,
+    stage: 'Assembly complete!',
+    totalFiles
+  });
+
   return pdfBytes.buffer;
 }
 
 // 2. Split PDF logic
-async function handleSplitPdf(arrayBuffer, mode, range) {
-  const srcDoc = await PDFDocument.load(arrayBuffer);
+async function handleSplitPdf(arrayBuffer, mode, range, options = {}) {
+  let srcDoc = await PDFDocument.load(arrayBuffer);
+
+  // VisionClean: Universal Smart Cropping (Auto-Crop Black Scan Borders & Restore Original Dimensions)
+  if (options && (options.autoCropBlackBorders || options.smartCrop)) {
+    const targetCropBoxes = options.pageCropBoxes || options.docCropBoxes || (options.docCropBox ? { 0: options.docCropBox } : {});
+    const hasAnyScanBorders = Object.values(targetCropBoxes).some(
+      (b) => b && b.hasBlackBorders === true && (b.cropTop > 0 || b.cropBottom > 0 || b.cropLeft > 0 || b.cropRight > 0)
+    );
+
+    if (hasAnyScanBorders) {
+      srcDoc = await cleanAndRefitDocument(srcDoc, targetCropBoxes, {
+        margin: options.cleanMargin ?? 0,
+        enabledEdges: options.enabledEdges || { top: true, bottom: true, left: true, right: true }
+      });
+    }
+  }
+
   const totalPages = srcDoc.getPageCount();
   const blobs = [];
   const names = [];
@@ -346,20 +608,41 @@ async function handleRotatePdf(arrayBuffer, rotations) {
 
 // 4. Images to PDF logic
 // Worker-safe pixel-level document enhancement (ctx.filter is NOT reliable in OffscreenCanvas workers)
-// Applies contrast boost and slight brightness/desaturation pass without CSS filter API.
+// Whitens paper background, sharpens dark text, and preserves crisp contrast without silver/gray haze.
 function applyDocumentEnhance(ctx, width, height) {
   const imageData = ctx.getImageData(0, 0, width, height);
   const data = imageData.data;
-  const contrast = 1.25;   // Boost contrast
-  const brightness = 13;   // Additive brightness (0-255 scale)
-  const factor = (259 * (contrast * 255 - 255)) / (255 * (259 - (contrast * 255 - 255)));
+  const factor = 1.15;
 
   for (let i = 0; i < data.length; i += 4) {
-    // Apply brightness + contrast to R, G, B channels
-    data[i]     = Math.min(255, Math.max(0, factor * (data[i]     - 128) + 128 + brightness));
-    data[i + 1] = Math.min(255, Math.max(0, factor * (data[i + 1] - 128) + 128 + brightness));
-    data[i + 2] = Math.min(255, Math.max(0, factor * (data[i + 2] - 128) + 128 + brightness));
-    // Alpha channel (i + 3) left unchanged
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const sat = max - min;
+    const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+    // 1. Paper background whitening: Clean up paper haze, scanner shadows, and near-white noise
+    if (lum >= 195 && sat < 35) {
+      data[i]     = 255;
+      data[i + 1] = 255;
+      data[i + 2] = 255;
+      continue;
+    }
+
+    // 2. Ink deepening: Dark text, checkboxes, and border strokes
+    if (lum < 100) {
+      data[i]     = Math.max(0, Math.round(r * 0.85));
+      data[i + 1] = Math.max(0, Math.round(g * 0.85));
+      data[i + 2] = Math.max(0, Math.round(b * 0.85));
+      continue;
+    }
+
+    // 3. Midtone contrast boost (preserves soft colors like blue form fills)
+    data[i]     = Math.min(255, Math.max(0, Math.round(factor * (r - 128) + 128 + 5)));
+    data[i + 1] = Math.min(255, Math.max(0, Math.round(factor * (g - 128) + 128 + 5)));
+    data[i + 2] = Math.min(255, Math.max(0, Math.round(factor * (b - 128) + 128 + 5)));
   }
   ctx.putImageData(imageData, 0, 0);
 }
@@ -500,14 +783,158 @@ async function handlePdfToImages(arrayBuffer, options) {
 }
 
 // 6. Compress PDF logic (Ultra-Grade Selective Image Stream Surgery)
-async function handleCompressPdf(arrayBuffer, options = {}) {
-  let { mode, quality = 0.6, autoEnhance = false, stripMetadata = true } = options;
+async function handleAuditBloat(arrayBuffer) {
+  const doc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+  const totalPages = doc.getPageCount();
+  const pageStats = [];
+  let totalRasterBytes = 0;
+  let totalImageCount = 0;
 
-  // Calibrate quality and dimensions based on setting
+  for (let i = 0; i < totalPages; i++) {
+    const page = doc.getPage(i);
+    let pageImages = 0;
+    let pageImageBytes = 0;
+
+    let resources = page.node.Resources();
+    if (!resources && page.node.parent) {
+      try {
+        const parent = doc.context.lookup(page.node.parent());
+        if (parent && typeof parent.Resources === 'function') {
+          resources = parent.Resources();
+        }
+      } catch {}
+    }
+
+    if (resources) {
+      if (typeof resources.lookup === 'function') {
+        resources = resources.lookup(PDFName.of('XObject'));
+      }
+      if (resources && typeof resources.entries === 'function') {
+        for (const [name, ref] of resources.entries()) {
+          const obj = doc.context.lookup(ref);
+          if (obj && obj.dict) {
+            const subtype = obj.dict.lookup(PDFName.of('Subtype'));
+            if (subtype === PDFName.of('Image')) {
+              pageImages++;
+              totalImageCount++;
+              if (obj.contents) {
+                pageImageBytes += obj.contents.length;
+              } else if (typeof obj.getContents === 'function') {
+                pageImageBytes += obj.getContents().length;
+              } else {
+                const w = obj.dict.lookup(PDFName.of('Width'))?.value || 1000;
+                const h = obj.dict.lookup(PDFName.of('Height'))?.value || 1000;
+                pageImageBytes += Math.round((w * h * 3) / 8);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const contents = page.node.Contents();
+    let contentStreamBytes = 0;
+    if (contents) {
+      const resolvedContents = doc.context.lookup(contents);
+      if (resolvedContents) {
+        if (typeof resolvedContents.size === 'function') {
+          for (let sIdx = 0; sIdx < resolvedContents.size(); sIdx++) {
+            const streamObj = doc.context.lookup(resolvedContents.get(sIdx));
+            if (streamObj) {
+              if (streamObj.contents) {
+                contentStreamBytes += streamObj.contents.length;
+              } else if (typeof streamObj.getContents === 'function') {
+                contentStreamBytes += streamObj.getContents().length;
+              }
+            }
+          }
+        } else if (resolvedContents.contents) {
+          contentStreamBytes = resolvedContents.contents.length;
+        } else if (typeof resolvedContents.getContents === 'function') {
+          contentStreamBytes = resolvedContents.getContents().length;
+        }
+      }
+    }
+
+    const approxBytes = pageImageBytes + contentStreamBytes;
+    totalRasterBytes += pageImageBytes;
+
+    pageStats.push({
+      pageNumber: i + 1,
+      imageCount: pageImages,
+      approxBytes,
+      imageBytes: pageImageBytes,
+      contentStreamBytes,
+      isHeavy: false,
+      type: pageImages > 0 ? 'image_heavy' : 'vector_clean'
+    });
+  }
+
+  const avgPageImageBytes = totalPages > 0 ? totalRasterBytes / totalPages : 0;
+  const heavyPages = [];
+  let heavyRasterBytes = 0;
+
+  for (const stat of pageStats) {
+    const isDisproportionate = totalImageCount > 0 && stat.imageCount > 0 && 
+      (stat.imageBytes >= 300_000 || 
+       (stat.imageBytes >= avgPageImageBytes * 1.5 && stat.imageBytes >= 50_000) ||
+       (pageStats.filter(p => p.imageCount > 0).length <= Math.max(1, Math.floor(totalPages * 0.35))));
+
+    if (isDisproportionate) {
+      stat.isHeavy = true;
+      heavyPages.push(stat.pageNumber);
+      heavyRasterBytes += stat.approxBytes;
+    }
+  }
+
+  const isVectorHeavy = totalImageCount === 0 || totalRasterBytes < 100_000;
+  const heavyPagesSharePct = totalRasterBytes > 0 
+    ? Math.min(100, Math.round((heavyRasterBytes / totalRasterBytes) * 100))
+    : 0;
+
+  return {
+    totalPages,
+    totalImageCount,
+    totalRasterBytes,
+    isVectorHeavy,
+    heavyPages,
+    heavyPagesSharePct,
+    pageStats
+  };
+}
+
+async function handleCompressPdf(arrayBuffer, options = {}) {
+  let { mode, quality = 0.6, autoEnhance = false, stripMetadata = true, selectedPages = null, targetSizeBytes } = options;
+
+  // Calibrate quality and dimensions based on setting or target size
   let jpegQuality = quality || 0.65;
   let maxDim = 1400;
 
-  if (quality <= 0.4 || mode === 'extreme') {
+  if (targetSizeBytes && targetSizeBytes > 0) {
+    const originalSize = arrayBuffer.byteLength;
+    const safeTarget = Math.floor(targetSizeBytes * 0.94);
+    const ratio = originalSize > 0 ? safeTarget / originalSize : 0.5;
+
+    if (originalSize <= targetSizeBytes) {
+      jpegQuality = 0.92;
+      maxDim = 2048;
+    } else if (ratio >= 0.75) {
+      jpegQuality = 0.85;
+      maxDim = 1800;
+    } else if (ratio >= 0.50) {
+      jpegQuality = 0.68;
+      maxDim = 1400;
+    } else if (ratio >= 0.30) {
+      jpegQuality = 0.48;
+      maxDim = 1100;
+    } else if (ratio >= 0.15) {
+      jpegQuality = 0.32;
+      maxDim = 900;
+    } else {
+      jpegQuality = 0.22;
+      maxDim = 750;
+    }
+  } else if (quality <= 0.4 || mode === 'extreme') {
     jpegQuality = 0.38;
     maxDim = 1024;
   } else if (quality >= 0.8 || mode === 'lossless' || mode === 'low') {
@@ -525,9 +952,11 @@ async function handleCompressPdf(arrayBuffer, options = {}) {
       pdfDoc.setAuthor('');
       pdfDoc.setSubject('');
       pdfDoc.setKeywords([]);
-      pdfDoc.setProducer('DocForge Ultra-Compression Engine');
-      pdfDoc.setCreator('DocForge');
-    } catch (metaErr) {}
+      pdfDoc.setProducer('DocScalar Ultra-Compression Engine');
+      pdfDoc.setCreator('DocScalar');
+    } catch {
+      // Ignore metadata failures
+    }
   }
 
   self.postMessage({ type: 'progress', progress: 15 });
@@ -621,6 +1050,34 @@ async function handleCompressPdf(arrayBuffer, options = {}) {
 
   self.postMessage({ type: 'progress', progress: 85 });
 
+  // If selective page compression requested, assemble merged document in exact sequential order
+  const totalPages = pdfDoc.getPageCount();
+  if (Array.isArray(selectedPages) && selectedPages.length > 0 && selectedPages.length < totalPages) {
+    const selectedSet = new Set(selectedPages.map(Number));
+    const srcDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+    const mergedDoc = await PDFDocument.create();
+
+    for (let i = 0; i < totalPages; i++) {
+      const pageNum = i + 1;
+      if (selectedSet.has(pageNum)) {
+        const [compPage] = await mergedDoc.copyPages(pdfDoc, [i]);
+        mergedDoc.addPage(compPage);
+      } else {
+        const [origPage] = await mergedDoc.copyPages(srcDoc, [i]);
+        mergedDoc.addPage(origPage);
+      }
+    }
+
+    const pdfBytes = await mergedDoc.save({
+      useObjectStreams: true,
+      addDefaultPage: false,
+      objectsPerTick: 100
+    });
+
+    self.postMessage({ type: 'progress', progress: 100 });
+    return pdfBytes.buffer;
+  }
+
   // Save with compressed object streams
   const pdfBytes = await pdfDoc.save({
     useObjectStreams: true,
@@ -633,7 +1090,7 @@ async function handleCompressPdf(arrayBuffer, options = {}) {
 }
 
 // 7. Un-OCR PDF — removes text layers while preserving 100% original image quality
-async function handleUnOcrPdf(arrayBuffer, options = {}) {
+async function handleUnOcrPdf(arrayBuffer) {
   // We use a robust "Stream Stripping" strategy.
   // Instead of re-rendering pages or extracting JPEGs (which fails on complex layouts),
   // we decode every content stream in the PDF, physically delete all text operators (BT...ET),
@@ -693,7 +1150,7 @@ async function handleUnOcrPdf(arrayBuffer, options = {}) {
             }
           }
         }
-      } catch (e) {
+      } catch {
         // Ignore streams that cannot be decoded as text
       }
     }
@@ -797,8 +1254,6 @@ async function handleRedactPdf(arrayBuffer, params = {}) {
   for (let i = 0; i < pdfDoc.numPages; i++) {
     const page = await pdfDoc.getPage(i + 1);
     const textContent = await page.getTextContent();
-    const viewport = page.getViewport({ scale: 1.0 });
-
     for (const pattern of textPatterns) {
       const regex = pattern.type === 'literal'
         ? new RegExp(pattern.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi')
@@ -830,7 +1285,17 @@ async function handleRedactPdf(arrayBuffer, params = {}) {
   pdfDoc.destroy();
 
   // Apply redaction rectangles via pdf-lib
-  const pdfLibDoc = await PDFDocument.load(arrayBuffer);
+  let pdfLibDoc = await PDFDocument.load(arrayBuffer);
+
+  // VisionClean: Universal Smart Cropper
+  if (params && params.autoCropBlackBorders) {
+    pdfLibDoc = await cleanAndRefitDocument(pdfLibDoc, params.pageCropBoxes || params.cropBox || {}, {
+      margin: params.cleanMargin ?? 0,
+      enabledEdges: params.enabledEdges,
+      pageIndices: params.pageIndices
+    });
+  }
+
   const pages = pdfLibDoc.getPages();
 
   for (let idx = 0; idx < patternBoxes.length; idx++) {
@@ -877,8 +1342,8 @@ async function handleRedactPdf(arrayBuffer, params = {}) {
       pdfLibDoc.setAuthor('');
       pdfLibDoc.setSubject('');
       pdfLibDoc.setKeywords([]);
-      pdfLibDoc.setProducer('DocForge Sanitizer');
-      pdfLibDoc.setCreator('DocForge');
+      pdfLibDoc.setProducer('DocScalar Sanitizer');
+      pdfLibDoc.setCreator('DocScalar');
       pdfLibDoc.setCreationDate(new Date());
       pdfLibDoc.setModificationDate(new Date());
     } catch (e) {

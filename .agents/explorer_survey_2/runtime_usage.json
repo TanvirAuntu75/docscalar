@@ -1,0 +1,625 @@
+[
+  {
+    "templateKey": "adam_fletcher",
+    "file": "adam_fletcher.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "adeline_palmerston",
+    "file": "adeline_palmerston.js",
+    "usesUniversalRuntime": true,
+    "usesComputeTwoPagePartition": true,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "adora_diagonal",
+    "file": "adora_diagonal.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "adora_montminy",
+    "file": "adora_montminy.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "alfredo_torres",
+    "file": "alfredo_torres.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "alvarado_slate",
+    "file": "alvarado_slate.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "amsterdam_orange",
+    "file": "amsterdam_orange.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "arthur_pendelton",
+    "file": "arthur_pendelton.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "austin_amber",
+    "file": "austin_amber.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "barcelona_cyan",
+    "file": "barcelona_cyan.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "berlin_two_tone",
+    "file": "berlin_two_tone.js",
+    "usesUniversalRuntime": true,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "bordeaux_wine",
+    "file": "bordeaux_wine.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "boston_crimson",
+    "file": "boston_crimson.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "buenos_aires_tango",
+    "file": "buenos_aires_tango.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "cairo_gold",
+    "file": "cairo_gold.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "cambridge_rose",
+    "file": "cambridge_rose.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "cape_town_sunset",
+    "file": "cape_town_sunset.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "card_matrix",
+    "file": "card_matrix.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "charles",
+    "file": "charles.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "copenhagen_sand",
+    "file": "copenhagen_sand.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "date_capsule",
+    "file": "date_capsule.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "diagonal_wedge",
+    "file": "diagonal_wedge.js",
+    "usesUniversalRuntime": true,
+    "usesComputeTwoPagePartition": true,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "donna_stroupe",
+    "file": "donna_stroupe.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "dublin_forest",
+    "file": "dublin_forest.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "edinburgh_navy",
+    "file": "edinburgh_navy.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "emerald_prestige",
+    "file": "emerald_prestige.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "emma",
+    "file": "emma.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "floating_card_matrix",
+    "file": "floating_card_matrix.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "florence_terracotta",
+    "file": "florence_terracotta.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "geneva_charcoal",
+    "file": "geneva_charcoal.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "harvard_classic",
+    "file": "harvard_classic.js",
+    "usesUniversalRuntime": true,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "helsinki_frost",
+    "file": "helsinki_frost.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "helsinki_navy",
+    "file": "helsinki_navy.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "howard_ong",
+    "file": "howard_ong.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "isabel_mercado",
+    "file": "isabel_mercado.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "isabel_schumacher",
+    "file": "isabel_schumacher.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "jonathan",
+    "file": "jonathan.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": true,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "jonathan_patterson",
+    "file": "jonathan_patterson.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "kathleen",
+    "file": "kathleen.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "kelly_mint",
+    "file": "kelly_mint.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "korina_villanueva",
+    "file": "korina_villanueva.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "kyiv_golden",
+    "file": "kyiv_golden.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "kyoto_coral",
+    "file": "kyoto_coral.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "lilac_sidebar",
+    "file": "lilac_sidebar.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "lorna_alvarado",
+    "file": "lorna_alvarado.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "lyon_lavender",
+    "file": "lyon_lavender.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "madrid_sun",
+    "file": "madrid_sun.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "manhattan_noir",
+    "file": "manhattan_noir.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "marcus_vance",
+    "file": "marcus_vance.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "mariana",
+    "file": "mariana.js",
+    "usesUniversalRuntime": true,
+    "usesComputeTwoPagePartition": true,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "milan_blush",
+    "file": "milan_blush.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "montreal_frost",
+    "file": "montreal_frost.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "ocean_block",
+    "file": "ocean_block.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "olivia",
+    "file": "olivia.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": true,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "ong_burgundy",
+    "file": "ong_burgundy.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "osaka_minimal",
+    "file": "osaka_minimal.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "oslo_taupe",
+    "file": "oslo_taupe.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "overlapping_badge",
+    "file": "overlapping_badge.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "oxford_burgundy",
+    "file": "oxford_burgundy.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "oxford_minimalist",
+    "file": "oxford_minimalist.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "prague_brass",
+    "file": "prague_brass.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "reykjavik_slate",
+    "file": "reykjavik_slate.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "richard",
+    "file": "richard.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "richard_sanchez",
+    "file": "richard_sanchez.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "sage_pastel",
+    "file": "sage_pastel.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "san_francisco_skyline",
+    "file": "san_francisco_skyline.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "sanchez_dark",
+    "file": "sanchez_dark.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "sanchez_mono",
+    "file": "sanchez_mono.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "sanchez_wave",
+    "file": "sanchez_wave.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "schumacher_charcoal",
+    "file": "schumacher_charcoal.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "seattle_emerald",
+    "file": "seattle_emerald.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "sebastian_bennett",
+    "file": "sebastian_bennett.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "seoul_neon",
+    "file": "seoul_neon.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "silicon_valley_ats",
+    "file": "silicon_valley_ats.js",
+    "usesUniversalRuntime": true,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "singapore_ruby",
+    "file": "singapore_ruby.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "split_dual_block",
+    "file": "split_dual_block.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "stockholm_monochrome",
+    "file": "stockholm_monochrome.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "stockholm_yellow",
+    "file": "stockholm_yellow.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "terracotta_arch",
+    "file": "terracotta_arch.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "tokyo_ice_blue",
+    "file": "tokyo_ice_blue.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "vancouver_pine",
+    "file": "vancouver_pine.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "venice_sand_split",
+    "file": "venice_sand_split.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "vienna_crest",
+    "file": "vienna_crest.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "violet_modern",
+    "file": "violet_modern.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "wall_street_executive",
+    "file": "wall_street_executive.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "wilson_light",
+    "file": "wilson_light.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "wilson_minimal",
+    "file": "wilson_minimal.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "ziv_olive",
+    "file": "ziv_olive.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  },
+  {
+    "templateKey": "zurich_slate_block",
+    "file": "zurich_slate_block.js",
+    "usesUniversalRuntime": false,
+    "usesComputeTwoPagePartition": false,
+    "usesSectionOrder": true
+  }
+]

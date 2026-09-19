@@ -13,7 +13,7 @@ export default function SEOHead({
   schema
 }) {
   const location = useLocation();
-  const currentUrl = `https://docforge.app${location.pathname}`;
+  const currentUrl = `https://docscalar.app${location.pathname}`;
   const effectiveCanonical = canonical || currentUrl;
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function SEOHead({
     setMetaTag('property', 'og:description', description);
     setMetaTag('property', 'og:url', effectiveCanonical);
     setMetaTag('property', 'og:type', 'website');
-    setMetaTag('property', 'og:site_name', 'DocForge');
+    setMetaTag('property', 'og:site_name', 'DocScalar');
 
     // 5. Twitter Card Meta Tags
     setMetaTag('name', 'twitter:card', 'summary_large_image');
@@ -60,11 +60,11 @@ export default function SEOHead({
     setMetaTag('name', 'twitter:description', description);
 
     // 6. Schema.org JSON-LD Script Injection
-    let schemaScript = document.getElementById('docforge-dynamic-schema');
+    let schemaScript = document.getElementById('docscalar-dynamic-schema');
     if (schema) {
       if (!schemaScript) {
         schemaScript = document.createElement('script');
-        schemaScript.id = 'docforge-dynamic-schema';
+        schemaScript.id = 'docscalar-dynamic-schema';
         schemaScript.type = 'application/ld+json';
         document.head.appendChild(schemaScript);
       }

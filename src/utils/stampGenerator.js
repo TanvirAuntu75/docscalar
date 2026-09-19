@@ -155,7 +155,7 @@ export function generateStampDataUrl({
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    const header = companyName || 'DOCFORGE CERTIFIED';
+    const header = companyName || 'DOCSCALAR CERTIFIED';
     ctx.fillText(header, center, center - radius * 0.45);
 
     // Center Main Text
@@ -175,8 +175,37 @@ export function generateStampDataUrl({
 
     // Star Accents
     if (hasStars) {
-      ctx.font = `${14 * dpr}px sans-serif`;
-      ctx.fillText('★  ★  ★', center, center + radius * 0.72);
+      const drawStar = (cx, cy, spikes, outerRadius, innerRadius) => {
+        let rot = Math.PI / 2 * 3;
+        let x = cx;
+        let y = cy;
+        const step = Math.PI / spikes;
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - outerRadius);
+        for (let i = 0; i < spikes; i++) {
+          x = cx + Math.cos(rot) * outerRadius;
+          y = cy + Math.sin(rot) * outerRadius;
+          ctx.lineTo(x, y);
+          rot += step;
+
+          x = cx + Math.cos(rot) * innerRadius;
+          y = cy + Math.sin(rot) * innerRadius;
+          ctx.lineTo(x, y);
+          rot += step;
+        }
+        ctx.lineTo(cx, cy - outerRadius);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+      };
+
+      const starY = center + radius * 0.72;
+      const starR = 5 * dpr;
+      const starInnerR = 2.2 * dpr;
+      drawStar(center - 20 * dpr, starY, 5, starR, starInnerR);
+      drawStar(center, starY, 5, starR, starInnerR);
+      drawStar(center + 20 * dpr, starY, 5, starR, starInnerR);
     }
 
     return canvas.toDataURL('image/png');

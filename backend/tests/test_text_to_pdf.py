@@ -9,7 +9,7 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate
 
 def test_text_to_pdf():
     print("==================================================")
-    print("DocForge Text-to-PDF Conversion Test Run")
+    print("DocScalar Text-to-PDF Conversion Test Run")
     print("==================================================")
 
     input_path = Path("C:/Users/Tanvir Alam/Desktop/New Text Document.txt")

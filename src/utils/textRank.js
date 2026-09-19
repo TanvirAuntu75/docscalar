@@ -1,5 +1,5 @@
 /**
- * DocForge 100% Client-Side TextRank & Extractive Summarization Engine
+ * DocScalar 100% Client-Side TextRank & Extractive Summarization Engine
  * 
  * Features:
  * 1. Abbreviation-aware sentence segmentation.
@@ -15,7 +15,8 @@ import { stemWord, tokenize } from './hybridSearch.js';
 const ABBREVIATIONS = new Set([
   'mr', 'mrs', 'ms', 'dr', 'prof', 'sr', 'jr', 'vs', 'etc', 'inc', 'ltd', 'co',
   'corp', 'jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec',
-  'e.g', 'i.e', 'fig', 'no', 'vol', 'dept', 'est', 'approx', 'min', 'max'
+  'eg', 'ie', 'e.g', 'i.e', 'fig', 'no', 'vol', 'dept', 'est', 'approx', 'min', 'max',
+  'dc', 'd.c', 'us', 'u.s', 'uk', 'u.k'
 ]);
 
 export function splitIntoSentences(text) {
@@ -39,9 +40,16 @@ export function splitIntoSentences(text) {
 
     buffer = buffer ? `${buffer} ${token}` : token;
 
-    // Check if token ends with abbreviation
-    const lastWord = token.split(/\s+/).pop().replace(/[.?!]/g, '').toLowerCase();
-    if (ABBREVIATIONS.has(lastWord) && i < rawTokens.length - 1) {
+    // Check if token ends with abbreviation or acronym
+    const rawLastWord = token.split(/\s+/).pop() || '';
+    const cleanWord = rawLastWord.replace(/[.?!]/g, '').toLowerCase();
+    const isSingleLetterAcronym = /^[a-zA-Z]\.$/.test(rawLastWord) || /\b(?:[a-zA-Z]\.){1,}$/.test(rawLastWord);
+
+    // Check if next token starts with lowercase letter (continuation of sentence)
+    const nextToken = rawTokens[i + 1]?.trim();
+    const nextStartsWithLower = nextToken && /^[a-z]/.test(nextToken);
+
+    if ((ABBREVIATIONS.has(cleanWord) || isSingleLetterAcronym || nextStartsWithLower) && i < rawTokens.length - 1) {
       continue; // keep buffering
     }
 
@@ -122,6 +130,13 @@ export function rankSentences(sentences, damping = 0.85, maxIter = 25, tol = 1e-
 
     scores.set(nextScores);
     if (maxDiff < tol) break;
+  }
+
+  // Normalize scores to form a valid probability distribution summing to 1.0
+  let totalScore = 0;
+  for (let i = 0; i < N; i++) totalScore += scores[i];
+  if (totalScore > 0) {
+    for (let i = 0; i < N; i++) scores[i] /= totalScore;
   }
 
   // 4. Return ranked sentence objects

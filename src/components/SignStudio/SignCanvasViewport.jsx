@@ -1,6 +1,11 @@
+/* eslint-disable react/prop-types */
 import { useState, useRef, useEffect } from 'react';
 import SignFieldOverlay from './SignFieldOverlay';
 import SignThumbnailSidebar from './SignThumbnailSidebar';
+import { useDpiQuality } from '../../hooks/useDpiQuality';
+import { DpiQualitySelector } from '../DpiQualitySelector';
+import SmartCropperToolbarButton from '../SmartCropperToolbarButton';
+import useCanvasPinchZoom from '../../hooks/useCanvasPinchZoom';
 
 /**
  * Individual PDF Page Viewport Container
@@ -9,6 +14,8 @@ function DocumentPageContainer({
   pdfDocument,
   pageIndex,
   scale,
+  renderScale: debouncedScale,
+  dpi = 150,
   fields,
   selectedFieldId,
   onSelectField,
@@ -19,13 +26,13 @@ function DocumentPageContainer({
   onEditField,
   totalPages,
   onDropField,
-  onDimensionsChange
+  onDimensionsChange,
+  cropper
 }) {
   const canvasRef = useRef(null);
   const pageOverlayRef = useRef(null);
   const renderTaskRef = useRef(null);
   const [pageSize, setPageSize] = useState({ width: 612, height: 792 });
-  const [rendered, setRendered] = useState(false);
   const [isRendering, setIsRendering] = useState(true);
 
   useEffect(() => {
@@ -40,7 +47,9 @@ function DocumentPageContainer({
         if (renderTaskRef.current) {
           try {
             renderTaskRef.current.cancel();
-          } catch (e) {}
+          } catch {
+            // Ignore cancel error
+          }
         }
 
         const page = await pdfDocument.getPage(pageIndex + 1);
@@ -55,11 +64,10 @@ function DocumentPageContainer({
           onDimensionsChange({ width, height });
         }
 
-        // Super-Sampled High-DPI Resolution:
-        // Ensures crisp, print-quality rendering for complex Asian kanji, Indic scripts, and fine typography at all zoom levels
-        const deviceDpr = window.devicePixelRatio || 1;
-        const superSampleFactor = Math.max(deviceDpr, 2.0);
-        const renderScale = Math.max(scale * superSampleFactor * 1.5, 2.0);
+        // Enhanced High-DPI Resolution based on user quality preset:
+        const activeScale = debouncedScale || scale;
+        const dpiMultiplier = (dpi || 150) / 72;
+        const renderScale = Math.max(activeScale * dpiMultiplier, 1.0);
         const viewport = page.getViewport({ scale: renderScale });
 
         const canvas = canvasRef.current;
@@ -89,7 +97,12 @@ function DocumentPageContainer({
 
         await renderTask.promise;
         if (!isCancelled) {
-          setRendered(true);
+          if (cropper) {
+            const detection = cropper.runDetection(pageIndex + 1, unscaledViewport, canvas);
+            if (cropper.isActive && (detection?.hasBlackBorders || cropper.hasDetectedBorders)) {
+              cropper.applyCanvasPreview(canvas, renderScale, detection, unscaledViewport);
+            }
+          }
           setIsRendering(false);
         }
       } catch (err) {
@@ -110,10 +123,12 @@ function DocumentPageContainer({
       if (renderTaskRef.current) {
         try {
           renderTaskRef.current.cancel();
-        } catch (e) {}
+        } catch {
+          // Ignore cancellation
+        }
       }
     };
-  }, [pdfDocument, pageIndex, scale]);
+  }, [pdfDocument, pageIndex, debouncedScale, dpi, cropper?.isActive, cropper?.cleanMargin, cropper?.enabledEdges]);
 
   // Handle dropping field from sidebar palette
   const handleDragOver = (e) => {
@@ -123,7 +138,7 @@ function DocumentPageContainer({
 
   const handleDrop = (e) => {
     e.preventDefault();
-    const rawData = e.dataTransfer.getData('application/docforge-sign-field');
+    const rawData = e.dataTransfer.getData('application/docscalar-sign-field');
     if (!rawData) return;
     try {
       const fieldData = JSON.parse(rawData);
@@ -163,12 +178,27 @@ function DocumentPageContainer({
       }}
       className="relative flex-shrink-0 transition-all duration-75 select-none my-6 mx-auto overflow-hidden bg-white"
     >
+      {/* Smart Cropper Clean Margins Refit Outline */}
+      {cropper?.isActive && (
+        <div
+          className="absolute border border-dashed border-emerald-500/60 pointer-events-none z-10"
+          style={{
+            inset: `${(cropper.cleanMargin ?? 0) * scale}px`
+          }}
+        >
+          <span className="absolute top-1 right-2 text-[9px] font-bold text-emerald-700 bg-emerald-100/90 dark:bg-emerald-950/90 dark:text-emerald-300 px-1.5 py-0.5 rounded shadow-xs uppercase tracking-wider flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            Smart Cropper Active{cropper.cleanMargin ? ` (${cropper.cleanMargin}pt)` : ''}
+          </span>
+        </div>
+      )}
+
       {/* High-DPI PDF.js Render Canvas */}
       <canvas
         ref={canvasRef}
         style={{
-          width: `${visualWidth}px`,
-          height: `${visualHeight}px`,
+          width: '100%',
+          height: '100%',
           display: 'block',
           backgroundColor: '#ffffff',
           imageRendering: '-webkit-optimize-contrast'
@@ -211,7 +241,7 @@ function DocumentPageContainer({
 }
 
 export default function SignCanvasViewport({
-  fileName,
+  cropper,
   pdfDocument,
   totalPages,
   activePageIndex,
@@ -223,7 +253,6 @@ export default function SignCanvasViewport({
   onRemoveField,
   onDuplicateField,
   onApplyAll,
-  onAlignField = () => {},
   onNudgeField = () => {},
   undo = () => {},
   redo = () => {},
@@ -232,12 +261,33 @@ export default function SignCanvasViewport({
   onEditField,
   onAddField,
   onReplacePdf,
-  onOpenSignatureModal
+  onOpenSignatureModal,
+  detectedZones = [],
+  onApplyDetectedZone = () => {}
 }) {
   const [zoomScale, setZoomScale] = useState(1.0);
+  const [debouncedRenderZoom, setDebouncedRenderZoom] = useState(zoomScale);
+  const { dpi, setDpi } = useDpiQuality();
   const [showThumbnails, setShowThumbnails] = useState(totalPages > 1);
   const [currentPageDimensions, setCurrentPageDimensions] = useState({ width: 612, height: 792 });
   const viewportScrollRef = useRef(null);
+
+  // Debounce high-DPI PDF rasterization to decouple smooth 120 FPS GPU scaling from heavy canvas redraws
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedRenderZoom(zoomScale);
+    }, 200);
+    return () => clearTimeout(handler);
+  }, [zoomScale]);
+
+  // Universal 2-finger touchpad/touchscreen canvas pinch-to-zoom
+  useCanvasPinchZoom({
+    containerRef: viewportScrollRef,
+    zoomScale,
+    setZoomScale,
+    minZoom: 0.3,
+    maxZoom: 3.0
+  });
 
   // Auto-fit page to viewport (Fit Page) on document load and dimensions change
   useEffect(() => {
@@ -303,7 +353,7 @@ export default function SignCanvasViewport({
         return;
       }
 
-      // Arrow Nudging (1px or 5px with Shift)
+      // Arrow Nudging (when field is selected)
       if (selectedFieldId) {
         const step = e.shiftKey ? 0.02 : 0.005;
         if (e.key === 'ArrowLeft') {
@@ -319,46 +369,23 @@ export default function SignCanvasViewport({
           e.preventDefault();
           onNudgeField(selectedFieldId, 0, step);
         }
+      } else {
+        // Page Cycling Navigation when no field is selected
+        if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+          e.preventDefault();
+          setActivePageIndex((p) => Math.max(0, p - 1));
+        } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+          e.preventDefault();
+          setActivePageIndex((p) => Math.min(totalPages - 1, p + 1));
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedFieldId, undo, redo, onRemoveField, onDuplicateField, onNudgeField, onSelectField]);
+  }, [selectedFieldId, undo, redo, onRemoveField, onDuplicateField, onNudgeField, onSelectField, setActivePageIndex, totalPages]);
 
-  // Non-passive native wheel listener to cleanly intercept trackpad 2-finger pinch
-  useEffect(() => {
-    const scrollEl = viewportScrollRef.current;
-    if (!scrollEl) return;
 
-    const handleNativeWheel = (e) => {
-      if (e.ctrlKey || e.metaKey) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const zoomDelta = -e.deltaY * 0.003;
-        const factor = Math.exp(zoomDelta);
-        setZoomScale((prev) => {
-          const next = Math.max(0.25, Math.min(3.0, prev * factor));
-          return Number(next.toFixed(2));
-        });
-      }
-    };
-
-    scrollEl.addEventListener('wheel', handleNativeWheel, { passive: false });
-
-    const handleGesture = (e) => {
-      e.preventDefault();
-    };
-    scrollEl.addEventListener('gesturestart', handleGesture, { passive: false });
-    scrollEl.addEventListener('gesturechange', handleGesture, { passive: false });
-
-    return () => {
-      scrollEl.removeEventListener('wheel', handleNativeWheel);
-      scrollEl.removeEventListener('gesturestart', handleGesture);
-      scrollEl.removeEventListener('gesturechange', handleGesture);
-    };
-  }, []);
 
   // Zoom preset buttons
   const fitWidth = () => {
@@ -464,12 +491,15 @@ export default function SignCanvasViewport({
 
           {/* Right: Zoom Controls */}
           <div className="flex items-center gap-2.5">
+            {/* Top Toolbar Universal Smart Cropper Button */}
+            {cropper && <SmartCropperToolbarButton cropper={cropper} />}
+
             <div className="flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1 rounded-xl border border-[var(--border-subtle)] shadow-xs">
               <span className="material-symbols-outlined text-[16px] text-[var(--text-secondary)]">zoom_out</span>
               <input
                 type="range"
-                min="25"
-                max="200"
+                min="30"
+                max="300"
                 step="5"
                 value={Math.round(zoomScale * 100)}
                 onChange={(e) => setZoomScale(parseInt(e.target.value) / 100)}
@@ -480,6 +510,8 @@ export default function SignCanvasViewport({
                 {Math.round(zoomScale * 100)}%
               </span>
             </div>
+
+            <DpiQualitySelector dpi={dpi} onChange={setDpi} align="right" compact={true} dropDirection="up" />
 
             <button
               className="btn btn-secondary btn-sm px-2.5 py-1 text-xs font-medium"
@@ -496,6 +528,32 @@ export default function SignCanvasViewport({
           </div>
 
         </div>
+
+        {cropper?.isActive && (
+          <div className="px-5 py-1.5 bg-emerald-500/10 border-t border-emerald-500/20 text-xs flex items-center justify-between text-emerald-800 dark:text-emerald-300 animate-[fadeIn_0.15s_ease-out]">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-[16px] text-emerald-600">auto_fix_high</span>
+              <span className="font-medium">
+                Smart Cropper Active: Content preserved with {cropper.cleanMargin}pt margins
+                {cropper.scope === 'single' ? ` (Page ${activePageIndex + 1})` : ' (All Pages)'}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => cropper.revert()}
+              className="text-xs text-emerald-700 dark:text-emerald-400 hover:underline cursor-pointer"
+            >
+              Revert to Original
+            </button>
+          </div>
+        )}
+
+        {cropper?.isInvertedDocument && (
+          <div className="px-5 py-1.5 bg-amber-500/8 border-t border-amber-500/20 text-xs flex items-center gap-2 text-amber-800 dark:text-amber-300 animate-[fadeIn_0.15s_ease-out]">
+            <span className="material-symbols-outlined text-[16px] text-amber-500">info</span>
+            <span>Dark/inverted background detected — auto-crop disabled to protect document design.</span>
+          </div>
+        )}
       </div>
 
       {/* Main Workspace Body with Left Thumbnail Strip + Centered Canvas */}
@@ -529,6 +587,8 @@ export default function SignCanvasViewport({
             pdfDocument={pdfDocument}
             pageIndex={activePageIndex}
             scale={zoomScale}
+            renderScale={debouncedRenderZoom}
+            dpi={dpi}
             fields={fields.filter((f) => f.pageIndex === activePageIndex)}
             selectedFieldId={selectedFieldId}
             onSelectField={onSelectField}
@@ -540,8 +600,32 @@ export default function SignCanvasViewport({
             totalPages={totalPages}
             onDropField={onAddField}
             onDimensionsChange={setCurrentPageDimensions}
+            cropper={cropper}
           />
         </div>
+
+        {/* Floating Smart Signature Line Suggestion Chip */}
+        {detectedZones && detectedZones.filter((z) => z.pageIndex === activePageIndex).length > 0 && (
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 bg-[var(--bg-primary)] border border-[var(--border-medium)] shadow-xl rounded-2xl px-4 py-2 flex items-center gap-3 animate-[fadeIn_0.2s_ease-out]">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)]">
+              <span className="material-symbols-outlined text-[17px] text-[var(--color-primary)] animate-pulse">auto_awesome</span>
+              <span>
+                Found {detectedZones.filter((z) => z.pageIndex === activePageIndex).length} signature line{detectedZones.filter((z) => z.pageIndex === activePageIndex).length > 1 ? 's' : ''} on Page {activePageIndex + 1}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const zone = detectedZones.find((z) => z.pageIndex === activePageIndex);
+                if (zone) onApplyDetectedZone(zone);
+              }}
+              className="btn btn-primary btn-sm text-xs font-bold py-1 px-3 flex items-center gap-1 shadow-xs cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[14px]">draw</span>
+              Snap Signature
+            </button>
+          </div>
+        )}
 
       </div>
 

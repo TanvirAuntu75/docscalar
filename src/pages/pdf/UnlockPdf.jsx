@@ -9,6 +9,7 @@ import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import { useJobPoller } from '../../hooks/useJobPoller';
+import useCanvasPinchZoom from '../../hooks/useCanvasPinchZoom';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -26,9 +27,28 @@ export default function UnlockPdf() {
 
   // Canvas Viewport State
   const [zoomScale, setZoomScale] = useState(1.0);
+  const [debouncedRenderZoom, setDebouncedRenderZoom] = useState(zoomScale);
   const [pageDimensions, setPageDimensions] = useState({ width: 595, height: 842 });
   const [canvasLoading, setCanvasLoading] = useState(false);
   const [isPasswordVerified, setIsPasswordVerified] = useState(false);
+  const viewportContainerRef = useRef(null);
+
+  // Debounce high-DPI PDF rasterization to decouple smooth 120 FPS GPU scaling from heavy canvas redraws
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedRenderZoom(zoomScale);
+    }, 200);
+    return () => clearTimeout(handler);
+  }, [zoomScale]);
+
+  // Universal 2-finger touchpad/touchscreen canvas pinch-to-zoom
+  useCanvasPinchZoom({
+    containerRef: viewportContainerRef,
+    zoomScale,
+    setZoomScale,
+    minZoom: 0.3,
+    maxZoom: 3.0
+  });
 
   // Processing & Polling State
   const [processing, setProcessing] = useState(false);
@@ -40,6 +60,7 @@ export default function UnlockPdf() {
   const [backendActive, setBackendActive] = useState(true);
   const poller = useJobPoller(BACKEND_URL);
   const canvasRef = useRef(null);
+  const currentRenderTaskRef = useRef(null);
 
   // 1. Check Backend Connectivity on Mount
   useEffect(() => {
@@ -133,13 +154,23 @@ export default function UnlockPdf() {
         const baseViewport = page.getViewport({ scale: 1.0 });
         setPageDimensions({ width: baseViewport.width, height: baseViewport.height });
 
-        const viewport = page.getViewport({ scale: 1.5 * zoomScale });
+        const viewport = page.getViewport({ scale: 1.5 * debouncedRenderZoom });
         const canvas = canvasRef.current;
         if (canvas) {
           canvas.width = viewport.width;
           canvas.height = viewport.height;
           const ctx = canvas.getContext('2d');
-          await page.render({ canvasContext: ctx, viewport }).promise;
+
+          if (currentRenderTaskRef.current) {
+            try {
+              currentRenderTaskRef.current.cancel();
+            } catch (e) {}
+            currentRenderTaskRef.current = null;
+          }
+
+          const renderTask = page.render({ canvasContext: ctx, viewport });
+          currentRenderTaskRef.current = renderTask;
+          await renderTask.promise;
         }
 
         if (!isCancelled) {
@@ -150,7 +181,7 @@ export default function UnlockPdf() {
           }
         }
       } catch (err) {
-        if (!isCancelled) {
+        if (!isCancelled && err?.name !== 'RenderingCancelledException') {
           setIsPasswordVerified(false);
           setCanvasLoading(false);
           if (!outputFileName) {
@@ -158,6 +189,8 @@ export default function UnlockPdf() {
             setOutputFileName(`${base}_unlocked.pdf`);
           }
         }
+      } finally {
+        currentRenderTaskRef.current = null;
       }
     };
 
@@ -165,8 +198,14 @@ export default function UnlockPdf() {
 
     return () => {
       isCancelled = true;
+      if (currentRenderTaskRef.current) {
+        try {
+          currentRenderTaskRef.current.cancel();
+        } catch (e) {}
+        currentRenderTaskRef.current = null;
+      }
     };
-  }, [files, activeFileIndex, currentPage, password, zoomScale]);
+  }, [files, activeFileIndex, currentPage, password, debouncedRenderZoom]);
 
   // 5. Monitor Backend Polling Job Status
   useEffect(() => {
@@ -300,7 +339,7 @@ export default function UnlockPdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Unlock PDF Online Free — Remove PDF Password | DocForge"
+        title="Unlock PDF Online Free — Remove PDF Password | DocScalar"
         description="Decrypt password-protected PDF files instantly. Remove user restrictions, permission locks, and owner security details securely."
       />
 
@@ -320,12 +359,12 @@ export default function UnlockPdf() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
               {/* Sticky Canvas Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2 flex-wrap">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2.5">
+                  <div className="flex items-center gap-2.5 flex-wrap">
                     {/* Active File Switcher */}
                     {files.length > 1 ? (
-                      <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
-                        <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">description</span>
+                      <div className="h-8 flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-medium)] shrink-0">
+                        <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
                         <select
                           value={activeFileIndex}
                           onChange={(e) => {
@@ -342,20 +381,21 @@ export default function UnlockPdf() {
                         </select>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
+                      <div className="h-8 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)] shrink-0">
                         <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
                         <span className="truncate max-w-[180px]">{files[0]?.name}</span>
+                        <span className="text-[var(--text-secondary)] font-normal">({formatFileSize(files[0]?.size || 0)})</span>
                       </div>
                     )}
 
                     {/* Page Navigation Capsule (When Verified) */}
                     {isPasswordVerified && totalPages > 0 ? (
-                      <div className="flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] px-1 py-0.5">
+                      <div className="h-8 flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] px-2.5 py-1 shrink-0">
                         <button
                           type="button"
                           onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                           disabled={currentPage <= 1}
-                          className="p-1 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                          className="p-0.5 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
                           title="Previous Page"
                         >
                           <span className="material-symbols-outlined text-[16px]">chevron_left</span>
@@ -367,14 +407,14 @@ export default function UnlockPdf() {
                           type="button"
                           onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                           disabled={currentPage >= totalPages}
-                          className="p-1 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                          className="p-0.5 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
                           title="Next Page"
                         >
                           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
                         </button>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold">
+                      <div className="h-8 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold shrink-0">
                         <span className="material-symbols-outlined text-[15px]">lock</span>
                         <span>Password Protected File</span>
                       </div>
@@ -384,13 +424,13 @@ export default function UnlockPdf() {
                   {/* Zoom Controls & Workspace Reset */}
                   <div className="flex items-center gap-2">
                     {isPasswordVerified && (
-                      <div className="flex items-center gap-1 bg-[var(--bg-secondary)] px-2 py-1 rounded-lg border border-[var(--border-subtle)]">
+                      <div className="h-8 flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
                         <span className="material-symbols-outlined text-[15px] text-[var(--text-secondary)]">zoom_in</span>
                         <input
                           type="range"
-                          min="0.5"
-                          max="1.5"
-                          step="0.1"
+                          min="0.3"
+                          max="3.0"
+                          step="0.05"
                           value={zoomScale}
                           onChange={(e) => setZoomScale(parseFloat(e.target.value))}
                           className="w-16 h-1 bg-[var(--border-subtle)] accent-[var(--color-primary)] rounded-lg cursor-pointer"
@@ -404,7 +444,7 @@ export default function UnlockPdf() {
                     <button
                       type="button"
                       onClick={resetWorkspace}
-                      className="p-1 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer"
+                      className="h-8 w-8 flex items-center justify-center hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-red-500/20"
                       title="Reset workspace"
                     >
                       <span className="material-symbols-outlined text-[18px]">restart_alt</span>
@@ -414,11 +454,11 @@ export default function UnlockPdf() {
               </div>
 
               {/* Viewport Canvas Frame */}
-              <div className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center relative bg-pattern select-none">
+              <div ref={viewportContainerRef} className="flex-1 overflow-auto p-4 sm:p-8 pb-24 sm:pb-32 flex items-start justify-center relative bg-pattern select-none">
                 {isPasswordVerified ? (
                   /* Decrypted High-DPI Document Canvas */
                   <div
-                    className="relative bg-white shadow-2xl rounded-sm border border-slate-300 dark:border-slate-700 overflow-hidden transition-transform duration-150"
+                    className="relative bg-white shadow-2xl rounded-sm border border-slate-300 dark:border-slate-700 overflow-hidden transition-transform duration-150 m-auto shrink-0"
                     style={{
                       width: (pageDimensions.width || 595) * zoomScale,
                       height: (pageDimensions.height || 842) * zoomScale
@@ -690,4 +730,4 @@ export default function UnlockPdf() {
       )}
     </ToolPageLayout>
   );
-}
+}

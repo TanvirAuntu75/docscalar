@@ -7,7 +7,7 @@ export function generateLilacSidebarHtml(
   themeColor = '#581c87',
   themeFont = 'Inter',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
@@ -16,19 +16,17 @@ export function generateLilacSidebarHtml(
 
   const expHtml = data.experience && data.experience.length ? `
     <section class="main-section">
-      <h3 class="section-title">Work Experience</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'Work Experience'}</h3>
       <div class="divider-line"></div>
       <div class="entries-list">
-        ${data.experience.map(e => `
+        ${data.experience.map((e, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${e.role}</span>
-              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
-            </div>
-            <div class="entry-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+              <span class="entry-role" data-df-field="exp:${idx}:role">${e.role}</span>
+              <span class="entry-date" ><span data-df-field="exp:${idx}:company">${e.company || ''}</span>${(e.company && (e.start || e.end)) ? ' | ' : ''}<span data-df-field="exp:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span></div>
             ${e.highlights && e.highlights.filter(Boolean).length ? `
               <ul class="entry-desc">
-                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+                ${e.highlights.filter(Boolean).map((h, hIdx) => `<li data-df-field="exp:${idx}:highlight:${hIdx}">${h}</li>`).join('')}
               </ul>
             ` : ''}
           </div>
@@ -39,14 +37,14 @@ export function generateLilacSidebarHtml(
 
   const eduHtml = data.education && data.education.length ? `
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Education</h3>
+      <h3 class="sidebar-title section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'Education'}</h3>
       <div class="sidebar-line"></div>
       <div class="edu-list">
-        ${data.education.map(e => `
+        ${data.education.map((e, idx) => `
           <div class="edu-item">
-            <div class="edu-degree">${e.degree}</div>
-            <div class="edu-school">${e.school}</div>
-            <div class="edu-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
+            <div class="edu-degree" data-df-field="edu:${idx}:degree">${e.degree}</div>
+            <div class="edu-school" data-df-field="edu:${idx}:school">${e.school}</div>
+            <div class="edu-date" data-df-field="edu:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
             ${e.note ? `<div class="edu-note">${e.note}</div>` : ''}
           </div>
         `).join('')}
@@ -56,10 +54,10 @@ export function generateLilacSidebarHtml(
 
   const skillsHtml = data.skills && data.skills.length ? `
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Skills</h3>
+      <h3 class="sidebar-title section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Skills'}</h3>
       <div class="sidebar-line"></div>
       <div class="skills-grid">
-        ${data.skills.map((s) => {
+        ${data.skills.map((s, idx) => {
           let name = s;
           let levelText = '';
           if (s.includes(' - ')) {
@@ -69,7 +67,7 @@ export function generateLilacSidebarHtml(
           }
           return `
             <div class="skill-item">
-              <span>• ${name}</span>
+              <span data-df-field="skill:${idx}">• ${name}</span>
               ${levelText ? `<span class="skill-level">${levelText}</span>` : ''}
             </div>
           `;
@@ -80,13 +78,13 @@ export function generateLilacSidebarHtml(
 
   const projHtml = data.projects && data.projects.length ? `
     <section class="main-section">
-      <h3 class="section-title">Projects</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'Projects'}</h3>
       <div class="divider-line"></div>
       <div class="entries-list">
-        ${data.projects.map(p => `
+        ${data.projects.map((p, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${p.name}</span>
+              <span class="entry-role" data-df-field="proj:${idx}:name">${p.name}</span>
               ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
             </div>
             ${p.description ? `<div style="font-size: 8.5pt; color: #475569; margin-top: 2px;">${p.description}</div>` : ''}
@@ -98,33 +96,35 @@ export function generateLilacSidebarHtml(
 
   const certHtml = data.certifications && data.certifications.length ? `
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Certifications</h3>
+      <h3 class="sidebar-title section-heading" data-df-field="heading:certifications">${data.sectionTitles?.certifications || 'Certifications'}</h3>
       <div class="sidebar-line"></div>
       <ul class="cert-list">
-        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+        ${data.certifications.map((c, idx) => `<li data-df-field="cert:${idx}">${c}</li>`).join('')}
       </ul>
     </div>
   ` : '';
 
-  const contactHtml = `
+  const hasContact = Boolean(data.phone || data.email || data.location || data.website || data.linkedin);
+  const contactHtml = hasContact ? `
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Contact</h3>
+      <h3 class="sidebar-title section-heading" data-df-field="heading:contact">${data.sectionTitles?.contact || 'Contact'}</h3>
       <div class="sidebar-line"></div>
       <div class="contact-list">
-        ${data.phone ? `<div class="contact-row"><span>${data.phone}</span></div>` : ''}
-        ${data.email ? `<div class="contact-row"><a href="mailto:${data.email}" style="color: inherit; text-decoration: none; word-break: break-all;">${data.email}</a></div>` : ''}
-        ${data.location ? `<div class="contact-row"><span>${data.location}</span></div>` : ''}
-        ${data.linkedin ? `<div class="contact-row"><a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
-        ${data.website ? `<div class="contact-row"><a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${data.phone ? `<div class="contact-row"><span data-df-field="phone">${data.phone}</span></div>` : ''}
+        ${data.email ? `<div class="contact-row"><a href="mailto:${data.email}" style="color: inherit; text-decoration: none; word-break: break-all;" data-df-field="email">${data.email}</a></div>` : ''}
+        ${data.location ? `<div class="contact-row"><span data-df-field="location">${data.location}</span></div>` : ''}
+        ${data.linkedin ? `<div class="contact-row"><a data-df-field="linkedin" href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${data.website ? `<div class="contact-row"><a data-df-field="website" href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
       </div>
     </div>
-  `;
+  ` : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${data.name ? `${data.name} - Resume` : 'Resume'}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
@@ -141,7 +141,7 @@ export function generateLilacSidebarHtml(
     
     #main-container {
       display: flex;
-      width: 210mm;
+      width: 794px;
       min-height: 297mm;
       margin: 0 auto;
       background: #ffffff;
@@ -162,13 +162,32 @@ export function generateLilacSidebarHtml(
       justify-content: center;
       margin-bottom: 6px;
     }
+    .avatar-mask {
+      width: 145px;
+      height: 145px;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid ${accent};
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    .avatar-mask .avatar, .avatar-mask img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
     .avatar {
-      width: 105px;
-      height: 105px;
+      width: 145px;
+      height: 145px;
       border-radius: 50%;
       border: 3px solid #581c87;
       object-fit: cover;
-    }
+    
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);}
     .sidebar-section {
       break-inside: avoid;
       page-break-inside: avoid;
@@ -337,15 +356,48 @@ export function generateLilacSidebarHtml(
       margin-bottom: 2px;
       text-align: justify;
     }
+  
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        margin-bottom: 0 !important;
+      }
+      #main-container, .page-container, .cv-page, .container, .page {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+    }
+  
+    .avatar, .profile-photo, .photo, .headshot, .profile-img, .photo-wrapper, .avatar-wrapper {
+      border-radius: 50%;
+      overflow: hidden;
+    }
   </style>
 </head>
 <body>
-<div id="main-container">
+<div class="cv-page" id="main-container">
   <div class="sidebar">
     ${data.photoUrl ? `
       <div class="avatar-container">
-        <img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />
-      </div>
+          <div class="avatar-mask">
+            <img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />
+          </div>
+        </div>
     ` : ''}
     ${contactHtml}
     ${skillsHtml}
@@ -354,11 +406,11 @@ export function generateLilacSidebarHtml(
   </div>
   
   <div class="main-content">
-    <div class="main-header">
-      <h1>${data.name || 'Candidate Name'}</h1>
-      ${data.title ? `<div class="title">${data.title}</div>` : ''}
-      ${data.summary ? `<div class="summary-text">${data.summary}</div>` : ''}
-    </div>
+      <div class="main-header">
+        ${data.name ? `<h1 data-df-field="name">${data.name}</h1>` : ''}
+        <div class="candidate-title title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${data.title || ''}</div>
+        ${data.summary ? `<div class="summary-text" data-df-field="summary">${data.summary}</div>` : ''}
+      </div>
     
     ${expHtml}
     ${projHtml}

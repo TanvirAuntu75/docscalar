@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
@@ -11,6 +11,9 @@ import * as pdfjsLib from 'pdfjs-dist';
 import JSZip from 'jszip';
 import { splitPdf as localSplitPdf } from '../../engines/pdf/splitPdf';
 import { formatFileSize } from '../../utils/constants';
+import useSmartCropper from '../../hooks/useSmartCropper';
+import { SmartCropperToolbarButton } from '../../components/SmartCropperToolbarButton';
+import { detectSmartBorders, computeCleanPdfCropBox } from '../../utils/pdfZoneScanner';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -33,6 +36,10 @@ export default function SplitPdf() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
+  const [pageCropBoxes, setPageCropBoxes] = useState({});
+  const [totalPages, setTotalPages] = useState(0);
+  const cropper = useSmartCropper({ totalPages });
+
   const [activeTab, setActiveTab] = useState('range');
   const [rangeMode, setRangeMode] = useState('custom'); 
   const [customRanges, setCustomRanges] = useState([{ id: 1, start: 1, end: 1 }]);
@@ -46,9 +53,10 @@ export default function SplitPdf() {
   const [zoomLevel, setZoomLevel] = useState(2); 
   const [searchQuery, setSearchQuery] = useState('');
   const [outputFileName, setOutputFileName] = useState('');
-  const [totalPages, setTotalPages] = useState(0);
   const [thumbnails, setThumbnails] = useState([]);
   const canvasRefs = useRef({});
+  const rawCanvasCacheRef = useRef({});
+  const detectionCacheRef = useRef({});
   const pdfInstanceRef = useRef(null);
   const fileInputRef = useRef(null);
   const [backendActive, setBackendActive] = useState(false);
@@ -101,14 +109,43 @@ export default function SplitPdf() {
     checkServer();
   }, []);
 
+  const paintThumbnailCanvas = useCallback((idx, isCropped) => {
+    const canvas = canvasRefs.current[idx];
+    const offCanvas = rawCanvasCacheRef.current[idx];
+    const det = detectionCacheRef.current[idx];
+    if (!canvas || !offCanvas) return;
+
+    canvas.width = offCanvas.width;
+    canvas.height = offCanvas.height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(offCanvas, 0, 0);
+
+    if (isCropped && det?.hasScanBorders && det?.borderResult) {
+      cropper.applyCanvasPreview(canvas, det.scale || 0.35, det.borderResult, det.baseViewport, true);
+    }
+  }, [cropper]);
+
+  useEffect(() => {
+    if (totalPages > 0) {
+      for (let i = 0; i < totalPages; i++) {
+        paintThumbnailCanvas(i, cropper.isActive);
+      }
+    }
+  }, [cropper.isActive, totalPages, paintThumbnailCanvas]);
+
   useEffect(() => {
     if (files.length === 0) {
-      setTotalPages(0); setSelectedPages([]); setThumbnails([]); return;
+      setTotalPages(0); setSelectedPages([]); setThumbnails([]); setPageCropBoxes({});
+      rawCanvasCacheRef.current = {}; detectionCacheRef.current = {};
+      return;
     }
     if (activeFileIndex >= files.length) { setActiveFileIndex(0); return; }
     let isCancelled = false;
     const loadPdfThumbnails = async () => {
-      setProcessing(true); setError(null);
+      setProcessing(true); setError(null); setPageCropBoxes({});
+      rawCanvasCacheRef.current = {}; detectionCacheRef.current = {};
       try {
         const file = files[activeFileIndex];
         const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
@@ -123,17 +160,53 @@ export default function SplitPdf() {
         setThumbnails(Array.from({ length: count }, (_, idx) => idx + 1));
         setProcessing(false);
         setTimeout(async () => {
+          const detectedBoxes = {};
+          let anyScanBordersFound = false;
           for (let i = 1; i <= count; i++) {
             if (isCancelled) break;
             try {
               const page = await pdf.getPage(i);
               const viewport = page.getViewport({ scale: 0.35 });
-              const canvas = canvasRefs.current[i - 1];
-              if (canvas) {
-                canvas.width = viewport.width; canvas.height = viewport.height;
-                await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+              const offCanvas = document.createElement('canvas');
+              offCanvas.width = viewport.width;
+              offCanvas.height = viewport.height;
+              await page.render({ canvasContext: offCanvas.getContext('2d'), viewport }).promise;
+              rawCanvasCacheRef.current[i - 1] = offCanvas;
+
+              let borderResult = null;
+              let hasScanBorders = false;
+              let cropBox = null;
+              try {
+                borderResult = detectSmartBorders(offCanvas, viewport);
+                hasScanBorders = borderResult && borderResult.hasBlackBorders === true &&
+                  (borderResult.cropTop > 0 || borderResult.cropBottom > 0 || borderResult.cropLeft > 0 || borderResult.cropRight > 0);
+                if (hasScanBorders) {
+                  cropBox = computeCleanPdfCropBox(borderResult, { width: page.view[2], height: page.view[3] }, viewport.scale);
+                  anyScanBordersFound = true;
+                }
+              } catch (e) {
+                hasScanBorders = false;
               }
+
+              const pageDetection = {
+                hasScanBorders,
+                cropBox,
+                borderResult,
+                scale: viewport.scale,
+                baseViewport: { width: page.view[2], height: page.view[3] }
+              };
+              detectedBoxes[i - 1] = pageDetection;
+              detectionCacheRef.current[i - 1] = pageDetection;
+
+              // Paint thumbnail immediately
+              paintThumbnailCanvas(i - 1, cropper.isActive || hasScanBorders);
             } catch (err) { console.warn(`Error rendering thumbnail page ${i}:`, err); }
+          }
+          if (!isCancelled) {
+            setPageCropBoxes(detectedBoxes);
+            if (anyScanBordersFound) {
+              cropper.activate();
+            }
           }
         }, 80);
       } catch (err) {
@@ -142,7 +215,7 @@ export default function SplitPdf() {
     };
     loadPdfThumbnails();
     return () => { isCancelled = true; if (pdfInstanceRef.current) pdfInstanceRef.current.destroy(); };
-  }, [files, activeFileIndex]);
+  }, [files, activeFileIndex, paintThumbnailCanvas]);
 
   const addCustomRange = () => {
     const nextStart = customRanges.length > 0 ? Math.min(totalPages, customRanges[customRanges.length - 1].end + 1) : 1;
@@ -223,7 +296,7 @@ export default function SplitPdf() {
       else { modeArg = 'select-pages'; rangeArg = selectedPages.map(p => p + 1).join(','); extraArg = { merge_output: mergeExtracted }; if (!selectedPages.length) { setError('Select pages'); return; } }
     } else if (activeTab === 'size') { modeArg = 'size-limit'; extraArg = { max_bytes: maxSizeMb * 1024 * 1024 }; }
     setProcessing(true);
-    if (backendActive) {
+    if (backendActive && !cropper.isActive) {
       try {
         const uploadData = await uploadFileSecure(BACKEND_URL, files[activeFileIndex], setProgress);
         const fd = new FormData();
@@ -240,7 +313,26 @@ export default function SplitPdf() {
       const localMode = modeArg === 'fixed-ranges' ? 'equal-intervals' : (['custom-ranges', 'select-pages'].includes(modeArg) ? 'range' : (['by-bookmarks', 'by-blank-page'].includes(modeArg) ? modeArg : 'all'));
       const localRange = modeArg === 'custom-ranges' ? JSON.parse(rangeArg).map(r => `${r[0]}-${r[1]}`).join(',') : (modeArg === 'select-pages' ? rangeArg : (modeArg === 'fixed-ranges' ? rangeArg : ''));
       setProgress(40);
-      const res = await localSplitPdf(files[activeFileIndex], localMode, localRange, setProgress);
+      const allPageCropBoxes = {};
+      Object.entries(pageCropBoxes).forEach(([idx, b]) => {
+        if (b?.hasScanBorders && b?.cropBox) {
+          allPageCropBoxes[parseInt(idx, 10)] = b.cropBox;
+        }
+      });
+      const activeCropBox = Object.values(pageCropBoxes).find((b) => b?.cropBox)?.cropBox || null;
+      const cropperOptions = await (cropper.getEngineOptionsAsync
+        ? cropper.getEngineOptionsAsync(files[activeFileIndex], pdfjsLib, (p) => setProgress(Math.round(p * 0.25)))
+        : cropper.getEngineOptions());
+      const cropOptions = {
+        ...cropperOptions,
+        autoCropBlackBorders: cropper.isActive,
+        smartCrop: cropper.isActive,
+        pageCropBoxes: cropper.isActive ? allPageCropBoxes : {},
+        docCropBox: cropper.isActive ? activeCropBox : null,
+        cleanMargin: cropper.cleanMargin || 0,
+        enabledEdges: cropper.enabledEdges
+      };
+      const res = await localSplitPdf(files[activeFileIndex], localMode, localRange, setProgress, cropOptions);
       const isSinglePdf = res.blobs.length === 1;
       const finalName = isSinglePdf ? `${files[activeFileIndex].name.replace(/\.[^.]+$/, '')}_extracted.pdf` : outputFileName;
       setResult({ localResult: res, name: finalName, filesCount: res.blobs.length, isSinglePdf, totalSize: res.blobs.reduce((acc, b) => acc + b.size, 0) });
@@ -267,7 +359,17 @@ export default function SplitPdf() {
     }
   };
 
-  const resetWorkspace = () => { clearStudioDraft('split-pdf'); setFiles([]); setResult(null); setError(null); setProcessing(false); setTotalPages(0); setThumbnails([]); };
+  const resetWorkspace = () => {
+    clearStudioDraft('split-pdf');
+    setFiles([]);
+    setResult(null);
+    setError(null);
+    setProcessing(false);
+    setTotalPages(0);
+    setThumbnails([]);
+    rawCanvasCacheRef.current = {};
+    detectionCacheRef.current = {};
+  };
 
   const getGridTemplate = () => {
     switch (zoomLevel) {
@@ -295,7 +397,7 @@ export default function SplitPdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Split PDF Pages Online Free (100% Local) | DocForge"
+        title="Split PDF Pages Online Free (100% Local) | DocScalar"
         description="Split PDF pages online. Choose Custom Ranges, Fixed Intervals, Size-Based limits, or Visual selection grid thumbnail extractor. Fully responsive & private."
       />
 
@@ -317,9 +419,10 @@ export default function SplitPdf() {
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
                 <div className="workspace-toolbar px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2 flex-wrap">
+                    {/* Active File Switcher / Document Identity */}
                     {files.length > 1 ? (
-                      <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
-                        <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">description</span>
+                      <div className="h-8 flex items-center gap-1.5 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-subtle)]">
+                        <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
                         <select
                           value={activeFileIndex}
                           onChange={(e) => setActiveFileIndex(parseInt(e.target.value))}
@@ -333,16 +436,32 @@ export default function SplitPdf() {
                         </select>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
+                      <div className="h-8 flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-subtle)]">
                         <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
-                        <span className="truncate max-w-[220px]">{files[0]?.name}</span>
-                        <span className="text-[var(--text-secondary)] font-normal">({totalPages} pages)</span>
+                        <span className="text-xs font-bold text-[var(--text-primary)] truncate max-w-[200px]" title={files[0]?.name}>
+                          {files[0]?.name}
+                        </span>
+                        <span className="text-[11px] text-[var(--text-secondary)] font-medium">
+                          ({totalPages} {totalPages === 1 ? 'page' : 'pages'})
+                        </span>
                       </div>
                     )}
 
-                    <label className="btn btn-secondary btn-sm cursor-pointer flex items-center gap-1.5 shadow-xs">
-                      <span className="material-symbols-outlined text-[15px]">add_circle</span>
-                      <span>Add File</span>
+                    {/* Mode Tag */}
+                    <span className="h-8 hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 shrink-0 select-none">
+                      <span className="material-symbols-outlined text-[15px]">
+                        {activeTab === 'range' ? 'tune' : activeTab === 'extract' ? 'call_split' : activeTab === 'fixed' ? 'splitscreen' : 'straighten'}
+                      </span>
+                      <span>{activeTab === 'range' ? 'Custom Ranges' : activeTab === 'extract' ? 'Extract Pages' : activeTab === 'fixed' ? 'Fixed Intervals' : 'Size Limit'}</span>
+                    </span>
+
+                    {/* Visual Divider */}
+                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-0.5 shrink-0" />
+
+                    {/* Ergonomic Add PDFs Action Button */}
+                    <label className="h-8 px-3.5 py-1.5 rounded-lg border border-[var(--border-medium)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover,var(--bg-tertiary))] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0 select-none">
+                      <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">add_circle</span>
+                      <span>Add PDF</span>
                       <input
                         ref={fileInputRef}
                         type="file"
@@ -350,16 +469,13 @@ export default function SplitPdf() {
                         accept=".pdf,application/pdf"
                         className="hidden"
                         onChange={handleAddFiles}
+                        title=""
+                        tabIndex={-1}
                       />
                     </label>
 
-                    {/* Mode Tag */}
-                    <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20">
-                      <span className="material-symbols-outlined text-[13px]">
-                        {activeTab === 'range' ? 'tune' : activeTab === 'extract' ? 'call_split' : activeTab === 'fixed' ? 'splitscreen' : 'straighten'}
-                      </span>
-                      {activeTab === 'range' ? 'Custom Ranges' : activeTab === 'extract' ? 'Extract Pages' : activeTab === 'fixed' ? 'Fixed Intervals' : 'Size Limit'}
-                    </span>
+                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-0.5 shrink-0" />
+                    <SmartCropperToolbarButton cropper={cropper} />
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -495,6 +611,41 @@ export default function SplitPdf() {
                           <span className="bg-black/70 backdrop-blur-xs text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-xs">
                             #{pageNum}
                           </span>
+                          {cropper.isActive ? (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                cropper.revert();
+                              }}
+                              className="text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1 cursor-pointer transition-all bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-500/50 shrink-0"
+                              title="Smart Cropping Active — Click to restore original document"
+                            >
+                              <span className="material-symbols-outlined text-[11px]">check_circle</span>
+                              <span>Cropped</span>
+                            </button>
+                          ) : pageCropBoxes[idx]?.hasScanBorders ? (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                cropper.activate();
+                              }}
+                              className="text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1 cursor-pointer transition-all bg-amber-500 hover:bg-amber-600 text-white border border-amber-400/50 shrink-0"
+                              title="Photocopy scan borders detected — Click to remove scan borders"
+                            >
+                              <span className="material-symbols-outlined text-[11px]">auto_fix_high</span>
+                              <span>Borders Detected</span>
+                            </button>
+                          ) : (
+                            <div
+                              className="text-[9px] font-semibold px-2 py-0.5 rounded-md shadow-xs flex items-center gap-1 bg-white text-slate-600 border border-slate-200 shrink-0 select-none cursor-default"
+                              title="Clean digital document: zero scan borders detected"
+                            >
+                              <span className="material-symbols-outlined text-[11px] text-slate-500">check_circle</span>
+                              <span>Clean Page</span>
+                            </div>
+                          )}
                         </div>
 
                         {/* Top-Right Visual Range Badges */}
@@ -513,7 +664,9 @@ export default function SplitPdf() {
                         )}
 
                         {/* Page Preview Canvas */}
-                        <div className="w-full aspect-[4/5] bg-slate-900/5 dark:bg-black/20 flex items-center justify-center p-2 overflow-hidden relative">
+                        <div className={`w-full aspect-[4/5] bg-slate-900/5 dark:bg-black/20 flex items-center justify-center p-2 overflow-hidden relative transition-all ${
+                          cropper.isActive && pageCropBoxes[idx]?.hasScanBorders ? 'ring-2 ring-emerald-500/50 bg-emerald-500/5' : ''
+                        }`}>
                           <canvas
                             ref={(el) => (canvasRefs.current[idx] = el)}
                             className="max-w-full max-h-full object-contain pointer-events-none drop-shadow-xs"

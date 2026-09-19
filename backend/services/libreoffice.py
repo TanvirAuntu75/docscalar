@@ -1,3 +1,4 @@
+import glob
 import logging
 import os
 import shutil
@@ -55,6 +56,8 @@ def resolve_libreoffice_binary() -> str:
         if path:
             return path
     for cand in (
+        r"C:\Program Files\LibreOffice\program\soffice.exe",
+        r"C:\Program Files (x86)\LibreOffice\program\soffice.exe",
         "/usr/bin/soffice",
         "/opt/libreoffice/program/soffice",
         "/Applications/LibreOffice.app/Contents/MacOS/soffice",
@@ -64,6 +67,29 @@ def resolve_libreoffice_binary() -> str:
     raise RuntimeError(
         "LibreOffice not found on PATH or common installation directories."
     )
+
+
+def resolve_ghostscript_binary() -> str | None:
+    """
+    Locates the Ghostscript executable on system PATH or standard installation directories.
+    """
+    for name in ("gswin64c", "gswin32c", "gs"):
+        path = shutil.which(name)
+        if path:
+            return path
+    # Common Windows directories
+    import glob
+    for cand in glob.glob(r"C:\Program Files\gs\gs*\bin\gswin64c.exe") + glob.glob(
+        r"C:\Program Files (x86)\gs\gs*\bin\gswin32c.exe"
+    ):
+        if Path(cand).exists():
+            return cand
+    # Common POSIX paths
+    for cand in ("/usr/bin/gs", "/usr/local/bin/gs", "/opt/homebrew/bin/gs"):
+        if Path(cand).exists():
+            return cand
+    return None
+
 
 
 def run_libreoffice_subprocess(
@@ -308,7 +334,8 @@ def convert_with_libreoffice(input_path: str, target_format: str) -> ConversionR
             if not expected_output.exists():
                 # Sometimes LibreOffice sanitizes output name space characters
                 # Let's search output folder for any file with matching stem and extension
-                matches = list(output_dir.glob(f"*{input_file.stem}*.{target_format}"))
+                escaped_stem = glob.escape(input_file.stem)
+                matches = list(output_dir.glob(f"*{escaped_stem}*.{target_format}"))
                 if matches:
                     expected_output = matches[0]
                 else:

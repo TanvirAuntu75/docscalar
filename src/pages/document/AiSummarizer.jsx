@@ -288,7 +288,7 @@ export default function AiSummarizer() {
 
   return (
     <ToolPageLayout
-      toolId="summarize-pdf"
+      toolId="ai-summarizer"
       title="AI Document Summarizer Studio"
       description="Condense multi-page PDF documents and research papers into executive briefs, key takeaways, and structured insights in seconds."
       files={files}
@@ -296,7 +296,7 @@ export default function AiSummarizer() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="AI PDF Summarizer Online Free — Executive Document Briefs | DocForge"
+        title="AI PDF Summarizer Online Free — Executive Document Briefs | DocScalar"
         description="Summarize PDF documents and research reports with advanced AI graph centrality. Free, instantaneous, and 100% private in-browser processing."
       />
 
@@ -671,14 +671,16 @@ export default function AiSummarizer() {
                 {/* Progress Bar (While Processing) */}
                 {processing && (
                   <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                        <span className="material-symbols-outlined text-[14px] animate-spin text-purple-500">
+                    <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-purple-500 shrink-0">
                           progress_activity
                         </span>
-                        {statusMessage || 'Generating summary...'}
-                      </span>
-                      <span>{progress}%</span>
+                        <span className="truncate" title={statusMessage || 'Generating summary...'}>
+                          {statusMessage || 'Generating summary...'}
+                        </span>
+                      </div>
+                      <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div
@@ -793,11 +795,11 @@ export default function AiSummarizer() {
             {/* Quick Next Steps */}
             <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
-                Continue Working with DocForge
+                Continue Working with DocScalar
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <Link
-                  to="/translate-pdf"
+                  to="/ai-translator"
                   className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[20px] text-[var(--color-primary)]">translate</span>

@@ -49,7 +49,7 @@ export async function generateDiffAuditReportPdf(params = {}) {
     color: rgb(0.06, 0.09, 0.16)
   });
 
-  page.drawText('DOCFORGE FORENSIC COMPARISON REPORT', {
+  page.drawText('DOCSCALAR FORENSIC COMPARISON REPORT', {
     x: margin + 16,
     y: height - 65,
     size: 14,
@@ -149,7 +149,7 @@ export async function generateDiffAuditReportPdf(params = {}) {
   });
 
   // Footer
-  page.drawText('Verified by DocForge Client-Side Forensic Diff Engine. Confidential.', {
+  page.drawText('Verified by DocScalar Client-Side Forensic Diff Engine. Confidential.', {
     x: margin,
     y: 30,
     size: 8,

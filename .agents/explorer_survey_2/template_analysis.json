@@ -1,0 +1,2469 @@
+[
+  {
+    "file": "adam_fletcher.js",
+    "templateKey": "adam_fletcher",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 24,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 42,
+        "line": "const languageList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 370,
+        "line": "${title ? `<div class=\"header-job-title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "summary",
+      "contact",
+      "skills",
+      "certifications",
+      "custom_languages",
+      "experience",
+      "education",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "adeline_palmerston.js",
+    "templateKey": "adeline_palmerston",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 34,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 280,
+        "line": "const langSection = (safeData.customSections || []).find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');"
+      },
+      {
+        "lineNum": 281,
+        "line": "const items = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 557,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 752,
+        "line": "${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "projects",
+      "certifications",
+      "references",
+      "education",
+      "summary",
+      "skills",
+      "contact"
+    ],
+    "usesUniversalRuntime": true
+  },
+  {
+    "file": "adora_diagonal.js",
+    "templateKey": "adora_diagonal",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 20,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 281,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 488,
+        "line": "${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "projects",
+      "references",
+      "certifications",
+      "contact",
+      "skills"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "adora_montminy.js",
+    "templateKey": "adora_montminy",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 23,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 42,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 602,
+        "line": "${title ? `<div class=\"job-title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "summary",
+      "contact",
+      "skills",
+      "certifications",
+      "education",
+      "experience",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "alfredo_torres.js",
+    "templateKey": "alfredo_torres",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 25,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 154,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 372,
+        "line": "${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "contact",
+      "education",
+      "skills",
+      "certifications",
+      "experience",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "alvarado_slate.js",
+    "templateKey": "alvarado_slate",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 19,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 38,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 495,
+        "line": "${title ? `<div class=\"role\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "amsterdam_orange.js",
+    "templateKey": "amsterdam_orange",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 20,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 39,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 520,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "arthur_pendelton.js",
+    "templateKey": "arthur_pendelton",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 26,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 46,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 127,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 414,
+        "line": "${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "education",
+      "skills",
+      "certifications",
+      "experience",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "austin_amber.js",
+    "templateKey": "austin_amber",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 20,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 39,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 520,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "barcelona_cyan.js",
+    "templateKey": "barcelona_cyan",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 20,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 39,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 493,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "berlin_two_tone.js",
+    "templateKey": "berlin_two_tone",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 27,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 192,
+        "line": "const langSection = (safeData.customSections || []).find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');"
+      },
+      {
+        "lineNum": 193,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 564,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": true
+  },
+  {
+    "file": "bordeaux_wine.js",
+    "templateKey": "bordeaux_wine",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 20,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 39,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 501,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "boston_crimson.js",
+    "templateKey": "boston_crimson",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 19,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 38,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 493,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "buenos_aires_tango.js",
+    "templateKey": "buenos_aires_tango",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 21,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 40,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 521,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "cairo_gold.js",
+    "templateKey": "cairo_gold",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 20,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 39,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 520,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "cambridge_rose.js",
+    "templateKey": "cambridge_rose",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 20,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 39,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 502,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "cape_town_sunset.js",
+    "templateKey": "cape_town_sunset",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 21,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 40,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 515,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "card_matrix.js",
+    "templateKey": "card_matrix",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 19,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 38,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 456,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "charles.js",
+    "templateKey": "charles",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 19,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 38,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 505,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "projects",
+      "references",
+      "certifications",
+      "skills",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "copenhagen_sand.js",
+    "templateKey": "copenhagen_sand",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 20,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 39,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 498,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "date_capsule.js",
+    "templateKey": "date_capsule",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 19,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 38,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 434,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "diagonal_wedge.js",
+    "templateKey": "diagonal_wedge",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 29,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 67,
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${isContinuation ? (safeData.sectionTitles?.experience ? `${safeData.sectionTitles.experience} (Continued)` : 'Work Experience (Continued)') : (safeData.sectionTitles?.experience || 'Work Experience')}</h3>"
+      },
+      {
+        "lineNum": 103,
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${isContinuation ? (safeData.sectionTitles?.projects ? `${safeData.sectionTitles.projects} (Continued)` : 'Key Projects (Continued)') : (safeData.sectionTitles?.projects || 'Key Projects')}</h3>"
+      },
+      {
+        "lineNum": 131,
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${safeData.sectionTitles?.summary || 'Professional Summary'}</h3>"
+      },
+      {
+        "lineNum": 145,
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${safeData.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 171,
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:education\">${safeData.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 199,
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${safeData.sectionTitles?.skills || 'Skills & Expertise'}</h3>"
+      },
+      {
+        "lineNum": 229,
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:skills\">${safeData.sectionTitles?.skills || 'Skills & Expertise'}</h3>"
+      },
+      {
+        "lineNum": 259,
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${safeData.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 281,
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${safeData.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 297,
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:certifications\">${safeData.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 336,
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${safeData.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 351,
+        "line": "const langSection = (safeData.customSections || []).find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');"
+      },
+      {
+        "lineNum": 352,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 759,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "projects",
+      "summary",
+      "education",
+      "skills",
+      "references",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": true
+  },
+  {
+    "file": "donna_stroupe.js",
+    "templateKey": "donna_stroupe",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 20,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 40,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 126,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 394,
+        "line": "${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "education",
+      "skills",
+      "certifications",
+      "summary",
+      "experience",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "dublin_forest.js",
+    "templateKey": "dublin_forest",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 20,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 39,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 499,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "edinburgh_navy.js",
+    "templateKey": "edinburgh_navy",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 19,
+        "line": "const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';"
+      },
+      {
+        "lineNum": 38,
+        "line": "const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);"
+      },
+      {
+        "lineNum": 435,
+        "line": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "references",
+      "certifications",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "emerald_prestige.js",
+    "templateKey": "emerald_prestige",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 417,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "emma.js",
+    "templateKey": "emma",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 385,
+        "line": "${data.title ? `<div class=\"title-sub\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "projects",
+      "education",
+      "skills",
+      "certifications",
+      "summary",
+      "experience",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "floating_card_matrix.js",
+    "templateKey": "floating_card_matrix",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 453,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "florence_terracotta.js",
+    "templateKey": "florence_terracotta",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 413,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "geneva_charcoal.js",
+    "templateKey": "geneva_charcoal",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 413,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "harvard_classic.js",
+    "templateKey": "harvard_classic",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 186,
+        "line": "<title>${safeData.name || 'Resume'} — Harvard Classic (ATS Ultra)</title>"
+      },
+      {
+        "lineNum": 220,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 333,
+        "line": "${safeData.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "summary",
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "references"
+    ],
+    "usesUniversalRuntime": true
+  },
+  {
+    "file": "helsinki_frost.js",
+    "templateKey": "helsinki_frost",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 334,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "helsinki_navy.js",
+    "templateKey": "helsinki_navy",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 414,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "howard_ong.js",
+    "templateKey": "howard_ong",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 116,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 461,
+        "line": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "contact",
+      "skills",
+      "education",
+      "summary",
+      "experience",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "isabel_mercado.js",
+    "templateKey": "isabel_mercado",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 477,
+        "line": "${data.title ? `<div class=\"job-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "contact",
+      "skills",
+      "summary",
+      "education",
+      "experience",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "isabel_schumacher.js",
+    "templateKey": "isabel_schumacher",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 240,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 493,
+        "line": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "summary",
+      "contact",
+      "skills",
+      "custom_languages",
+      "education",
+      "experience",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "jonathan.js",
+    "templateKey": "jonathan",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 459,
+        "line": "${data.title ? `<div class=\"title-sub\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "summary",
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "jonathan_patterson.js",
+    "templateKey": "jonathan_patterson",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 167,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 495,
+        "line": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "summary",
+      "contact",
+      "skills",
+      "custom_languages",
+      "experience",
+      "education",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "kathleen.js",
+    "templateKey": "kathleen",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 472,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "kelly_mint.js",
+    "templateKey": "kelly_mint",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 445,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "references",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "korina_villanueva.js",
+    "templateKey": "korina_villanueva",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 167,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 474,
+        "line": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "contact",
+      "education",
+      "skills",
+      "custom_languages",
+      "experience",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "kyiv_golden.js",
+    "templateKey": "kyiv_golden",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 440,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "kyoto_coral.js",
+    "templateKey": "kyoto_coral",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 425,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "lilac_sidebar.js",
+    "templateKey": "lilac_sidebar",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 412,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "lorna_alvarado.js",
+    "templateKey": "lorna_alvarado",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 287,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 543,
+        "line": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "contact",
+      "education",
+      "skills",
+      "summary",
+      "experience",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "lyon_lavender.js",
+    "templateKey": "lyon_lavender",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 433,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "madrid_sun.js",
+    "templateKey": "madrid_sun",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 437,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "manhattan_noir.js",
+    "templateKey": "manhattan_noir",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 420,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "marcus_vance.js",
+    "templateKey": "marcus_vance",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 208,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 541,
+        "line": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "skills",
+      "education",
+      "certifications",
+      "summary",
+      "experience",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "mariana.js",
+    "templateKey": "mariana",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 272,
+        "line": "const langSection = (safeData.customSections || []).find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');"
+      },
+      {
+        "lineNum": 331,
+        "line": "<title>${safeData.name ? `${safeData.name} - Resume` : 'Resume'}</title>"
+      },
+      {
+        "lineNum": 733,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "summary",
+      "projects",
+      "certifications",
+      "references",
+      "contact"
+    ],
+    "usesUniversalRuntime": true
+  },
+  {
+    "file": "milan_blush.js",
+    "templateKey": "milan_blush",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 438,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "montreal_frost.js",
+    "templateKey": "montreal_frost",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 454,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "ocean_block.js",
+    "templateKey": "ocean_block",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 396,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "olivia.js",
+    "templateKey": "olivia",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 615,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "contact",
+      "education",
+      "skills",
+      "experience",
+      "projects",
+      "certifications",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "ong_burgundy.js",
+    "templateKey": "ong_burgundy",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 437,
+        "line": "${data.title ? `<div class=\"role\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "osaka_minimal.js",
+    "templateKey": "osaka_minimal",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 425,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "oslo_taupe.js",
+    "templateKey": "oslo_taupe",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 423,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "overlapping_badge.js",
+    "templateKey": "overlapping_badge",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 174,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 348,
+        "line": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "oxford_burgundy.js",
+    "templateKey": "oxford_burgundy",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 395,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "oxford_minimalist.js",
+    "templateKey": "oxford_minimalist",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 209,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 286,
+        "line": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "summary",
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "prague_brass.js",
+    "templateKey": "prague_brass",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 439,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "reykjavik_slate.js",
+    "templateKey": "reykjavik_slate",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 429,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "richard.js",
+    "templateKey": "richard",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 407,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "projects",
+      "certifications",
+      "skills"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "richard_sanchez.js",
+    "templateKey": "richard_sanchez",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 175,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 446,
+        "line": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "summary",
+      "skills",
+      "experience",
+      "education",
+      "projects",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "sage_pastel.js",
+    "templateKey": "sage_pastel",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 412,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "sanchez_dark.js",
+    "templateKey": "sanchez_dark",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 476,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "projects",
+      "certifications",
+      "references",
+      "contact",
+      "skills"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "sanchez_mono.js",
+    "templateKey": "sanchez_mono",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 439,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "projects",
+      "certifications",
+      "contact",
+      "skills"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "sanchez_wave.js",
+    "templateKey": "sanchez_wave",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 349,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "san_francisco_skyline.js",
+    "templateKey": "san_francisco_skyline",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 437,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "schumacher_charcoal.js",
+    "templateKey": "schumacher_charcoal",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 425,
+        "line": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "projects",
+      "certifications",
+      "contact",
+      "skills"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "seattle_emerald.js",
+    "templateKey": "seattle_emerald",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 426,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "sebastian_bennett.js",
+    "templateKey": "sebastian_bennett",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 109,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 363,
+        "line": "${safeData.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "summary",
+      "education",
+      "experience",
+      "projects",
+      "skills",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "seoul_neon.js",
+    "templateKey": "seoul_neon",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 407,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "silicon_valley_ats.js",
+    "templateKey": "silicon_valley_ats",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 182,
+        "line": "<title>${safeData.name || 'Resume'} — Silicon Valley ATS</title>"
+      },
+      {
+        "lineNum": 215,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 322,
+        "line": "${safeData.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "summary",
+      "skills",
+      "experience",
+      "projects",
+      "education",
+      "certifications",
+      "references"
+    ],
+    "usesUniversalRuntime": true
+  },
+  {
+    "file": "singapore_ruby.js",
+    "templateKey": "singapore_ruby",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 407,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "split_dual_block.js",
+    "templateKey": "split_dual_block",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 474,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "stockholm_monochrome.js",
+    "templateKey": "stockholm_monochrome",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 387,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "stockholm_yellow.js",
+    "templateKey": "stockholm_yellow",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 413,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "terracotta_arch.js",
+    "templateKey": "terracotta_arch",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 130,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 371,
+        "line": "${safeData.title ? `"
+      },
+      {
+        "lineNum": 374,
+        "line": "<span class=\"candidate-title\" data-df-field=\"title\">${safeData.title}</span>"
+      }
+    ],
+    "headingStamps": [
+      "summary",
+      "experience",
+      "projects",
+      "education",
+      "skills"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "tokyo_ice_blue.js",
+    "templateKey": "tokyo_ice_blue",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 436,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "vancouver_pine.js",
+    "templateKey": "vancouver_pine",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 440,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "venice_sand_split.js",
+    "templateKey": "venice_sand_split",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 410,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "vienna_crest.js",
+    "templateKey": "vienna_crest",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 371,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "violet_modern.js",
+    "templateKey": "violet_modern",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 395,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "wall_street_executive.js",
+    "templateKey": "wall_street_executive",
+    "hasOmissionGuard": false,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": true,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 210,
+        "line": ".candidate-title {"
+      },
+      {
+        "lineNum": 297,
+        "line": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "summary",
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "references"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "wilson_light.js",
+    "templateKey": "wilson_light",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 117,
+        "line": "const langSection = (safeData.customSections || []).find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');"
+      },
+      {
+        "lineNum": 419,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "wilson_minimal.js",
+    "templateKey": "wilson_minimal",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 374,
+        "line": "${safeData.title ? `<div class=\"role\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "ziv_olive.js",
+    "templateKey": "ziv_olive",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 124,
+        "line": "const langSection = (safeData.customSections || []).find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');"
+      },
+      {
+        "lineNum": 403,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "projects",
+      "certifications",
+      "contact",
+      "skills",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  },
+  {
+    "file": "zurich_slate_block.js",
+    "templateKey": "zurich_slate_block",
+    "hasOmissionGuard": true,
+    "hasDataDfFieldTitle": true,
+    "hasCandidateTitleClass": false,
+    "hasFallbackTitle": false,
+    "titleLines": [
+      {
+        "lineNum": 415,
+        "line": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+      }
+    ],
+    "headingStamps": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "contact",
+      "summary"
+    ],
+    "usesUniversalRuntime": false
+  }
+]

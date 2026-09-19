@@ -1,0 +1,2297 @@
+[
+  {
+    "slug": "adam_fletcher",
+    "file": "adam_fletcher.js",
+    "fnKey": "generateAdamFletcherHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 40,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "adeline_palmerston",
+    "file": "adeline_palmerston.js",
+    "fnKey": "generateAdelinePalmerstonHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 2,
+    "dfFieldsCount": 54,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": true
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "adora_diagonal",
+    "file": "adora_diagonal.js",
+    "fnKey": "generateAdoraDiagonalHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 29,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "adora_montminy",
+    "file": "adora_montminy.js",
+    "fnKey": "generateAdoraMontminyHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 42,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": true,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "alfredo_torres",
+    "file": "alfredo_torres.js",
+    "fnKey": "generateAlfredoTorresHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 43,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": true
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "alvarado_slate",
+    "file": "alvarado_slate.js",
+    "fnKey": "generateAlvaradoSlateHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 45,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "amsterdam_orange",
+    "file": "amsterdam_orange.js",
+    "fnKey": "generateAmsterdamOrangeHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 43,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "arthur_pendelton",
+    "file": "arthur_pendelton.js",
+    "fnKey": "generateArthurPendeltonHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 43,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": true
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "austin_amber",
+    "file": "austin_amber.js",
+    "fnKey": "generateAustinAmberHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 43,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "barcelona_cyan",
+    "file": "barcelona_cyan.js",
+    "fnKey": "generateBarcelonaCyanHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 35,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "berlin_two_tone",
+    "file": "berlin_two_tone.js",
+    "fnKey": "generateBerlinTwoToneHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "bordeaux_wine",
+    "file": "bordeaux_wine.js",
+    "fnKey": "generateBordeauxWineHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 35,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "boston_crimson",
+    "file": "boston_crimson.js",
+    "fnKey": "generateBostonCrimsonHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "buenos_aires_tango",
+    "file": "buenos_aires_tango.js",
+    "fnKey": "generateBuenosAiresTangoHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 41,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "cairo_gold",
+    "file": "cairo_gold.js",
+    "fnKey": "generateCairoGoldHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 41,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "cambridge_rose",
+    "file": "cambridge_rose.js",
+    "fnKey": "generateCambridgeRoseHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 35,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "cape_town_sunset",
+    "file": "cape_town_sunset.js",
+    "fnKey": "generateCapeTownSunsetHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 41,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "card_matrix",
+    "file": "card_matrix.js",
+    "fnKey": "generateCardMatrixHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 31,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "charles",
+    "file": "charles.js",
+    "fnKey": "generateCharlesHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 42,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "copenhagen_sand",
+    "file": "copenhagen_sand.js",
+    "fnKey": "generateCopenhagenSandHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 43,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "date_capsule",
+    "file": "date_capsule.js",
+    "fnKey": "generateDateCapsuleHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 25,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": false,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "diagonal_wedge",
+    "file": "diagonal_wedge.js",
+    "fnKey": "generateDiagonalWedgeHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 1,
+    "dfFieldsCount": 50,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": true,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "donna_stroupe",
+    "file": "donna_stroupe.js",
+    "fnKey": "generateDonnaStroupeHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 43,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": true
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "dublin_forest",
+    "file": "dublin_forest.js",
+    "fnKey": "generateDublinForestHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "edinburgh_navy",
+    "file": "edinburgh_navy.js",
+    "fnKey": "generateEdinburghNavyHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 29,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "emerald_prestige",
+    "file": "emerald_prestige.js",
+    "fnKey": "generateEmeraldPrestigeHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "emma",
+    "file": "emma.js",
+    "fnKey": "generateEmmaHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": false,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "floating_card_matrix",
+    "file": "floating_card_matrix.js",
+    "fnKey": "generateFloatingCardMatrixHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 41,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "florence_terracotta",
+    "file": "florence_terracotta.js",
+    "fnKey": "generateFlorenceTerracottaHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 35,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "geneva_charcoal",
+    "file": "geneva_charcoal.js",
+    "fnKey": "generateGenevaCharcoalHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "helsinki_frost",
+    "file": "helsinki_frost.js",
+    "fnKey": "generateHelsinkiFrostHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 29,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "helsinki_navy",
+    "file": "helsinki_navy.js",
+    "fnKey": "generateHelsinkiNavyHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 43,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "howard_ong",
+    "file": "howard_ong.js",
+    "fnKey": "generateHowardOngHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 36,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "isabel_mercado",
+    "file": "isabel_mercado.js",
+    "fnKey": "generateIsabelMercadoHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 38,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "isabel_schumacher",
+    "file": "isabel_schumacher.js",
+    "fnKey": "generateIsabelSchumacherHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 39,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "jonathan",
+    "file": "jonathan.js",
+    "fnKey": "generateJonathanHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 1,
+    "dfFieldsCount": 51,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "jonathan_patterson",
+    "file": "jonathan_patterson.js",
+    "fnKey": "generateJonathanPattersonHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 46,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": true
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": true
+    }
+  },
+  {
+    "slug": "kathleen",
+    "file": "kathleen.js",
+    "fnKey": "generateKathleenHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": false,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "kelly_mint",
+    "file": "kelly_mint.js",
+    "fnKey": "generateKellyMintHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 35,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "korina_villanueva",
+    "file": "korina_villanueva.js",
+    "fnKey": "generateKorinaVillanuevaHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 46,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": true
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": true,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "kyiv_golden",
+    "file": "kyiv_golden.js",
+    "fnKey": "generateKyivGoldenHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "kyoto_coral",
+    "file": "kyoto_coral.js",
+    "fnKey": "generateKyotoCoralHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 43,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "lilac_sidebar",
+    "file": "lilac_sidebar.js",
+    "fnKey": "generateLilacSidebarHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "lorna_alvarado",
+    "file": "lorna_alvarado.js",
+    "fnKey": "generateLornaAlvaradoHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 44,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": false,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": true
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "lyon_lavender",
+    "file": "lyon_lavender.js",
+    "fnKey": "generateLyonLavenderHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 41,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "madrid_sun",
+    "file": "madrid_sun.js",
+    "fnKey": "generateMadridSunHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 43,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "manhattan_noir",
+    "file": "manhattan_noir.js",
+    "fnKey": "generateManhattanNoirHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 41,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "marcus_vance",
+    "file": "marcus_vance.js",
+    "fnKey": "generateMarcusVanceHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 42,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "mariana",
+    "file": "mariana.js",
+    "fnKey": "generateMarianaHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 2,
+    "dfFieldsCount": 59,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": true
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "milan_blush",
+    "file": "milan_blush.js",
+    "fnKey": "generateMilanBlushHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 35,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "montreal_frost",
+    "file": "montreal_frost.js",
+    "fnKey": "generateMontrealFrostHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 41,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "ocean_block",
+    "file": "ocean_block.js",
+    "fnKey": "generateOceanBlockHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "olivia",
+    "file": "olivia.js",
+    "fnKey": "generateOliviaHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 1,
+    "dfFieldsCount": 59,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "ong_burgundy",
+    "file": "ong_burgundy.js",
+    "fnKey": "generateOngBurgundyHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "osaka_minimal",
+    "file": "osaka_minimal.js",
+    "fnKey": "generateOsakaMinimalHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 43,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "oslo_taupe",
+    "file": "oslo_taupe.js",
+    "fnKey": "generateOsloTaupeHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "overlapping_badge",
+    "file": "overlapping_badge.js",
+    "fnKey": "generateOverlappingBadgeHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "oxford_burgundy",
+    "file": "oxford_burgundy.js",
+    "fnKey": "generateOxfordBurgundyHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 29,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "prague_brass",
+    "file": "prague_brass.js",
+    "fnKey": "generatePragueBrassHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "reykjavik_slate",
+    "file": "reykjavik_slate.js",
+    "fnKey": "generateReykjavikSlateHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "richard",
+    "file": "richard.js",
+    "fnKey": "generateRichardHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 31,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": false,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "richard_sanchez",
+    "file": "richard_sanchez.js",
+    "fnKey": "generateRichardSanchezHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 39,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "sage_pastel",
+    "file": "sage_pastel.js",
+    "fnKey": "generateSagePastelHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "sanchez_dark",
+    "file": "sanchez_dark.js",
+    "fnKey": "generateSanchezDarkHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 29,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "sanchez_mono",
+    "file": "sanchez_mono.js",
+    "fnKey": "generateSanchezMonoHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 29,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "sanchez_wave",
+    "file": "sanchez_wave.js",
+    "fnKey": "generateSanchezWaveHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 28,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "san_francisco_skyline",
+    "file": "san_francisco_skyline.js",
+    "fnKey": "generateSanFranciscoSkylineHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 43,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "schumacher_charcoal",
+    "file": "schumacher_charcoal.js",
+    "fnKey": "generateSchumacherCharcoalHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 29,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "seattle_emerald",
+    "file": "seattle_emerald.js",
+    "fnKey": "generateSeattleEmeraldHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "sebastian_bennett",
+    "file": "sebastian_bennett.js",
+    "fnKey": "generateSebastianBennettHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 36,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "seoul_neon",
+    "file": "seoul_neon.js",
+    "fnKey": "generateSeoulNeonHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 35,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "singapore_ruby",
+    "file": "singapore_ruby.js",
+    "fnKey": "generateSingaporeRubyHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 35,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "split_dual_block",
+    "file": "split_dual_block.js",
+    "fnKey": "generateSplitDualBlockHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 41,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "stockholm_monochrome",
+    "file": "stockholm_monochrome.js",
+    "fnKey": "generateStockholmMonochromeHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 41,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "stockholm_yellow",
+    "file": "stockholm_yellow.js",
+    "fnKey": "generateStockholmYellowHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "terracotta_arch",
+    "file": "terracotta_arch.js",
+    "fnKey": "generateTerracottaArchHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 31,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": false,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": true
+    }
+  },
+  {
+    "slug": "tokyo_ice_blue",
+    "file": "tokyo_ice_blue.js",
+    "fnKey": "generateTokyoIceBlueHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "vancouver_pine",
+    "file": "vancouver_pine.js",
+    "fnKey": "generateVancouverPineHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 41,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": true,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "venice_sand_split",
+    "file": "venice_sand_split.js",
+    "fnKey": "generateVeniceSandSplitHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 35,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "vienna_crest",
+    "file": "vienna_crest.js",
+    "fnKey": "generateViennaCrestHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 29,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "violet_modern",
+    "file": "violet_modern.js",
+    "fnKey": "generateVioletModernHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "wilson_light",
+    "file": "wilson_light.js",
+    "fnKey": "generateWilsonLightHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": false,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "wilson_minimal",
+    "file": "wilson_minimal.js",
+    "fnKey": "generateWilsonMinimalHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "ziv_olive",
+    "file": "ziv_olive.js",
+    "fnKey": "generateZivOliveHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 31,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": true,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": false,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  },
+  {
+    "slug": "zurich_slate_block",
+    "file": "zurich_slate_block.js",
+    "fnKey": "generateZurichSlateBlockHtml",
+    "emptyObjOk": true,
+    "fullPayloadOk": true,
+    "fullPageCount": 0,
+    "dfFieldsCount": 33,
+    "stamping": {
+      "hasNameField": true,
+      "hasTitleField": true,
+      "hasSummaryField": true,
+      "hasEmailField": true,
+      "hasPhoneField": true,
+      "hasExpField": true,
+      "hasEduField": true,
+      "hasSkillField": false,
+      "hasProjField": false,
+      "hasCertField": true,
+      "hasRefField": false
+    },
+    "geometry": {
+      "hasSvgVectors": true,
+      "hasClipPolygon": false,
+      "hasArchFrame": false
+    }
+  }
+]

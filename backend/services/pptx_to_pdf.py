@@ -44,7 +44,7 @@ class ConverterConfig:
 class PPTXToPDFConverter:
     def __init__(self, config: ConverterConfig | None = None, **kw):
         self.cfg = config or ConverterConfig(**kw)
-        # Fall back to DocForge backend's detected LibreOffice path before scanning system PATH
+        # Fall back to DocScalar backend's detected LibreOffice path before scanning system PATH
         from backend import config as backend_config
 
         self.soffice = self.cfg.soffice_bin or getattr(

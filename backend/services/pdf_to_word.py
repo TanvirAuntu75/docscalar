@@ -1,4 +1,5 @@
 import os
+import uuid
 from pathlib import Path
 
 from pdf2docx import Converter
@@ -694,7 +695,8 @@ def convert_pdf_to_docx(input_path: str, safe_mode: bool = False) -> ConversionR
         if validation_err:
             return ConversionResult(success=False, error_message=validation_err)
 
-        output_docx_path = config.OUTPUT_DIR / f"{input_file.stem}.docx"
+        job_tag = uuid.uuid4().hex[:8]
+        output_docx_path = config.OUTPUT_DIR / f"{input_file.stem}_{job_tag}.docx"
 
         from backend.jobs.queue import update_job_progress
 
@@ -707,6 +709,13 @@ def convert_pdf_to_docx(input_path: str, safe_mode: bool = False) -> ConversionR
             import fitz
 
             doc = fitz.open(str(input_file))
+            if getattr(doc, "is_encrypted", False) and getattr(doc, "needs_pass", False):
+                doc.close()
+                return ConversionResult(
+                    success=False,
+                    error_message="PASSWORD_REQUIRED: Document is password protected.",
+                )
+
             total_chars = sum(len(page.get_text().strip()) for page in doc)
             page_count = max(1, len(doc))
             avg_chars = total_chars / page_count

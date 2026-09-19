@@ -45,8 +45,8 @@ export default function Footer() {
     return (
       <footer className="w-full py-8 border-t border-[var(--border-subtle)] bg-[var(--bg-primary)] flex flex-col sm:flex-row items-center justify-between px-6 md:px-12 lg:px-24 text-center sm:text-left transition-colors duration-300">
         <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-          <div className="font-display font-bold text-lg tracking-tighter text-on-background/80">DocForge</div>
-          <p className="text-on-surface-variant/60 text-xs font-sans">© 2026 DocForge Inc. Built for the modern web.</p>
+          <div className="font-display font-bold text-lg tracking-tighter text-on-background/80">DocScalar</div>
+          <p className="text-on-surface-variant/60 text-xs font-sans">© 2026 DocScalar Inc. Built for the modern web.</p>
         </div>
         <div className="flex gap-6 mt-4 sm:mt-0 text-xs text-[var(--text-secondary)]">
           <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
@@ -78,8 +78,8 @@ export default function Footer() {
       </div>
 
       <div className="absolute bottom-10 left-0 right-0 text-center z-10 flex flex-col items-center gap-4">
-        <div className="font-display font-bold text-2xl tracking-tighter text-on-background/80">DocForge</div>
-        <p className="text-on-surface-variant/60 text-sm font-sans">© 2026 DocForge Inc. Built for the modern web.</p>
+        <div className="font-display font-bold text-2xl tracking-tighter text-on-background/80">DocScalar</div>
+        <p className="text-on-surface-variant/60 text-sm font-sans">© 2026 DocScalar Inc. Built for the modern web.</p>
       </div>
     </footer>
   );

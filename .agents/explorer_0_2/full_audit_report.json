@@ -1,0 +1,5451 @@
+[
+  {
+    "file": "adam_fletcher.js",
+    "fnName": "generateAdamFletcherHtml",
+    "lineCount": 482,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 15,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": false,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": false,
+      "hasDfCustom": true,
+      "missingFields": [
+        "website",
+        "linkedin",
+        "proj",
+        "cert",
+        "ref"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Adam Fletcher'",
+        "data.name || 'Adam Fletcher'",
+        "name || 'Language'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h2>Contact</h2>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "adeline_palmerston.js",
+    "fnName": "generateAdelinePalmerstonHtml",
+    "lineCount": 741,
+    "pagination": {
+      "usesComputePartition": true,
+      "usesPaginationEngine": true
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 26,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": true,
+      "hasDfCustom": true,
+      "missingFields": []
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Adeline Palmerston'",
+        "data.name || 'Adeline Palmerston'",
+        "data.name || 'Adeline Palmerston'"
+      ],
+      "titleFallbacks": [
+        "title || 'Additional Information'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h2>Contact</h2>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "adora_diagonal.js",
+    "fnName": "generateAdoraDiagonalHtml",
+    "lineCount": 421,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 14,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3>Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "adora_montminy.js",
+    "fnName": "generateAdoraMontminyHtml",
+    "lineCount": 492,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 15,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": false,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": false,
+      "hasDfCustom": true,
+      "missingFields": [
+        "website",
+        "linkedin",
+        "proj",
+        "cert",
+        "ref"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "name || 'Language'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "alfredo_torres.js",
+    "fnName": "generateAlfredoTorresHtml",
+    "lineCount": 607,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": true,
+      "hasDfCustom": false,
+      "missingFields": [
+        "linkedin",
+        "proj",
+        "cert",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Alfredo Torres'",
+        "data.name || 'Alfredo Torres'",
+        "data.name || 'Alfredo Torres'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "alvarado_slate.js",
+    "fnName": "generateAlvaradoSlateHtml",
+    "lineCount": 422,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "amsterdam_orange.js",
+    "fnName": "generateAmsterdamOrangeHtml",
+    "lineCount": 444,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "arthur_pendelton.js",
+    "fnName": "generateArthurPendeltonHtml",
+    "lineCount": 566,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": true,
+      "hasDfCustom": false,
+      "missingFields": [
+        "linkedin",
+        "proj",
+        "cert",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Arthur Pendelton'",
+        "data.name || 'Arthur Pendelton'",
+        "data.name || 'Arthur Pendelton'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "austin_amber.js",
+    "fnName": "generateAustinAmberHtml",
+    "lineCount": 444,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "barcelona_cyan.js",
+    "fnName": "generateBarcelonaCyanHtml",
+    "lineCount": 424,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "berlin_two_tone.js",
+    "fnName": "generateBerlinTwoToneHtml",
+    "lineCount": 375,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": false,
+      "rendersPhotoConditionally": false,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "bordeaux_wine.js",
+    "fnName": "generateBordeauxWineHtml",
+    "lineCount": 430,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "boston_crimson.js",
+    "fnName": "generateBostonCrimsonHtml",
+    "lineCount": 419,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "buenos_aires_tango.js",
+    "fnName": "generateBuenosAiresTangoHtml",
+    "lineCount": 452,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "cairo_gold.js",
+    "fnName": "generateCairoGoldHtml",
+    "lineCount": 451,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "cambridge_rose.js",
+    "fnName": "generateCambridgeRoseHtml",
+    "lineCount": 440,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "cape_town_sunset.js",
+    "fnName": "generateCapeTownSunsetHtml",
+    "lineCount": 439,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "card_matrix.js",
+    "fnName": "generateCardMatrixHtml",
+    "lineCount": 368,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 15,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "charles.js",
+    "fnName": "generateCharlesHtml",
+    "lineCount": 456,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": true,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3>Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "copenhagen_sand.js",
+    "fnName": "generateCopenhagenSandHtml",
+    "lineCount": 427,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "date_capsule.js",
+    "fnName": "generateDateCapsuleHtml",
+    "lineCount": 342,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 10,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": false,
+      "hasDfLocation": false,
+      "hasDfWebsite": false,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "phone",
+        "location",
+        "website",
+        "linkedin",
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "diagonal_wedge.js",
+    "fnName": "generateDiagonalWedgeHtml",
+    "lineCount": 593,
+    "pagination": {
+      "usesComputePartition": true,
+      "usesPaginationEngine": true
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 20,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "donna_stroupe.js",
+    "fnName": "generateDonnaStroupeHtml",
+    "lineCount": 518,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": true,
+      "hasDfCustom": false,
+      "missingFields": [
+        "linkedin",
+        "proj",
+        "cert",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Donna Stroupe'",
+        "name || 'Language'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "dublin_forest.js",
+    "fnName": "generateDublinForestHtml",
+    "lineCount": 424,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "edinburgh_navy.js",
+    "fnName": "generateEdinburghNavyHtml",
+    "lineCount": 352,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 14,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "emerald_prestige.js",
+    "fnName": "generateEmeraldPrestigeHtml",
+    "lineCount": 428,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "emma.js",
+    "fnName": "generateEmmaHtml",
+    "lineCount": 429,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": false,
+      "rendersPhotoConditionally": false,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 15,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": false,
+      "hasDfLocation": false,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "phone",
+        "location",
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3>Contact Information</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "floating_card_matrix.js",
+    "fnName": "generateFloatingCardMatrixHtml",
+    "lineCount": 485,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"card-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "florence_terracotta.js",
+    "fnName": "generateFlorenceTerracottaHtml",
+    "lineCount": 424,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "geneva_charcoal.js",
+    "fnName": "generateGenevaCharcoalHtml",
+    "lineCount": 424,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "helsinki_frost.js",
+    "fnName": "generateHelsinkiFrostHtml",
+    "lineCount": 355,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 14,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "helsinki_navy.js",
+    "fnName": "generateHelsinkiNavyHtml",
+    "lineCount": 444,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "howard_ong.js",
+    "fnName": "generateHowardOngHtml",
+    "lineCount": 505,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "linkedin",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Howard Ong'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.certifications || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "isabel_mercado.js",
+    "fnName": "generateIsabelMercadoHtml",
+    "lineCount": 588,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 15,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "linkedin",
+        "proj",
+        "cert",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'ISABEL MERCADO'",
+        "data.name || 'Isabel Mercado'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "isabel_schumacher.js",
+    "fnName": "generateIsabelSchumacherHtml",
+    "lineCount": 510,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 15,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": false,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": false,
+      "hasDfCustom": true,
+      "missingFields": [
+        "website",
+        "linkedin",
+        "proj",
+        "cert",
+        "ref"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Isabel Schumacher'",
+        "data.name || 'Isabel Schumacher'",
+        "name || 'Language'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h2>Contact</h2>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "jonathan.js",
+    "fnName": "generateJonathanHtml",
+    "lineCount": 473,
+    "pagination": {
+      "usesComputePartition": true,
+      "usesPaginationEngine": true
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": false,
+      "rendersPhotoConditionally": false,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 27,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": true,
+      "hasDfCustom": true,
+      "missingFields": []
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Additional Information'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "jonathan_patterson.js",
+    "fnName": "generateJonathanPattersonHtml",
+    "lineCount": 617,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 19,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": true,
+      "hasDfCustom": true,
+      "missingFields": [
+        "linkedin",
+        "proj",
+        "cert"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "name || 'Language'",
+        "data.name || 'Jonathan Patterson'",
+        "data.name || 'Jonathan Patterson'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "kathleen.js",
+    "fnName": "generateKathleenHtml",
+    "lineCount": 457,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": true,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 15,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": false,
+      "hasDfLocation": false,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "phone",
+        "location",
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3>Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "kelly_mint.js",
+    "fnName": "generateKellyMintHtml",
+    "lineCount": 427,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Kelly Blackwell'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "korina_villanueva.js",
+    "fnName": "generateKorinaVillanuevaHtml",
+    "lineCount": 608,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 19,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": true,
+      "hasDfCustom": true,
+      "missingFields": [
+        "linkedin",
+        "proj",
+        "cert"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "name || 'Language'",
+        "data.name || 'Korina Villanueva'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "kyiv_golden.js",
+    "fnName": "generateKyivGoldenHtml",
+    "lineCount": 425,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "kyoto_coral.js",
+    "fnName": "generateKyotoCoralHtml",
+    "lineCount": 432,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "lilac_sidebar.js",
+    "fnName": "generateLilacSidebarHtml",
+    "lineCount": 397,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": true,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "lorna_alvarado.js",
+    "fnName": "generateLornaAlvaradoHtml",
+    "lineCount": 502,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": false,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": false,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": true,
+      "hasDfCustom": true,
+      "missingFields": [
+        "summary",
+        "website",
+        "linkedin",
+        "proj",
+        "cert"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Lorna Alvarado'",
+        "data.name || 'Lorna Alvarado'",
+        "name || 'Language'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "lyon_lavender.js",
+    "fnName": "generateLyonLavenderHtml",
+    "lineCount": 440,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "madrid_sun.js",
+    "fnName": "generateMadridSunHtml",
+    "lineCount": 444,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "manhattan_noir.js",
+    "fnName": "generateManhattanNoirHtml",
+    "lineCount": 427,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Information</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "marcus_vance.js",
+    "fnName": "generateMarcusVanceHtml",
+    "lineCount": 673,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": false,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "website",
+        "linkedin",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Marcus Vance'",
+        "data.name || 'Marcus Vance'",
+        "data.name || 'Marcus Vance'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "mariana.js",
+    "fnName": "generateMarianaHtml",
+    "lineCount": 671,
+    "pagination": {
+      "usesComputePartition": true,
+      "usesPaginationEngine": true
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": true,
+      "hasAvatarContainer": true,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 26,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": true,
+      "hasDfCustom": true,
+      "missingFields": []
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'",
+        "title || 'Additional Information'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3>Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "milan_blush.js",
+    "fnName": "generateMilanBlushHtml",
+    "lineCount": 423,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "montreal_frost.js",
+    "fnName": "generateMontrealFrostHtml",
+    "lineCount": 439,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "ocean_block.js",
+    "fnName": "generateOceanBlockHtml",
+    "lineCount": 403,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "olivia.js",
+    "fnName": "generateOliviaHtml",
+    "lineCount": 633,
+    "pagination": {
+      "usesComputePartition": true,
+      "usesPaginationEngine": true
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": true,
+      "hasAvatarContainer": true,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 29,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": true,
+      "hasDfCustom": true,
+      "missingFields": []
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'",
+        "title || 'Additional Information'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3>Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "ong_burgundy.js",
+    "fnName": "generateOngBurgundyHtml",
+    "lineCount": 417,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3>Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "osaka_minimal.js",
+    "fnName": "generateOsakaMinimalHtml",
+    "lineCount": 432,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "oslo_taupe.js",
+    "fnName": "generateOsloTaupeHtml",
+    "lineCount": 408,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "overlapping_badge.js",
+    "fnName": "generateOverlappingBadgeHtml",
+    "lineCount": 446,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"section-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "oxford_burgundy.js",
+    "fnName": "generateOxfordBurgundyHtml",
+    "lineCount": 394,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 14,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "prague_brass.js",
+    "fnName": "generatePragueBrassHtml",
+    "lineCount": 424,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "reykjavik_slate.js",
+    "fnName": "generateReykjavikSlateHtml",
+    "lineCount": 414,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "richard.js",
+    "fnName": "generateRichardHtml",
+    "lineCount": 393,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": true,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 14,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": false,
+      "hasDfLocation": false,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "phone",
+        "location",
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Language'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "richard_sanchez.js",
+    "fnName": "generateRichardSanchezHtml",
+    "lineCount": 531,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 15,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": false,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": false,
+      "hasDfCustom": true,
+      "missingFields": [
+        "website",
+        "linkedin",
+        "proj",
+        "cert",
+        "ref"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Richard Sanchez'",
+        "data.name || 'Richard Sanchez'",
+        "name || 'Language'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || [",
+        "data.custom_languages || [",
+        "data.skills || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "sage_pastel.js",
+    "fnName": "generateSagePastelHtml",
+    "lineCount": 397,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": true,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "sanchez_dark.js",
+    "fnName": "generateSanchezDarkHtml",
+    "lineCount": 438,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": true,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 14,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3>Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "sanchez_mono.js",
+    "fnName": "generateSanchezMonoHtml",
+    "lineCount": 400,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": true,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 14,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3>Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "sanchez_wave.js",
+    "fnName": "generateSanchezWaveHtml",
+    "lineCount": 357,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 13,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": false,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "website",
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "san_francisco_skyline.js",
+    "fnName": "generateSanFranciscoSkylineHtml",
+    "lineCount": 444,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 18,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "schumacher_charcoal.js",
+    "fnName": "generateSchumacherCharcoalHtml",
+    "lineCount": 410,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": true,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 14,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3>Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "seattle_emerald.js",
+    "fnName": "generateSeattleEmeraldHtml",
+    "lineCount": 423,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "sebastian_bennett.js",
+    "fnName": "generateSebastianBennettHtml",
+    "lineCount": 492,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": false,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "website",
+        "linkedin",
+        "proj",
+        "cert",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Sebastian Bennett'",
+        "data.name || 'Sebastian Bennett'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "seoul_neon.js",
+    "fnName": "generateSeoulNeonHtml",
+    "lineCount": 425,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "singapore_ruby.js",
+    "fnName": "generateSingaporeRubyHtml",
+    "lineCount": 424,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "split_dual_block.js",
+    "fnName": "generateSplitDualBlockHtml",
+    "lineCount": 476,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "stockholm_monochrome.js",
+    "fnName": "generateStockholmMonochromeHtml",
+    "lineCount": 403,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"box-title\">Information</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "stockholm_yellow.js",
+    "fnName": "generateStockholmYellowHtml",
+    "lineCount": 433,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "terracotta_arch.js",
+    "fnName": "generateTerracottaArchHtml",
+    "lineCount": 479,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": false,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 12,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": false,
+      "hasDfLinkedin": false,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": false,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "website",
+        "linkedin",
+        "proj",
+        "cert",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Adeline Palmerston'",
+        "data.name || 'Candidate'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": true,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "tokyo_ice_blue.js",
+    "fnName": "generateTokyoIceBlueHtml",
+    "lineCount": 431,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "vancouver_pine.js",
+    "fnName": "generateVancouverPineHtml",
+    "lineCount": 433,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": true,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "venice_sand_split.js",
+    "fnName": "generateVeniceSandSplitHtml",
+    "lineCount": 430,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 17,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "vienna_crest.js",
+    "fnName": "generateViennaCrestHtml",
+    "lineCount": 380,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 14,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 0,
+      "emptyHeadersSample": [],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "violet_modern.js",
+    "fnName": "generateVioletModernHtml",
+    "lineCount": 402,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "wilson_light.js",
+    "fnName": "generateWilsonLightHtml",
+    "lineCount": 432,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": true,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 15,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": false,
+      "hasDfLocation": false,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "phone",
+        "location",
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Language'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3>Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "wilson_minimal.js",
+    "fnName": "generateWilsonMinimalHtml",
+    "lineCount": 389,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"section-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "ziv_olive.js",
+    "fnName": "generateZivOliveHtml",
+    "lineCount": 419,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 15,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": true,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [
+        "title || 'Languages'"
+      ],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": [
+        "data.customSections || ["
+      ]
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3>Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  },
+  {
+    "file": "zurich_slate_block.js",
+    "fnName": "generateZurichSlateBlockHtml",
+    "lineCount": 431,
+    "pagination": {
+      "usesComputePartition": false,
+      "usesPaginationEngine": false
+    },
+    "avatar": {
+      "hasAvatarMaskDiv": false,
+      "hasAvatarContainer": false,
+      "directImgAvatar": true,
+      "rendersPhotoConditionally": true,
+      "brokenImgOnEmpty": false
+    },
+    "dfFields": {
+      "totalUnique": 16,
+      "hasDfName": true,
+      "hasDfTitle": true,
+      "hasDfSummary": true,
+      "hasDfEmail": true,
+      "hasDfPhone": true,
+      "hasDfLocation": true,
+      "hasDfWebsite": true,
+      "hasDfLinkedin": true,
+      "hasDfExp": true,
+      "hasDfEdu": true,
+      "hasDfSkills": false,
+      "hasDfProj": false,
+      "hasDfCert": true,
+      "hasDfRef": false,
+      "hasDfCustom": false,
+      "missingFields": [
+        "skills",
+        "proj",
+        "ref",
+        "custom"
+      ]
+    },
+    "fallbacks": {
+      "nameFallbacks": [
+        "data.name || 'Candidate Name'"
+      ],
+      "titleFallbacks": [],
+      "summaryFallbacks": [],
+      "contactFallbacks": [],
+      "arrayFallbacks": []
+    },
+    "printAndGeometry": {
+      "hasA4Dimensions": false,
+      "hasPrintStyles": true,
+      "hasPrintColorAdjust": true,
+      "hasPageBreak": true
+    },
+    "emptyRendering": {
+      "error": null,
+      "emptyHeadersCount": 1,
+      "emptyHeadersSample": [
+        "<h3 class=\"sidebar-title\">Contact</h3>"
+      ],
+      "brokenImg": false,
+      "brokenLinks": false
+    }
+  }
+]

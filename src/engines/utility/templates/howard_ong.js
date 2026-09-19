@@ -8,80 +8,43 @@ export function generateHowardOngHtml(
   themeColor = '#7e444b',
   themeFont = 'Montserrat',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
   const burgundyColor = themeColor === 'default' || !themeColor ? '#7e444b' : themeColor;
   const fontFam = themeFont === 'Playfair Display' ? "'Playfair Display', Georgia, serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : themeFont === 'Inter' ? "'Inter', sans-serif" : "'Montserrat', sans-serif";
 
-  const candidateName = (data.name || 'HOWARD ONG').toUpperCase();
-  const photoSrc = data.photoUrl || '/images/candidates/howard.jpg';
+  const candidateName = data.name ? (data.name || '').toUpperCase().trim() : '';
+  const photoSrc = data.photoUrl || '';
+  const summaryText = data.summary || data.profile || '';
 
-  const summaryText = data.summary || 'Dedicated and detail-oriented Financial Analyst with 10 years of experience. Eager to apply proven-budget maximization skills for Bank of Brocelle in monitoring, maintaining, and completing client billing and reconciliations. Special interest in achieving the millennial market and helping with retirement and general financial planning.';
+  const phoneText = data.phone || '';
+  const emailText = data.email || '';
+  const locationText = data.location || '';
+  const websiteText = data.website || '';
+  const linkedinText = data.linkedin || '';
+  const hasContact = Boolean(phoneText || emailText || locationText || websiteText || linkedinText);
 
-  const phoneText = data.phone || '+123-456-7890';
-  const emailText = data.email || 'hello@reallygreatsite.com';
-  const locationText = data.location || '123 Anywhere St., Any City';
-  const websiteText = data.website || 'www.reallygreatsite.com';
-
-  const rawSkills = data.skills && data.skills.length ? data.skills : [
-    'Financial modeling and reporting', 'Data mining and analysis', 'Financial accounting', 'Business valuation', 'Advanced SAS proficiency',
-    'Observation', 'Decision making', 'Communication', 'Multi-tasking'
-  ];
-
-  const cleanSkills = rawSkills.map(s => typeof s === 'string' ? (s.includes(' - ') ? s.split(' - ')[0] : s) : s.name || '');
+  const rawSkills = (data.skills && data.skills.length) ? data.skills : [];
+  const cleanSkills = rawSkills.map(s => typeof s === 'string' ? (s.includes(' - ') ? s.split(' - ')[0] : s) : s.name || '').filter(Boolean);
   const hardSkills = cleanSkills.slice(0, 5);
-  const softSkills = cleanSkills.slice(5, 9).length ? cleanSkills.slice(5, 9) : ['Observation', 'Decision making', 'Communication', 'Multi-tasking'];
+  const softSkills = cleanSkills.slice(5);
 
-  const educationList = data.education && data.education.length ? data.education : [
-    { school: 'Borcelle Business School', degree: 'Masters in Accounting', date: 'Completed in 2016' },
-    { school: 'Larana Business School', degree: 'Certificate in Financial Management, Financial Analysis, and Public Budgeting', date: 'Completed in 2014' },
-    { school: 'Borcelle Business School', degree: 'Bachelor of Economics, Major in Finance, Minor in Data Analytics', date: 'Completed in 2012' }
-  ];
+  const educationList = (data.education && data.education.length) ? data.education : [];
+  const experienceList = (data.experience && data.experience.length) ? data.experience : [];
+  const referenceList = (data.references && data.references.length) ? data.references : [];
+  const projectsList = (data.projects && data.projects.length) ? data.projects : [];
+  const achievementsList = (data.awards || data.certifications || []).map(a => typeof a === 'string' ? { date: '', desc: a } : { date: a.date || a.year || '', desc: a.title || a.name || '' });
 
-  const experienceList = data.experience && data.experience.length ? data.experience : [
-    {
-      header: 'Ginyard International Co. | Financial Analyst',
-      date: '2020 – Present',
-      bullets: [
-        'Analyse current and past financial data',
-        'Look at recent financial performance and identify trends',
-        'Prepare reports on the above information and communicate the insights of these reports to the broader business',
-        'Consult with the management team to develop long-term commercial plans',
-        'Suggest budgets and improvements based on the above information'
-      ]
-    },
-    {
-      header: 'Ingoude Company | Junior/Investment Analyst',
-      date: '2015 – 2020',
-      bullets: [
-        'Looked at financial performance and identified trends',
-        'Explored various investment opportunities'
-      ]
-    },
-    {
-      header: 'Timmerman Industries | Financial Analyst Intern',
-      date: '2012 – 2015',
-      bullets: [
-        'Analysed financial data',
-        'Observed financial performance and identified trends',
-        'Prepared reports on the above information and reported the insights.'
-      ]
-    }
-  ];
-
-  const achievementsList = [
-    { date: '2013 – 2015', desc: 'Reduced the production cost by 20% in the second year of internship.' },
-    { date: '2015 – 2020', desc: '2015 - 2020 Managed five projects worth over $100million.' }
-  ];
+  const hasHeader = Boolean(candidateName || data.title || photoSrc);
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Howard Ong - Resume</title>
+  <title>${data.name ? `${data.name} - Resume` : 'Resume'}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -99,23 +62,31 @@ export function generateHowardOngHtml(
       margin: 0;
       padding: 0;
       width: 794px;
-      height: 1123px;
-      overflow: hidden;
+      min-height: 1123px;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
 
     /* Fixed A4 Canvas with Rounded Outer Frame */
-    .resume-canvas {
+    .cv-page, .resume-canvas {
       width: 794px;
-      height: 1123px;
+      min-height: 1123px;
       background-color: #ffffff;
       border-radius: 28px;
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      margin: 0 auto;
+      margin: 0 auto 20px auto;
+      page-break-after: always;
+      break-after: page;
+      box-sizing: border-box;
+    }
+
+    .cv-page:last-child {
+      page-break-after: avoid !important;
+      break-after: avoid !important;
+      margin-bottom: 0 !important;
     }
 
     /* Top Burgundy Header Banner */
@@ -129,7 +100,7 @@ export function generateHowardOngHtml(
 
     .header-text-container {
       position: absolute;
-      top: 60px;
+      top: 50px;
       left: 310px;
     }
 
@@ -151,19 +122,35 @@ export function generateHowardOngHtml(
     }
 
     /* Circular Profile Photo with Optimal Headroom Framing */
-    .profile-photo {
+    .avatar-container {
       position: absolute;
       top: 45px;
       left: 48px;
       width: 220px;
       height: 220px;
+      z-index: 5;
+    }
+
+    .avatar-mask {
+      width: 220px;
+      height: 220px;
       border-radius: 50%;
       border: 9px solid #ffffff;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      background-color: #ffffff;
+    }
+
+    .profile-photo, .avatar {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       object-position: center 15%;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-      z-index: 5;
-      background-color: #ffffff;
+      display: block;
     }
 
     /* Two-Column Main Body */
@@ -291,215 +278,359 @@ export function generateHowardOngHtml(
     }
 
     .about-text {
-      font-size: 10.2px;
+      font-size: 10px;
       line-height: ${lineSpacing};
-      color: #383a3e;
+      color: #3b3d40;
       text-align: justify;
       margin-top: 4px;
     }
 
-    /* Professional Experience */
     .exp-list {
       display: flex;
       flex-direction: column;
-      gap: 13px;
-      margin-top: 4px;
+      gap: 14px;
+      margin-top: 6px;
     }
 
-    .exp-header {
+    .exp-item {
+      position: relative;
+      padding-left: 14px;
+    }
+
+    .exp-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 5px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #2e3033;
+    }
+
+    .exp-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .exp-role {
       font-size: 11px;
       font-weight: 700;
-      color: #232528;
+      color: #2e3033;
     }
 
-    .exp-date {
+    .exp-dates {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #2e3033;
+    }
+
+    .exp-company {
       font-size: 10px;
       font-style: italic;
-      color: #55575c;
+      color: #484b50;
       margin-top: 1px;
-    }
-
-    .exp-subheading {
-      font-size: 9.5px;
-      font-style: italic;
-      color: #404246;
-      margin-top: 3px;
+      margin-bottom: 3px;
     }
 
     .exp-bullets {
       list-style-type: disc;
-      padding-left: 15px;
+      padding-left: 16px;
       display: flex;
       flex-direction: column;
       gap: 3px;
-      margin-top: 3px;
     }
 
     .exp-bullets li {
       font-size: 9.5px;
-      line-height: 1.4;
-      color: #383a3e;
+      line-height: ${lineSpacing};
+      color: #3b3d40;
       text-align: justify;
     }
 
-    /* Achievements Grid */
-    .achieve-list {
+    .achievements-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
       margin-top: 6px;
     }
 
-    .achieve-row {
+    .achievement-item {
       display: flex;
-      gap: 14px;
-      font-size: 10px;
-      line-height: 1.45;
+      gap: 8px;
+      font-size: 9.5px;
+      line-height: 1.35;
+      color: #3b3d40;
     }
 
-    .achieve-date {
-      width: 75px;
+    .achievement-date {
       font-weight: 700;
-      color: #232528;
+      color: #2e3033;
       flex-shrink: 0;
     }
 
-    .achieve-desc {
-      flex: 1;
-      color: #383a3e;
+    .achievement-desc {
+      text-align: justify;
     }
 
-    /* Bottom Burgundy Footer Bar */
+    .references-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 6px;
+    }
+
+    .ref-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ref-name {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #2e3033;
+    }
+
+    .ref-role {
+      font-size: 9.5px;
+      color: #484b50;
+      margin-top: 1px;
+    }
+
+    .ref-contact {
+      font-size: 9px;
+      color: #63666b;
+      margin-top: 2px;
+    }
+
+    /* Bottom Decorative Burgundy Bar */
     .footer-bar {
       width: 100%;
-      height: 14px;
+      height: 24px;
       background-color: ${burgundyColor};
+      margin-top: auto;
       flex-shrink: 0;
+    }
+
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page, .resume-canvas {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        width: 794px !important;
+        height: 1123px !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .cv-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="resume-canvas">
-    <!-- Top Burgundy Banner -->
+  <div class="cv-page resume-canvas" id="page-1">
+    <!-- Top Burgundy Header Banner -->
     <div class="header-banner">
+      ${photoSrc ? `
+      <!-- Circular Profile Photo -->
+      <div class="avatar-container">
+        <div class="avatar-mask">
+          <img class="profile-photo avatar" src="${photoSrc}" alt="${data.name || 'Profile Photo'}">
+        </div>
+      </div>
+      ` : ''}
+
       <div class="header-text-container">
-        <h1 class="candidate-name">${candidateName}</h1>
-        <div class="candidate-title">${data.title || 'Financial Analyst'}</div>
+        ${candidateName ? `<h1 class="candidate-name" data-df-field="name">${candidateName}</h1>` : ''}
+        <div class="candidate-title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${data.title || ''}</div>
       </div>
     </div>
 
-    <!-- Circular Profile Photo with full head & hair headroom -->
-    <img class="profile-photo" src="${photoSrc}" alt="${data.name || 'Howard Ong'}">
-
-    <!-- Body Layout -->
+    <!-- Two-Column Main Body -->
     <div class="body-container">
       
-      <!-- Left Column -->
+      <!-- Left Column: Contact, Skills, Education -->
       <div class="left-col">
-        <!-- My Contact -->
+        ${hasContact ? `
+        <!-- Contact Details -->
         <div>
-          <div class="section-title">My Contact</div>
+          <div class="section-title section-heading" data-df-field="heading:contact">${data.sectionTitles?.contact || 'CONTACT'}</div>
           <div class="contact-list">
-            <div class="contact-item">
-              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-              <span style="word-break: break-all;">${emailText}</span>
-            </div>
+            ${phoneText ? `
             <div class="contact-item">
               <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-              <span>${phoneText}</span>
+              <span data-df-field="phone">${phoneText}</span>
             </div>
+            ` : ''}
+            ${emailText ? `
+            <div class="contact-item">
+              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              <a href="mailto:${emailText}" data-df-field="email" style="color: inherit; text-decoration: none; word-break: break-all;">${emailText}</a>
+            </div>
+            ` : ''}
+            ${locationText ? `
             <div class="contact-item">
               <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-              <span>${locationText}</span>
+              <span data-df-field="location">${locationText}</span>
             </div>
+            ` : ''}
+            ${websiteText ? `
             <div class="contact-item">
               <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-              <span>${websiteText}</span>
+              <a href="https://${websiteText.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="website" style="color: inherit; text-decoration: none;">${websiteText.replace(/^https?:\/\//, '')}</a>
             </div>
+            ` : ''}
+            ${linkedinText ? `
+            <div class="contact-item">
+              <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45a1.63 1.63 0 1 0 .01 3.25 1.63 1.63 0 0 0 0-3.25z"/></svg>
+              <a href="https://${linkedinText.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="linkedin" style="color: inherit; text-decoration: none;">${linkedinText.replace(/^https?:\/\//, '')}</a>
+            </div>
+            ` : ''}
           </div>
         </div>
+        ` : ''}
 
-        <!-- Hard Skill -->
+        ${hardSkills.length > 0 ? `
+        <!-- Skills (Column 1) -->
         <div>
-          <div class="section-title">Hard Skill</div>
+          <div class="section-title section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'SKILLS'}</div>
           <ul class="bullet-list">
-            ${hardSkills.map(s => `<li>${s}</li>`).join('')}
+            ${hardSkills.map((s, idx) => `<li data-df-field="skill:${idx}">${s}</li>`).join('')}
           </ul>
         </div>
+        ` : ''}
 
-        <!-- Soft Skill -->
+        ${softSkills.length > 0 ? `
+        <!-- Expertise -->
         <div>
-          <div class="section-title">Soft Skill</div>
+          <div class="section-title section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'EXPERTISE'}</div>
           <ul class="bullet-list">
-            ${softSkills.map(s => `<li>${s}</li>`).join('')}
+            ${softSkills.map((s, idx) => `<li data-df-field="skill:${idx + hardSkills.length}">${s}</li>`).join('')}
           </ul>
         </div>
+        ` : ''}
 
-        <!-- Education Background -->
+        ${educationList.length > 0 ? `
+        <!-- Education -->
         <div>
-          <div class="section-title" style="border-bottom: none; padding-bottom: 0;">Education Background</div>
+          <div class="section-title section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'EDUCATION'}</div>
           <div class="edu-list">
-            ${educationList.map(e => `
+            ${educationList.map((e, idx) => `
               <div class="edu-item">
-                <div class="edu-school">${e.school || 'Borcelle Business School'}</div>
-                <div class="edu-degree">${e.degree || 'Masters in Accounting'}</div>
-                <div class="edu-date">${e.date || `Completed in ${e.end || '2016'}`}</div>
+                <div class="edu-school" data-df-field="edu:${idx}:school">${e.school || ''}</div>
+                <div class="edu-degree" data-df-field="edu:${idx}:degree">${e.degree || ''}${e.note ? ` · ${e.note}` : ''}</div>
+                <div class="edu-date" data-df-field="edu:${idx}:date">${e.date || (e.start ? `${e.start}${e.end ? ` – ${e.end}` : ''}` : '')}</div>
               </div>
             `).join('')}
           </div>
         </div>
+        ` : ''}
       </div>
 
-      <!-- Right Column -->
+      <!-- Right Column: Profile, Experience, Achievements, References -->
       <div class="right-col">
-        <!-- About Me -->
+        ${summaryText ? `
+        <!-- Profile Section -->
         <div>
-          <div class="section-title">About Me</div>
-          <p class="about-text">
+          <div class="section-title section-heading" data-df-field="heading:summary">${data.sectionTitles?.summary || 'PROFILE'}</div>
+          <p class="about-text" data-df-field="summary">
             ${summaryText}
           </p>
         </div>
+        ` : ''}
 
-        <!-- Professional Experience -->
+        ${experienceList.length > 0 ? `
+        <!-- Work Experience Section -->
         <div>
-          <div class="section-title">Professional Experience</div>
+          <div class="section-title section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'WORK EXPERIENCE'}</div>
           <div class="exp-list">
-            ${experienceList.map(e => {
-              const header = e.header || `${e.company || 'Ginyard International Co.'} | ${e.role || 'Financial Analyst'}`;
-              const date = e.date || `${e.start || '2020'} – ${e.end || 'Present'}`;
-              const bullets = e.bullets || (e.highlights && e.highlights.filter(Boolean).length ? e.highlights.filter(Boolean) : [e.description || 'Analyse current and past financial data']);
+            ${experienceList.map((e, idx) => {
+              const bullets = e.highlights && e.highlights.filter(Boolean).length ? e.highlights.filter(Boolean) : (e.description ? [e.description] : []);
               return `
-                <div>
-                  <div class="exp-header">${header}</div>
-                  <div class="exp-date">${date}</div>
-                  <div class="exp-subheading">Key responsibilities:</div>
+                <div class="exp-item">
+                  <div class="exp-title-row">
+                    <span class="exp-role" data-df-field="exp:${idx}:role">${e.role || ''}</span>
+                    <span class="exp-dates" ><span data-df-field="exp:${idx}:company">${e.company || ''}</span>${(e.company && (e.start || e.end)) ? ' | ' : ''}<span data-df-field="exp:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span></div>
+                  ${bullets.length > 0 ? `
                   <ul class="exp-bullets">
-                    ${bullets.map(b => `<li>${b.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+                    ${bullets.map((b, bIdx) => `<li data-df-field="exp:${idx}:highlight:${bIdx}">${b.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
                   </ul>
+                  ` : ''}
                 </div>
               `;
             }).join('')}
           </div>
         </div>
+        ` : ''}
 
-        <!-- Achievements -->
+        ${projectsList.length > 0 ? `
+        <!-- Projects Section -->
         <div>
-          <div class="section-title">Achievements</div>
-          <div class="achieve-list">
-            ${achievementsList.map(a => `
-              <div class="achieve-row">
-                <span class="achieve-date">${a.date}</span>
-                <span class="achieve-desc">${a.desc}</span>
+          <div class="section-title section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'PROJECTS'}</div>
+          <div class="exp-list">
+            ${projectsList.map((p, idx) => `
+              <div class="exp-item">
+                <div class="exp-title-row">
+                  <span class="exp-role" data-df-field="proj:${idx}:name">${p.name || ''}</span>
+                  ${p.url ? `<span class="exp-dates" data-df-field="proj:${idx}:url"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${p.url}</a></span>` : ''}
+                </div>
+                ${p.description ? `<div class="about-text" data-df-field="proj:${idx}:description" style="margin-top: 3px;">${p.description}</div>` : ''}
               </div>
             `).join('')}
           </div>
         </div>
+        ` : ''}
+
+        ${achievementsList.length > 0 ? `
+        <!-- Achievements Section -->
+        <div>
+          <div class="section-title">ACHIEVEMENTS</div>
+          <div class="achievements-list">
+            ${achievementsList.map((a, idx) => `
+              <div class="achievement-item">
+                ${a.date ? `<span class="achievement-date">${a.date}</span>` : ''}
+                <span class="achievement-desc" data-df-field="cert:${idx}">${a.desc}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        ` : ''}
+
+        ${referenceList.length > 0 ? `
+        <!-- References Section -->
+        <div>
+          <div class="section-title section-heading" data-df-field="heading:references">${data.sectionTitles?.references || 'REFERENCES'}</div>
+          <div class="references-grid">
+            ${referenceList.map((r, idx) => `
+              <div class="ref-item">
+                <div class="ref-name" data-df-field="ref:${idx}:name">${r.name || ''}</div>
+                <div class="ref-role" data-df-field="ref:${idx}:relation">${r.relation || ''}</div>
+                ${r.contact ? `<div class="ref-contact" data-df-field="ref:${idx}:contact">${r.contact}</div>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        ` : ''}
       </div>
 
     </div>
 
-    <!-- Bottom Burgundy Footer -->
+    <!-- Bottom Decorative Burgundy Bar -->
     <div class="footer-bar"></div>
   </div>
 

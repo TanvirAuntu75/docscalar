@@ -80,7 +80,7 @@ export default function SignUp() {
 
   return (
     <div className="bg-background min-h-[80vh] flex flex-col justify-center items-center px-margin-mobile py-xl relative">
-      <SEOHead title="Create Account — DocForge" description="Sign up for a free DocForge account to unlock historical file metrics and manage document history." />
+      <SEOHead title="Create Account — DocScalar" description="Sign up for a free DocScalar account to access historical file metrics and manage document history." />
       <div className="absolute inset-0 bg-pattern opacity-10 pointer-events-none"></div>
 
       {/* Back to Home link */}
@@ -95,7 +95,7 @@ export default function SignUp() {
         <div className="text-center mb-6">
           <Link to="/" className="inline-flex items-center gap-2 mb-4 font-h3 text-h3 font-semibold text-primary">
             <span className="material-symbols-outlined text-[28px] fill">description</span>
-            <span>DocForge</span>
+            <span>DocScalar</span>
           </Link>
           <h2 className="font-h2 text-h2 text-on-background">Create Account</h2>
           <p className="font-body-md text-body-md text-on-surface-variant mt-1">Get started with private browser document processing</p>

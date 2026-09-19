@@ -1,5 +1,5 @@
-// DocForge Local IndexedDB Utility for Local First Data Storage
-const DB_NAME = 'docforge_db';
+// DocScalar Local IndexedDB Utility for Local First Data Storage
+const DB_NAME = 'docscalar_db';
 const DB_VERSION = 2; // Upgraded version to support canvas layout saving
 const STORE_NAME = 'file_history';
 const CANVAS_STORE_NAME = 'canvas_state';

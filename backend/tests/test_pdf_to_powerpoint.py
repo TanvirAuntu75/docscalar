@@ -30,10 +30,14 @@ class TestPdfToPowerpointResilient(unittest.TestCase):
         self.assertEqual(result.error_message, "Input file does not exist")
 
     def test_dummy_conversion(self):
-        # Find test_dummy.pdf in the workspace root
-        dummy_path = Path(__file__).resolve().parent.parent / "test_dummy.pdf"
+        # Find test_dummy.pdf in canonical tests/fixtures/ directory
+        workspace_root = Path(__file__).resolve().parent.parent.parent
+        dummy_path = workspace_root / "tests" / "fixtures" / "test_dummy.pdf"
+        if not dummy_path.exists():
+            # Fallback: check old location at workspace root
+            dummy_path = workspace_root / "test_dummy.pdf"
         if dummy_path.exists():
-            out_dir = Path(__file__).resolve().parent.parent / "backend" / "test_output"
+            out_dir = Path(__file__).resolve().parent.parent / "test_output"
             out_dir.mkdir(parents=True, exist_ok=True)
             out_file = out_dir / "test_dummy.pptx"
             if out_file.exists():

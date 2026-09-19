@@ -15,8 +15,7 @@ import {
   ShieldCheck,
   Sparkles,
   Download,
-  Cpu,
-  Server,
+  Zap,
   FileCheck,
   LayoutGrid,
   Maximize2,
@@ -256,10 +255,10 @@ export default function PdfToPdfa() {
         });
     } else if (poller.status === 'failed') {
       setProcessing(false);
-      setError(poller.error || 'Server conversion failed.');
+      setError(poller.error || 'Cloud archival conversion could not be completed.');
     } else if (poller.status === 'started' || poller.status === 'queued') {
       setProgress(poller.progress || 20);
-      setStatusMessage('Validating ISO 19005 archival compliance on server...');
+      setStatusMessage('Validating ISO 19005 archival compliance...');
     }
   }, [poller.status, poller.result, poller.error, poller.progress, files, activeFileIndex, numPages, conformanceLevel]);
 
@@ -277,8 +276,8 @@ export default function PdfToPdfa() {
 
     try {
       if (engineMode === 'server') {
-        if (!backendActive) throw new Error('Conversion server is unreachable. Please switch to Fast Browser Mode.');
-        setStatusMessage('Uploading PDF for server Ghostscript PDF/A distiller...');
+        if (!backendActive) throw new Error('Cloud Archival engine is currently offline. Please switch to Fast Mode.');
+        setStatusMessage('Uploading PDF for high-precision PDF/A conversion...');
         const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
         if (!uploadData.success) throw new Error(uploadData.detail || 'Upload failed');
 
@@ -363,7 +362,7 @@ export default function PdfToPdfa() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="PDF to PDF/A Converter Free — ISO 19005 Archival Standard | DocForge"
+        title="PDF to PDF/A Converter Free — ISO 19005 Archival Standard | DocScalar"
         description="Convert PDF to ISO-compliant PDF/A-1b, PDF/A-2b, and PDF/A-3b format for long-term document archiving. Free, private, and instantaneous."
       />
 
@@ -587,8 +586,11 @@ export default function PdfToPdfa() {
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Cpu size={14} />
-                      <span>Fast Browser (Private)</span>
+                      <Zap size={14} />
+                      <span>Fast Mode</span>
+                      <span className={`text-[10px] font-normal ${engineMode === 'client' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>
+                        Instant · Private
+                      </span>
                     </button>
 
                     <button
@@ -600,8 +602,11 @@ export default function PdfToPdfa() {
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Server size={14} />
-                      <span>Ghostscript Server</span>
+                      <Sparkles size={14} />
+                      <span>Cloud Archival</span>
+                      <span className={`text-[10px] font-normal ${engineMode === 'server' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>
+                        ISO Compliant
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -677,14 +682,16 @@ export default function PdfToPdfa() {
                 {/* Progress Bar (While Processing) */}
                 {processing && (
                   <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                    <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                           progress_activity
                         </span>
-                        {statusMessage || 'Standardizing PDF/A...'}
-                      </span>
-                      <span>{progress}%</span>
+                        <span className="truncate" title={statusMessage || 'Standardizing PDF/A...'}>
+                          {statusMessage || 'Standardizing PDF/A...'}
+                        </span>
+                      </div>
+                      <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div
@@ -770,7 +777,7 @@ export default function PdfToPdfa() {
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Engine</span>
                 <span className="text-xs font-bold text-blue-600 dark:text-blue-400 mt-1 capitalize">
-                  {result.engineMode === 'server' ? 'Ghostscript' : 'ISO-19005 Distiller'}
+                  {result.engineMode === 'server' ? 'Cloud Archival' : 'ISO-19005 Distiller'}
                 </span>
               </div>
             </div>
@@ -799,7 +806,7 @@ export default function PdfToPdfa() {
             {/* Quick Next Steps */}
             <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
-                Continue Working with DocForge
+                Continue Working with DocScalar
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <Link

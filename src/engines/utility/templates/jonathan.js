@@ -1,84 +1,109 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// 3. JONATHAN — Classic Editorial Serif Single-Column Layout (Refined & Flawless)
+// 3. JONATHAN — Classic Editorial Serif Single-Column Layout (Hardened & Paginated)
 // ═══════════════════════════════════════════════════════════════════════════════
+
+import { computeTwoPagePartition } from '../paginationEngine.js';
 
 export function generateJonathanHtml(
   data,
   themeColor = '#1a1a1a',
   themeFont = 'Playfair Display',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
   const accent = themeColor === 'default' || !themeColor ? '#1a1a1a' : themeColor;
   const fontFam = themeFont === 'Inter' ? "'Inter', sans-serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : "'Playfair Display', Georgia, serif";
 
-  const initials = data.name ? data.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'CV';
+  const initials = data.name ? (data.name || '').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'CV';
 
   const contactParts = [];
-  if (data.email) contactParts.push(`<a href="mailto:${data.email}" style="color: inherit; text-decoration: none;">${data.email}</a>`);
-  if (data.phone) contactParts.push(`<span>${data.phone}</span>`);
-  if (data.location) contactParts.push(`<span>${data.location}</span>`);
+  if (data.email) contactParts.push(`<a href="mailto:${data.email}" data-df-field="email" style="color: inherit; text-decoration: none;">${data.email}</a>`);
+  if (data.phone) contactParts.push(`<span data-df-field="phone">${data.phone}</span>`);
+  if (data.location) contactParts.push(`<span data-df-field="location">${data.location}</span>`);
   if (data.linkedin) {
     const cleanLi = data.linkedin.replace(/^https?:\/\/(www\.)?/, '');
-    contactParts.push(`<a href="https://${cleanLi}" target="_blank" style="color: inherit; text-decoration: none;">${cleanLi}</a>`);
+    contactParts.push(`<a href="https://${cleanLi}" target="_blank" data-df-field="linkedin" style="color: inherit; text-decoration: none;">${cleanLi}</a>`);
   }
   if (data.website) {
     const cleanWeb = data.website.replace(/^https?:\/\/(www\.)?/, '');
-    contactParts.push(`<a href="https://${cleanWeb}" target="_blank" style="color: inherit; text-decoration: none;">${cleanWeb}</a>`);
+    contactParts.push(`<a href="https://${cleanWeb}" target="_blank" data-df-field="website" style="color: inherit; text-decoration: none;">${cleanWeb}</a>`);
   }
+  if (data.github) {
+    const cleanGit = data.github.replace(/^https?:\/\/(www\.)?/, '');
+    contactParts.push(`<a href="https://${cleanGit}" target="_blank" data-df-field="github" style="color: inherit; text-decoration: none;">${cleanGit}</a>`);
+  }
+
+  const { partitions } = computeTwoPagePartition({
+    data,
+    sectionOrder,
+    pageMargin,
+    lineSpacing,
+    baseHeaderHeight: 140,
+    totalPageHeight: 1043
+  });
 
   const renderSummary = () => {
     if (!data.summary?.trim()) return '';
     return `
       <section class="cv-section">
-        <h2 class="section-title">Professional Summary</h2>
+        <h2 class="section-title section-heading" data-df-field="heading:summary">${data.sectionTitles?.summary || 'Professional Summary'}</h2>
         <div class="section-line"></div>
-        <div class="section-content">${data.summary}</div>
+        <div class="section-content" data-df-field="summary">${data.summary}</div>
       </section>
     `;
   };
 
-  const renderExperience = () => {
-    if (!data.experience || !data.experience.length) return '';
+  const renderExperienceItems = (items, isContinuation = false, globalOffset = 0) => {
+    if (!items || !items.length) return '';
     return `
       <section class="cv-section">
-        <h2 class="section-title">Experience</h2>
+        <h2 class="section-title section-heading" data-df-field="heading:experience">${isContinuation ? (data.sectionTitles?.experience ? `${data.sectionTitles.experience} (Continued)` : 'Experience (Continued)') : (data.sectionTitles?.experience || 'Experience')}</h2>
         <div class="section-line"></div>
-        ${data.experience.map(e => `
-          <div class="entry-block">
-            <div class="entry-header">
-              <span class="entry-title">${e.company}${data.location ? ` | ${data.location}` : ''}</span>
-              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+        ${items.map((e, idx) => {
+          const actualIdx = globalOffset + idx;
+          const dateStr = `${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}`;
+          return `
+            <div class="entry-block">
+              <div class="entry-header">
+                <span class="entry-title"><span data-df-field="exp:${actualIdx}:company">${e.company}</span>${data.location ? ` | <span data-df-field="exp:${actualIdx}:location">${data.location}</span>` : ''}</span>
+                <span class="entry-date" data-df-field="exp:${actualIdx}:date">${dateStr}</span>
+              </div>
+              <div class="entry-role" data-df-field="exp:${actualIdx}:role">${e.role}</div>
+              ${e.highlights && e.highlights.filter(Boolean).length ? `
+                <ul class="entry-desc">
+                  ${e.highlights.filter(Boolean).map((h, hIdx) => `
+                    <li data-df-field="exp:${actualIdx}:highlight:${hIdx}">${h}</li>
+                  `).join('')}
+                </ul>
+              ` : ''}
             </div>
-            <div class="entry-role">${e.role}</div>
-            ${e.highlights && e.highlights.filter(Boolean).length ? `
-              <ul class="entry-desc">
-                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
-              </ul>
-            ` : ''}
-          </div>
-        `).join('')}
+          `;
+        }).join('')}
       </section>
     `;
   };
 
-  const renderEducation = () => {
-    if (!data.education || !data.education.length) return '';
+  const renderEducationItems = (items, isContinuation = false, globalOffset = 0) => {
+    if (!items || !items.length) return '';
     return `
       <section class="cv-section">
-        <h2 class="section-title">Education</h2>
+        <h2 class="section-title section-heading" data-df-field="heading:education">${isContinuation ? (data.sectionTitles?.education ? `${data.sectionTitles.education} (Continued)` : 'Education (Continued)') : (data.sectionTitles?.education || 'Education')}</h2>
         <div class="section-line"></div>
-        ${data.education.map(e => `
-          <div class="entry-block">
-            <div class="entry-header">
-              <span class="entry-title">${e.school}${data.location ? ` | ${data.location}` : ''}</span>
-              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+        ${items.map((e, idx) => {
+          const actualIdx = globalOffset + idx;
+          const dateStr = `${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}`;
+          return `
+            <div class="entry-block">
+              <div class="entry-header">
+                <span class="entry-title" data-df-field="edu:${actualIdx}:school">${e.school}</span>
+                <span class="entry-date" data-df-field="edu:${actualIdx}:date">${dateStr}</span>
+              </div>
+              <div class="entry-role" data-df-field="edu:${actualIdx}:degree">${e.degree}${e.note ? ` : ${e.note}` : ''}</div>
             </div>
-            <div class="entry-role">${e.degree}${e.note ? ` : ${e.note}` : ''}</div>
-          </div>
-        `).join('')}
+          `;
+        }).join('')}
       </section>
     `;
   };
@@ -87,10 +112,10 @@ export function generateJonathanHtml(
     if (!data.skills || !data.skills.length) return '';
     return `
       <section class="cv-section">
-        <h2 class="section-title">Skills & Proficiencies</h2>
+        <h2 class="section-title section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Skills & Proficiencies'}</h2>
         <div class="section-line"></div>
         <div class="skills-grid">
-          ${data.skills.map((s) => {
+          ${data.skills.map((s, sIdx) => {
             let name = s;
             let levelText = '';
             if (s.includes(' - ')) {
@@ -100,7 +125,7 @@ export function generateJonathanHtml(
             }
             return `
               <div class="skill-item">
-                <span class="skill-name">• ${name}</span>
+                <span class="skill-name" data-df-field="skill:${sIdx}">• ${name}</span>
                 ${levelText ? `<span class="skill-level">${levelText}</span>` : ''}
               </div>
             `;
@@ -110,50 +135,53 @@ export function generateJonathanHtml(
     `;
   };
 
-  const renderProjects = () => {
-    if (!data.projects || !data.projects.length) return '';
+  const renderProjectItems = (items, isContinuation = false, globalOffset = 0) => {
+    if (!items || !items.length) return '';
     return `
       <section class="cv-section">
-        <h2 class="section-title">Projects</h2>
+        <h2 class="section-title section-heading" data-df-field="heading:projects">${isContinuation ? (data.sectionTitles?.projects ? `${data.sectionTitles.projects} (Continued)` : 'Projects (Continued)') : (data.sectionTitles?.projects || 'Projects')}</h2>
         <div class="section-line"></div>
-        ${data.projects.map(p => `
-          <div class="entry-block">
-            <div class="entry-header">
-              <span class="entry-title">${p.name}</span>
-              ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${p.url}</a></span>` : ''}
+        ${items.map((p, idx) => {
+          const actualIdx = globalOffset + idx;
+          return `
+            <div class="entry-block">
+              <div class="entry-header">
+                <span class="entry-title" data-df-field="proj:${actualIdx}:name">${p.name}</span>
+                ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="proj:${actualIdx}:url" style="color: inherit; text-decoration: none;">${p.url}</a></span>` : ''}
+              </div>
+              ${p.description ? `<div class="project-desc" data-df-field="proj:${actualIdx}:description">${p.description}</div>` : ''}
             </div>
-            ${p.description ? `<div class="project-desc">${p.description}</div>` : ''}
-          </div>
-        `).join('')}
+          `;
+        }).join('')}
       </section>
     `;
   };
 
-  const renderCertifications = () => {
-    if (!data.certifications || !data.certifications.length) return '';
+  const renderCertItems = (items) => {
+    if (!items || !items.length) return '';
     return `
       <section class="cv-section">
-        <h2 class="section-title">Certifications</h2>
+        <h2 class="section-title section-heading" data-df-field="heading:certifications">${data.sectionTitles?.certifications || 'Certifications'}</h2>
         <div class="section-line"></div>
         <ul class="entry-desc">
-          ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+          ${items.map((c, idx) => `<li data-df-field="cert:${idx}">${c}</li>`).join('')}
         </ul>
       </section>
     `;
   };
 
-  const renderReferences = () => {
-    if (!data.references || !data.references.length) return '';
+  const renderReferenceItems = (items) => {
+    if (!items || !items.length) return '';
     return `
       <section class="cv-section">
-        <h2 class="section-title">References</h2>
+        <h2 class="section-title section-heading" data-df-field="heading:references">${data.sectionTitles?.references || 'References'}</h2>
         <div class="section-line"></div>
         <div class="skills-grid">
-          ${data.references.map(r => `
+          ${items.map((r, idx) => `
             <div class="entry-block">
-              <div class="entry-title">${r.name}</div>
-              <div class="entry-role">${r.relation}</div>
-              <div style="font-size: 8.5pt; color: #666; margin-top: 2px;">${r.phone ? `Phone: ${r.phone} · ` : ''}${r.email ? `Email: ${r.email}` : ''}</div>
+              <div class="entry-title" data-df-field="ref:${idx}:name">${r.name}</div>
+              <div class="entry-role" data-df-field="ref:${idx}:relation">${r.relation}</div>
+              <div style="font-size: 8.5pt; color: #666; margin-top: 2px;" data-df-field="ref:${idx}:contact">${r.phone ? `Phone: ${r.phone} · ` : ''}${r.email ? `Email: ${r.email}` : ''}</div>
             </div>
           `).join('')}
         </div>
@@ -161,29 +189,76 @@ export function generateJonathanHtml(
     `;
   };
 
-  const renderCustomSections = () => {
-    const custom = data.customSections || [];
-    if (!custom.length) return '';
-    return custom.map(cs => `
+  const renderCustomSection = (cs) => {
+    if (!cs || !cs.items || !cs.items.length) return '';
+    return `
       <section class="cv-section">
-        <h2 class="section-title">${cs.title || 'Additional Information'}</h2>
+        <h2 class="section-title" data-df-field="custom:${cs.id}:title">${cs.title || 'Additional Information'}</h2>
         <div class="section-line"></div>
         <div class="skills-grid">
-          ${cs.items.map(i => `
+          ${cs.items.map((i, idx) => `
             <div>
-              <strong>${i.title}</strong>${i.value ? `: ${i.value}` : ''}
+              <strong data-df-field="custom:${cs.id}:${idx}:title">${typeof i === 'string' ? i : (i.title || i.name || '')}</strong>${typeof i === 'object' && i !== null && i.value ? `: <span data-df-field="custom:${cs.id}:${idx}:value">${i.value}</span>` : ''}
             </div>
           `).join('')}
         </div>
       </section>
-    `).join('\n');
+    `;
   };
+
+  const page1Sections = [];
+  const page2Sections = [];
+
+  for (const key of sectionOrder) {
+    if (key === 'summary') {
+      if (partitions.summary.hasP1) page1Sections.push(renderSummary());
+    } else if (key === 'experience' && data.experience && data.experience.length) {
+      if (partitions.experience.hasP1) {
+        page1Sections.push(renderExperienceItems(partitions.experience.p1, false, partitions.experience.p1Offset));
+      }
+      if (partitions.experience.hasP2) {
+        page2Sections.push(renderExperienceItems(partitions.experience.p2, partitions.experience.isP2Continuation, partitions.experience.p2Offset));
+      }
+    } else if (key === 'education' && data.education && data.education.length) {
+      if (partitions.education.hasP1) {
+        page1Sections.push(renderEducationItems(partitions.education.p1, false, partitions.education.p1Offset));
+      }
+      if (partitions.education.hasP2) {
+        page2Sections.push(renderEducationItems(partitions.education.p2, partitions.education.isP2Continuation, partitions.education.p2Offset));
+      }
+    } else if (key === 'skills' && data.skills && data.skills.length) {
+      if (partitions.skills.hasP1) page1Sections.push(renderSkills());
+      if (partitions.skills.hasP2) page2Sections.push(renderSkills());
+    } else if (key === 'projects' && data.projects && data.projects.length) {
+      if (partitions.projects.hasP1) {
+        page1Sections.push(renderProjectItems(partitions.projects.p1, false, partitions.projects.p1Offset));
+      }
+      if (partitions.projects.hasP2) {
+        page2Sections.push(renderProjectItems(partitions.projects.p2, partitions.projects.isP2Continuation, partitions.projects.p2Offset));
+      }
+    } else if (key === 'certifications' && data.certifications && data.certifications.length) {
+      if (partitions.certifications.hasP1) page1Sections.push(renderCertItems(partitions.certifications.p1));
+      if (partitions.certifications.hasP2) page2Sections.push(renderCertItems(partitions.certifications.p2));
+    } else if (key === 'references' && data.references && data.references.length) {
+      if (partitions.references.hasP1) page1Sections.push(renderReferenceItems(partitions.references.p1));
+      if (partitions.references.hasP2) page2Sections.push(renderReferenceItems(partitions.references.p2));
+    } else {
+      const csPart = partitions.customSections[key];
+      if (csPart) {
+        if (csPart.hasP1) page1Sections.push(renderCustomSection({ ...csPart.cs, items: csPart.p1Items }));
+        if (csPart.hasP2) page2Sections.push(renderCustomSection({ ...csPart.cs, items: csPart.p2Items }));
+      }
+    }
+  }
+
+  const hasPage2 = page2Sections.length > 0;
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${data.name ? `${data.name} - Resume` : 'Resume'}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
@@ -192,20 +267,34 @@ export function generateJonathanHtml(
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       font-family: 'Inter', sans-serif;
-      background: #fdfdfc;
+      background: transparent;
       color: #1a1a1a;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      padding: 0;
+      margin: 0;
     }
-    .page-wrapper {
-      width: 210mm;
-      min-height: 297mm;
+    .cv-page {
+      width: 794px;
+      min-height: 1123px;
+      max-height: 1123px;
+      box-sizing: border-box;
       margin: 0 auto;
       padding: ${45 + pageMargin}px ${45 + pageMargin}px;
       background: #fdfdfc;
       display: flex;
       flex-direction: column;
       gap: 16px;
+      box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.06);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      page-break-after: always;
+      break-after: page;
     }
     .initials-circle {
       width: 54px;
@@ -263,7 +352,7 @@ export function generateJonathanHtml(
       text-transform: capitalize;
     }
     .section-line {
-      border-bottom: 1.5px solid #d3d3d3;
+      border-bottom: 1px solid #e5e7eb;
       margin-bottom: 10px;
     }
     .section-content {
@@ -336,28 +425,58 @@ export function generateJonathanHtml(
       color: #6a6a6a;
       font-size: 8.5pt;
     }
+
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .cv-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="page-wrapper">
+  <!-- Page 1 Sheet -->
+  <div class="cv-page" id="page-1">
     <header>
-      <div class="initials-circle">${initials}</div>
+      ${data.photoUrl ? `
+        <div class="initials-circle avatar-mask" style="padding: 0; overflow: hidden; border-radius: 50%;">
+          <img class="profile-photo avatar" src="${data.photoUrl}" alt="${data.name || 'Candidate'}" style="width: 100%; height: 100%; object-fit: cover;" />
+        </div>
+      ` : (data.name ? `<div class="initials-circle">${initials}</div>` : '')}
       <div class="name-header">
-        <h1>${data.name || 'Candidate Name'}</h1>
-        ${data.title ? `<div class="title-sub">${data.title}</div>` : ''}
-        <div class="contact">${contactParts.join('  |  ')}</div>
+        ${data.name ? `<h1 data-df-field="name">${data.name}</h1>` : ''}
+        <div class="candidate-title title-sub" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${data.title || ''}</div>
+        ${contactParts.length ? `<div class="contact">${contactParts.join('  |  ')}</div>` : ''}
       </div>
     </header>
 
-    ${renderSummary()}
-    ${renderExperience()}
-    ${renderEducation()}
-    ${renderSkills()}
-    ${renderProjects()}
-    ${renderCertifications()}
-    ${renderCustomSections()}
-    ${renderReferences()}
+    ${page1Sections.join('\n')}
   </div>
+
+  ${hasPage2 ? `
+    <!-- Page 2 Sheet -->
+    <div class="cv-page" id="page-2">
+      ${page2Sections.join('\n')}
+    </div>
+  ` : ''}
 </body>
 </html>`;
 }

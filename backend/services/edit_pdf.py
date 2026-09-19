@@ -29,6 +29,11 @@ def edit_pdf_backend(input_path: str, annotations: list) -> ConversionResult:
 
         output_pdf_path = config.OUTPUT_DIR / f"{input_file.stem}_edited.pdf"
 
+        # Sanitize annotations input to strictly ensure safe dicts
+        if not annotations or not isinstance(annotations, list):
+            annotations = []
+        annotations = [a for a in annotations if isinstance(a, dict)]
+
         doc = fitz.open(input_file)
         update_job_progress(30)
 
@@ -43,13 +48,13 @@ def edit_pdf_backend(input_path: str, annotations: list) -> ConversionResult:
                 w = page.rect.width
                 h = page.rect.height
 
-                x = anno.get("xPercent", 0) * w
-                y = anno.get("yPercent", 0) * h
-                width = anno.get("widthPercent", 0) * w
-                height = anno.get("heightPercent", 0) * h
+                x = (anno.get("xPercent") or 0) * w
+                y = (anno.get("yPercent") or 0) * h
+                width = (anno.get("widthPercent") or 0) * w
+                height = (anno.get("heightPercent") or 0) * h
 
                 # Make redaction box slightly larger for safe margins
-                rect = fitz.Rect(x - 0.5, y - 0.5, x + width + 0.5, y + height + 0.5)
+                rect = fitz.Rect(x - 0.5, y - 0.5, x + width + 0.5, y + height + 0.5).normalize()
                 # Fill color: white (1, 1, 1) standard background
                 page.add_redact_annot(rect, fill=(1, 1, 1))
                 redacted_any = True
@@ -85,7 +90,7 @@ def edit_pdf_backend(input_path: str, annotations: list) -> ConversionResult:
                 y = anno.get("yPercent", 0) * h
                 width = anno.get("widthPercent", 0) * w
                 height = anno.get("heightPercent", 0) * h
-                rect = fitz.Rect(x, y, x + width, y + height)
+                rect = fitz.Rect(x, y, x + width, y + height).normalize()
 
                 # Extract style metadata from original text spans in this area
                 font_name = "helv"
@@ -93,10 +98,17 @@ def edit_pdf_backend(input_path: str, annotations: list) -> ConversionResult:
 
                 try:
                     # Clip coordinates check
-                    blocks = page.get_text("dict", clip=rect)["blocks"]
+                    dict_data = page.get_text("dict", clip=rect)
+                    blocks = dict_data.get("blocks", []) if isinstance(dict_data, dict) else []
                     for blk in blocks:
-                        for ln in blk.get("lines", []):
-                            for spn in ln.get("spans", []):
+                        if not isinstance(blk, dict):
+                            continue
+                        for ln in (blk.get("lines") or []):
+                            if not isinstance(ln, dict):
+                                continue
+                            for spn in (ln.get("spans") or []):
+                                if not isinstance(spn, dict):
+                                    continue
                                 if spn.get("font"):
                                     font_name = spn["font"]
                                 if spn.get("size"):
@@ -131,60 +143,75 @@ def edit_pdf_backend(input_path: str, annotations: list) -> ConversionResult:
                 )
 
             elif anno.get("type") == "text":
-                x = anno.get("xPercent", 0) * w
-                y = anno.get("yPercent", 0) * h
+                x = (anno.get("xPercent") or 0) * w
+                y = (anno.get("yPercent") or 0) * h
                 size = anno.get("size", 12)
+                text_content = anno.get("text", "")
 
-                pt = fitz.Point(x, y)
+                if anno.get("whiteout") and text_content:
+                    approx_width = max(len(text_content) * size * 0.65 + 8, 24)
+                    whiteout_rect = fitz.Rect(
+                        x - 3,
+                        y - 2,
+                        x + approx_width,
+                        y + size * 1.15,
+                    ).normalize()
+                    page.draw_rect(whiteout_rect, color=(1, 1, 1), fill=(1, 1, 1))
+
+                pt = fitz.Point(x, y + size * 0.8)
                 page.insert_text(
                     pt,
-                    anno.get("text", ""),
+                    text_content,
                     fontsize=size,
                     fontname="helv",
                     color=color,
                 )
 
-            elif anno.get("type") in ["pen", "highlight"]:
-                points = anno.get("points", [])
+            elif anno.get("type") in ["pen", "highlight", "whiteout"]:
+                points = [p for p in (anno.get("points") or []) if isinstance(p, dict)]
                 if len(points) < 2:
                     continue
 
-                thickness = anno.get("thickness", 2)
                 is_hl = anno.get("type") == "highlight"
+                is_whiteout = anno.get("type") == "whiteout"
+                thickness = anno.get("thickness", 18 if (is_hl or is_whiteout) else 2)
 
                 # Draw lines
                 for i in range(len(points) - 1):
                     p1 = points[i]
                     p2 = points[i + 1]
-                    pt1 = fitz.Point(p1["xPercent"] * w, p1["yPercent"] * h)
-                    pt2 = fitz.Point(p2["xPercent"] * w, p2["yPercent"] * h)
+                    pt1 = fitz.Point((p1.get("xPercent") or 0) * w, (p1.get("yPercent") or 0) * h)
+                    pt2 = fitz.Point((p2.get("xPercent") or 0) * w, (p2.get("yPercent") or 0) * h)
 
-                    press1 = p1.get("pressure", 0.5)
-                    press2 = p2.get("pressure", 0.5)
+                    press1 = p1.get("pressure") or 0.5
+                    press2 = p2.get("pressure") or 0.5
                     avg_pressure = (press1 + press2) / 2.0
 
                     shape = page.new_shape()
                     shape.draw_line(pt1, pt2)
 
-                    # Highlights are thicker, translucent lines
-                    segment_width = thickness * (
-                        2.5 if is_hl else (0.3 + avg_pressure * 1.4)
-                    )
+                    segment_width = thickness if (is_hl or is_whiteout) else (thickness * (0.3 + avg_pressure * 1.4))
+                    shape_color = (1.0, 1.0, 1.0) if is_whiteout else color
+                    shape_opacity = 0.4 if is_hl else 1.0
+
                     shape.finish(
-                        color=color, width=segment_width, lineCap=1, lineJoin=1
+                        color=shape_color,
+                        width=segment_width,
+                        lineCap=2 if is_hl else 1,
+                        stroke_opacity=shape_opacity,
                     )
                     shape.commit()
 
             elif anno.get("type") == "shape":
                 shape_type = anno.get("shapeType")
-                start = anno.get("startPt", {})
-                end = anno.get("endPt", {})
+                start = anno.get("startPt") if isinstance(anno.get("startPt"), dict) else {}
+                end = anno.get("endPt") if isinstance(anno.get("endPt"), dict) else {}
 
                 s_pt = fitz.Point(
-                    start.get("xPercent", 0) * w, start.get("yPercent", 0) * h
+                    (start.get("xPercent") or 0) * w, (start.get("yPercent") or 0) * h
                 )
                 e_pt = fitz.Point(
-                    end.get("xPercent", 0) * w, end.get("yPercent", 0) * h
+                    (end.get("xPercent") or 0) * w, (end.get("yPercent") or 0) * h
                 )
                 thickness = anno.get("thickness", 2)
 
@@ -208,13 +235,14 @@ def edit_pdf_backend(input_path: str, annotations: list) -> ConversionResult:
                     shape.draw_line(e_pt, fitz.Point(wing1_x, wing1_y))
                     shape.draw_line(e_pt, fitz.Point(wing2_x, wing2_y))
                 elif shape_type == "rectangle":
-                    rect = fitz.Rect(s_pt, e_pt)
+                    rect = fitz.Rect(s_pt, e_pt).normalize()
                     shape.draw_rect(rect)
                 elif shape_type == "circle":
-                    rect = fitz.Rect(s_pt, e_pt)
+                    rect = fitz.Rect(s_pt, e_pt).normalize()
                     shape.draw_oval(rect)
 
-                shape.finish(color=color, width=thickness)
+                fill_color = hex_to_rgb(anno.get("fillColor")) if anno.get("fillColor") else None
+                shape.finish(color=color, fill=fill_color, width=thickness)
                 shape.commit()
 
         update_job_progress(90)

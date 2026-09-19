@@ -1,4 +1,4 @@
-# DocForge ⚡
+# DocScalar ⚡
 ### The 100% Client-Side Document Manipulation & Visual DAG Studio
 
 [![CI/CD Pipeline](https://github.com/TanvirAuntu75/docforge/actions/workflows/deploy.yml/badge.svg)](https://github.com/TanvirAuntu75/docforge/actions/workflows/deploy.yml)
@@ -9,7 +9,7 @@
 [![Privacy: Zero-Upload](https://img.shields.io/badge/Privacy-100%25%20Zero--Upload-emerald.svg)](#privacy--security-guarantee)
 
 > **"Your documents never leave your device."**
-> DocForge is a local-first, privacy-guaranteed document engineering suite offering 44+ PDF and office tools, 7 fullscreen editing studios, an interactive Visual DAG workflow canvas, and an in-browser neural assistant.
+> DocScalar is a local-first, privacy-guaranteed document engineering suite offering 44+ PDF and office tools, 7 fullscreen editing studios, an interactive Visual DAG workflow canvas, and an in-browser neural assistant.
 
 ---
 

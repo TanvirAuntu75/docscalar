@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -8,6 +8,9 @@ import { organizePdf } from '../../engines/pdf/organizePdf';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import { formatFileSize } from '../../utils/constants';
+import useSmartCropper from '../../hooks/useSmartCropper';
+import { SmartCropperToolbarButton } from '../../components/SmartCropperToolbarButton';
+import { detectSmartBorders, computeCleanPdfCropBox } from '../../utils/pdfZoneScanner';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -21,6 +24,10 @@ export default function RotatePdf() {
 
   const [pageCards, setPageCards] = useState([]);
   const canvasRefs = useRef({});
+  const rawCanvasCacheRef = useRef({});
+  const detectionCacheRef = useRef({});
+
+  const cropper = useSmartCropper({ totalPages: pageCards.length });
 
   const [zoomLevel, setZoomLevel] = useState(2); // 1 = Small, 2 = Medium, 3 = Large
   const [searchQuery, setSearchQuery] = useState('');
@@ -67,10 +74,38 @@ export default function RotatePdf() {
     }
   }, [files, outputFileName]);
 
+  const paintThumbnailCanvas = useCallback((cardId, isCropped) => {
+    const canvas = canvasRefs.current[cardId];
+    const offCanvas = rawCanvasCacheRef.current[cardId];
+    const det = detectionCacheRef.current[cardId];
+    if (!canvas || !offCanvas) return;
+
+    canvas.width = offCanvas.width;
+    canvas.height = offCanvas.height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(offCanvas, 0, 0);
+
+    if (isCropped && det?.hasScanBorders && det?.borderResult) {
+      cropper.applyCanvasPreview(canvas, det.scale || 0.35, det.borderResult, det.baseViewport, true);
+    }
+  }, [cropper]);
+
+  useEffect(() => {
+    if (pageCards.length > 0) {
+      pageCards.forEach((c) => {
+        paintThumbnailCanvas(c.id, cropper.isActive);
+      });
+    }
+  }, [cropper.isActive, pageCards.length, paintThumbnailCanvas]);
+
   // Load PDF and render thumbnails when file changes
   useEffect(() => {
     if (files.length === 0 || files.length < parsedFilesCount.current) {
       setPageCards([]);
+      rawCanvasCacheRef.current = {};
+      detectionCacheRef.current = {};
       parsedFilesCount.current = 0;
       if (files.length === 0) return;
     }
@@ -137,16 +172,56 @@ export default function RotatePdf() {
                 const targetCard = newCards.find((c) => c.fileIndex === item.fileIndex && c.originalIndex === i);
                 if (!targetCard) continue;
 
-                const canvas = canvasRefs.current[targetCard.id];
-                if (canvas) {
-                  canvas.width = viewport.width;
-                  canvas.height = viewport.height;
-                  const ctx = canvas.getContext('2d');
-                  await page.render({ canvasContext: ctx, viewport }).promise;
+                const offCanvas = document.createElement('canvas');
+                offCanvas.width = viewport.width;
+                offCanvas.height = viewport.height;
+                const ctx = offCanvas.getContext('2d');
+                await page.render({ canvasContext: ctx, viewport }).promise;
+                rawCanvasCacheRef.current[targetCard.id] = offCanvas;
+
+                let borderResult = null;
+                let hasScanBorders = false;
+                let cropBox = null;
+                try {
+                  borderResult = detectSmartBorders(offCanvas, viewport);
+                  hasScanBorders = borderResult && borderResult.hasBlackBorders === true &&
+                    (borderResult.cropTop > 0 || borderResult.cropBottom > 0 || borderResult.cropLeft > 0 || borderResult.cropRight > 0);
+                  if (hasScanBorders) {
+                    cropBox = computeCleanPdfCropBox(borderResult, { width: page.view[2], height: page.view[3] }, viewport.scale);
+                    targetCard.hasScanBorders = true;
+                    targetCard.cropBox = cropBox;
+                  } else {
+                    targetCard.hasScanBorders = false;
+                    targetCard.cropBox = null;
+                  }
+                } catch (e) {
+                  targetCard.hasScanBorders = false;
+                  targetCard.cropBox = null;
                 }
+
+                detectionCacheRef.current[targetCard.id] = {
+                  hasScanBorders,
+                  cropBox,
+                  borderResult,
+                  scale: viewport.scale,
+                  baseViewport: { width: page.view[2], height: page.view[3] }
+                };
+
+                paintThumbnailCanvas(targetCard.id, cropper.isActive || hasScanBorders);
               } catch (err) {
                 console.warn(`Error rendering thumbnail for file ${item.fileIndex}, page ${i + 1}:`, err);
               }
+            }
+          }
+          if (!isCancelled) {
+            setPageCards((prev) =>
+              prev.map((c) => {
+                const matched = newCards.find((nc) => nc.id === c.id);
+                return matched ? { ...c, hasScanBorders: matched.hasScanBorders, cropBox: matched.cropBox } : c;
+              })
+            );
+            if (newCards.some((c) => c.hasScanBorders)) {
+              cropper.activate();
             }
           }
         }, 100);
@@ -257,7 +332,22 @@ export default function RotatePdf() {
     setResult(null);
 
     try {
-      const outputBlob = await organizePdf(files, pageCards, setProgress);
+      const fileCropBoxes = {};
+      pageCards.forEach((c) => {
+        if (c.cropBox && cropper.isActive) {
+          if (!fileCropBoxes[c.fileIndex]) fileCropBoxes[c.fileIndex] = {};
+          fileCropBoxes[c.fileIndex][c.originalIndex] = c.cropBox;
+        }
+      });
+      const cropOptions = {
+        ...cropper.getEngineOptions(),
+        autoCropBlackBorders: cropper.isActive,
+        smartCrop: cropper.isActive,
+        fileCropBoxes,
+        cleanMargin: cropper.cleanMargin || 0,
+        enabledEdges: cropper.enabledEdges
+      };
+      const outputBlob = await organizePdf(files, pageCards, setProgress, cropOptions);
       const finalName = outputFileName.trim().endsWith('.pdf')
         ? outputFileName.trim()
         : `${outputFileName.trim()}.pdf`;
@@ -336,7 +426,7 @@ export default function RotatePdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Rotate PDF Pages Online Free (100% Local) | DocForge"
+        title="Rotate PDF Pages Online Free (100% Local) | DocScalar"
         description="Rotate PDF pages from multiple files visually locally in your browser. Fully private, no server uploads."
       />
 
@@ -356,9 +446,9 @@ export default function RotatePdf() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-y-auto relative bg-[var(--bg-tertiary)]">
               {/* Sticky Workspace Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <label className="btn btn-primary btn-sm cursor-pointer flex items-center gap-1.5 shadow-xs">
+                <div className="workspace-toolbar px-4 py-2.5 flex items-center justify-between flex-wrap gap-2.5">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <label className="h-8 px-3.5 py-1.5 rounded-lg border border-[var(--color-primary)] bg-[var(--color-primary)] text-white hover:opacity-90 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs text-xs font-semibold select-none shrink-0">
                       <span className="material-symbols-outlined text-[16px]">add_circle</span>
                       <span>Add PDFs</span>
                       <input
@@ -368,13 +458,17 @@ export default function RotatePdf() {
                         accept=".pdf,application/pdf"
                         className="hidden"
                         onChange={handleAddFiles}
+                        title=""
+                        tabIndex={-1}
                       />
                     </label>
+
+                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-0.5 shrink-0" />
 
                     <button
                       type="button"
                       onClick={() => rotateAll(-90)}
-                      className="btn btn-secondary btn-sm flex items-center gap-1"
+                      className="h-8 px-3 py-1.5 rounded-lg border border-[var(--border-medium)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover,var(--bg-tertiary))] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--color-primary)] transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0"
                       title="Rotate all pages left 90°"
                     >
                       <span className="material-symbols-outlined text-[15px]">rotate_left</span>
@@ -384,7 +478,7 @@ export default function RotatePdf() {
                     <button
                       type="button"
                       onClick={() => rotateAll(90)}
-                      className="btn btn-secondary btn-sm flex items-center gap-1"
+                      className="h-8 px-3 py-1.5 rounded-lg border border-[var(--border-medium)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover,var(--bg-tertiary))] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--color-primary)] transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0"
                       title="Rotate all pages right 90°"
                     >
                       <span className="material-symbols-outlined text-[15px]">rotate_right</span>
@@ -394,7 +488,7 @@ export default function RotatePdf() {
                     <button
                       type="button"
                       onClick={() => rotateAll(180)}
-                      className="btn btn-secondary btn-sm flex items-center gap-1"
+                      className="h-8 px-3 py-1.5 rounded-lg border border-[var(--border-medium)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover,var(--bg-tertiary))] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--color-primary)] transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0"
                       title="Flip all pages 180°"
                     >
                       <span className="material-symbols-outlined text-[15px]">screen_rotation</span>
@@ -405,12 +499,15 @@ export default function RotatePdf() {
                       type="button"
                       onClick={resetAllRotations}
                       disabled={rotatedCount === 0}
-                      className="btn btn-secondary btn-sm flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="h-8 px-3 py-1.5 rounded-lg border border-[var(--border-medium)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover,var(--bg-tertiary))] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--color-primary)] transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
                       title="Reset all rotations to 0°"
                     >
                       <span className="material-symbols-outlined text-[15px]">refresh</span>
                       <span className="hidden md:inline">Reset All (0°)</span>
                     </button>
+
+                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-0.5 shrink-0" />
+                    <SmartCropperToolbarButton cropper={cropper} />
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -538,6 +635,41 @@ export default function RotatePdf() {
                           <span className="bg-black/70 backdrop-blur-xs text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-xs">
                             #{uiIndex + 1}
                           </span>
+                          {cropper.isActive ? (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                cropper.revert();
+                              }}
+                              className="text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1 cursor-pointer transition-all bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-500/50 shrink-0"
+                              title="Smart Cropping Active — Click to restore original document"
+                            >
+                              <span className="material-symbols-outlined text-[11px]">check_circle</span>
+                              <span>Cropped</span>
+                            </button>
+                          ) : card.hasScanBorders ? (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                cropper.activate();
+                              }}
+                              className="text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1 cursor-pointer transition-all bg-amber-500 hover:bg-amber-600 text-white border border-amber-400/50 shrink-0"
+                              title="Photocopy scan borders detected — Click to remove scan borders"
+                            >
+                              <span className="material-symbols-outlined text-[11px]">auto_fix_high</span>
+                              <span>Borders Detected</span>
+                            </button>
+                          ) : (
+                            <div
+                              className="text-[9px] font-semibold px-2 py-0.5 rounded-md shadow-xs flex items-center gap-1 bg-white text-slate-600 border border-slate-200 shrink-0 select-none cursor-default"
+                              title="Clean digital document: zero scan borders detected"
+                            >
+                              <span className="material-symbols-outlined text-[11px] text-slate-500">check_circle</span>
+                              <span>Clean Page</span>
+                            </div>
+                          )}
                         </div>
 
                         {/* Hover Quick Action Buttons */}
@@ -578,7 +710,9 @@ export default function RotatePdf() {
                         </div>
 
                         {/* Page Preview Container */}
-                        <div className="w-full aspect-[4/5] bg-slate-900/5 dark:bg-black/20 flex items-center justify-center p-2 overflow-hidden relative">
+                        <div className={`w-full aspect-[4/5] bg-slate-900/5 dark:bg-black/20 flex items-center justify-center p-2 overflow-hidden relative transition-all ${
+                          cropper.isActive && card.hasScanBorders ? 'ring-2 ring-emerald-500/50 bg-emerald-500/5' : ''
+                        }`}>
                           <canvas
                             ref={(el) => (canvasRefs.current[card.id] = el)}
                             style={{
@@ -628,6 +762,8 @@ export default function RotatePdf() {
                       accept=".pdf,application/pdf"
                       className="hidden"
                       onChange={handleAddFiles}
+                      title=""
+                      tabIndex={-1}
                     />
                   </label>
                 </div>

@@ -10,19 +10,20 @@ import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import { useJobPoller } from '../../hooks/useJobPoller';
+import useCanvasPinchZoom from '../../hooks/useCanvasPinchZoom';
 import {
   FileSearch,
   Sparkles,
   Download,
   Languages,
-  Cpu,
-  Server
+  Zap
 } from 'lucide-react';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const LANGUAGES = [
+  { code: 'all', name: 'Auto-Detect (All Languages)', flag: '🌐' },
   { code: 'eng', name: 'English', flag: 'US' },
   { code: 'ben', name: 'Bengali (বাংলা)', flag: 'BD' },
   { code: 'hin', name: 'Hindi (हिन्दी)', flag: 'IN' },
@@ -52,11 +53,30 @@ export default function OcrPdf() {
   const [pageFilter, setPageFilter] = useState('');
   const [gridDensity, setGridDensity] = useState('standard'); // 'compact' | 'standard' | 'large'
   const [zoomScale, setZoomScale] = useState(1.0);
+  const [debouncedRenderZoom, setDebouncedRenderZoom] = useState(zoomScale);
   const [canvasLoading, setCanvasLoading] = useState(false);
+  const viewportContainerRef = useRef(null);
+
+  // Debounce high-DPI PDF rasterization to decouple smooth 120 FPS GPU scaling from heavy canvas redraws
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedRenderZoom(zoomScale);
+    }, 200);
+    return () => clearTimeout(handler);
+  }, [zoomScale]);
+
+  // Universal 2-finger touchpad/touchscreen canvas pinch-to-zoom
+  useCanvasPinchZoom({
+    containerRef: viewportContainerRef,
+    zoomScale,
+    setZoomScale,
+    minZoom: 0.3,
+    maxZoom: 3.0
+  });
 
   // OCR Configuration State
   const [ocrMode, setOcrMode] = useState('client'); // 'client' | 'server'
-  const [selectedLanguage, setSelectedLanguage] = useState('eng');
+  const [selectedLanguage, setSelectedLanguage] = useState('all');
   const [autoEnhance, setAutoEnhance] = useState(true);
   const [embedInvisibleText, setEmbedInvisibleText] = useState(true);
   const [outputFileName, setOutputFileName] = useState('');
@@ -70,6 +90,7 @@ export default function OcrPdf() {
   const [error, setError] = useState(null);
 
   const previewCanvasRef = useRef(null);
+  const currentRenderTaskRef = useRef(null);
   const poller = useJobPoller(BACKEND_URL);
 
   // 1. Check Server Availability
@@ -165,9 +186,10 @@ export default function OcrPdf() {
           setOutputFileName(`${base}_searchable.pdf`);
         }
 
-        // Render Thumbnails
+        // Render Thumbnails progressively
         const thumbs = [];
-        for (let i = 1; i <= Math.min(pdf.numPages, 48); i++) {
+        const maxThumbs = Math.min(pdf.numPages, 48);
+        for (let i = 1; i <= maxThumbs; i++) {
           if (isCancelled) return;
           const page = await pdf.getPage(i);
           const viewport = page.getViewport({ scale: 0.35 });
@@ -180,8 +202,12 @@ export default function OcrPdf() {
           await page.render({ canvasContext: ctx, viewport }).promise;
           thumbs.push(canvas.toDataURL('image/jpeg', 0.8));
           page.cleanup();
+
+          // Stream thumbnails progressively every 3 pages or upon completion
+          if (i % 3 === 0 || i === maxThumbs) {
+            if (!isCancelled) setPageThumbnails([...thumbs]);
+          }
         }
-        if (!isCancelled) setPageThumbnails(thumbs);
       } catch (err) {
         if (!isCancelled) {
           setError('Failed to load PDF. Please verify the document is not password locked or corrupted.');
@@ -202,7 +228,7 @@ export default function OcrPdf() {
     };
   }, [files, activeFileIndex]);
 
-  // 5. Render Active Page in Single-Page Inspect Mode
+  // 5. Render Active Page in Single-Page Inspect Mode with Render Collision Guard
   useEffect(() => {
     if (!pdfDocument || viewMode !== 'preview') return;
 
@@ -218,16 +244,31 @@ export default function OcrPdf() {
         const canvas = previewCanvasRef.current;
         if (!canvas) return;
 
-        const viewport = page.getViewport({ scale: 1.5 * zoomScale });
+        const viewport = page.getViewport({ scale: 1.5 * debouncedRenderZoom });
         canvas.width = viewport.width;
         canvas.height = viewport.height;
 
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, viewport.width, viewport.height);
-        await page.render({ canvasContext: ctx, viewport }).promise;
+
+        // Cancel previous in-flight render task if user zooms or changes page quickly
+        if (currentRenderTaskRef.current) {
+          try {
+            currentRenderTaskRef.current.cancel();
+          } catch (e) {}
+          currentRenderTaskRef.current = null;
+        }
+
+        const renderTask = page.render({ canvasContext: ctx, viewport });
+        currentRenderTaskRef.current = renderTask;
+        await renderTask.promise;
       } catch (err) {
-        console.error('Error rendering page inspect view:', err);
+        if (err?.name !== 'RenderingCancelledException') {
+          console.error('Error rendering page inspect view:', err);
+        }
+      } finally {
+        currentRenderTaskRef.current = null;
       }
     };
 
@@ -235,8 +276,14 @@ export default function OcrPdf() {
 
     return () => {
       isMounted = false;
+      if (currentRenderTaskRef.current) {
+        try {
+          currentRenderTaskRef.current.cancel();
+        } catch (e) {}
+        currentRenderTaskRef.current = null;
+      }
     };
-  }, [pdfDocument, activePageIndex, viewMode, zoomScale]);
+  }, [pdfDocument, activePageIndex, viewMode, debouncedRenderZoom]);
 
   // 6. Monitor Backend Poller (Server Mode)
   useEffect(() => {
@@ -271,12 +318,12 @@ export default function OcrPdf() {
         });
     } else if (poller.status === 'failed') {
       setProcessing(false);
-      setError(poller.error || 'Text recognition failed on server.');
+      setError(poller.error || 'Text recognition failed. Please try Fast Scan mode.');
     } else if (poller.status === 'started' || poller.status === 'queued') {
       setProgress(poller.progress || 15);
-      setStatusMessage('Executing neural text recognition matrices...');
+      setStatusMessage(poller.statusMessage || 'Recognizing document text and layout...');
     }
-  }, [poller.status, poller.result, poller.error, poller.progress, files, activeFileIndex]);
+  }, [poller.status, poller.result, poller.error, poller.progress, poller.statusMessage, files, activeFileIndex]);
 
   // 7. Execute OCR Recognition
   const handleRunOcr = async () => {
@@ -285,20 +332,20 @@ export default function OcrPdf() {
     setError(null);
     setResult(null);
     setProgress(5);
-    setStatusMessage('Initializing neural OCR engine...');
+    setStatusMessage('Initializing recognition engine...');
 
     const file = files[activeFileIndex] || files[0];
     const finalName = outputFileName || `${file.name.replace(/\.[^.]+$/, '')}_searchable.pdf`;
 
     try {
       if (ocrMode === 'server') {
-        if (!backendActive) throw new Error('OCR server is unreachable. Please switch to Fast Browser Mode.');
-        setStatusMessage('Uploading document for high-accuracy neural OCR...');
+        if (!backendActive) throw new Error('High Precision engine is currently offline. Please switch to Fast Scan mode.');
+        setStatusMessage('Preparing document for high-precision recognition...');
         const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
         if (!uploadData.success) throw new Error(uploadData.detail || 'Upload failed');
 
         setProgress(40);
-        setStatusMessage('Queueing OCR recognition task...');
+        setStatusMessage('Processing text recognition...');
 
         const convertFormData = new FormData();
         convertFormData.append('file_id', uploadData.file_id);
@@ -310,11 +357,11 @@ export default function OcrPdf() {
           body: convertFormData
         });
 
-        if (!convertRes.ok) throw new Error('Failed to queue OCR task.');
+        if (!convertRes.ok) throw new Error('Failed to start text recognition.');
         const convertData = await convertRes.json();
         poller.startPolling(convertData.job_id);
       } else {
-        setStatusMessage('Recognizing text layers locally via WebGL ONNX...');
+        setStatusMessage('Recognizing document text and layout...');
         const ocrBlob = await ocrPdf(
           file,
           { language: selectedLanguage, autoEnhance, embedInvisibleText },
@@ -382,8 +429,8 @@ export default function OcrPdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="OCR PDF Online Free — Searchable PDF Converter | DocForge"
-        description="Make scanned PDFs searchable with high accuracy text recognition. 100% Client-side or Server-side options."
+        title="OCR PDF Online Free — Searchable PDF Converter | DocScalar"
+        description="Make scanned PDFs searchable with high precision text recognition. Fast on-device and deep recognition options."
       />
 
       {!result ? (
@@ -401,13 +448,13 @@ export default function OcrPdf() {
             {/* ========================================================================= */}
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
               {/* Sticky Canvas Toolbar */}
-              <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2 flex-wrap">
+              <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)] shrink-0">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2.5">
+                  <div className="flex items-center gap-2.5 flex-wrap">
                     {/* Active File Switcher */}
                     {files.length > 1 ? (
-                      <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
-                        <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">description</span>
+                      <div className="h-8 flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-medium)] shrink-0">
+                        <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
                         <select
                           value={activeFileIndex}
                           onChange={(e) => {
@@ -424,7 +471,7 @@ export default function OcrPdf() {
                         </select>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
+                      <div className="h-8 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)] shrink-0">
                         <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
                         <span className="truncate max-w-[200px]">{files[0]?.name}</span>
                         <span className="text-[var(--text-secondary)] font-normal">({formatFileSize(files[0]?.size || 0)})</span>
@@ -432,11 +479,11 @@ export default function OcrPdf() {
                     )}
 
                     {/* View Switcher Capsule (Gallery vs Inspect) */}
-                    <div className="flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
+                    <div className="h-8 flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)] shrink-0">
                       <button
                         type="button"
                         onClick={() => setViewMode('gallery')}
-                        className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${
+                        className={`h-7 px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                           viewMode === 'gallery'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -448,7 +495,7 @@ export default function OcrPdf() {
                       <button
                         type="button"
                         onClick={() => setViewMode('preview')}
-                        className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${
+                        className={`h-7 px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                           viewMode === 'preview'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -461,12 +508,12 @@ export default function OcrPdf() {
 
                     {/* Page Navigation Capsule (When in Inspect View) */}
                     {viewMode === 'preview' && totalPages > 0 && (
-                      <div className="flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] px-1 py-0.5">
+                      <div className="h-8 flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] px-2.5 py-1 shrink-0">
                         <button
                           type="button"
                           onClick={() => setActivePageIndex((p) => Math.max(0, p - 1))}
                           disabled={activePageIndex === 0}
-                          className="p-1 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                          className="p-0.5 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
                           title="Previous Page"
                         >
                           <span className="material-symbols-outlined text-[16px]">chevron_left</span>
@@ -478,7 +525,7 @@ export default function OcrPdf() {
                           type="button"
                           onClick={() => setActivePageIndex((p) => Math.min(totalPages - 1, p + 1))}
                           disabled={activePageIndex >= totalPages - 1}
-                          className="p-1 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                          className="p-0.5 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
                           title="Next Page"
                         >
                           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
@@ -491,8 +538,8 @@ export default function OcrPdf() {
                   <div className="flex items-center gap-2">
                     {viewMode === 'gallery' ? (
                       <>
-                        <div className="flex items-center bg-[var(--bg-secondary)] rounded-lg px-2 py-0.5 border border-[var(--border-subtle)] text-xs text-[var(--text-primary)]">
-                          <span className="material-symbols-outlined text-[14px] text-[var(--text-secondary)] mr-1">search</span>
+                        <div className="h-8 flex items-center bg-[var(--bg-secondary)] rounded-lg px-2.5 py-1 border border-[var(--border-subtle)] text-xs text-[var(--text-primary)]">
+                          <span className="material-symbols-outlined text-[14px] text-[var(--text-secondary)] mr-1.5">search</span>
                           <input
                             type="text"
                             placeholder="Find page..."
@@ -502,11 +549,11 @@ export default function OcrPdf() {
                           />
                         </div>
 
-                        <div className="flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
+                        <div className="h-8 flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)] shrink-0">
                           <button
                             type="button"
                             onClick={() => setGridDensity('compact')}
-                            className={`p-1 rounded cursor-pointer ${gridDensity === 'compact' ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--text-secondary)]'}`}
+                            className={`h-7 w-7 flex items-center justify-center rounded cursor-pointer transition-colors ${gridDensity === 'compact' ? 'bg-[var(--color-primary)] text-white shadow-xs' : 'text-[var(--text-secondary)]'}`}
                             title="Compact View"
                           >
                             <span className="material-symbols-outlined text-[14px]">density_small</span>
@@ -514,7 +561,7 @@ export default function OcrPdf() {
                           <button
                             type="button"
                             onClick={() => setGridDensity('standard')}
-                            className={`p-1 rounded cursor-pointer ${gridDensity === 'standard' ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--text-secondary)]'}`}
+                            className={`h-7 w-7 flex items-center justify-center rounded cursor-pointer transition-colors ${gridDensity === 'standard' ? 'bg-[var(--color-primary)] text-white shadow-xs' : 'text-[var(--text-secondary)]'}`}
                             title="Standard View"
                           >
                             <span className="material-symbols-outlined text-[14px]">density_medium</span>
@@ -522,7 +569,7 @@ export default function OcrPdf() {
                           <button
                             type="button"
                             onClick={() => setGridDensity('large')}
-                            className={`p-1 rounded cursor-pointer ${gridDensity === 'large' ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--text-secondary)]'}`}
+                            className={`h-7 w-7 flex items-center justify-center rounded cursor-pointer transition-colors ${gridDensity === 'large' ? 'bg-[var(--color-primary)] text-white shadow-xs' : 'text-[var(--text-secondary)]'}`}
                             title="Large View"
                           >
                             <span className="material-symbols-outlined text-[14px]">density_large</span>
@@ -530,13 +577,13 @@ export default function OcrPdf() {
                         </div>
                       </>
                     ) : (
-                      <div className="flex items-center gap-1 bg-[var(--bg-secondary)] px-2 py-1 rounded-lg border border-[var(--border-subtle)]">
+                      <div className="h-8 flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
                         <span className="material-symbols-outlined text-[15px] text-[var(--text-secondary)]">zoom_in</span>
                         <input
                           type="range"
-                          min="0.5"
-                          max="1.5"
-                          step="0.1"
+                          min="0.3"
+                          max="3.0"
+                          step="0.05"
                           value={zoomScale}
                           onChange={(e) => setZoomScale(parseFloat(e.target.value))}
                           className="w-16 h-1 bg-[var(--border-subtle)] accent-[var(--color-primary)] rounded-lg cursor-pointer"
@@ -550,7 +597,7 @@ export default function OcrPdf() {
                     <button
                       type="button"
                       onClick={resetWorkspace}
-                      className="p-1 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer"
+                      className="h-8 w-8 flex items-center justify-center hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-red-500/20"
                       title="Reset workspace"
                     >
                       <span className="material-symbols-outlined text-[18px]">restart_alt</span>
@@ -560,9 +607,9 @@ export default function OcrPdf() {
               </div>
 
               {/* Viewport Canvas Stage */}
-              <div className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center relative bg-pattern select-none">
+              <div ref={viewportContainerRef} className="flex-1 overflow-auto p-4 sm:p-8 pb-24 sm:pb-32 flex items-start justify-center relative bg-pattern select-none">
                 {canvasLoading ? (
-                  <div className="flex flex-col items-center gap-3 text-[var(--text-secondary)]">
+                  <div className="flex flex-col items-center gap-3 text-[var(--text-secondary)] my-auto">
                     <span className="material-symbols-outlined text-[32px] animate-spin text-[var(--color-primary)]">
                       progress_activity
                     </span>
@@ -595,7 +642,7 @@ export default function OcrPdf() {
                               : 'border-[var(--border-subtle)] hover:border-[var(--color-primary)]/50'
                           }`}
                         >
-                          <div className="w-full aspect-3/4 rounded-xl overflow-hidden bg-white shadow-xs flex items-center justify-center relative">
+                          <div className="w-full aspect-[1/1.414] rounded-xl overflow-hidden bg-white shadow-xs flex items-center justify-center relative">
                             {thumb ? (
                               <img src={thumb} alt={`Page ${pageNum}`} className="w-full h-full object-contain pointer-events-none" />
                             ) : (
@@ -624,7 +671,7 @@ export default function OcrPdf() {
                 ) : (
                   /* 2. Single-Page Inspect Preview */
                   <div
-                    className="relative bg-white shadow-2xl rounded-sm border border-slate-300 dark:border-slate-700 overflow-hidden transition-transform duration-150"
+                    className="relative bg-white shadow-2xl rounded-sm border border-slate-300 dark:border-slate-700 overflow-hidden transition-transform duration-150 m-auto shrink-0"
                     style={{
                       width: pageDimensions.width * zoomScale,
                       height: pageDimensions.height * zoomScale
@@ -662,27 +709,33 @@ export default function OcrPdf() {
                     <button
                       type="button"
                       onClick={() => setOcrMode('client')}
-                      className={`py-2 px-1 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                      className={`py-2 px-1.5 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 transition-all cursor-pointer ${
                         ocrMode === 'client'
                           ? 'bg-[var(--color-primary)] text-white shadow-xs'
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Cpu size={14} />
-                      <span>Fast Browser (ONNX)</span>
+                      <Zap size={14} />
+                      <span>Fast Scan</span>
+                      <span className={`text-[10px] font-normal ${ocrMode === 'client' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>
+                        Instant · Private
+                      </span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setOcrMode('server')}
-                      className={`py-2 px-1 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                      className={`py-2 px-1.5 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 transition-all cursor-pointer ${
                         ocrMode === 'server'
                           ? 'bg-[var(--color-primary)] text-white shadow-xs'
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Server size={14} />
-                      <span>High Accuracy Server</span>
+                      <Sparkles size={14} />
+                      <span>High Precision</span>
+                      <span className={`text-[10px] font-normal ${ocrMode === 'server' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>
+                        {backendActive ? 'Deep Multi-Pass' : 'Offline'}
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -756,14 +809,16 @@ export default function OcrPdf() {
                 {/* Progress Bar (While Processing) */}
                 {processing && (
                   <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                    <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                           progress_activity
                         </span>
-                        {statusMessage || 'Recognizing characters...'}
-                      </span>
-                      <span>{progress}%</span>
+                        <span className="truncate" title={statusMessage || 'Recognizing characters...'}>
+                          {statusMessage || 'Recognizing characters...'}
+                        </span>
+                      </div>
+                      <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div
@@ -777,6 +832,13 @@ export default function OcrPdf() {
                 {error && (
                   <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium">
                     {error}
+                  </div>
+                )}
+
+                {ocrMode === 'server' && !backendActive && (
+                  <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-amber-600 dark:text-amber-400 font-medium flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[15px] shrink-0">info</span>
+                    <span>High Precision is currently offline. Switch to Fast Scan to process directly on this device.</span>
                   </div>
                 )}
               </div>
@@ -850,7 +912,7 @@ export default function OcrPdf() {
               </div>
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Layer Mode</span>
-                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1">Searchable 3-Tr</span>
+                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1">Searchable Layer</span>
               </div>
             </div>
 

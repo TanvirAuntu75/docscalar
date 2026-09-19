@@ -1,0 +1,2563 @@
+[
+  {
+    "file": "adam_fletcher.js",
+    "fnName": "generateAdamFletcherHtml",
+    "fnHeader": "export function generateAdamFletcherHtml(\r data,\r themeColor = '#32353e',\r themeFont = 'Montserrat',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "name",
+      "photoUrl",
+      "summary",
+      "profile",
+      "phone",
+      "email",
+      "location",
+      "skills",
+      "customSections",
+      "custom_languages",
+      "education",
+      "experience",
+      "references",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Adam Fletcher'}\">",
+    "lineCount": 482
+  },
+  {
+    "file": "adeline_palmerston.js",
+    "fnName": "generateAdelinePalmerstonHtml",
+    "fnHeader": "export function generateAdelinePalmerstonHtml( data, themeColor = '#212f3d', themeFont = 'Montserrat', sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'], themeLayout = 'single', pageMargin = 0, lineSpacing = 1.45 ) {",
+    "usesPartition": true,
+    "hasPage2": true,
+    "numPages": 2,
+    "uniqueDataAccess": [
+      "name",
+      "photoUrl",
+      "summary",
+      "profile",
+      "phone",
+      "email",
+      "location",
+      "skills",
+      "custom_languages",
+      "education",
+      "experience",
+      "projects",
+      "certifications",
+      "customSections",
+      "references",
+      "website",
+      "linkedin",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Adeline Palmerston'}\" />",
+    "lineCount": 741
+  },
+  {
+    "file": "adora_diagonal.js",
+    "fnName": "generateAdoraDiagonalHtml",
+    "fnHeader": "export function generateAdoraDiagonalHtml(\r data,\r themeColor = '#0284c7',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "skills",
+      "customSections",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 421
+  },
+  {
+    "file": "adora_montminy.js",
+    "fnName": "generateAdoraMontminyHtml",
+    "fnHeader": "export function generateAdoraMontminyHtml( data, themeColor = '#1d8cf8', themeFont = 'Inter', sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'], themeLayout = 'single', pageMargin = 0, lineSpacing = 1.45 ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "summary",
+      "phone",
+      "email",
+      "location",
+      "skills",
+      "customSections",
+      "custom_languages",
+      "education",
+      "experience",
+      "photoUrl",
+      "name",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Photo\" />",
+    "lineCount": 492
+  },
+  {
+    "file": "alfredo_torres.js",
+    "fnName": "generateAlfredoTorresHtml",
+    "fnHeader": "export function generateAlfredoTorresHtml(\r data = {},\r themeColor = '#b89358',\r themeFont = 'Plus Jakarta Sans',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "photoUrl",
+      "experience",
+      "education",
+      "skills",
+      "references",
+      "phone",
+      "email",
+      "location",
+      "address",
+      "website",
+      "summary",
+      "profile",
+      "name",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Alfredo Torres'}\">",
+    "lineCount": 607
+  },
+  {
+    "file": "alvarado_slate.js",
+    "fnName": "generateAlvaradoSlateHtml",
+    "fnHeader": "export function generateAlvaradoSlateHtml(\r data,\r themeColor = '#5c6e73',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 422
+  },
+  {
+    "file": "amsterdam_orange.js",
+    "fnName": "generateAmsterdamOrangeHtml",
+    "fnHeader": "export function generateAmsterdamOrangeHtml(\r data,\r themeColor = '#1e1b4b',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 444
+  },
+  {
+    "file": "arthur_pendelton.js",
+    "fnName": "generateArthurPendeltonHtml",
+    "fnHeader": "export function generateArthurPendeltonHtml(\r data = {},\r themeColor = '#0f172a',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "photoUrl",
+      "experience",
+      "education",
+      "skills",
+      "tools",
+      "references",
+      "phone",
+      "email",
+      "location",
+      "address",
+      "website",
+      "linkedin",
+      "summary",
+      "profile",
+      "name",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Arthur Pendelton'}\">",
+    "lineCount": 566
+  },
+  {
+    "file": "austin_amber.js",
+    "fnName": "generateAustinAmberHtml",
+    "fnHeader": "export function generateAustinAmberHtml(\r data,\r themeColor = '#042f2e',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 444
+  },
+  {
+    "file": "barcelona_cyan.js",
+    "fnName": "generateBarcelonaCyanHtml",
+    "fnHeader": "export function generateBarcelonaCyanHtml(\r data,\r themeColor = '#06b6d4',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 424
+  },
+  {
+    "file": "berlin_two_tone.js",
+    "fnName": "generateBerlinTwoToneHtml",
+    "fnHeader": "export function generateBerlinTwoToneHtml( data, themeColor = '#d4a373', themeFont = 'Inter', sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'], themeLayout = 'single', pageMargin = 0, lineSpacing = 1.45 ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "",
+    "lineCount": 375
+  },
+  {
+    "file": "bordeaux_wine.js",
+    "fnName": "generateBordeauxWineHtml",
+    "fnHeader": "export function generateBordeauxWineHtml(\r data,\r themeColor = '#4c0519',\r themeFont = 'Playfair Display',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 430
+  },
+  {
+    "file": "boston_crimson.js",
+    "fnName": "generateBostonCrimsonHtml",
+    "fnHeader": "export function generateBostonCrimsonHtml(\r data,\r themeColor = '#881337',\r themeFont = 'Merriweather',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 419
+  },
+  {
+    "file": "buenos_aires_tango.js",
+    "fnName": "generateBuenosAiresTangoHtml",
+    "fnHeader": "export function generateBuenosAiresTangoHtml(\r data,\r themeColor = '#581c87',\r themeFont = 'Playfair Display',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 452
+  },
+  {
+    "file": "cairo_gold.js",
+    "fnName": "generateCairoGoldHtml",
+    "fnHeader": "export function generateCairoGoldHtml(\r data,\r themeColor = '#0a0a0a',\r themeFont = 'Playfair Display',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 451
+  },
+  {
+    "file": "cambridge_rose.js",
+    "fnName": "generateCambridgeRoseHtml",
+    "fnHeader": "export function generateCambridgeRoseHtml(\r data,\r themeColor = '#4a6b63',\r themeFont = 'Playfair Display',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 440
+  },
+  {
+    "file": "cape_town_sunset.js",
+    "fnName": "generateCapeTownSunsetHtml",
+    "fnHeader": "export function generateCapeTownSunsetHtml(\r data,\r themeColor = '#c2410c',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 439
+  },
+  {
+    "file": "card_matrix.js",
+    "fnName": "generateCardMatrixHtml",
+    "fnHeader": "export function generateCardMatrixHtml(\r data,\r themeColor = '#4f46e5',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 368
+  },
+  {
+    "file": "charles.js",
+    "fnName": "generateCharlesHtml",
+    "fnHeader": "export function generateCharlesHtml(\r data,\r themeColor = '#0b7a8a',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "education",
+      "projects",
+      "certifications",
+      "location",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "skills",
+      "customSections",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 456
+  },
+  {
+    "file": "copenhagen_sand.js",
+    "fnName": "generateCopenhagenSandHtml",
+    "fnHeader": "export function generateCopenhagenSandHtml(\r data,\r themeColor = '#44403c',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 427
+  },
+  {
+    "file": "date_capsule.js",
+    "fnName": "generateDateCapsuleHtml",
+    "fnHeader": "export function generateDateCapsuleHtml(\r data,\r themeColor = '#2563eb',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 342
+  },
+  {
+    "file": "diagonal_wedge.js",
+    "fnName": "generateDiagonalWedgeHtml",
+    "fnHeader": "export function generateDiagonalWedgeHtml( data, themeColor = '#1e40af', themeFont = 'Inter', sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'], themeLayout = 'single', pageMargin = 0, lineSpacing = 1.45 ) {",
+    "usesPartition": true,
+    "hasPage2": true,
+    "numPages": 2,
+    "uniqueDataAccess": [
+      "location",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "skills",
+      "education",
+      "certifications",
+      "summary",
+      "photoUrl",
+      "name",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 593
+  },
+  {
+    "file": "donna_stroupe.js",
+    "fnName": "generateDonnaStroupeHtml",
+    "fnHeader": "export function generateDonnaStroupeHtml(\r data,\r themeColor = '#2b211d',\r themeFont = 'Montserrat',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "name",
+      "photoUrl",
+      "summary",
+      "profile",
+      "phone",
+      "email",
+      "location",
+      "website",
+      "skills",
+      "customSections",
+      "custom_languages",
+      "education",
+      "experience",
+      "references",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Donna Stroupe'}\">",
+    "lineCount": 518
+  },
+  {
+    "file": "dublin_forest.js",
+    "fnName": "generateDublinForestHtml",
+    "fnHeader": "export function generateDublinForestHtml(\r data,\r themeColor = '#064e3b',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 424
+  },
+  {
+    "file": "edinburgh_navy.js",
+    "fnName": "generateEdinburghNavyHtml",
+    "fnHeader": "export function generateEdinburghNavyHtml(\r data,\r themeColor = '#1e3a8a',\r themeFont = 'Merriweather',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 352
+  },
+  {
+    "file": "emerald_prestige.js",
+    "fnName": "generateEmeraldPrestigeHtml",
+    "fnHeader": "export function generateEmeraldPrestigeHtml(\r data,\r themeColor = '#064e3b',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 428
+  },
+  {
+    "file": "emma.js",
+    "fnName": "generateEmmaHtml",
+    "fnHeader": "export function generateEmmaHtml( data, themeColor = '#3c3530', themeFont = 'Playfair Display', sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'], themeLayout = 'single', pageMargin = 0, lineSpacing = 1.45 ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "projects",
+      "education",
+      "skills",
+      "certifications",
+      "customSections",
+      "name",
+      "title",
+      "summary",
+      "email",
+      "phone",
+      "website",
+      "linkedin"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "",
+    "lineCount": 429
+  },
+  {
+    "file": "floating_card_matrix.js",
+    "fnName": "generateFloatingCardMatrixHtml",
+    "fnHeader": "export function generateFloatingCardMatrixHtml(\r data,\r themeColor = '#0284c7',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 485
+  },
+  {
+    "file": "florence_terracotta.js",
+    "fnName": "generateFlorenceTerracottaHtml",
+    "fnHeader": "export function generateFlorenceTerracottaHtml(\r data,\r themeColor = '#9a3412',\r themeFont = 'Playfair Display',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 424
+  },
+  {
+    "file": "geneva_charcoal.js",
+    "fnName": "generateGenevaCharcoalHtml",
+    "fnHeader": "export function generateGenevaCharcoalHtml(\r data,\r themeColor = '#18181b',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 424
+  },
+  {
+    "file": "helsinki_frost.js",
+    "fnName": "generateHelsinkiFrostHtml",
+    "fnHeader": "export function generateHelsinkiFrostHtml(\r data,\r themeColor = '#0284c7',\r themeFont = 'Playfair Display',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 355
+  },
+  {
+    "file": "helsinki_navy.js",
+    "fnName": "generateHelsinkiNavyHtml",
+    "fnHeader": "export function generateHelsinkiNavyHtml(\r data,\r themeColor = '#0a192f',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 444
+  },
+  {
+    "file": "howard_ong.js",
+    "fnName": "generateHowardOngHtml",
+    "fnHeader": "export function generateHowardOngHtml(\r data,\r themeColor = '#7e444b',\r themeFont = 'Montserrat',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "name",
+      "photoUrl",
+      "summary",
+      "profile",
+      "phone",
+      "email",
+      "location",
+      "website",
+      "skills",
+      "education",
+      "experience",
+      "references",
+      "awards",
+      "certifications",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Howard Ong'}\">",
+    "lineCount": 505
+  },
+  {
+    "file": "isabel_mercado.js",
+    "fnName": "generateIsabelMercadoHtml",
+    "fnHeader": "export function generateIsabelMercadoHtml(\r data,\r themeColor = '#31353d',\r themeFont = 'Montserrat',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "name",
+      "photoUrl",
+      "summary",
+      "profile",
+      "phone",
+      "email",
+      "website",
+      "location",
+      "skills",
+      "education",
+      "experience",
+      "references",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Isabel Mercado'}\">",
+    "lineCount": 588
+  },
+  {
+    "file": "isabel_schumacher.js",
+    "fnName": "generateIsabelSchumacherHtml",
+    "fnHeader": "export function generateIsabelSchumacherHtml(\r data,\r themeColor = '#312f2e',\r themeFont = 'Montserrat',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "name",
+      "photoUrl",
+      "summary",
+      "profile",
+      "phone",
+      "email",
+      "location",
+      "skills",
+      "customSections",
+      "custom_languages",
+      "education",
+      "experience",
+      "references",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Isabel Schumacher'}\">",
+    "lineCount": 510
+  },
+  {
+    "file": "jonathan.js",
+    "fnName": "generateJonathanHtml",
+    "fnHeader": "export function generateJonathanHtml( data, themeColor = '#1a1a1a', themeFont = 'Playfair Display', sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'], themeLayout = 'single', pageMargin = 0, lineSpacing = 1.45 ) {",
+    "usesPartition": true,
+    "hasPage2": true,
+    "numPages": 2,
+    "uniqueDataAccess": [
+      "name",
+      "email",
+      "phone",
+      "location",
+      "linkedin",
+      "website",
+      "summary",
+      "skills",
+      "experience",
+      "education",
+      "projects",
+      "certifications",
+      "references",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "",
+    "lineCount": 473
+  },
+  {
+    "file": "jonathan_patterson.js",
+    "fnName": "generateJonathanPattersonHtml",
+    "fnHeader": "export function generateJonathanPattersonHtml(\r data,\r themeColor = '#1b324d',\r themeFont = 'Montserrat',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.4\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "name",
+      "photoUrl",
+      "summary",
+      "profile",
+      "phone",
+      "email",
+      "website",
+      "location",
+      "skills",
+      "customSections",
+      "custom_languages",
+      "education",
+      "experience",
+      "references",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Jonathan Patterson'}\">",
+    "lineCount": 617
+  },
+  {
+    "file": "kathleen.js",
+    "fnName": "generateKathleenHtml",
+    "fnHeader": "export function generateKathleenHtml(\r data,\r themeColor = '#d97706',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "customSections",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 457
+  },
+  {
+    "file": "kelly_mint.js",
+    "fnName": "generateKellyMintHtml",
+    "fnHeader": "export function generateKellyMintHtml(\r data,\r themeColor = '#0d9488',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 427
+  },
+  {
+    "file": "korina_villanueva.js",
+    "fnName": "generateKorinaVillanuevaHtml",
+    "fnHeader": "export function generateKorinaVillanuevaHtml(\r data,\r themeColor = '#112338',\r themeFont = 'Montserrat',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "name",
+      "photoUrl",
+      "summary",
+      "profile",
+      "phone",
+      "email",
+      "website",
+      "location",
+      "skills",
+      "education",
+      "experience",
+      "references",
+      "customSections",
+      "custom_languages",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Korina Villanueva'}\">",
+    "lineCount": 608
+  },
+  {
+    "file": "kyiv_golden.js",
+    "fnName": "generateKyivGoldenHtml",
+    "fnHeader": "export function generateKyivGoldenHtml(\r data,\r themeColor = '#1d4ed8',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 425
+  },
+  {
+    "file": "kyoto_coral.js",
+    "fnName": "generateKyotoCoralHtml",
+    "fnHeader": "export function generateKyotoCoralHtml(\r data,\r themeColor = '#e11d48',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 432
+  },
+  {
+    "file": "lilac_sidebar.js",
+    "fnName": "generateLilacSidebarHtml",
+    "fnHeader": "export function generateLilacSidebarHtml(\r data,\r themeColor = '#581c87',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 397
+  },
+  {
+    "file": "lorna_alvarado.js",
+    "fnName": "generateLornaAlvaradoHtml",
+    "fnHeader": "export function generateLornaAlvaradoHtml(\r data,\r themeColor = '#232628',\r themeFont = 'Montserrat',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "name",
+      "photoUrl",
+      "phone",
+      "email",
+      "location",
+      "skills",
+      "customSections",
+      "custom_languages",
+      "education",
+      "experience",
+      "references",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Lorna Alvarado'}\">",
+    "lineCount": 502
+  },
+  {
+    "file": "lyon_lavender.js",
+    "fnName": "generateLyonLavenderHtml",
+    "fnHeader": "export function generateLyonLavenderHtml(\r data,\r themeColor = '#7c3aed',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 440
+  },
+  {
+    "file": "madrid_sun.js",
+    "fnName": "generateMadridSunHtml",
+    "fnHeader": "export function generateMadridSunHtml(\r data,\r themeColor = '#1e293b',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 444
+  },
+  {
+    "file": "manhattan_noir.js",
+    "fnName": "generateManhattanNoirHtml",
+    "fnHeader": "export function generateManhattanNoirHtml(\r data,\r themeColor = '#000000',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 427
+  },
+  {
+    "file": "marcus_vance.js",
+    "fnName": "generateMarcusVanceHtml",
+    "fnHeader": "export function generateMarcusVanceHtml(\r data = {},\r themeColor = '#0d9488',\r themeFont = 'Space Grotesk',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "photoUrl",
+      "experience",
+      "education",
+      "skills",
+      "certifications",
+      "projects",
+      "phone",
+      "email",
+      "location",
+      "address",
+      "summary",
+      "profile",
+      "name",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Marcus Vance'}\">",
+    "lineCount": 673
+  },
+  {
+    "file": "mariana.js",
+    "fnName": "generateMarianaHtml",
+    "fnHeader": "export function generateMarianaHtml(\r data,\r themeColor = '#2c3549',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": true,
+    "hasPage2": true,
+    "numPages": 2,
+    "uniqueDataAccess": [
+      "phone",
+      "email",
+      "location",
+      "website",
+      "linkedin",
+      "education",
+      "skills",
+      "customSections",
+      "experience",
+      "projects",
+      "certifications",
+      "references",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 671
+  },
+  {
+    "file": "milan_blush.js",
+    "fnName": "generateMilanBlushHtml",
+    "fnHeader": "export function generateMilanBlushHtml(\r data,\r themeColor = '#be185d',\r themeFont = 'Playfair Display',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 423
+  },
+  {
+    "file": "montreal_frost.js",
+    "fnName": "generateMontrealFrostHtml",
+    "fnHeader": "export function generateMontrealFrostHtml(\r data,\r themeColor = '#2563eb',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 439
+  },
+  {
+    "file": "ocean_block.js",
+    "fnName": "generateOceanBlockHtml",
+    "fnHeader": "export function generateOceanBlockHtml(\r data,\r themeColor = '#0369a1',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 403
+  },
+  {
+    "file": "olivia.js",
+    "fnName": "generateOliviaHtml",
+    "fnHeader": "export function generateOliviaHtml(\r data,\r themeColor = '#b38e70',\r themeFont = 'Playfair Display',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": true,
+    "hasPage2": true,
+    "numPages": 2,
+    "uniqueDataAccess": [
+      "phone",
+      "email",
+      "location",
+      "linkedin",
+      "website",
+      "education",
+      "skills",
+      "customSections",
+      "experience",
+      "projects",
+      "certifications",
+      "references",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 633
+  },
+  {
+    "file": "ong_burgundy.js",
+    "fnName": "generateOngBurgundyHtml",
+    "fnHeader": "export function generateOngBurgundyHtml(\r data,\r themeColor = '#802b3e',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 417
+  },
+  {
+    "file": "osaka_minimal.js",
+    "fnName": "generateOsakaMinimalHtml",
+    "fnHeader": "export function generateOsakaMinimalHtml(\r data,\r themeColor = '#0f172a',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 432
+  },
+  {
+    "file": "oslo_taupe.js",
+    "fnName": "generateOsloTaupeHtml",
+    "fnHeader": "export function generateOsloTaupeHtml(\r data,\r themeColor = '#6e5a4f',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 408
+  },
+  {
+    "file": "overlapping_badge.js",
+    "fnName": "generateOverlappingBadgeHtml",
+    "fnHeader": "export function generateOverlappingBadgeHtml(\r data,\r themeColor = '#1e3a8a',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 446
+  },
+  {
+    "file": "oxford_burgundy.js",
+    "fnName": "generateOxfordBurgundyHtml",
+    "fnHeader": "export function generateOxfordBurgundyHtml(\r data,\r themeColor = '#831843',\r themeFont = 'Playfair Display',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 394
+  },
+  {
+    "file": "prague_brass.js",
+    "fnName": "generatePragueBrassHtml",
+    "fnHeader": "export function generatePragueBrassHtml(\r data,\r themeColor = '#3f4f2f',\r themeFont = 'Merriweather',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 424
+  },
+  {
+    "file": "reykjavik_slate.js",
+    "fnName": "generateReykjavikSlateHtml",
+    "fnHeader": "export function generateReykjavikSlateHtml(\r data,\r themeColor = '#0284c7',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 414
+  },
+  {
+    "file": "richard.js",
+    "fnName": "generateRichardHtml",
+    "fnHeader": "export function generateRichardHtml(\r data,\r themeColor = '#0f3b7d',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "skills",
+      "customSections",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 393
+  },
+  {
+    "file": "richard_sanchez.js",
+    "fnName": "generateRichardSanchezHtml",
+    "fnHeader": "export function generateRichardSanchezHtml(\r data,\r themeColor = '#0b3b8c',\r themeFont = 'Montserrat',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "name",
+      "photoUrl",
+      "summary",
+      "profile",
+      "phone",
+      "email",
+      "location",
+      "customSections",
+      "custom_languages",
+      "skills",
+      "experience",
+      "education",
+      "references",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Richard Sanchez'}\">",
+    "lineCount": 531
+  },
+  {
+    "file": "sage_pastel.js",
+    "fnName": "generateSagePastelHtml",
+    "fnHeader": "export function generateSagePastelHtml(\r data,\r themeColor = '#164e63',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 397
+  },
+  {
+    "file": "sanchez_dark.js",
+    "fnName": "generateSanchezDarkHtml",
+    "fnHeader": "export function generateSanchezDarkHtml(\r data,\r themeColor = '#2b3543',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "projects",
+      "certifications",
+      "references",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "skills",
+      "customSections",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 438
+  },
+  {
+    "file": "sanchez_mono.js",
+    "fnName": "generateSanchezMonoHtml",
+    "fnHeader": "export function generateSanchezMonoHtml(\r data,\r themeColor = '#475569',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "skills",
+      "customSections",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 400
+  },
+  {
+    "file": "sanchez_wave.js",
+    "fnName": "generateSanchezWaveHtml",
+    "fnHeader": "export function generateSanchezWaveHtml(\r data,\r themeColor = '#1a365d',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "photoUrl",
+      "name",
+      "title",
+      "phone",
+      "email",
+      "linkedin",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 357
+  },
+  {
+    "file": "san_francisco_skyline.js",
+    "fnName": "generateSanFranciscoSkylineHtml",
+    "fnHeader": "export function generateSanFranciscoSkylineHtml(\r data,\r themeColor = '#0284c7',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 444
+  },
+  {
+    "file": "schumacher_charcoal.js",
+    "fnName": "generateSchumacherCharcoalHtml",
+    "fnHeader": "export function generateSchumacherCharcoalHtml(\r data,\r themeColor = '#2f2e2d',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "skills",
+      "customSections",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 410
+  },
+  {
+    "file": "seattle_emerald.js",
+    "fnName": "generateSeattleEmeraldHtml",
+    "fnHeader": "export function generateSeattleEmeraldHtml(\r data,\r themeColor = '#0d9488',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 423
+  },
+  {
+    "file": "sebastian_bennett.js",
+    "fnName": "generateSebastianBennettHtml",
+    "fnHeader": "export function generateSebastianBennettHtml(\r data,\r themeColor = '#222427',\r themeFont = 'Montserrat',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "name",
+      "photoUrl",
+      "summary",
+      "profile",
+      "phone",
+      "email",
+      "location",
+      "skills",
+      "education",
+      "experience",
+      "references",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Sebastian Bennett'}\">",
+    "lineCount": 492
+  },
+  {
+    "file": "seoul_neon.js",
+    "fnName": "generateSeoulNeonHtml",
+    "fnHeader": "export function generateSeoulNeonHtml(\r data,\r themeColor = '#8b5cf6',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 425
+  },
+  {
+    "file": "singapore_ruby.js",
+    "fnName": "generateSingaporeRubyHtml",
+    "fnHeader": "export function generateSingaporeRubyHtml(\r data,\r themeColor = '#9f1239',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 424
+  },
+  {
+    "file": "split_dual_block.js",
+    "fnName": "generateSplitDualBlockHtml",
+    "fnHeader": "export function generateSplitDualBlockHtml(\r data,\r themeColor = '#3d6053',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 476
+  },
+  {
+    "file": "stockholm_monochrome.js",
+    "fnName": "generateStockholmMonochromeHtml",
+    "fnHeader": "export function generateStockholmMonochromeHtml(\r data,\r themeColor = '#000000',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 403
+  },
+  {
+    "file": "stockholm_yellow.js",
+    "fnName": "generateStockholmYellowHtml",
+    "fnHeader": "export function generateStockholmYellowHtml(\r data,\r themeColor = '#eab308',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 433
+  },
+  {
+    "file": "terracotta_arch.js",
+    "fnName": "generateTerracottaArchHtml",
+    "fnHeader": "export function generateTerracottaArchHtml( data, themeColor = '#b87352', themeFont = 'Montserrat', sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'], themeLayout = 'single', pageMargin = 0, lineSpacing = 1.45 ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "name",
+      "photoUrl",
+      "summary",
+      "profile",
+      "phone",
+      "location",
+      "email",
+      "skills",
+      "education",
+      "experience",
+      "references",
+      "title"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "",
+    "lineCount": 479
+  },
+  {
+    "file": "tokyo_ice_blue.js",
+    "fnName": "generateTokyoIceBlueHtml",
+    "fnHeader": "export function generateTokyoIceBlueHtml(\r data,\r themeColor = '#3b82f6',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 431
+  },
+  {
+    "file": "vancouver_pine.js",
+    "fnName": "generateVancouverPineHtml",
+    "fnHeader": "export function generateVancouverPineHtml(\r data,\r themeColor = '#064e3b',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 433
+  },
+  {
+    "file": "venice_sand_split.js",
+    "fnName": "generateVeniceSandSplitHtml",
+    "fnHeader": "export function generateVeniceSandSplitHtml(\r data,\r themeColor = '#d6c7b2',\r themeFont = 'Playfair Display',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 430
+  },
+  {
+    "file": "vienna_crest.js",
+    "fnName": "generateViennaCrestHtml",
+    "fnHeader": "export function generateViennaCrestHtml(\r data,\r themeColor = '#1e293b',\r themeFont = 'Merriweather',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 380
+  },
+  {
+    "file": "violet_modern.js",
+    "fnName": "generateVioletModernHtml",
+    "fnHeader": "export function generateVioletModernHtml(\r data,\r themeColor = '#7c3aed',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 402
+  },
+  {
+    "file": "wilson_light.js",
+    "fnName": "generateWilsonLightHtml",
+    "fnHeader": "export function generateWilsonLightHtml(\r data,\r themeColor = '#1a365d',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "customSections",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 432
+  },
+  {
+    "file": "wilson_minimal.js",
+    "fnName": "generateWilsonMinimalHtml",
+    "fnHeader": "export function generateWilsonMinimalHtml(\r data,\r themeColor = '#1a1d20',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 389
+  },
+  {
+    "file": "ziv_olive.js",
+    "fnName": "generateZivOliveHtml",
+    "fnHeader": "export function generateZivOliveHtml(\r data,\r themeColor = '#8c9586',\r themeFont = 'Playfair Display',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "skills",
+      "customSections",
+      "photoUrl",
+      "name",
+      "title",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 419
+  },
+  {
+    "file": "zurich_slate_block.js",
+    "fnName": "generateZurichSlateBlockHtml",
+    "fnHeader": "export function generateZurichSlateBlockHtml(\r data,\r themeColor = '#1e293b',\r themeFont = 'Inter',\r sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],\r themeLayout = 'single',\r pageMargin = 0,\r lineSpacing = 1.45\r ) {",
+    "usesPartition": false,
+    "hasPage2": false,
+    "numPages": 0,
+    "uniqueDataAccess": [
+      "experience",
+      "location",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "phone",
+      "email",
+      "linkedin",
+      "website",
+      "name",
+      "title",
+      "photoUrl",
+      "summary"
+    ],
+    "mockLiteralsCount": 1,
+    "mockLiteralsSample": [
+      "name=\"viewport\""
+    ],
+    "avatarSnippet": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "lineCount": 431
+  }
+]

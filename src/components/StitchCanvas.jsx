@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import DocumentViewer from '../pages/utility/DocumentViewer';
 
 // Import local WASM/JS conversion engines
+import { convertPdfToWord } from '../engines/document/pdfToWord';
 import { docxToPdf } from '../engines/document/docxToPdf';
 import { excelToPdf } from '../engines/document/excelToPdf';
 import { powerpointToPdf } from '../engines/document/powerpointToPdf';
@@ -38,7 +39,8 @@ import { ocrPdf, terminateOcrPool } from '../engines/pdf/ocrPdf';
 import { unOcrPdf } from '../engines/pdf/unOcrPdf';
 import { applyBatesNumbering } from '../engines/pdf/batesNumbering';
 import { saveCanvasState, loadCanvasState, clearCanvasState } from '../utils/db';
-import { parseLocalNLPCommand, extractCommandParameters, optimizeCanvasLayout, validateCanvasConnections, executeAutoHeal, hasDependencyCycle, TOOL_REGISTRY, resolveDocumentTargets, detectFanOutTools, needsStudioParams } from '../utils/canvasBrain';
+import { parseLocalNLPCommand, extractCommandParameters, optimizeCanvasLayout, validateCanvasConnections, executeAutoHeal, hasDependencyCycle, TOOL_REGISTRY, resolveDocumentTargets, detectFanOutTools, needsStudioParams, computeStructuralTopologyHash, planCanvasWorkflow, materializeCanvasOperations, reactCanvasToIntent, normalizeUserPrompt } from '../utils/canvasBrain';
+import { getToolValidation, findConversionPath, TOOLS_MANIFEST, normalizeExtension } from '../utils/toolsManifest';
 import { WORKFLOW_PRESETS, encodeFlowToUrl, decodeFlowFromUrl, saveFlowToStorage, loadSavedFlows } from '../utils/flowPresets';
 import { AnimatePresence } from 'framer-motion';
 import FocusStudioPortal from './FocusStudio/FocusStudioPortal';
@@ -46,85 +48,185 @@ import FocusStudioPortal from './FocusStudio/FocusStudioPortal';
 // Bug fix: use env variable so deployed builds point to the real backend
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
-const TOOL_VALIDATION = {
-  'merge-pdf':        { accept: ['.pdf'], minInputs: 2, maxInputs: 50, errorMsg: 'Merge PDF requires at least 2 PDF files.' },
-  'split-pdf':        { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Split PDF requires exactly 1 PDF file.' },
-  'compress-pdf':     { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Compress PDF requires at least 1 PDF file.' },
-  'rotate-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Rotate PDF requires at least 1 PDF file.' },
-  'docx-to-pdf':      { accept: ['.docx', '.doc'], minInputs: 1, maxInputs: 50, errorMsg: 'Word to PDF requires at least 1 Word file (.docx, .doc).' },
-  'image-to-pdf':     { accept: ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif', '.zip'], minInputs: 1, maxInputs: 50, errorMsg: 'Image to PDF requires at least 1 image file or ZIP archive.' },
-  'image-compressor': { accept: ['.png', '.jpg', '.jpeg', '.webp'], minInputs: 1, maxInputs: 50, errorMsg: 'Image Compressor requires at least 1 image file.' },
-  'image-converter':  { accept: ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif'], minInputs: 1, maxInputs: 50, errorMsg: 'Image Converter requires at least 1 image file.' },
-  'image-resizer':    { accept: ['.png', '.jpg', '.jpeg', '.webp'], minInputs: 1, maxInputs: 50, errorMsg: 'Image Resizer requires at least 1 image file.' },
-  'ocr-pdf':          { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'OCR PDF requires at least 1 PDF file.' },
-  'un-ocr-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Un-OCR PDF requires at least 1 PDF file.' },
-  'text-to-pdf':      { accept: ['.txt', '.md'], minInputs: 1, maxInputs: 50, errorMsg: 'Text to PDF requires at least 1 Text file (.txt, .md).' },
-  'add-watermark':    { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Add Watermark requires at least 1 PDF file.' },
-  'add-page-numbers': { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Add Page Numbers requires at least 1 PDF file.' },
-  'remove-pages':     { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Remove Pages requires at least 1 PDF file.' },
-  'extract-pages':    { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Extract Pages requires at least 1 PDF file.' },
-  'organize-pdf':     { accept: ['.pdf'], minInputs: 1, maxInputs: 1, errorMsg: 'Organize PDF requires exactly 1 PDF file.' },
-  'crop-pdf':         { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Crop PDF requires at least 1 PDF file.' },
-  'edit-pdf':         { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Edit PDF requires at least 1 PDF file.' },
-  'pdf-forms':        { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Fill PDF Forms requires at least 1 PDF file.' },
-  'sign-pdf':         { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Sign PDF requires at least 1 PDF file.' },
-  'repair-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Repair PDF requires at least 1 PDF file.' },
-  'qr-generator':     { accept: [], minInputs: 0, maxInputs: 0, errorMsg: 'QR Generator does not require input files.' },
-  'excel-to-pdf':     { accept: ['.xlsx', '.xls', '.csv'], minInputs: 1, maxInputs: 50, errorMsg: 'Excel to PDF requires at least 1 Excel file.' },
-  'powerpoint-to-pdf':{ accept: ['.pptx', '.ppt'], minInputs: 1, maxInputs: 50, errorMsg: 'PowerPoint to PDF requires at least 1 PowerPoint file.' },
-  'html-to-pdf':      { accept: ['.html', '.htm'], minInputs: 1, maxInputs: 50, errorMsg: 'HTML to PDF requires at least 1 HTML file.' },
-  'pdf-to-word':      { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'PDF to Word requires at least 1 PDF file.' },
-  'pdf-to-excel':     { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'PDF to Excel requires at least 1 PDF file.' },
-  'pdf-to-powerpoint':{ accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'PDF to PowerPoint requires at least 1 PDF file.' },
-  'pdf-to-image':     { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'PDF to Image requires at least 1 PDF file.' },
-  'ai-translator':    { accept: ['.pdf', '.txt', '.md', '.docx'], minInputs: 1, maxInputs: 50, errorMsg: 'AI Translator requires at least 1 document file.' },
-  'ai-summarizer':    { accept: ['.pdf', '.docx', '.txt', '.md'], minInputs: 1, maxInputs: 50, errorMsg: 'AI Summarizer requires at least 1 document file.' },
-  'unzip-file':       { accept: ['.zip'], minInputs: 1, maxInputs: 50, errorMsg: 'Unzip/Expand File requires at least 1 ZIP archive.' },
-  'protect-pdf':      { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Protect PDF requires at least 1 PDF file.' },
-  'unlock-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Unlock PDF requires at least 1 PDF file.' },
-  'redact-pdf':       { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Redact PDF requires at least 1 PDF file.' },
-  'compare-pdf':      { accept: ['.pdf'], minInputs: 2, maxInputs: 2, errorMsg: 'Compare PDF requires exactly 2 PDF files.' },
-  'pdf-to-pdfa':      { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'PDF to PDF/A requires at least 1 PDF file.' },
-  'url-to-pdf':       { accept: [], minInputs: 0, maxInputs: 0, errorMsg: 'URL to PDF does not require input files.' },
-  'bates-numbering':  { accept: ['.pdf'], minInputs: 1, maxInputs: 50, errorMsg: 'Bates Numbering requires at least 1 PDF file.' },
-  'condition-router': { accept: ['.pdf', '.docx', '.xlsx', '.png', '.jpg'], minInputs: 1, maxInputs: 50, errorMsg: 'Condition Router requires at least 1 input document.' },
-  'scan-to-pdf':      { accept: [], minInputs: 0, maxInputs: 0, errorMsg: 'Scan to PDF accesses camera input directly.' },
-  'conversion-pipeline': { accept: ['.pdf', '.docx', '.xlsx', '.pptx', '.png', '.jpg', '.txt'], minInputs: 1, maxInputs: 50, errorMsg: 'Conversion Pipeline requires at least 1 document.' },
-  'resume-builder':   { accept: [], minInputs: 0, maxInputs: 0, errorMsg: 'Resume Builder creates documents from form templates.' },
-  'document-viewer':  { accept: ['.pdf', '.docx', '.xlsx', '.txt'], minInputs: 1, maxInputs: 1, errorMsg: 'Document Viewer requires 1 document to display.' },
+// Canonical Tool Validation derived from TOOLS_MANIFEST
+const TOOL_VALIDATION = getToolValidation();
+
+/**
+ * Disconnects a cable connection in the operations state cleanly.
+ * Handles both direct input IDs and rewritten output file node IDs (ws-out-*),
+ * as well as parameter connections and input port mappings.
+ */
+export const disconnectCableState = (operations, fromId, toId) => {
+  if (!Array.isArray(operations)) return [];
+
+  return operations.map(op => {
+    // 1. If toId is an operation node, fromId is connected as an input (or is an output node of an upstream operator)
+    if (op.id === toId) {
+      const idsToRemove = new Set([fromId]);
+
+      // If fromId is an output node (e.g. ws-out-*), trace it back to its upstream operator
+      const upstreamOp = operations.find(o => o.outputId === fromId || (Array.isArray(o.outputIds) && o.outputIds.includes(fromId)));
+      if (upstreamOp) {
+        idsToRemove.add(upstreamOp.id);
+      }
+
+      // Also trace if fromId starts with ws-out- and any operator produced it
+      if (typeof fromId === 'string' && fromId.startsWith('ws-out-')) {
+        operations.forEach(o => {
+          if (o.outputId === fromId || (Array.isArray(o.outputIds) && o.outputIds.includes(fromId))) {
+            idsToRemove.add(o.id);
+          }
+        });
+      }
+
+      const nextInputs = (op.inputIds || []).filter(id => !idsToRemove.has(id));
+
+      // Clean up inputPortMap
+      const nextInputPortMap = op.inputPortMap ? { ...op.inputPortMap } : {};
+      for (const id of idsToRemove) {
+        delete nextInputPortMap[id];
+      }
+
+      // Clean up parameter connections in params
+      let nextParams = op.params ? { ...op.params } : {};
+      if (op.params) {
+        for (const [key, val] of Object.entries(op.params)) {
+          if (typeof val === 'string' && idsToRemove.has(val)) {
+            delete nextParams[key];
+          }
+        }
+      }
+
+      // Clean up paramConnections if present
+      let nextParamConnections = op.paramConnections ? { ...op.paramConnections } : undefined;
+      if (nextParamConnections) {
+        for (const [key, val] of Object.entries(nextParamConnections)) {
+          if (typeof val === 'string' && idsToRemove.has(val)) {
+            delete nextParamConnections[key];
+          }
+        }
+      }
+
+      const nextPrevInputs = op.prevInputIds ? op.prevInputIds.filter(id => !idsToRemove.has(id)) : undefined;
+
+      return {
+        ...op,
+        inputIds: nextInputs,
+        ...(op.inputPortMap ? { inputPortMap: nextInputPortMap } : {}),
+        params: nextParams,
+        ...(nextParamConnections ? { paramConnections: nextParamConnections } : {}),
+        ...(nextPrevInputs ? { prevInputIds: nextPrevInputs } : {}),
+        status: nextInputs.length === 0 ? 'idle' : op.status,
+        progress: nextInputs.length === 0 ? 0 : op.progress
+      };
+    }
+
+    // 2. If fromId is an operation node, and toId is its output file node
+    if (op.id === fromId && (op.outputId === toId || (Array.isArray(op.outputIds) && op.outputIds.includes(toId)))) {
+      const nextOutputIds = Array.isArray(op.outputIds) ? op.outputIds.filter(id => id !== toId) : [];
+      const hasNoRemainingOutput = nextOutputIds.length === 0 && (!op.outputId || op.outputId === toId);
+      return {
+        ...op,
+        outputId: op.outputId === toId ? (nextOutputIds[nextOutputIds.length - 1] || null) : op.outputId,
+        outputIds: nextOutputIds,
+        status: hasNoRemainingOutput ? 'idle' : op.status,
+        progress: hasNoRemainingOutput ? 0 : op.progress
+      };
+    }
+
+    return op;
+  });
 };
 
-// Startup assertion to ensure TOOL_REGISTRY and TOOL_VALIDATION are synchronized in development
-(() => {
-  if (import.meta.env.DEV) {
-    const registryKeys = Object.keys(TOOL_REGISTRY);
-    const validationKeys = Object.keys(TOOL_VALIDATION);
-    
-    for (const key of registryKeys) {
-      if (!TOOL_VALIDATION[key]) {
-        console.error(`[Assertion Error] Tool ID "${key}" is defined in TOOL_REGISTRY but missing from TOOL_VALIDATION.`);
-      } else {
-        const regAccept = TOOL_REGISTRY[key].accept || [];
-        const valAccept = TOOL_VALIDATION[key].accept || [];
-        if (JSON.stringify(regAccept.slice().sort()) !== JSON.stringify(valAccept.slice().sort())) {
-          console.warn(`[Assertion Warning] Tool "${key}" accept extensions mismatch: Registry=[${regAccept}], Validation=[${valAccept}]`);
-        }
-        if (TOOL_REGISTRY[key].minInputs !== TOOL_VALIDATION[key].minInputs) {
-          console.warn(`[Assertion Warning] Tool "${key}" minInputs mismatch: Registry=${TOOL_REGISTRY[key].minInputs}, Validation=${TOOL_VALIDATION[key].minInputs}`);
-        }
-        if (TOOL_REGISTRY[key].maxInputs !== TOOL_VALIDATION[key].maxInputs) {
-          console.warn(`[Assertion Warning] Tool "${key}" maxInputs mismatch: Registry=${TOOL_REGISTRY[key].maxInputs}, Validation=${TOOL_VALIDATION[key].maxInputs}`);
-        }
-      }
-    }
+/**
+ * Determines whether a drop point (dropX, dropY) falls within an operator's bounds.
+ * Dynamically measures DOM height (cardElement.offsetHeight) or defaults to 380px,
+ * cleanly accommodating 150px to 450px operator cards.
+ */
+export const isPointInOperatorDropTarget = (op, dropX, dropY, cardElement = null) => {
+  if (!op || op.x === undefined || op.y === undefined) return false;
+  const domEl = cardElement || (typeof document !== 'undefined' ? document.getElementById(`op-node-${op.id}`) : null);
+  const opWidth = domEl?.offsetWidth || (op.status === 'idle' ? 210 : 160);
+  const opHeight = domEl?.offsetHeight || 380;
+  return (
+    dropX >= op.x - 30 &&
+    dropX <= op.x + opWidth + 30 &&
+    dropY >= op.y - 30 &&
+    dropY <= op.y + opHeight + 30
+  );
+};
 
-    for (const key of validationKeys) {
-      if (!TOOL_REGISTRY[key]) {
-        console.error(`[Assertion Error] Tool ID "${key}" is defined in TOOL_VALIDATION but missing from TOOL_REGISTRY.`);
+/**
+ * Computes total input file size in bytes for an operator from workspace queue or upstream operators.
+ */
+export const calculateInputSize = (targetOp, workspaceQueue = [], operations = []) => {
+  if (!targetOp || !Array.isArray(targetOp.inputIds)) return 0;
+  return targetOp.inputIds.reduce((acc, inputId) => {
+    if (typeof inputId === 'string' && inputId.startsWith('op-')) {
+      const upstream = operations.find(o => o.id === inputId);
+      if (upstream) {
+        if (upstream.telemetry?.outputSize) {
+          return acc + upstream.telemetry.outputSize;
+        }
+        if (upstream.outputId) {
+          const fileNode = workspaceQueue.find(q => q.id === upstream.outputId);
+          return acc + (fileNode?.size || fileNode?.resultBlob?.size || fileNode?.file?.size || 0);
+        }
       }
+    } else {
+      const fileNode = workspaceQueue.find(q => q.id === inputId);
+      return acc + (fileNode?.size || fileNode?.file?.size || fileNode?.resultBlob?.size || 0);
     }
+    return acc;
+  }, 0);
+};
+
+/**
+ * Calculates persistent operator execution telemetry:
+ * duration, throughput (MB/s), size delta percentage, and output size.
+ */
+export const computeNodeTelemetry = ({ startTime, durationMs, inputSize = 0, outputSize = 0 }) => {
+  const elapsedMs = durationMs !== undefined ? durationMs : (startTime ? Math.max(0, Date.now() - startTime) : 0);
+  const durationSec = (elapsedMs / 1000).toFixed(1);
+  const inSize = Number(inputSize) || 0;
+  const outSize = Number(outputSize) || 0;
+  const throughputMbSec = elapsedMs > 0 && inSize > 0 
+    ? ((inSize / (1024 * 1024)) / (elapsedMs / 1000)).toFixed(1) 
+    : null;
+  const sizeDeltaPct = inSize > 0 && outSize > 0 
+    ? Math.round(((outSize - inSize) / inSize) * 100) 
+    : null;
+  return { durationSec, throughputMbSec, sizeDeltaPct, outputSize: outSize };
+};
+
+/**
+ * Formats glassmorphic telemetry pill text matching specification:
+ * ⚡ ${telemetry.durationSec}s · ${telemetry.throughputMbSec ? telemetry.throughputMbSec + ' MB/s · ' : ''}${telemetry.sizeDeltaPct ? (telemetry.sizeDeltaPct > 0 ? '+' : '') + telemetry.sizeDeltaPct + '%' : ''}
+ */
+export const formatTelemetryPill = (telemetry) => {
+  if (!telemetry) return '';
+  const { durationSec, throughputMbSec, sizeDeltaPct } = telemetry;
+  const throughputPart = throughputMbSec ? `${throughputMbSec} MB/s · ` : '';
+  const deltaPart = (sizeDeltaPct !== null && sizeDeltaPct !== undefined) 
+    ? `${sizeDeltaPct > 0 ? '+' : ''}${sizeDeltaPct}%` 
+    : '';
+  const raw = `⚡ ${durationSec}s · ${throughputPart}${deltaPart}`;
+  return raw.replace(/ · $/, '');
+};
+
+const formatStatusText = (st) => {
+  if (!st) return 'Processing';
+  if (typeof st === 'string') return st;
+  if (typeof st === 'object') {
+    if (st.currentFile) {
+      const idx = typeof st.currentIndex === 'number' ? `${st.currentIndex + 1}/${st.totalFiles || '?'}: ` : '';
+      return `Merging ${idx}${st.currentFile}`;
+    }
+    if (st.stage) return String(st.stage);
+    return 'Processing';
   }
-})();
+  return String(st);
+};
 
 export default function StitchCanvas({
   workspaceQueue,
@@ -221,9 +323,16 @@ export default function StitchCanvas({
   const operationsRef = useRef(operations);
   operationsRef.current = operations;
 
+  // Connection topology signature — prevents running cycle & type validation on progress ticks
+  const connectionTopologyKey = useMemo(() => {
+    const qKey = workspaceQueue.map(f => `${f.id}:${f.name}`).join('|');
+    const opKey = operations.map(o => `${o.id}:${o.toolId}:${(o.inputIds || []).join(',')}`).join('|');
+    return `${qKey}__${opKey}`;
+  }, [workspaceQueue, operations]);
+
   const canvasIssues = useMemo(() => {
     return validateCanvasConnections(operations, workspaceQueue);
-  }, [operations, workspaceQueue]);
+  }, [connectionTopologyKey]);
 
 
 
@@ -410,51 +519,35 @@ export default function StitchCanvas({
 
     let ext = '';
     let fileName = '';
+    let sourceOutputType = null;
     
     if (sourceId.startsWith('op-')) {
       const sourceOp = operations.find(o => o.id === sourceId);
       if (!sourceOp) return false;
       
+      const sourceMeta = TOOL_REGISTRY[sourceOp.toolId] || TOOLS_MANIFEST[sourceOp.toolId];
+      sourceOutputType = sourceMeta?.outputType || null;
+
       if (sourceOp.status === 'completed' && sourceOp.outputId) {
         const fileNode = workspaceQueue.find(q => q.id === sourceOp.outputId);
         if (fileNode) {
           fileName = fileNode.file?.name || fileNode.name || '';
-          ext = '.' + fileName.split('.').pop().toLowerCase();
+          ext = normalizeExtension(fileName);
         }
       }
       
       if (!ext) {
-        const toolId = sourceOp.toolId;
-        if (toolId === 'split-pdf' || toolId === 'pdf-to-image') {
-          ext = '.zip';
-          fileName = 'output.zip';
-        } else if (toolId === 'pdf-to-word') {
-          ext = '.docx';
-          fileName = 'output.docx';
-        } else if (toolId === 'pdf-to-excel') {
-          ext = '.xlsx';
-          fileName = 'output.xlsx';
-        } else if (toolId === 'pdf-to-powerpoint') {
-          ext = '.pptx';
-          fileName = 'output.pptx';
-        } else if (toolId === 'ai-translator') {
-          ext = '.pdf';
-          fileName = 'output.pdf';
-        } else if (['image-compressor', 'image-converter', 'image-resizer'].includes(toolId)) {
-          ext = '.png';
-          fileName = 'output.png';
-        } else if (toolId === 'unzip-file') {
-          return true;
-        } else {
-          ext = '.pdf';
-          fileName = 'output.pdf';
-        }
+        ext = sourceMeta?.outExt || '.pdf';
+        fileName = `output${ext}`;
       }
     } else {
       const fileNode = workspaceQueue.find(q => q.id === sourceId);
       if (fileNode) {
         fileName = fileNode.file?.name || fileNode.name || '';
-        ext = '.' + fileName.split('.').pop().toLowerCase();
+        ext = normalizeExtension(fileName);
+        if (fileNode.outputType) {
+          sourceOutputType = fileNode.outputType;
+        }
       }
     }
 
@@ -479,30 +572,25 @@ export default function StitchCanvas({
       return false;
     }
 
-    if (validation.accept.length === 0) return true;
+    if (!validation.accept || validation.accept.length === 0) return true;
 
-    // Allow .zip files to be connected to any batchable operator as a wildcard
-    const isValid = ext === '.zip' || validation.accept.some(acc => {
+    // Type Compatibility Check (No .zip wildcard)
+    const acceptsDirectly = validation.accept.some(acc => {
       if (acc === 'image/*') {
-        return ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif'].includes(ext);
+        return ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif', '.tiff'].includes(ext);
       }
-      return acc === ext;
+      return acc.toLowerCase() === ext.toLowerCase();
     });
 
-    if (!isValid) {
-      // Check if we can auto-convert this format to PDF
-      const canAutoConvert = (
-        ext === '.docx' || ext === '.doc' || 
-        ext === '.xlsx' || ext === '.xls' || ext === '.csv' || 
-        ext === '.pptx' || ext === '.ppt' || 
-        ext === '.html' || 
-        ext === '.zip' || 
-        ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif'].includes(ext)
-      ) && validation.accept.includes('.pdf');
+    if (!acceptsDirectly) {
+      // Check if BFS conversion path exists
+      const sourceDesc = sourceOutputType || (ext === '.zip' ? { type: 'archive', contains: 'any' } : ext);
+      const conversionPath = findConversionPath(sourceDesc, targetOp.toolId);
 
-      if (canAutoConvert) {
+      if (conversionPath && conversionPath.length > 0) {
         if (!silent) {
-          showToast(`Connected! Format mismatch detected. Click 'Run Action' or 'Auto-Heal' to convert automatically.`, 'warning');
+          const healToolName = TOOL_REGISTRY[conversionPath[0]]?.name || conversionPath[0];
+          showToast(`Connected! Pipeline will automatically adapt via '${healToolName}'.`, 'warning');
         }
         return true;
       }
@@ -539,9 +627,20 @@ export default function StitchCanvas({
 
   // Command bar States
   const [commandInput, setCommandInput] = useState('');
+  const commandTextareaRef = useRef(null);
   const [isThinking, setIsThinking] = useState(false);
   const [thinkingMessage, setThinkingMessage] = useState('Thinking...');
   const [showCommandsMenu, setShowCommandsMenu] = useState(false);
+
+  // Auto-adjust command textarea height up to 160px with invisible scroller (Gemini / ChatGPT style)
+  useEffect(() => {
+    const el = commandTextareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    const maxHeight = 160;
+    const scrollH = el.scrollHeight;
+    el.style.height = `${Math.min(scrollH, maxHeight)}px`;
+  }, [commandInput]);
 
   // File Picker Ref
   const fileInputRef = useRef(null);
@@ -672,6 +771,19 @@ export default function StitchCanvas({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [workspaceQueue, operations, selectedNodeIds, focusedNodeId]);
 
+  // Clarification Modal Escape key listener
+  useEffect(() => {
+    if (!clarificationPrompt) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        clarificationPrompt.resolve(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [clarificationPrompt]);
+
   // IndexedDB Auto-save & Restore State
   const isStateLoadedRef = useRef(false);
 
@@ -716,7 +828,7 @@ export default function StitchCanvas({
           const decodedOps = decodeFlowFromUrl(flowHash);
           if (decodedOps && decodedOps.length > 0) {
             setOperations(decodedOps);
-            showToast('✨ Loaded shared DAG workflow from link!', 'success');
+            showToast('Loaded shared DAG workflow from link!', 'success');
           }
         }
       } catch (err) {
@@ -728,10 +840,20 @@ export default function StitchCanvas({
     restoreState();
   }, []);
 
+  // Structural topology hash — gates IndexedDB writes strictly to node additions, moves, parameter edits,
+  // permanently decoupling storage serialization from runtime op.progress (0-100%) ticks.
+  const structuralTopologyHash = useMemo(() => {
+    return computeStructuralTopologyHash(workspaceQueue, operations, panOffset, zoom, autoFitViewport);
+  }, [workspaceQueue, operations, panOffset, zoom, autoFitViewport]);
+
+  const lastSavedTopologyRef = useRef('');
+
   useEffect(() => {
     if (!isStateLoadedRef.current) return;
+    if (structuralTopologyHash === lastSavedTopologyRef.current) return;
     
     const handler = setTimeout(async () => {
+      lastSavedTopologyRef.current = structuralTopologyHash;
       const stateToSave = {
         workspaceQueue,
         operations,
@@ -745,10 +867,10 @@ export default function StitchCanvas({
       } catch (err) {
         console.error('Failed to auto-save canvas:', err);
       }
-    }, 100);
+    }, 250);
 
     return () => clearTimeout(handler);
-  }, [workspaceQueue, operations, panOffset, zoom, autoFitViewport]);
+  }, [structuralTopologyHash, workspaceQueue, operations, panOffset, zoom, autoFitViewport]);
 
 
   // Quick Action Tools depending on active file type (supporting operator outputs for chaining)
@@ -906,16 +1028,7 @@ export default function StitchCanvas({
       const dropY = (e.clientY - rect.top - panOffset.y) / zoom;
 
       // Find target operator card bounding box (expanded dimensions for settings inputs)
-      const targetOp = operations.find(op => {
-        const opWidth = op.status === 'idle' ? 210 : 160;
-        const opHeight = 150; // Dynamic height range including parameters and inputs list
-        return (
-          dropX >= op.x - 30 &&
-          dropX <= op.x + opWidth + 30 &&
-          dropY >= op.y - 30 &&
-          dropY <= op.y + opHeight + 30
-        );
-      });
+      const targetOp = operations.find(op => isPointInOperatorDropTarget(op, dropX, dropY));
 
       if (targetOp) {
         if (targetOp.id !== draggingCable.fromId) {
@@ -1342,8 +1455,9 @@ export default function StitchCanvas({
 
   // Calculate box enclosing all nodes and fit viewport
   const handleFitToView = (customQueue, customOps) => {
-    const q = customQueue || workspaceQueue;
-    const ops = customOps || operations;
+    const q = Array.isArray(customQueue) ? customQueue : workspaceQueue;
+    const ops = Array.isArray(customOps) ? customOps : operations;
+    if (!Array.isArray(q) || !Array.isArray(ops)) return;
     if (q.length === 0 && ops.length === 0) return;
     
     let minX = Infinity;
@@ -1529,7 +1643,7 @@ export default function StitchCanvas({
     const outputId = `ws-out-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
     
     const getMimeType = (fileName) => {
-      const ext = fileName.split('.').pop().toLowerCase();
+      const ext = (fileName || '').split('.').pop().toLowerCase();
       const map = {
         pdf: 'application/pdf',
         png: 'image/png',
@@ -1547,12 +1661,12 @@ export default function StitchCanvas({
       return map[ext] || 'application/octet-stream';
     };
 
-    // Calculate compact multi-column grid coordinates (4 columns per row)
-    const count = allocatedPositions.length;
-    const col = count % 4;
-    const row = Math.floor(count / 4);
-    let safeX = x + 280 + col * 260;
-    let safeY = y + row * 160;
+    const currentQueue = workspaceQueueRef.current || workspaceQueue || [];
+    const currentOps = operationsRef.current || operations || [];
+    const positionsList = Array.isArray(allocatedPositions) ? allocatedPositions : [];
+
+    let safeX = x + 300;
+    let safeY = y;
     let collision = true;
     let iterations = 0;
     
@@ -1560,20 +1674,20 @@ export default function StitchCanvas({
       collision = false;
       iterations++;
       
-      for (const node of [...workspaceQueue, ...operations]) {
+      for (const node of [...currentQueue, ...currentOps]) {
         const dx = Math.abs((node.x || 100) - safeX);
         const dy = Math.abs((node.y || 100) - safeY);
-        if (dx < 250 && dy < 150) {
+        if (dx < 280 && dy < 180) {
           collision = true;
           break;
         }
       }
       
       if (!collision) {
-        for (const pos of allocatedPositions) {
+        for (const pos of positionsList) {
           const dx = Math.abs(pos.x - safeX);
           const dy = Math.abs(pos.y - safeY);
-          if (dx < 250 && dy < 150) {
+          if (dx < 280 && dy < 180) {
             collision = true;
             break;
           }
@@ -1581,18 +1695,20 @@ export default function StitchCanvas({
       }
       
       if (collision) {
-        const nextIdx = count + iterations;
-        safeX = x + 280 + (nextIdx % 4) * 260;
-        safeY = y + Math.floor(nextIdx / 4) * 160;
+        safeY += 180;
+        if (safeY > y + 540) {
+          safeX += 280;
+          safeY = y;
+        }
       }
     }
 
-    allocatedPositions.push({ x: safeX, y: safeY });
+    positionsList.push({ x: safeX, y: safeY });
 
     const outputNode = {
       id: outputId,
       name,
-      size: blob.size,
+      size: blob?.size || 0,
       type: getMimeType(name),
       status: 'Completed',
       progress: 100,
@@ -1613,36 +1729,13 @@ export default function StitchCanvas({
 
   const handleDisconnectCable = (fromId, toId) => {
     pushHistoryState();
-    
-    // 1. If toId is an operation node, fromId is connected as an input
-    setOperations(prev => prev.map(op => {
-      if (op.id === toId) {
-        const nextInputs = op.inputIds.filter(id => id !== fromId);
-        return {
-          ...op,
-          inputIds: nextInputs,
-          status: nextInputs.length === 0 ? 'idle' : op.status,
-          progress: nextInputs.length === 0 ? 0 : op.progress
-        };
-      }
-      // 2. If fromId is an operation node, and toId is its output file node
-      if (op.id === fromId && (op.outputId === toId || op.outputIds?.includes(toId))) {
-        return {
-          ...op,
-          outputId: null,
-          outputIds: [],
-          status: 'idle',
-          progress: 0
-        };
-      }
-      return op;
-    }));
+    setOperations(prev => disconnectCableState(prev, fromId, toId));
   };
 
   const handleExportWorkflow = () => {
     try {
       if (operations.length === 0) {
-        showToast('⚠️ No tools on canvas to export.');
+        showToast('No tools on canvas to export.');
         return;
       }
       
@@ -1659,15 +1752,15 @@ export default function StitchCanvas({
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(workflowOps, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `docforge_workflow_${Date.now()}.json`);
+      downloadAnchor.setAttribute("download", `docscalar_workflow_${Date.now()}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
       
-      showToast('📥 Workflow exported successfully!');
+      showToast('Workflow exported successfully!');
     } catch (err) {
       console.error(err);
-      showToast('❌ Failed to export workflow.');
+      showToast('Failed to export workflow.');
     }
   };
 
@@ -1704,10 +1797,10 @@ export default function StitchCanvas({
 
         pushHistoryState();
         setOperations(validatedOps);
-        showToast('📤 Workflow imported successfully!');
+        showToast('Workflow imported successfully!');
       } catch (err) {
         console.error(err);
-        showToast('❌ Invalid workflow file format.');
+        showToast('Invalid workflow file format.');
       }
     };
     reader.readAsText(file);
@@ -1868,7 +1961,7 @@ export default function StitchCanvas({
     speakAnnouncement(`Added ${actionId.replace('-', ' ')} operator to canvas.`);
 
     if (compatibleItems.length === 0 && items.length > 0) {
-      showToast(`⚠️ Incompatible files selected. Spawning empty ${actionId.replace('-', ' ')} tool.`, 'warning');
+      showToast(`Incompatible files selected. Spawning empty ${actionId.replace('-', ' ')} tool.`, 'warning');
     }
 
     return opId;
@@ -1915,7 +2008,7 @@ export default function StitchCanvas({
 
     setOperations(prev => [...prev, ...spawnedOps]);
     setRecipesMenuOpen(false);
-    showToast(`✨ Loaded ${preset.name} blueprint! Connect your files to begin.`, 'success');
+    showToast(`Loaded ${preset.name} blueprint! Connect your files to begin.`, 'success');
   };
 
   const handleShareFlow = () => {
@@ -1926,7 +2019,7 @@ export default function StitchCanvas({
     const flowHash = encodeFlowToUrl(operations);
     const shareUrl = `${window.location.origin}/canvas?flow=${flowHash}`;
     navigator.clipboard.writeText(shareUrl).then(() => {
-      showToast('🔗 Shareable workflow link copied to clipboard!', 'success');
+      showToast('Shareable workflow link copied to clipboard!', 'success');
     }).catch(() => {
       showToast('Failed to copy link to clipboard', 'error');
     });
@@ -1941,7 +2034,7 @@ export default function StitchCanvas({
     if (!flowName || !flowName.trim()) return;
     saveFlowToStorage(flowName.trim(), operations);
     setCustomFlows(loadSavedFlows());
-    showToast(`💾 Saved custom blueprint "${flowName.trim()}"!`, 'success');
+    showToast(`Saved custom blueprint "${flowName.trim()}"!`, 'success');
   };
 
   const applyCustomFlow = (savedFlow) => {
@@ -1969,7 +2062,7 @@ export default function StitchCanvas({
 
     setOperations(prev => [...prev, ...spawnedOps]);
     setRecipesMenuOpen(false);
-    showToast(`✨ Loaded "${savedFlow.name}" blueprint!`, 'success');
+    showToast(`Loaded "${savedFlow.name}" blueprint!`, 'success');
   };
 
   // Click-to-connect handler for selected nodes to operator input port
@@ -2019,20 +2112,19 @@ export default function StitchCanvas({
     if (!activeStudio) return;
     const { opId } = activeStudio;
     
-    // Update parameters
-    setOperations(prev => prev.map(op => {
+    // Synchronously compute updated operations array to eliminate stale closure race conditions
+    const currentOps = operationsRef.current || operations;
+    const updatedOps = currentOps.map(op => {
       if (op.id === opId) {
         return { ...op, params: finalParams };
       }
       return op;
-    }));
-    
-    // Run tool with fromStudioCommit = true
-    setTimeout(() => {
-      executeOperator(opId, null, null, true).catch(() => {});
-    }, 50);
-    
+    });
+    setOperations(updatedOps);
     setActiveStudio(null);
+
+    // Execute operator passing synchronously computed latestOps
+    executeOperator(opId, null, updatedOps, true).catch(() => {});
   };
 
   // Execute Operator WASM logic on Run Click (supporting automated recursive pipeline execution)
@@ -2056,7 +2148,7 @@ export default function StitchCanvas({
 
   // Retry a failed operator execution
   const retryOperator = (opId) => {
-    setOperations(prev => prev.map(o => o.id === opId ? { ...o, status: 'idle', progress: 0 } : o));
+    setOperations(prev => prev.map(o => o.id === opId ? { ...o, status: 'idle', progress: 0, error: null, telemetry: null } : o));
     // Remove the failed output node if it exists
     const op = operations.find(o => o.id === opId);
     if (op && op.outputId) {
@@ -2391,7 +2483,27 @@ export default function StitchCanvas({
     } else if (actionId === 'add-watermark') {
       return await addWatermark(mainFile, { text: params.text || 'CONFIDENTIAL', opacity: params.opacity || 0.5 }, progressCb);
     } else if (actionId === 'add-page-numbers') {
-      return await addPageNumbers(mainFile, { formatStr: params.format || 'Page {n} of {total}', position: params.position || 'bottom-right', startNumber: params.startNumber || 1 }, progressCb);
+      return await addPageNumbers(mainFile, { 
+        formatStr: params.format || 'Page {n} of {total}', 
+        position: params.position || 'bottom-right', 
+        startNumber: params.startNumber || 1,
+        shrinkToFit: Boolean(params.shrinkToFit),
+        shieldMode: params.shieldMode || 'auto',
+        numberingStyle: params.numberingStyle || 'arabic'
+      }, progressCb);
+    } else if (actionId === 'bates-numbering') {
+      const { applyBatesNumbering } = await import('../engines/pdf/batesNumbering.js');
+      const batesBytes = await applyBatesNumbering(mainFile, {
+        prefix: params.prefix || 'CONF-',
+        suffix: params.suffix || '',
+        startNumber: params.startNumber || 1,
+        digits: params.digits || 6,
+        position: params.position || 'bottom-right',
+        shrinkToFit: Boolean(params.shrinkToFit),
+        shieldMode: params.shieldMode || 'auto'
+      });
+      progressCb(100);
+      return new Blob([batesBytes], { type: 'application/pdf' });
     } else if (actionId === 'ocr-pdf') {
       const language = params.language || 'eng';
       try {
@@ -2447,9 +2559,22 @@ export default function StitchCanvas({
       const zipContent = await zip.loadAsync(mainFile);
       const entries = Object.values(zipContent.files).filter(e => !e.dir);
       progressCb(100);
-      return entries.length === 1 ? await entries[0].async('blob') : mainFile;
+      if (entries.length >= 1) {
+        const outputs = [];
+        for (const entry of entries) {
+          const blob = await entry.async('blob');
+          outputs.push({ blob, name: entry.name });
+        }
+        return {
+          blob: outputs[0].blob,
+          name: outputs[0].name,
+          outputs
+        };
+      }
+      return mainFile;
     } else if (actionId === 'repair-pdf') {
-      return await repairPdf(mainFile, progressCb);
+      const repairRes = await repairPdf(mainFile, { returnBlobOnly: true }, progressCb);
+      return repairRes instanceof Blob ? repairRes : (repairRes.blob || repairRes);
     } else if (actionId === 'bates-numbering') {
       const pdfBytes = await mainFile.arrayBuffer();
       const outputBytes = await applyBatesNumbering(pdfBytes, params);
@@ -2489,7 +2614,7 @@ export default function StitchCanvas({
       const bounds = params.bounds || { xPercent: 10, yPercent: 10, widthPercent: 80, heightPercent: 80 };
       return await cropPdf(mainFile, bounds, progressCb);
     } else if (actionId === 'edit-pdf') {
-      const annotations = params.annotations || [];
+      const annotations = params.overlays || params.annotations || [];
       return await editPdf(mainFile, annotations, progressCb);
     } else if (actionId === 'pdf-forms') {
       const fieldValues = params.fieldValues || {};
@@ -2597,7 +2722,7 @@ export default function StitchCanvas({
         // Bug #6 fix: check if downstream operator is destructive — show warning before auto-triggering
         const downstreamReg = TOOL_REGISTRY[downstreamOp.toolId];
         if (downstreamReg?.destructive) {
-          showToast(`⚠️ Auto-trigger skipped for '${downstreamReg.name}' — it is a destructive operation. Click Play to run it manually.`, 'warning');
+          showToast(`Auto-trigger skipped for '${downstreamReg.name}' — it is a destructive operation. Click Play to run it manually.`, 'warning');
         } else {
           setTimeout(() => {
             // CRITICAL: pass latestOpsList so executeOperator sees upstream as 'completed',
@@ -2717,7 +2842,7 @@ export default function StitchCanvas({
       const visited = _visitedSet || new Set();
     if (visited.has(opId)) {
       const cyclePath = [...visited, opId].join(' → ');
-      showToast(`🔴 Circular dependency detected: ${cyclePath}. Aborting.`);
+      showToast(`Circular dependency detected: ${cyclePath}. Aborting.`);
       speakAnnouncement('Circular dependency detected. Execution aborted.');
       throw new Error(`Circular dependency: ${cyclePath}`);
     }
@@ -2754,7 +2879,7 @@ export default function StitchCanvas({
           name: baseFile.name,
           size: baseFile.size
         };
-        showToast("🚀 Fast Merge: Appending new PDFs to existing merge result!", "success");
+        showToast("Fast Merge: Appending new PDFs to existing merge result!", "success");
         speakAnnouncement("Incremental merge optimization active.");
       }
     }
@@ -2963,6 +3088,7 @@ export default function StitchCanvas({
       speakAnnouncement(`Started executing ${op.toolId.replace('-', ' ')}.`);
 
       // Start active execution timer
+      const startTime = Date.now();
       setOpTimers(prev => ({ ...prev, [opId]: 0 }));
       const timerInterval = setInterval(() => {
         setOpTimers(prev => {
@@ -2978,9 +3104,11 @@ export default function StitchCanvas({
           speakAnnouncement("Input is already unpacked. Skipping unzip step.");
           showToast("Skipped unzip: files are already extracted.", "info");
           
+          const inSize = calculateInputSize(op, currentQueue, operationsRef.current);
+          const telemetry = computeNodeTelemetry({ startTime, inputSize: inSize, outputSize: inSize });
           const outputIds = finalItems.map(item => item.id);
           const latestOpsAfterUnzip = operationsRef.current.map(o =>
-            o.id === opId ? { ...o, outputId: outputIds[outputIds.length - 1], outputIds, status: 'completed', progress: 100 } : o
+            o.id === opId ? { ...o, outputId: outputIds[outputIds.length - 1], outputIds, status: 'completed', progress: 100, telemetry } : o
           );
           setOperations(latestOpsAfterUnzip);
           
@@ -2995,7 +3123,7 @@ export default function StitchCanvas({
 
         const mainFile = finalItems[0].file;
         const progressCb = (pct, statusText) => {
-          setOperations(prev => prev.map(o => o.id === opId ? { ...o, progress: pct, statusText: statusText || 'Processing' } : o));
+          setOperations(prev => prev.map(o => o.id === opId ? { ...o, progress: pct, statusText: formatStatusText(statusText) } : o));
         };
         
         progressCb(10);
@@ -3369,8 +3497,24 @@ export default function StitchCanvas({
             position, 
             startNumber,
             ptopTotalPages: params.ptopTotalPages,
-            ptopPageIndices: params.ptopPageIndices
+            ptopPageIndices: params.ptopPageIndices,
+            shrinkToFit: Boolean(params.shrinkToFit),
+            shieldMode: params.shieldMode || 'auto',
+            numberingStyle: params.numberingStyle || 'arabic'
           }, progressCb);
+        } else if (actionId === 'bates-numbering') {
+          const { applyBatesNumbering } = await import('../engines/pdf/batesNumbering.js');
+          const batesBytes = await applyBatesNumbering(mainFile, {
+            prefix: params.prefix || 'CONF-',
+            suffix: params.suffix || '',
+            startNumber: params.startNumber || 1,
+            digits: params.digits || 6,
+            position: params.position || 'bottom-right',
+            shrinkToFit: Boolean(params.shrinkToFit),
+            shieldMode: params.shieldMode || 'auto'
+          });
+          progressCb(100);
+          resultBlob = new Blob([batesBytes], { type: 'application/pdf' });
         } else if (actionId === 'remove-pages') {
           const pagesStr = params.pages || '';
           let indices = [];
@@ -3468,7 +3612,8 @@ export default function StitchCanvas({
           };
           resultBlob = await redactPdf(mainFile, redactParams, progressCb);
         } else if (actionId === 'repair-pdf') {
-          resultBlob = await repairPdf(mainFile, progressCb);
+          const repairRes = await repairPdf(mainFile, { returnBlobOnly: true }, progressCb);
+          resultBlob = repairRes instanceof Blob ? repairRes : (repairRes.blob || repairRes);
         } else if (actionId === 'ocr-pdf') {
           const language = params.language || 'eng';
           try {
@@ -3484,7 +3629,7 @@ export default function StitchCanvas({
           const scale = params.scale || 2.0;
           resultBlob = await unOcrPdf(mainFile, { scale }, progressCb);
         } else if (actionId === 'qr-generator') {
-          const text = params.text || 'https://docforge.app';
+          const text = params.text || 'https://docscalar.app';
           const size = params.size || 300;
           const darkColor = params.darkColor || '#000000';
           const lightColor = params.lightColor || '#ffffff';
@@ -3538,7 +3683,7 @@ export default function StitchCanvas({
             const text = mainFile.text ? await mainFile.text() : 'Document content summary';
             const lines = text.split('\n').filter(l => l.trim().length > 20);
             const topBullets = lines.slice(0, 5).map(l => `- ${l.trim()}`).join('\n');
-            const summaryMd = `# Executive Summary: ${mainFile.name}\n\n## Key Highlights\n${topBullets || '- Document content extracted and processed.'}\n\n---\n*Generated locally by DocForge Zero-Cost Intelligence Engine*`;
+            const summaryMd = `# Executive Summary: ${mainFile.name}\n\n## Key Highlights\n${topBullets || '- Document content extracted and processed.'}\n\n---\n*Generated locally by DocScalar Zero-Cost Intelligence Engine*`;
             resultBlob = new Blob([summaryMd], { type: 'text/markdown' });
             progressCb(100);
           }
@@ -3552,8 +3697,16 @@ export default function StitchCanvas({
           } else {
             resultBlob = mainFile;
           }
-          progressCb(100);
-        } else if (['pdf-to-word', 'pdf-to-excel', 'pdf-to-powerpoint', 'ai-translator', 'protect-pdf', 'unlock-pdf', 'redact-pdf', 'compare-pdf', 'pdf-to-pdfa', 'url-to-pdf'].includes(actionId)) {
+        } else if (actionId === 'pdf-to-word') {
+          try {
+            console.log(`[runEngine] Running Client Side PDF to Word for ${mainFile.name}...`);
+            resultBlob = await convertPdfToWord(mainFile, params, progressCb);
+            console.log(`[runEngine] Client Side PDF to Word completed successfully for ${mainFile.name}`);
+          } catch (clientErr) {
+            console.warn(`[runEngine] Client PDF to Word failed, falling back to backend Server Side:`, clientErr);
+            resultBlob = await executeServerJob(mainFile, actionId, params, progressCb);
+          }
+        } else if (['pdf-to-excel', 'pdf-to-powerpoint', 'ai-translator', 'protect-pdf', 'unlock-pdf', 'redact-pdf', 'compare-pdf', 'pdf-to-pdfa', 'url-to-pdf'].includes(actionId)) {
           resultBlob = await executeServerJob(mainFile, actionId, params, progressCb);
         } else {
           throw new Error(`Tool "${actionId}" is not yet wired for canvas execution.`);
@@ -3864,8 +4017,15 @@ export default function StitchCanvas({
           setWorkspaceQueue(prev => prev.filter(q => !unusedIds.includes(q.id)));
         }
 
+        // Calculate batch execution telemetry
+        const batchInputSize = (finalItems && finalItems.length > 0)
+          ? finalItems.reduce((acc, item) => acc + (item.file?.size || item.size || 0), 0)
+          : calculateInputSize(op, currentQueue, opsList);
+        const batchOutputSize = generatedOutputs.reduce((acc, b) => acc + (b.blob?.size || 0), 0);
+        const batchTelemetry = computeNodeTelemetry({ startTime, inputSize: batchInputSize, outputSize: batchOutputSize });
+
         // Mark operation as completed
-        setOperations(prev => prev.map(o => o.id === opId ? { ...o, outputId: lastOutputId, outputIds: batchOutputIds, status: 'completed', progress: 100 } : o));
+        setOperations(prev => prev.map(o => o.id === opId ? { ...o, outputId: lastOutputId, outputIds: batchOutputIds, status: 'completed', progress: 100, telemetry: batchTelemetry } : o));
         setAuditLogs(prev => [
           ...prev,
           {
@@ -3879,7 +4039,7 @@ export default function StitchCanvas({
         ]);
         speakAnnouncement(`Successfully processed batch operations.`);
 
-        const nextOps = opsList.map(o => o.id === opId ? { ...o, outputId: lastOutputId, outputIds: batchOutputIds, status: 'completed', progress: 100 } : o);
+        const nextOps = opsList.map(o => o.id === opId ? { ...o, outputId: lastOutputId, outputIds: batchOutputIds, status: 'completed', progress: 100, telemetry: batchTelemetry } : o);
 
         // CRITICAL: Release the lock early so downstream operators can acquire it immediately
         if (isTopLevel) {
@@ -3894,7 +4054,7 @@ export default function StitchCanvas({
         const mainFile = finalItems[0]?.file || null;
         console.log(`[executeOperator] Standard mode runEngine starting for ${actionId} with file:`, mainFile?.name);
         const progressCb = (pct, statusText) => {
-          setOperations(prev => prev.map(o => o.id === opId ? { ...o, progress: pct, statusText: statusText || 'Processing' } : o));
+          setOperations(prev => prev.map(o => o.id === opId ? { ...o, progress: pct, statusText: formatStatusText(statusText) } : o));
           if (pct > 0 && pct < 100 && pct % 25 === 0) {
             speakAnnouncement(`Processing ${actionId.replace('-', ' ')}. Progress ${pct} percent.`);
           }
@@ -4006,6 +4166,13 @@ export default function StitchCanvas({
           generatedOutputs.push({ blob: resultBlob, name: outputName });
         }
         
+        // Calculate execution telemetry (duration, throughput MB/s, delta percentage)
+        const finalInputSize = (finalItems && finalItems.length > 0)
+          ? finalItems.reduce((acc, item) => acc + (item.file?.size || item.size || 0), 0)
+          : calculateInputSize(op, currentQueue, opsList);
+        const finalOutputSize = resultBlob?.size || generatedOutputs.reduce((acc, o) => acc + (o.blob?.size || 0), 0) || 0;
+        const telemetry = computeNodeTelemetry({ startTime, inputSize: finalInputSize, outputSize: finalOutputSize });
+
         // Mark operation as completed and link output ID
         setOperations(prev => prev.map(o => o.id === opId ? { 
           ...o, 
@@ -4013,7 +4180,8 @@ export default function StitchCanvas({
           outputIds: outputIdsToTrack, 
           status: 'completed', 
           progress: 100,
-          prevInputIds: [...o.inputIds]
+          prevInputIds: [...o.inputIds],
+          telemetry
         } : o));
 
         const auditMessage = isSplitUnpack
@@ -4044,7 +4212,8 @@ export default function StitchCanvas({
           outputIds: outputIdsToTrack, 
           status: 'completed', 
           progress: 100,
-          prevInputIds: [...o.inputIds]
+          prevInputIds: [...o.inputIds],
+          telemetry
         } : o);
 
         // CRITICAL: Release the execution lock BEFORE triggering downstream operators.
@@ -4088,15 +4257,15 @@ export default function StitchCanvas({
         // Already handled by cancelOperator
       } else if (isTimeout) {
         speakAnnouncement('Operation timed out.');
-        showToast(`⏱️ ${actionId.replace('-', ' ')} timed out after ${EXECUTION_TIMEOUT_MS / 1000}s. Try a smaller file or use the dedicated tool page.`);
+        showToast(`${actionId.replace('-', ' ')} timed out after ${EXECUTION_TIMEOUT_MS / 1000}s. Try a smaller file or use the dedicated tool page.`);
       } else if (isCircular) {
         // Already toasted in the cycle detection block
       } else if (isUnsupported) {
         speakAnnouncement('Tool not available in canvas.');
-        showToast(`⚠️ "${actionId.replace('-', ' ')}" isn't available in the canvas yet. Use the dedicated tool page from the sidebar.`);
+        showToast(`"${actionId.replace('-', ' ')}" isn't available in the canvas yet. Use the dedicated tool page from the sidebar.`);
       } else {
         speakAnnouncement('Operation failed.');
-        showToast(`❌ Error processing ${mainFile.name}: ${err.message || 'Unknown error'}`);
+        showToast(`Error processing ${mainFile.name}: ${err.message || 'Unknown error'}`);
       }
       throw err;
     } finally {
@@ -4231,366 +4400,8 @@ export default function StitchCanvas({
     return 10;
   };
 
-  const runClientHeuristicPlanner = async (cmd, graphState, lastActiveNodesList) => {
-    // Universal rewrite of distributed parallel tool clauses (e.g., "please merge 1 to 3 and 2 to 4, 5 to 6" -> "please merge 1 to 3 and then merge 2 to 4 and then merge 5 to 6")
-    let rewrittenCmd = cmd;
-    const verbs = ['merge', 'combine', 'join', 'stitch', 'split', 'cut', 'divide', 'compress', 'shrink', 'reduce', 'rotate', 'turn', 'spin', 'protect', 'lock', 'encrypt', 'unlock', 'decrypt', 'ocr', 'recognize', 'sign', 'watermark', 'stamp', 'paginate', 'remove', 'delete', 'crop', 'edit', 'qr', 'convert', 'summarize', 'explain', 'unzip', 'unarchive', 'decompress', 'expand', 'scan', 'redact', 'repair', 'translate', 'fill', 'number', 'extract', 'organize', 'annotate', 'compare'];
-    const ordinalWordsPattern = '(?:\\d+(?:st|nd|rd|th)?|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth|thirteenth|fourteenth|fifteenth|sixteenth|seventeenth|eighteenth|nineteenth|twentieth|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)';
-    const relPattern = '(?:to|with)';
-    const verbsPattern = `(?:${verbs.join('|')})`;
-    
-    const firstVerbMatch = rewrittenCmd.match(new RegExp(`\\b(${verbsPattern})\\b`, 'i'));
-    if (firstVerbMatch) {
-      const verb = firstVerbMatch[1];
-      const pairs = [];
-      const globalPairRe = new RegExp(`\\b(${ordinalWordsPattern}\\s+${relPattern}\\s+${ordinalWordsPattern})\\b`, 'gi');
-      let pMatch;
-      while ((pMatch = globalPairRe.exec(rewrittenCmd)) !== null) {
-        pairs.push(pMatch[1]);
-      }
-      
-      if (pairs.length > 1) {
-        const firstPairIndex = rewrittenCmd.toLowerCase().indexOf(pairs[0].toLowerCase());
-        const prefix = rewrittenCmd.slice(0, firstPairIndex);
-        
-        const lastPairIndex = rewrittenCmd.toLowerCase().lastIndexOf(pairs[pairs.length - 1].toLowerCase());
-        const restOfString = rewrittenCmd.slice(lastPairIndex + pairs[pairs.length - 1].length);
-        
-        const rewrittenPairs = pairs.map((p, idx) => {
-          if (idx === 0) return `${prefix}${p}`;
-          return `${verb} ${p}`;
-        });
-        
-        rewrittenCmd = rewrittenPairs.join(' and then ') + restOfString;
-      }
-    }
-
-    // Extract nested past-participle operations (e.g., "4th and 3rd merged" -> "merge 4th and 3rd")
-    const getBaseVerb = (verbEd) => {
-      const v = verbEd.toLowerCase();
-      if (v.startsWith('merg')) return 'merge';
-      if (v.startsWith('combin')) return 'combine';
-      if (v.startsWith('join')) return 'join';
-      if (v.startsWith('stitch')) return 'stitch';
-      if (v.startsWith('compress') || v.startsWith('shrunk') || v.startsWith('shrink')) return 'compress';
-      if (v.startsWith('rotat') || v.startsWith('turn')) return 'rotate';
-      if (v.startsWith('protect') || v.startsWith('lock')) return 'protect';
-      if (v.startsWith('unlock') || v.startsWith('decrypt')) return 'unlock';
-      if (v.startsWith('convert')) return 'convert';
-      if (v.startsWith('split') || v.startsWith('divid')) return 'split';
-      return 'process';
-    };
-
-    const pastParticipleRe = new RegExp(`(?:the\\s+)?(${ordinalWordsPattern}(?:(?:\\s+(?:to|with|and|,|\\s)\\s+)*${ordinalWordsPattern})*)\\s+(merged|combined|joined|stitched|compressed|shrunk|rotated|protected|unlocked|converted)\\b`, 'gi');
-    
-    let ppMatch;
-    const prefixSteps = [];
-    let tempCmdForRegex = rewrittenCmd;
-    while ((ppMatch = pastParticipleRe.exec(tempCmdForRegex)) !== null) {
-      const fullMatch = ppMatch[0];
-      const targets = ppMatch[1];
-      const verbEd = ppMatch[2];
-      const baseVerb = getBaseVerb(verbEd);
-      prefixSteps.push(`${baseVerb} ${targets}`);
-      rewrittenCmd = rewrittenCmd.replace(fullMatch, 'the output');
-    }
-    
-    if (prefixSteps.length > 0) {
-      rewrittenCmd = prefixSteps.join(' and then ') + ' and then ' + rewrittenCmd;
-    }
-
-    const lowerCmd = rewrittenCmd.toLowerCase();
-    const vPat = verbs.join('|');
-    const pattern = new RegExp(
-      // Original connectors: "and then", "then", "after that", "next"
-      `\\b(?:and\\s+then|then|after\\s+that|next|followed\\s+by|and\\s+finally|lastly|subsequently)\\b` +
-      // "and <verb>" or "to <verb>"
-      `|\\b(?:and|to)\\b(?=\\s*(?:run\\s+|do\\s+|go\\s+)?(?:${vPat}))` +
-      // Bare "after" as sequential connector — "compress after rotate" → split
-      `|\\bafter\\b(?=\\s+(?:${vPat}))` +
-      // Comma before a verb — ", rotate it"
-      `|\\s*,\\s*(?=\\s*(?:run\\s+|do\\s+|go\\s+)?(?:${vPat}))` +
-      // Semicolons — "compress; rotate"
-      `|\\s*;\\s*` +
-      // Slash-separated — "compress/rotate/merge"
-      `|\\s*\/\\s*(?=(?:${vPat}))` +
-      // Numbered steps — "step 1: compress" / "step 2: rotate"
-      `|\\bstep\\s+\\d+\\s*[:.)]\\s*` +
-      // Period before a verb — "compress. rotate."
-      `|\.\\s+(?=(?:${vPat}))`
-      , 'i');
-
-    // [Phase E] Pre-process: protect multi-format fan-out phrases from being split at "and".
-    // e.g. "convert to Word and Excel" should NOT be split into two clauses.
-    // Strategy: detect fan-out in the raw command first; if detected, treat the whole command
-    // as a SINGLE clause and let the fan-out loop below handle the expansion.
-    const fanOutAtTopLevel = detectFanOutTools(rewrittenCmd);
-    const rawClauses = fanOutAtTopLevel
-      ? [rewrittenCmd]  // don't split — the whole command is a fan-out clause
-      : rewrittenCmd.split(pattern).map(p => p.trim()).filter(Boolean);
-
-    // Further protect individual clauses: if a clause itself contains a fan-out pattern
-    // (e.g. after splitting on "then"), still preserve it as one piece.
-    const clauses = rawClauses;
-
-    const ops = [];
-    let stepIdx = 0;
-    let activePool = [...graphState];
-
-    for (const clause of clauses) {
-      // [Phase D] Fan-out detection: check if this single clause requests N parallel tools
-      const fanOutTools = detectFanOutTools(clause);
-      if (fanOutTools) {
-        // Resolve document targets once for all fan-out tools
-        const ditResult = resolveDocumentTargets(clause, activePool);
-        let baseMatches = activePool.filter(node => {
-          const ext = '.' + (node.name || '').split('.').pop().toLowerCase();
-          return ['.pdf', '.docx', '.doc', '.xlsx', '.xls', '.pptx', '.ppt'].some(e => e === ext);
-        });
-        if (ditResult.resolved && ditResult.included.length > 0) {
-          baseMatches = ditResult.included;
-        }
-        if (baseMatches.length === 0) baseMatches = activePool.slice(-1); // fallback to last
-
-        const fanOutSourceIds = new Set(baseMatches.map(m => m.id));
-        fanOutTools.forEach((toolId, fanIdx) => {
-          const validation = TOOL_REGISTRY[toolId];
-          if (!validation) return;
-          const targetInputs = validation.maxInputs === 1
-            ? [baseMatches[baseMatches.length - 1]]
-            : baseMatches;
-          const parameters = extractCommandParameters(toolId, clause);
-          if (needsStudioParams(toolId)) {
-            parameters.initialNlpPrompt = clause;
-          }
-          ops.push({
-            tool_id: toolId,
-            target_node_ids: targetInputs.map(ti => ti.id),
-            parameters
-          });
-          let outExt = validation.outExt || '.pdf';
-          activePool.push({
-            id: `output:${stepIdx}-fan${fanIdx}`,
-            name: `${toolId}_output${outExt}`,
-            type: 'op',
-            status: 'completed',
-            ancestry: [...targetInputs.flatMap(ti => ti.ancestry || []), `output:${stepIdx}-fan${fanIdx}`]
-          });
-        });
-        stepIdx++;
-        continue; // handled — skip the single-tool path below
-      }
-
-      const actionId = await parseLocalNLPCommand(clause, activePool);
-      if (!actionId) continue;
-
-      const validation = TOOL_REGISTRY[actionId];
-      if (!validation) continue;
-
-      const accepts = validation.accept || [];
-      const isTargetImage = accepts.includes('image/*');
-      const isTargetPdf = accepts.includes('.pdf');
-      const isTargetOffice = ['.docx', '.doc', '.xlsx', '.xls', '.csv', '.pptx', '.ppt'].some(x => accepts.includes(x));
-
-      if (!accepts.includes('.zip') && (isTargetPdf || isTargetImage || isTargetOffice)) {
-        const zipItem = [...activePool].reverse().find(node => {
-          const ext = '.' + (node.name || '').split('.').pop().toLowerCase();
-          return ext === '.zip';
-        });
-
-        if (zipItem) {
-          ops.push({
-            tool_id: 'unzip-file',
-            target_node_ids: [zipItem.id],
-            parameters: {}
-          });
-          
-          activePool = activePool.filter(ap => ap.id !== zipItem.id);
-          
-          let injectedExt = '.pdf';
-          if (isTargetImage) injectedExt = '.png';
-          else if (accepts.includes('.docx')) injectedExt = '.docx';
-          else if (accepts.includes('.xlsx')) injectedExt = '.xlsx';
-          
-          activePool.push({
-            id: `output:${stepIdx}`,
-            name: `unzip_output${injectedExt}`,
-            type: 'op',
-            status: 'completed',
-            ancestry: [...(zipItem.ancestry || []), `output:${stepIdx}`]
-          });
-          stepIdx++;
-        }
-      }
-
-      let targetInputs = [];
-      const isImage = (ext) => ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif'].includes(ext);
-      let matches = activePool.filter(node => {
-        const ext = '.' + (node.name || '').split('.').pop().toLowerCase();
-        const isCompatible = accepts.some(acc => {
-          if (acc === 'image/*') return isImage(ext);
-          return acc === ext;
-        });
-        if (isCompatible) return true;
-
-        // If the tool accepts PDF, we can also match any file that can be auto-converted to PDF
-        if (accepts.includes('.pdf')) {
-          const canAutoConvert = (
-            ext === '.docx' || ext === '.doc' || 
-            ext === '.xlsx' || ext === '.xls' || ext === '.csv' || 
-            ext === '.pptx' || ext === '.ppt' || 
-            ext === '.html' || 
-            ext === '.zip' || 
-            ext === '.txt' || ext === '.md' ||
-            isImage(ext)
-          );
-          if (canAutoConvert) return true;
-        }
-
-        // If the tool accepts images, we can also match any PDF file (will auto-extract to image)
-        if (accepts.some(acc => acc === 'image/*' || ['.png', '.jpg', '.jpeg', '.webp'].includes(acc))) {
-          if (ext === '.pdf') return true;
-        }
-
-        // If the tool accepts Word (.docx), we can also match any PDF file (will auto-convert to Word)
-        if (accepts.some(acc => ['.docx', '.doc'].includes(acc))) {
-          if (ext === '.pdf') return true;
-        }
-
-        // If the tool accepts Excel (.xlsx), we can also match any PDF file (will auto-convert to Excel)
-        if (accepts.some(acc => ['.xlsx', '.xls', '.csv'].includes(acc))) {
-          if (ext === '.pdf') return true;
-        }
-
-        // If the tool accepts PowerPoint (.pptx), we can also match any PDF file (will auto-convert to PowerPoint)
-        if (accepts.some(acc => ['.pptx', '.ppt'].includes(acc))) {
-          if (ext === '.pdf') return true;
-        }
-
-        return false;
-      });
-
-      const lowerClause = clause.toLowerCase();
-      const hasPronoun = lowerClause.match(/\b(it|them|those|files?|that|this|these)\b/);
-
-      // [Phase C] Document Index Targeting — resolve ordinal / exclusion / "all outputs" first
-      const ditResult = resolveDocumentTargets(clause, activePool);
-      if (ditResult.resolved) {
-        if (ditResult.included.length > 0) {
-          // Filter to only compatible nodes (respecting tool accepts)
-          const compatible = ditResult.included.filter(node => {
-            const ext = '.' + (node.name || '').split('.').pop().toLowerCase();
-            return accepts.some(acc => {
-              if (acc === 'image/*') return isImage(ext);
-              return acc === ext;
-            }) || accepts.includes('.pdf'); // pdf tools can chain onto any
-          });
-          if (compatible.length > 0) {
-            targetInputs = validation.maxInputs === 1
-              ? [compatible[compatible.length - 1]]
-              : compatible;
-          } else {
-            // Ordinal resolved but incompatible type — try full included list anyway
-            targetInputs = validation.maxInputs === 1
-              ? [ditResult.included[ditResult.included.length - 1]]
-              : ditResult.included;
-          }
-        }
-        // Exclusions: remove excluded nodes from matches before falling through
-        if (ditResult.excluded.length > 0 && targetInputs.length === 0) {
-          const excIds = new Set(ditResult.excluded.map(n => n.id));
-          matches = matches.filter(m => !excIds.has(m.id));
-        }
-      }
-      
-      // Bug #7 fix: collect all substring matches, then pick the LONGEST cleanName to prevent
-      // short names like 'report' from shadowing 'reportcard' due to substring collision
-      if (targetInputs.length === 0) {
-        let filenameMatch = null;
-        const filenameMatches = [];
-        activePool.forEach(node => {
-          const cleanName = (node.name || '').toLowerCase().replace(/\.[^.]+$/, '');
-          if (cleanName.length >= 3 && lowerClause.includes(cleanName)) {
-            filenameMatches.push({ node, len: cleanName.length });
-          }
-        });
-        if (filenameMatches.length > 0) {
-          filenameMatches.sort((a, b) => b.len - a.len);
-          filenameMatch = filenameMatches[0].node;
-        }
-
-        if (filenameMatch && matches.some(m => m.id === filenameMatch.id)) {
-          targetInputs = [filenameMatch];
-        } else if (hasPronoun && lastActiveNodesList.length > 0) {
-          const activeMatch = lastActiveNodesList.map(id => activePool.find(n => n.id === id)).filter(Boolean).find(node => {
-            const ext = '.' + (node.name || '').split('.').pop().toLowerCase();
-            return accepts.some(acc => {
-              if (acc === 'image/*') return isImage(ext);
-              return acc === ext;
-            });
-          });
-          if (activeMatch) {
-            targetInputs = [activeMatch];
-          }
-        }
-
-        if (targetInputs.length === 0) {
-          if (validation.maxInputs > 1) {
-            targetInputs = matches;
-          } else if (matches.length > 0) {
-            matches.sort((a, b) => {
-              const isAOut = a.id.startsWith('ws-out-') || a.id.startsWith('output:');
-              const isBOut = b.id.startsWith('ws-out-') || b.id.startsWith('output:');
-              if (isAOut && !isBOut) return 1;
-              if (!isAOut && isBOut) return -1;
-              return 0;
-            });
-            targetInputs = [matches[matches.length - 1]];
-          }
-        }
-      }
-
-      if (validation.minInputs && targetInputs.length < validation.minInputs) {
-        continue;
-      }
-      
-      if (validation.maxInputs === 1 && targetInputs.length > 1) {
-        targetInputs = [targetInputs[targetInputs.length - 1]];
-      }
-
-      const parameters = extractCommandParameters(actionId, clause);
-      if (needsStudioParams(actionId)) {
-        parameters.initialNlpPrompt = clause;
-      }
-
-      ops.push({
-        tool_id: actionId,
-        target_node_ids: targetInputs.map(ti => ti.id),
-        parameters
-      });
-
-      activePool = activePool.filter(ap => !targetInputs.some(ti => ti.id === ap.id));
-      let outExt = '.pdf';
-      if (actionId === 'split-pdf') outExt = '.zip';
-      else if (actionId === 'pdf-to-word') outExt = '.docx';
-      else if (actionId === 'pdf-to-excel') outExt = '.xlsx';
-      else if (actionId === 'image-converter') outExt = '.' + (parameters.format || 'png');
-
-      activePool.push({
-        id: `output:${stepIdx}`,
-        name: `${actionId}_output${outExt}`,
-        type: 'op',
-        status: 'completed',
-        ancestry: [...targetInputs.flatMap(ti => ti.ancestry || []), `output:${stepIdx}`]
-      });
-      stepIdx++;
-    }
-
-    return {
-      confidence_score: 0.9,
-      clarification_needed: null,
-      operations: ops
-    };
+  const runClientHeuristicPlanner = async (cmd, graphState, lastActiveNodesList = [], selectedNodeIds = []) => {
+    return planCanvasWorkflow(cmd, graphState, lastActiveNodesList, selectedNodeIds);
   };
 
   const confirmWorkflowExecution = async (opIds, fallbackOps = []) => {
@@ -4686,12 +4497,17 @@ export default function StitchCanvas({
   };
 
   // Handle Command Submission (Stitch Natural Language Bar)
-  const handleSendCommand = async (e) => {
-    e.preventDefault();
-    if (!commandInput.trim() || isThinking) return;
+  const handleSendCommand = async (e, customCmd = null) => {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    const rawCmd = typeof e === 'string' ? e : (customCmd || commandInput);
+    if (!rawCmd || !rawCmd.trim() || isThinking) return;
 
-    const cmd = commandInput.trim();
+    const normalizedCmd = normalizeUserPrompt(rawCmd);
+    const cmd = (normalizedCmd || rawCmd).trim();
     setCommandInput('');
+    if (commandTextareaRef.current) {
+      commandTextareaRef.current.style.height = 'auto';
+    }
     setIsThinking(true);
     setShowCommandsMenu(false);
 
@@ -4763,6 +4579,65 @@ export default function StitchCanvas({
         setOperations([]);
         setSelectedNodeIds([]);
         showToast('Workspace cleared');
+        return;
+      }
+
+      // A0. Intercept Selective Document Retention & Canvas Pruning Commands
+      // e.g. "except for the 4 main documents delete all of them"
+      // e.g. "delete all of them except for the 4 main documents"
+      // e.g. "delete all except the 4 main documents"
+      // e.g. "keep only the 4 main documents and delete the rest"
+      // e.g. "clear canvas except original files"
+      const isSelectivePrune = 
+        (/\b(except|excluding|but not)\b/i.test(lowerCmd) && /\b(delete|remove|clear|wipe)\b/i.test(lowerCmd)) ||
+        (/\b(keep|retain)\s+only\b/i.test(lowerCmd));
+
+      if (isSelectivePrune) {
+        setIsThinking(false);
+        const wordToNum = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
+        const countMatch = lowerCmd.match(/\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:main|original|source|initial)?\s*(?:documents?|files?|cards?|nodes?)/i);
+        let keepCount = null;
+        if (countMatch) {
+          const rawVal = countMatch[1].toLowerCase();
+          keepCount = isNaN(rawVal) ? wordToNum[rawVal] : parseInt(rawVal, 10);
+        }
+
+        const isMainDoc = (f) => !f.isOutput && !f.id?.startsWith('output-') && !f.id?.startsWith('output:');
+        let mainFiles = workspaceQueue.filter(isMainDoc);
+        if (mainFiles.length === 0) {
+          mainFiles = workspaceQueue.slice(0, keepCount || 4);
+        } else if (keepCount && keepCount > 0) {
+          mainFiles = mainFiles.slice(0, keepCount);
+        }
+
+        pushHistoryState();
+        setWorkspaceQueue(mainFiles);
+        setOperations([]);
+        setSelectedNodeIds([]);
+        showToast(`Retained ${mainFiles.length} main document(s); cleared all other nodes.`, 'success');
+        return;
+      }
+
+      // A1. Intercept Global Operator/Tool Pruning Commands
+      // e.g. "delete all operators", "remove all tools", "clear all operations"
+      if (/^(?:delete|remove|clear)\s+(?:all\s+)?(?:operators?|tools?|operations?|steps?)$/i.test(lowerCmd)) {
+        setIsThinking(false);
+        pushHistoryState();
+        setOperations([]);
+        setSelectedNodeIds([]);
+        showToast('Removed all operator cards from canvas.', 'info');
+        return;
+      }
+
+      // A2. Intercept Global Output Pruning Commands
+      // e.g. "delete all outputs", "remove all generated files", "delete intermediate outputs"
+      if (/^(?:delete|remove|clear)\s+(?:all\s+)?(?:(?:generated|intermediate)\s+(?:outputs?|files?|nodes?)|outputs?|output\s+(?:files?|nodes?))$/i.test(lowerCmd)) {
+        setIsThinking(false);
+        pushHistoryState();
+        const isMainDoc = (f) => !f.isOutput && !f.id?.startsWith('output-') && !f.id?.startsWith('output:');
+        setWorkspaceQueue(prev => prev.filter(isMainDoc));
+        setSelectedNodeIds([]);
+        showToast('Removed all generated output files from canvas.', 'info');
         return;
       }
 
@@ -4958,7 +4833,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
       }
 
       if (!plan || !plan.operations) {
-        plan = await runClientHeuristicPlanner(cmd, graphState, lastActiveNodes);
+        plan = await runClientHeuristicPlanner(cmd, graphState, lastActiveNodes, selectedNodeIds);
       }
 
       // Check for low-confidence or explicit clarification requests
@@ -4968,15 +4843,25 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
         const userClarification = await new Promise(resolve => {
           setClarificationPrompt({
             message: explanation,
+            options: plan.options || [],
             resolve
           });
         });
         setClarificationPrompt(null);
         if (!userClarification) return; // Cancelled
         
-        // Re-submit with clarified query
-        setCommandInput(`${cmd} (${userClarification})`);
-        showToast('Re-submitting clarified query...', 'info');
+        let resolvedPrompt = '';
+        if (typeof userClarification === 'object' && userClarification !== null) {
+          resolvedPrompt = userClarification.prompt || userClarification.label || '';
+        } else if (typeof userClarification === 'string') {
+          resolvedPrompt = userClarification.trim();
+        }
+
+        if (resolvedPrompt) {
+          showToast('Executing clarified request...', 'info');
+          // Recursively re-invoke handleSendCommand instead of dead-ending
+          handleSendCommand(resolvedPrompt);
+        }
         return;
       }
 
@@ -5227,7 +5112,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
       }
 
       // Step 4: Show reasoning path to user
-      const reasoningPath = steps.map(s => s.actionId.replace('-', ' ')).join(' ➔ ');
+      const reasoningPath = steps.map(s => s.actionId.replace('-', ' ')).join(' -> ');
       setThinkingMessage(`AI Planner compiled: ${reasoningPath}`);
       await new Promise(r => setTimeout(r, 800));
 
@@ -5283,7 +5168,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
       }
 
       const totalStepsCompiled = spawnedOps.length + reusedOps.length + injectedIds.length;
-      showToast(`🪄 AI Pipeline Router: Compiled and queued ${totalStepsCompiled}-step workflow.`);
+      showToast(`AI Pipeline Router: Compiled and queued ${totalStepsCompiled}-step workflow.`);
       speakAnnouncement(`Compiled ${totalStepsCompiled}-step workflow on canvas.`);
 
       // Build dependency-ordered list using the updated configurations from nextOps
@@ -5326,6 +5211,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
 
         // Map of opId → { blob, name } for outputs produced in this pipeline run
         const pipelineOutputs = {};
+        const allocatedCardPositions = [];
 
         for (const op of ordered) {
           let timerInterval = null;
@@ -5384,7 +5270,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
 
             if (needsStudioParams(op.toolId)) {
               console.log(`[Pipeline] Halting pipeline execution at studio-eligible tool ${op.toolId}. Opening Focus Studio.`);
-              showToast(`🪄 Opening Focus Studio for ${TOOL_REGISTRY[op.toolId]?.name || 'review'}...`, 'info');
+              showToast(`Opening Focus Studio for ${TOOL_REGISTRY[op.toolId]?.name || 'review'}...`, 'info');
               
               setOperations(prev => prev.map(o => o.id === op.id ? { ...o, status: 'idle', progress: 0 } : o));
               
@@ -5397,6 +5283,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
             console.log(`[Pipeline] Running ${op.toolId} with ${inputFiles.length} input(s)`);
 
             // Start active execution timer
+            const pipelineStartTime = Date.now();
             setOpTimers(prev => ({ ...prev, [op.id]: 0 }));
             timerInterval = setInterval(() => {
               setOpTimers(prev => {
@@ -5407,7 +5294,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
 
             // Run engine directly (bypass recursive executeOperator to avoid lock issues)
             const progressCb = (pct, statusText) => {
-              setOperations(prev => prev.map(o => o.id === op.id ? { ...o, status: 'processing', progress: pct, statusText: statusText || 'Processing' } : o));
+              setOperations(prev => prev.map(o => o.id === op.id ? { ...o, status: 'processing', progress: pct, statusText: formatStatusText(statusText) } : o));
             };
 
             setOperations(prev => prev.map(o => o.id === op.id ? { ...o, status: 'processing', progress: 0 } : o));
@@ -5476,33 +5363,44 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
               outputsList = [{ blob: resultBlob, name: outputName }];
             }
 
-            if (op.toolId === 'split-pdf') {
+            if (op.toolId === 'split-pdf' || op.toolId === 'pdf-to-image' || op.toolId === 'unzip-file') {
               try {
-                const zip = new JSZip();
-                const zipContent = await zip.loadAsync(resultBlob);
-                const fileKeys = Object.keys(zipContent.files).filter(name => !zipContent.files[name].dir);
-                const totalFiles = fileKeys.length;
-                if (totalFiles > 0 && totalFiles <= 5) {
+                if (engineResult && engineResult.outputs && engineResult.outputs.length > 0 && (!engineResult.outputIds || engineResult.outputIds.length === 0)) {
                   isSplitUnpack = true;
-                  for (let idx = 0; idx < totalFiles; idx++) {
-                    const filename = fileKeys[idx];
-                    const fileEntry = zipContent.files[filename];
-                    const blob = await fileEntry.async('blob');
-                    const file = new File([blob], filename, { type: 'application/pdf' });
-                    
-                    const outputX = op.x + 280;
-                    const offset = (idx - (totalFiles - 1) / 2) * 150;
-                    const outputY = op.y + offset;
-                    
-                    const outId = createCompletedOutputNode(file.name, outputX, outputY, file, [], op.ancestry);
+                  for (let idx = 0; idx < engineResult.outputs.length; idx++) {
+                    const item = engineResult.outputs[idx];
+                    const mime = resolveMimeType(item.name, item.blob?.type);
+                    const file = new File([item.blob], item.name, { type: mime });
+                    const outId = createCompletedOutputNode(file.name, op.x, op.y, file, allocatedCardPositions, op.ancestry);
                     splitOutputIds.push(outId);
-                    splitOutputsList.push({ blob, name: file.name });
+                    splitOutputsList.push({ blob: item.blob, name: file.name });
                   }
                   outputIdsList = splitOutputIds;
                   outputsList = splitOutputsList;
+                } else if (resultBlob && (resultBlob.type === 'application/zip' || (outputName && outputName.endsWith('.zip')))) {
+                  const zip = new JSZip();
+                  const zipContent = await zip.loadAsync(resultBlob);
+                  const fileKeys = Object.keys(zipContent.files).filter(name => !zipContent.files[name].dir);
+                  const totalFiles = fileKeys.length;
+                  if (totalFiles > 0) {
+                    isSplitUnpack = true;
+                    for (let idx = 0; idx < totalFiles; idx++) {
+                      const filename = fileKeys[idx];
+                      const fileEntry = zipContent.files[filename];
+                      const blob = await fileEntry.async('blob');
+                      const mime = resolveMimeType(filename, blob.type);
+                      const file = new File([blob], filename, { type: mime });
+                      
+                      const outId = createCompletedOutputNode(file.name, op.x, op.y, file, allocatedCardPositions, op.ancestry);
+                      splitOutputIds.push(outId);
+                      splitOutputsList.push({ blob, name: file.name });
+                    }
+                    outputIdsList = splitOutputIds;
+                    outputsList = splitOutputsList;
+                  }
                 }
               } catch (zipErr) {
-                console.warn('[Pipeline] Failed to parse/unpack split PDF ZIP:', zipErr);
+                console.warn('[Pipeline] Failed to parse/unpack ZIP / multi-file output:', zipErr);
               }
             }
 
@@ -5512,13 +5410,17 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
             // Create output node and mark op completed
             let outputNodeId;
             let outputIdsToTrack = [];
-            if (isSplitUnpack || (engineResult && engineResult.outputs)) {
+            if (isSplitUnpack || (engineResult && engineResult.outputs && engineResult.outputIds && engineResult.outputIds.length > 0)) {
               outputNodeId = outputIdsList[outputIdsList.length - 1];
               outputIdsToTrack = outputIdsList;
             } else {
-              outputNodeId = createCompletedOutputNode(outputName, op.x, op.y, resultBlob, [], op.ancestry);
+              outputNodeId = createCompletedOutputNode(outputName, op.x, op.y, resultBlob, allocatedCardPositions, op.ancestry);
               outputIdsToTrack = [outputNodeId];
             }
+
+            const pInputSize = inputFiles.reduce((acc, f) => acc + (f.size || 0), 0);
+            const pOutputSize = resultBlob?.size || (outputsList && outputsList.length > 0 ? outputsList.reduce((acc, o) => acc + (o.blob?.size || 0), 0) : 0);
+            const pTelemetry = computeNodeTelemetry({ startTime: pipelineStartTime, inputSize: pInputSize, outputSize: pOutputSize });
 
             setOperations(prev => prev.map(o => o.id === op.id ? {
               ...o,
@@ -5526,7 +5428,8 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
               progress: 100,
               outputId: outputNodeId,
               outputIds: outputIdsToTrack,
-              prevInputIds: [...o.inputIds]
+              prevInputIds: [...o.inputIds],
+              telemetry: pTelemetry
             } : o));
             
             const auditMessage = isSplitUnpack
@@ -5546,11 +5449,11 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
             ]);
 
             if (isUnzipBypass) {
-              showToast(`ℹ️ Unzip skipped (already extracted)`);
+              showToast(`Unzip skipped (already extracted)`);
             } else if (isSplitUnpack) {
-              showToast(`✅ split pdf → split into ${splitOutputIds.length} files`);
+              showToast(`split pdf -> split into ${splitOutputIds.length} files`);
             } else {
-              showToast(`✅ ${aId.replace(/-/g, ' ')} → ${outputName}`);
+              showToast(`${aId.replace(/-/g, ' ')} -> ${outputName}`);
             }
             console.log(`[Pipeline] Completed ${op.toolId}: ${outputName}`);
 
@@ -5568,7 +5471,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                 message: `Failed '${TOOL_REGISTRY[op.toolId]?.name || 'operator'}' in pipeline: ${err.message || 'Unknown error'}`
               }
             ]);
-            showToast(`❌ ${op.toolId.replace(/-/g, ' ')} failed: ${err.message || 'Unknown error'}`, 'error');
+            showToast(`${op.toolId.replace(/-/g, ' ')} failed: ${err.message || 'Unknown error'}`, 'error');
             break; // Stop pipeline on failure
           } finally {
             if (timerInterval) {
@@ -6330,7 +6233,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                       className="absolute right-0 top-[32%] -translate-y-1/2 translate-x-[7px] w-4 h-4 rounded-full bg-emerald-500 border border-surface shadow-sm z-30 cursor-crosshair pointer-events-auto flex items-center justify-center text-[8px] text-white font-bold hover:scale-110 transition-transform shadow-emerald-500/30" 
                       title="True Branch (Condition Met) - Drag to connect" 
                     >
-                      ✓
+                      <span className="material-symbols-outlined text-[10px]">check</span>
                     </div>
                     {/* False Port (Amber) */}
                     <div 
@@ -6338,7 +6241,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                       className="absolute right-0 top-[68%] -translate-y-1/2 translate-x-[7px] w-4 h-4 rounded-full bg-amber-500 border border-surface shadow-sm z-30 cursor-crosshair pointer-events-auto flex items-center justify-center text-[8px] text-white font-bold hover:scale-110 transition-transform shadow-amber-500/30" 
                       title="False Branch (Condition Failed) - Drag to connect" 
                     >
-                      ✗
+                      <span className="material-symbols-outlined text-[10px]">close</span>
                     </div>
                   </>
                 ) : (
@@ -6371,7 +6274,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
 
                 {op.inputIds.length > 1 && op.toolId !== 'merge-pdf' && (
                   <span className="px-1.5 py-0.5 rounded-full text-[8px] font-bold bg-primary/10 text-primary border border-primary/20 mt-0.5 select-none">
-                    📦 Batch ({op.inputIds.length} files)
+                    Batch ({op.inputIds.length} files)
                   </span>
                 )}
 
@@ -6525,7 +6428,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                             const maxPage = Math.max(...numbers.map(Number));
                             if (maxPage > connectedPageCount) {
                               isRangeInvalid = true;
-                              rangeWarningText = `⚠️ Exceeds page count (${connectedPageCount})`;
+                              rangeWarningText = `Exceeds page count (${connectedPageCount})`;
                             }
                           }
                         }
@@ -6594,12 +6497,12 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                               className="w-full accent-orange-600 h-1 rounded-lg bg-surface-container border border-outline-variant cursor-pointer"
                             />
                             <p className="text-[8px] text-orange-600 font-medium leading-tight">
-                              ⚠️ Converts pages to images. Text search will be disabled.
+                              Converts pages to images. Text search will be disabled.
                             </p>
                           </div>
                         ) : (
                           <p className="text-[8px] text-green-600 font-medium leading-tight mt-0.5">
-                            ✅ Preserves selectable text and vector graphics.
+                            Preserves selectable text and vector graphics.
                           </p>
                         )}
                       </div>
@@ -7087,7 +6990,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                       <>
                         <div className="flex items-center gap-1.5">
                           <div className="w-3.5 h-3.5 border-[2px] border-primary/20 border-t-primary rounded-full animate-spin flex-shrink-0" />
-                          <span className="text-[9px] font-bold text-primary font-label-mono">{op.statusText || 'Processing'} ({op.progress}%)</span>
+                          <span className="text-[9px] font-bold text-primary font-label-mono">{formatStatusText(op.statusText)} ({op.progress}%)</span>
                         </div>
                         <button
                           onClick={(e) => { e.stopPropagation(); cancelOperator(op.id); }}
@@ -7114,9 +7017,20 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                         </button>
                       </>
                     ) : (
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-primary">
-                        {op.status}
-                      </span>
+                      <div className="flex flex-col items-center gap-1 w-full">
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-primary">
+                          {op.status}
+                        </span>
+                        {op.telemetry && (
+                          <div 
+                            data-testid="telemetry-pill"
+                            className="telemetry-pill mt-0.5 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm text-[7.5px] font-bold text-primary flex items-center justify-center gap-1 shadow-sm select-none max-w-full truncate"
+                            title={`Execution: ${op.telemetry.durationSec}s${op.telemetry.throughputMbSec ? ` · Speed: ${op.telemetry.throughputMbSec} MB/s` : ''}${op.telemetry.sizeDeltaPct !== null && op.telemetry.sizeDeltaPct !== undefined ? ` · Size delta: ${op.telemetry.sizeDeltaPct}%` : ''}`}
+                          >
+                            <span>{formatTelemetryPill(op.telemetry)}</span>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
                 )}
@@ -7205,7 +7119,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
           <button onClick={handleZoomReset} className="w-7 h-7 rounded-lg hover:bg-surface text-outline hover:text-primary flex items-center justify-center cursor-pointer transition-colors" title="Reset Viewport">
             <span className="material-symbols-outlined text-[16px]">restart_alt</span>
           </button>
-          <button onClick={handleFitToView} className="w-7 h-7 rounded-lg hover:bg-surface text-outline hover:text-primary flex items-center justify-center cursor-pointer transition-colors" title="Fit to Screen">
+          <button onClick={() => handleFitToView()} className="w-7 h-7 rounded-lg hover:bg-surface text-outline hover:text-primary flex items-center justify-center cursor-pointer transition-colors" title="Fit to Screen">
             <span className="material-symbols-outlined text-[16px]">fit_screen</span>
           </button>
         </div>
@@ -7224,15 +7138,15 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
 
 
 
-        {/* BOTTOM STITCH CHAT COMMAND INPUT BAR */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 w-full max-w-[480px] px-4">
+        {/* BOTTOM STITCH CHAT COMMAND INPUT BAR (Gemini & ChatGPT Prompt Box Style) */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 w-full max-w-[calc(100vw-32px)] sm:max-w-xl md:max-w-2xl lg:max-w-[720px] px-2 sm:px-0">
           <form
             onSubmit={handleSendCommand}
-            className="relative w-full rounded-2xl glass-widget p-2 flex items-center gap-2"
+            className="relative w-full rounded-2xl sm:rounded-[26px] glass-widget border border-outline-variant/70 shadow-2xl p-2 sm:p-2.5 flex items-end gap-2 focus-within:border-primary/80 focus-within:shadow-[0_0_24px_rgba(var(--color-primary-rgb),0.15)] transition-all duration-200"
           >
             {/* Slash Commands Dropdown */}
             {showCommandsMenu && (
-              <div className="absolute bottom-full left-0 mb-2 w-full glass-widget p-1 rounded-xl z-50 text-left flex flex-col">
+              <div className="absolute bottom-full left-0 mb-2 w-full glass-widget p-1.5 rounded-xl z-50 text-left flex flex-col shadow-2xl border border-outline-variant/60 animate-[scaleUp_0.12s_ease-out]">
                 <span className="font-label-mono text-[9px] text-outline uppercase px-3.5 py-1.5 block select-none font-bold">Commands</span>
                 {[
                   { cmd: '/merge', desc: 'Merge selected PDFs or Images' },
@@ -7247,6 +7161,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                     onClick={() => {
                       setCommandInput(c.cmd);
                       setShowCommandsMenu(false);
+                      if (commandTextareaRef.current) commandTextareaRef.current.focus();
                     }}
                     className="px-3.5 py-2 text-xs font-semibold hover:bg-surface-container text-on-surface-variant hover:text-primary rounded-lg transition-colors flex items-center justify-between text-left cursor-pointer"
                   >
@@ -7260,14 +7175,15 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
             <button
               type="button"
               onClick={() => setShowCommandsMenu(!showCommandsMenu)}
-              className="w-8 h-8 rounded-xl bg-surface border border-outline-variant hover:border-primary text-outline hover:text-primary flex items-center justify-center cursor-pointer transition-colors"
-              title="View Commands Menu"
+              className="w-9 h-9 shrink-0 rounded-xl bg-surface border border-outline-variant hover:border-primary text-outline hover:text-primary flex items-center justify-center cursor-pointer transition-all mb-0.5"
+              title="Quick Commands (/)"
             >
               <span className="material-symbols-outlined text-[18px]">terminal</span>
             </button>
 
-            <input
-              type="text"
+            <textarea
+              ref={commandTextareaRef}
+              rows={1}
               value={commandInput}
               onChange={(e) => {
                 setCommandInput(e.target.value);
@@ -7277,17 +7193,29 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                   setShowCommandsMenu(false);
                 }
               }}
-              placeholder="What would you like to edit? Try '/merge'..."
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  if (commandInput.trim() && !isThinking) {
+                    handleSendCommand(e);
+                  }
+                } else if (e.key === 'Escape' && showCommandsMenu) {
+                  setShowCommandsMenu(false);
+                }
+              }}
+              placeholder="What would you like to edit? Try '/merge', or describe your workflow..."
               disabled={isThinking}
-              className="flex-grow bg-transparent border-none outline-none text-xs text-on-background placeholder:text-outline font-semibold disabled:opacity-50"
+              className="flex-grow bg-transparent border-none outline-none text-xs sm:text-sm text-on-background placeholder:text-outline font-semibold resize-none overflow-y-auto no-scrollbar py-2 px-2 leading-relaxed min-h-[36px] max-h-[160px] disabled:opacity-50 whitespace-pre-wrap break-words"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             />
 
             <button
               type="submit"
               disabled={isThinking || !commandInput.trim()}
-              className="w-8 h-8 rounded-xl bg-primary text-white hover:opacity-90 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-md disabled:opacity-30 disabled:scale-100"
+              className="w-9 h-9 shrink-0 rounded-xl bg-primary text-white hover:brightness-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-md disabled:opacity-30 disabled:scale-100 disabled:shadow-none mb-0.5"
+              title="Send Prompt (Enter)"
             >
-              <span className="material-symbols-outlined text-[16px]">send</span>
+              <span className="material-symbols-outlined text-[18px]">arrow_upward</span>
             </button>
           </form>
         </div>
@@ -7445,7 +7373,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
 
           <div className="bg-surface/85 backdrop-blur-md border border-outline-variant/60 shadow-lg px-4 py-1.5 h-10 rounded-xl flex items-center gap-3.5 select-none">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-[13px] text-on-background tracking-tight">DocForge Studio</span>
+              <span className="font-bold text-[13px] text-on-background tracking-tight">DocScalar Studio</span>
             </div>
             
             <div className="h-4 w-[1px] bg-outline-variant/60" />
@@ -8377,14 +8305,23 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
 
       {/* CLARIFICATION REQUEST MODAL */}
       {clarificationPrompt && (
-        <div className="absolute inset-0 bg-background/60 backdrop-blur-[6px] z-[99999] flex items-center justify-center animate-[fadeIn_0.15s_ease-out] pointer-events-auto">
+        <div 
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              e.preventDefault();
+              e.stopPropagation();
+              clarificationPrompt.resolve(null);
+            }
+          }}
+          className="absolute inset-0 bg-background/60 backdrop-blur-[6px] z-[99999] flex items-center justify-center animate-[fadeIn_0.15s_ease-out] pointer-events-auto"
+        >
           <form 
             onSubmit={(e) => {
               e.preventDefault();
               const val = e.target.clarificationInput.value.trim();
               clarificationPrompt.resolve(val || null);
             }}
-            className="w-[460px] bg-surface-container border border-primary/30 shadow-2xl rounded-3xl p-6 flex flex-col gap-5 animate-[scaleUp_0.18s_ease-out]"
+            className="w-[480px] bg-surface-container border border-primary/30 shadow-2xl rounded-3xl p-6 flex flex-col gap-5 animate-[scaleUp_0.18s_ease-out]"
           >
             <div className="flex items-center gap-3.5 border-b border-outline-variant pb-3.5">
               <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
@@ -8400,6 +8337,24 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
               <p className="text-[11.5px] font-bold text-on-surface-variant leading-relaxed">
                 {clarificationPrompt.message}
               </p>
+
+              {/* Interactive preset options button chips */}
+              {Array.isArray(clarificationPrompt.options) && clarificationPrompt.options.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-1 pb-1">
+                  {clarificationPrompt.options.map((opt, optIdx) => (
+                    <button
+                      key={opt.actionId || optIdx}
+                      type="button"
+                      onClick={() => clarificationPrompt.resolve(opt.prompt || opt)}
+                      className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-primary/10 text-primary border border-primary/25 hover:bg-primary hover:text-on-primary active:scale-95 transition-all cursor-pointer text-left flex items-center gap-1.5 shadow-sm"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                      {opt.label || opt.prompt || (typeof opt === 'string' ? opt : 'Option')}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               <input 
                 name="clarificationInput"
                 type="text" 
@@ -8415,7 +8370,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                 onClick={() => clarificationPrompt.resolve(null)}
                 className="px-4 py-2 text-xs font-bold text-outline hover:text-on-background transition-colors cursor-pointer bg-transparent border-none"
               >
-                Cancel
+                Cancel (Esc)
               </button>
               <button
                 type="submit"

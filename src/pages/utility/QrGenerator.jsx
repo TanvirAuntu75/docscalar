@@ -32,11 +32,11 @@ import {
 
 export default function QrGenerator() {
   const [payloadType, setPayloadType] = useState('url'); // 'url' | 'wifi' | 'vcard' | 'email' | 'text'
-  const [urlData, setUrlData] = useState('https://docforge.app');
-  const [textData, setTextData] = useState('Hello from DocForge QR Studio!');
+  const [urlData, setUrlData] = useState('https://docscalar.app');
+  const [textData, setTextData] = useState('Hello from DocScalar QR Studio!');
   const [wifiData, setWifiData] = useState({ ssid: 'Office_Network', password: 'secret_password_2026', encryption: 'WPA', hidden: false });
-  const [vcardData, setVcardData] = useState({ name: 'Alex Morgan', phone: '+1 (555) 234-5678', email: 'alex@docforge.app', company: 'DocForge Inc.', title: 'Lead Architect' });
-  const [emailData, setEmailData] = useState({ to: 'contact@docforge.app', subject: 'Inquiry', body: 'Hello DocForge team,' });
+  const [vcardData, setVcardData] = useState({ name: 'Alex Morgan', phone: '+1 (555) 234-5678', email: 'alex@docscalar.app', company: 'DocScalar Inc.', title: 'Lead Architect' });
+  const [emailData, setEmailData] = useState({ to: 'contact@docscalar.app', subject: 'Inquiry', body: 'Hello DocScalar team,' });
 
   // Customization State
   const [size, setSize] = useState(380);
@@ -212,8 +212,8 @@ export default function QrGenerator() {
   const resetWorkspace = () => {
     clearStudioDraft('qr-generator');
     setPayloadType('url');
-    setUrlData('https://docforge.app');
-    setTextData('Hello from DocForge QR Studio!');
+    setUrlData('https://docscalar.app');
+    setTextData('Hello from DocScalar QR Studio!');
     setSize(380);
     setDarkColor('#000000');
     setLightColor('#ffffff');
@@ -231,7 +231,7 @@ export default function QrGenerator() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Free QR Code Generator Online — Custom Vector SVG, PNG & PDF | DocForge"
+        title="Free QR Code Generator Online — Custom Vector SVG, PNG & PDF | DocScalar"
         description="Create high-resolution custom QR codes online for free. Support for URLs, Wi-Fi credentials, vCard contacts, SVG vector exports, and printable PDF flyers."
       />
 
@@ -650,7 +650,7 @@ export default function QrGenerator() {
             {/* Quick Next Steps */}
             <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
-                Continue Working with DocForge
+                Continue Working with DocScalar
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <Link

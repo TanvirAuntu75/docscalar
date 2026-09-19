@@ -11,18 +11,19 @@ import { useJobPoller } from '../../hooks/useJobPoller';
 import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx';
 import {
   Table,
   Sparkles,
   Download,
-  Cpu,
-  Server,
+  Zap,
   FileCheck,
   LayoutGrid,
   Maximize2,
   ChevronLeft,
   ChevronRight,
-  Hash
+  Hash,
+  FileSpreadsheet
 } from 'lucide-react';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
@@ -45,7 +46,15 @@ export default function PdfToExcel() {
   const [engineMode, setEngineMode] = useState('client'); // 'client' | 'server'
   const [sheetMode, setSheetMode] = useState('per_page'); // 'per_page' | 'single_sheet'
   const [autoDetectNumbers, setAutoDetectNumbers] = useState(true);
+  const [extractScalars, setExtractScalars] = useState(true);
   const [outputFileName, setOutputFileName] = useState('');
+
+  // Extracted Spreadsheet Live Preview State
+  const [previewWorkbook, setPreviewWorkbook] = useState(null);
+  const [previewSheetNames, setPreviewSheetNames] = useState([]);
+  const [activePreviewSheet, setActivePreviewSheet] = useState(0);
+  const [previewRows, setPreviewRows] = useState([]);
+  const [scalarCount, setScalarCount] = useState(0);
 
   // Processing & Poller
   const [processing, setProcessing] = useState(false);
@@ -56,6 +65,7 @@ export default function PdfToExcel() {
   const [error, setError] = useState(null);
 
   const canvasRef = useRef(null);
+  const currentRenderTaskRef = useRef(null);
   const poller = useJobPoller(BACKEND_URL);
 
   // 1. Check Server Availability
@@ -63,7 +73,10 @@ export default function PdfToExcel() {
     const checkServer = async () => {
       try {
         const res = await apiFetch(`${BACKEND_URL}/api/meta/conversions`, { signal: AbortSignal.timeout(1500) });
-        if (res.ok) setBackendActive(true);
+        if (res.ok) {
+          setBackendActive(true);
+          setEngineMode('server');
+        }
       } catch (e) {
         setBackendActive(false);
       }
@@ -89,6 +102,7 @@ export default function PdfToExcel() {
           if (draft.engineMode) setEngineMode(draft.engineMode);
           if (draft.sheetMode) setSheetMode(draft.sheetMode);
           if (draft.autoDetectNumbers !== undefined) setAutoDetectNumbers(draft.autoDetectNumbers);
+          if (draft.extractScalars !== undefined) setExtractScalars(draft.extractScalars);
           if (draft.outputFileName) setOutputFileName(draft.outputFileName);
         }
       } catch (err) {
@@ -109,10 +123,11 @@ export default function PdfToExcel() {
         engineMode,
         sheetMode,
         autoDetectNumbers,
+        extractScalars,
         outputFileName
       });
     }
-  }, [files, engineMode, sheetMode, autoDetectNumbers, outputFileName]);
+  }, [files, engineMode, sheetMode, autoDetectNumbers, extractScalars, outputFileName]);
 
   // 4. Load PDF with PDF.js for Preview
   useEffect(() => {
@@ -202,14 +217,27 @@ export default function PdfToExcel() {
         canvas.height = viewport.height;
         canvas.width = viewport.width;
 
+        if (currentRenderTaskRef.current) {
+          try {
+            currentRenderTaskRef.current.cancel();
+          } catch (e) {}
+          currentRenderTaskRef.current = null;
+        }
+
         const renderContext = {
           canvasContext: context,
           viewport
         };
 
-        await page.render(renderContext).promise;
+        const renderTask = page.render(renderContext);
+        currentRenderTaskRef.current = renderTask;
+        await renderTask.promise;
       } catch (err) {
-        console.warn('Canvas render error:', err);
+        if (err?.name !== 'RenderingCancelledException') {
+          console.warn('Canvas render error:', err);
+        }
+      } finally {
+        currentRenderTaskRef.current = null;
       }
     };
 
@@ -217,6 +245,12 @@ export default function PdfToExcel() {
 
     return () => {
       isCancelled = true;
+      if (currentRenderTaskRef.current) {
+        try {
+          currentRenderTaskRef.current.cancel();
+        } catch (e) {}
+        currentRenderTaskRef.current = null;
+      }
     };
   }, [pdfDoc, activePage, viewMode, zoomScale]);
 
@@ -239,6 +273,7 @@ export default function PdfToExcel() {
             pagesCount: numPages,
             engineMode: 'server'
           });
+          loadPreviewFromBlob(blob);
           saveFile(finalName, blob.size, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'PDF to EXCEL', blob);
           clearStudioDraft('pdf-to-excel');
         })
@@ -253,12 +288,56 @@ export default function PdfToExcel() {
         });
     } else if (poller.status === 'failed') {
       setProcessing(false);
-      setError(poller.error || 'Server conversion failed.');
+      setError(poller.error || 'High-precision conversion failed.');
     } else if (poller.status === 'started' || poller.status === 'queued') {
       setProgress(poller.progress || 20);
-      setStatusMessage('Extracting tabular data via LibreOffice / AI engine...');
+      setStatusMessage('Extracting tabular data with full precision...');
     }
   }, [poller.status, poller.result, poller.error, poller.progress, files, activeFileIndex, numPages]);
+
+  // Parse generated Excel workbook for instant live preview
+  const loadPreviewFromBlob = async (blob) => {
+    try {
+      const arrayBuffer = await blob.arrayBuffer();
+      const wb = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+      setPreviewWorkbook(wb);
+      const names = wb.SheetNames || [];
+      setPreviewSheetNames(names);
+      setActivePreviewSheet(0);
+      if (names.length > 0) {
+        const firstSheet = wb.Sheets[names[0]];
+        const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+        setPreviewRows(rows.slice(0, 50));
+        let sCount = 0;
+        for (const r of rows) {
+          if (
+            Array.isArray(r) &&
+            r.some(
+              (c) =>
+                typeof c === 'string' &&
+                (c.includes(':') ||
+                  c.includes('Invoice') ||
+                  c.includes('Total') ||
+                  c.includes('Document Information'))
+            )
+          ) {
+            sCount++;
+          }
+        }
+        setScalarCount(sCount);
+      }
+    } catch (err) {
+      console.warn('Failed to parse workbook for live preview:', err);
+    }
+  };
+
+  const switchPreviewSheet = (index) => {
+    if (!previewWorkbook || !previewSheetNames[index]) return;
+    setActivePreviewSheet(index);
+    const sheet = previewWorkbook.Sheets[previewSheetNames[index]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+    setPreviewRows(rows.slice(0, 50));
+  };
 
   // 7. Execute PDF to Excel Conversion
   const handleConvert = async () => {
@@ -267,15 +346,15 @@ export default function PdfToExcel() {
     setError(null);
     setResult(null);
     setProgress(5);
-    setStatusMessage('Analyzing document table structures...');
+    setStatusMessage('Analyzing document table structures & metadata...');
 
     const file = files[activeFileIndex] || files[0];
     const finalName = outputFileName.trim().endsWith('.xlsx') ? outputFileName.trim() : `${outputFileName.trim() || file.name.replace(/\.[^.]+$/, '')}.xlsx`;
 
     try {
       if (engineMode === 'server') {
-        if (!backendActive) throw new Error('Conversion server is unreachable. Please switch to Fast Browser Mode.');
-        setStatusMessage('Uploading PDF for server table extraction...');
+        if (!backendActive) throw new Error('Cloud conversion engine is currently offline. Please switch to Fast Mode.');
+        setStatusMessage('Preparing document for full-precision table extraction...');
         const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
         if (!uploadData.success) throw new Error(uploadData.detail || 'Upload failed');
 
@@ -296,10 +375,10 @@ export default function PdfToExcel() {
         const convertData = await convertRes.json();
         poller.startPolling(convertData.job_id);
       } else {
-        setStatusMessage('Extracting tabular coordinates and packaging XLSX...');
+        setStatusMessage('Extracting tabular coordinates, scalar fields, and compiling XLSX...');
         const xlsxBlob = await pdfToExcel(
           file,
-          { sheetMode, autoDetectNumbers },
+          { sheetMode, autoDetectNumbers, extractScalars },
           (p) => {
             setProgress(p);
             setStatusMessage(`Compiling Excel worksheets... ${p}%`);
@@ -315,6 +394,7 @@ export default function PdfToExcel() {
           engineMode: 'client'
         });
 
+        await loadPreviewFromBlob(xlsxBlob);
         await saveFile(finalName, xlsxBlob.size, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'PDF to EXCEL', xlsxBlob);
         await clearStudioDraft('pdf-to-excel');
       }
@@ -344,6 +424,11 @@ export default function PdfToExcel() {
     setOutputFileName('');
     setPdfDoc(null);
     setNumPages(0);
+    setPreviewWorkbook(null);
+    setPreviewSheetNames([]);
+    setActivePreviewSheet(0);
+    setPreviewRows([]);
+    setScalarCount(0);
     poller.resetPoller();
   };
 
@@ -359,7 +444,7 @@ export default function PdfToExcel() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="PDF to Excel Online Free — Convert PDF to XLSX | DocForge"
+        title="PDF to Excel Online Free — Convert PDF to XLSX | DocScalar"
         description="Convert PDF tables and spreadsheets into Microsoft Excel (.xlsx) format. High-precision coordinate extraction with 100% private local processing."
       />
 
@@ -496,7 +581,7 @@ export default function PdfToExcel() {
               </div>
 
               {/* Viewport Canvas Stage */}
-              <div className="flex-1 overflow-auto p-4 sm:p-8 flex items-start justify-center relative bg-pattern select-none">
+              <div className="flex-1 overflow-auto p-4 sm:p-8 flex items-start justify-center relative bg-pattern select-none pb-24 sm:pb-32">
                 {docLoading ? (
                   <div className="flex flex-col items-center gap-3 text-[var(--text-secondary)] my-auto">
                     <span className="material-symbols-outlined text-[32px] animate-spin text-[var(--color-primary)]">
@@ -506,8 +591,7 @@ export default function PdfToExcel() {
                   </div>
                 ) : viewMode === 'inspect' ? (
                   <div
-                    className="relative bg-white shadow-2xl rounded-2xl border border-slate-300 dark:border-slate-800 p-2 overflow-hidden flex flex-col transition-transform duration-150 origin-top"
-                    style={{ transform: `scale(${zoomScale})` }}
+                    className="relative bg-white shadow-2xl rounded-2xl border border-slate-300 dark:border-slate-800 p-2 overflow-hidden flex flex-col transition-all duration-150 m-auto shrink-0"
                   >
                     <canvas ref={canvasRef} className="rounded-xl max-w-full h-auto" />
                   </div>
@@ -523,7 +607,7 @@ export default function PdfToExcel() {
                         }}
                         className="group relative bg-[var(--bg-primary)] p-4 rounded-2xl border border-[var(--border-subtle)] hover:border-emerald-500 shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col items-center gap-3"
                       >
-                        <div className="w-full aspect-[3/4] bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center relative overflow-hidden group-hover:scale-[1.02] transition-transform">
+                        <div className="w-full aspect-[1/1.414] bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center relative overflow-hidden group-hover:scale-[1.02] transition-transform">
                           {pageThumbnails[i] ? (
                             <img src={pageThumbnails[i]} alt={`Page ${i + 1}`} className="w-full h-full object-contain bg-white" />
                           ) : (
@@ -583,8 +667,9 @@ export default function PdfToExcel() {
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Cpu size={14} />
-                      <span>Fast Browser (Private)</span>
+                      <Zap size={14} />
+                      <span>Fast Mode</span>
+                      <span className={`text-[10px] ${engineMode === 'client' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>Instant · Private</span>
                     </button>
 
                     <button
@@ -596,8 +681,9 @@ export default function PdfToExcel() {
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Server size={14} />
-                      <span>LibreOffice Server</span>
+                      <Sparkles size={14} />
+                      <span>Full Precision</span>
+                      <span className={`text-[10px] ${engineMode === 'server' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>Multi-Layer</span>
                     </button>
                   </div>
                 </div>
@@ -642,6 +728,25 @@ export default function PdfToExcel() {
                   />
                 </div>
 
+                {/* 4. Scalar Recognition Toggle */}
+                <div className="bg-[var(--bg-secondary)] p-3 rounded-2xl border border-[var(--border-subtle)] flex items-center justify-between">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-xs font-semibold text-[var(--text-primary)] flex items-center gap-1.5">
+                      <Sparkles size={14} className="text-emerald-500" />
+                      <span>Extract Metadata & Totals</span>
+                    </span>
+                    <span className="text-[10px] text-[var(--text-secondary)]">
+                      Captures invoice #, dates, key-values & summary totals
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={extractScalars}
+                    onChange={(e) => setExtractScalars(e.target.checked)}
+                    className="w-4 h-4 rounded accent-[var(--color-primary)] cursor-pointer"
+                  />
+                </div>
+
                 {/* 4. Output File Name */}
                 <div className="flex flex-col gap-1 pt-2 border-t border-[var(--border-subtle)]">
                   <label className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
@@ -659,14 +764,16 @@ export default function PdfToExcel() {
                 {/* Progress Bar (While Processing) */}
                 {processing && (
                   <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                    <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                           progress_activity
                         </span>
-                        {statusMessage || 'Extracting tables...'}
-                      </span>
-                      <span>{progress}%</span>
+                        <span className="truncate" title={statusMessage || 'Extracting tables...'}>
+                          {statusMessage || 'Extracting tables...'}
+                        </span>
+                      </div>
+                      <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div
@@ -713,22 +820,22 @@ export default function PdfToExcel() {
         /* RESULT VIEW: Celebratory High-Fidelity Download Card                       */
         /* ========================================================================= */
         <div className="w-full flex-1 flex items-center justify-center p-4 sm:p-8">
-          <div className="max-w-xl w-full p-8 sm:p-10 bg-[var(--bg-primary)] border border-[var(--border-subtle)] rounded-3xl shadow-xl shadow-black/5 dark:shadow-black/25 flex flex-col items-center text-center gap-6 animate-[scaleIn_0.22s_ease-out]">
+          <div className="max-w-4xl w-full p-6 sm:p-8 bg-[var(--bg-primary)] border border-[var(--border-subtle)] rounded-3xl shadow-xl shadow-black/5 dark:shadow-black/25 flex flex-col items-center text-center gap-5 animate-[scaleIn_0.22s_ease-out]">
             {/* Celebration Icon Badge */}
-            <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/10">
-              <span className="material-symbols-outlined text-[40px]">check_circle</span>
+            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+              <span className="material-symbols-outlined text-[36px]">check_circle</span>
             </div>
 
             {/* Title & Document Pill */}
-            <div className="flex flex-col gap-2 max-w-md">
+            <div className="flex flex-col gap-1.5 max-w-md">
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight">
                 Excel Spreadsheet Ready!
               </h2>
-              <p className="text-sm text-[var(--text-secondary)]">
-                Your PDF tables have been extracted into an editable Microsoft Excel workbook.
+              <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
+                Your PDF tables & scalar fields have been extracted into an editable Microsoft Excel workbook.
               </p>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-full text-xs font-semibold text-[var(--text-primary)] mx-auto mt-2 max-w-full">
-                <FileCheck size={16} className="text-emerald-500" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-full text-xs font-semibold text-[var(--text-primary)] mx-auto mt-1 max-w-full">
+                <FileCheck size={15} className="text-emerald-500" />
                 <span className="truncate max-w-[220px]">{result.name}</span>
                 {result.size && (
                   <>
@@ -741,21 +848,106 @@ export default function PdfToExcel() {
 
             {/* Telemetry Diagnostics Grid */}
             <div className="grid grid-cols-3 gap-2.5 w-full">
-              <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
+              <div className="p-2.5 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Pages Processed</span>
-                <span className="text-base font-extrabold text-[var(--text-primary)]">{result.pagesCount || numPages}</span>
+                <span className="text-sm sm:text-base font-extrabold text-[var(--text-primary)]">{result.pagesCount || numPages}</span>
               </div>
-              <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
+              <div className="p-2.5 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Format</span>
-                <span className="text-base font-extrabold text-emerald-600 dark:text-emerald-400">XLSX</span>
+                <span className="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-400">XLSX</span>
               </div>
-              <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
+              <div className="p-2.5 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Engine</span>
-                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1 capitalize">
-                  {result.engineMode === 'server' ? 'LibreOffice' : 'Coordinate Extractor'}
+                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5 capitalize">
+                  {result.engineMode === 'server' ? 'Full Precision Engine' : 'Fast Structural Engine'}
                 </span>
               </div>
             </div>
+
+            {/* Extracted Workbook Live Data Preview */}
+            {previewRows.length > 0 && (
+              <div className="w-full flex flex-col gap-2 p-3 sm:p-4 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] text-left">
+                <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[var(--border-subtle)]">
+                  <div className="flex items-center gap-2">
+                    <FileSpreadsheet size={16} className="text-emerald-500" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-[var(--text-primary)]">
+                      Spreadsheet Live Preview
+                    </span>
+                    {scalarCount > 0 && (
+                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                        {scalarCount} Scalar Records Recognized
+                      </span>
+                    )}
+                  </div>
+
+                  {previewSheetNames.length > 1 && (
+                    <div className="flex items-center gap-1 bg-[var(--bg-primary)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
+                      {previewSheetNames.map((name, idx) => (
+                        <button
+                          key={name}
+                          type="button"
+                          onClick={() => switchPreviewSheet(idx)}
+                          className={`px-2 py-0.5 text-xs font-semibold rounded transition-all cursor-pointer ${
+                            activePreviewSheet === idx
+                              ? 'bg-emerald-600 text-white shadow-xs font-bold'
+                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                          }`}
+                        >
+                          {name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="w-full overflow-x-auto max-h-56 border border-[var(--border-subtle)] rounded-xl bg-[var(--bg-primary)]">
+                  <table className="w-full text-xs border-collapse font-mono">
+                    <thead>
+                      <tr className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold border-b border-[var(--border-subtle)]">
+                        <th className="py-1 px-2 w-8 text-center border-r border-[var(--border-subtle)] text-[10px] text-slate-400">#</th>
+                        {Array.from({ length: Math.max(...previewRows.map((r) => (Array.isArray(r) ? r.length : 0)), 4) }).map((_, cIdx) => (
+                          <th key={cIdx} className="py-1 px-3 text-left border-r border-[var(--border-subtle)] text-[11px] font-semibold text-slate-500">
+                            {String.fromCharCode(65 + (cIdx % 26))}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {previewRows.slice(0, 20).map((row, rIdx) => {
+                        const isHeaderBlock = Array.isArray(row) && row.length === 1 && String(row[0]).startsWith('---');
+                        return (
+                          <tr
+                            key={rIdx}
+                            className={`border-b border-[var(--border-subtle)]/60 hover:bg-emerald-500/5 transition-colors ${
+                              isHeaderBlock
+                                ? 'bg-emerald-500/10 font-bold text-emerald-700 dark:text-emerald-400'
+                                : rIdx % 2 === 0
+                                ? 'bg-transparent'
+                                : 'bg-slate-50/50 dark:bg-slate-900/30'
+                            }`}
+                          >
+                            <td className="py-1 px-2 text-center border-r border-[var(--border-subtle)] text-[10px] text-slate-400 select-none">
+                              {rIdx + 1}
+                            </td>
+                            {isHeaderBlock ? (
+                              <td colSpan={10} className="py-1 px-3 font-semibold text-emerald-700 dark:text-emerald-400 font-sans">
+                                {row[0]}
+                              </td>
+                            ) : (
+                              Array.from({ length: Math.max(...previewRows.map((r) => (Array.isArray(r) ? r.length : 0)), 4) }).map((_, cIdx) => (
+                                <td key={cIdx} className="py-1 px-3 border-r border-[var(--border-subtle)]/50 whitespace-nowrap text-[var(--text-primary)] text-[11px]">
+                                  {row && row[cIdx] !== undefined ? String(row[cIdx]) : ''}
+                                </td>
+                              ))
+                            )}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
 
             {/* Action Buttons (Strict Single-Line No Wrap) */}
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center pt-2">
@@ -781,7 +973,7 @@ export default function PdfToExcel() {
             {/* Quick Next Steps */}
             <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
-                Continue Working with DocForge
+                Continue Working with DocScalar
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <Link

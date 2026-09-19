@@ -9,6 +9,9 @@ import { generateDiffAuditReportPdf } from '../../engines/pdf/comparePdf';
 import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
+import { useDpiQuality } from '../../hooks/useDpiQuality';
+import { DpiQualitySelector } from '../../components/DpiQualitySelector';
+import useCanvasPinchZoom from '../../hooks/useCanvasPinchZoom';
 import {
   Columns,
   SplitSquareVertical,
@@ -34,6 +37,26 @@ export default function ComparePdf() {
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [zoomScale, setZoomScale] = useState(1.0);
+  const [debouncedRenderZoom, setDebouncedRenderZoom] = useState(zoomScale);
+  const { dpi, setDpi } = useDpiQuality();
+  const viewportContainerRef = useRef(null);
+
+  // Debounce high-DPI PDF rasterization to decouple smooth 120 FPS GPU scaling from heavy canvas redraws
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedRenderZoom(zoomScale);
+    }, 200);
+    return () => clearTimeout(handler);
+  }, [zoomScale]);
+
+  // Universal 2-finger touchpad/touchscreen canvas pinch-to-zoom
+  useCanvasPinchZoom({
+    containerRef: viewportContainerRef,
+    zoomScale,
+    setZoomScale,
+    minZoom: 0.3,
+    maxZoom: 3.0
+  });
 
   // View Modes: 'side-by-side' | 'swipe' | 'heatmap' | 'text-diff'
   const [viewMode, setViewMode] = useState('side-by-side');
@@ -200,59 +223,74 @@ export default function ComparePdf() {
         const pageA = await pdfA.getPage(pA);
         const pageB = await pdfB.getPage(pB);
 
-        const targetWidth = Math.round(580 * zoomScale);
-        const scaleA = targetWidth / pageA.getViewport({ scale: 1.0 }).width;
-        const scaleB = targetWidth / pageB.getViewport({ scale: 1.0 }).width;
+        const dpiMultiplier = (dpi || 150) / 72;
+        const targetWidth = Math.round(580 * debouncedRenderZoom);
+        const rasterWidth = Math.round(targetWidth * dpiMultiplier);
+        const scaleA = rasterWidth / pageA.getViewport({ scale: 1.0 }).width;
+        const scaleB = rasterWidth / pageB.getViewport({ scale: 1.0 }).width;
 
         const viewportA = pageA.getViewport({ scale: scaleA });
         const viewportB = pageB.getViewport({ scale: scaleB });
 
         const commonHeight = Math.max(viewportA.height, viewportB.height);
+        const cssHeight = Math.round(commonHeight / dpiMultiplier);
 
         // 1. Side-by-Side Render
         const canvasA = canvasARef.current;
         if (canvasA) {
-          canvasA.width = targetWidth;
+          canvasA.width = rasterWidth;
           canvasA.height = commonHeight;
+          canvasA.style.width = `${targetWidth}px`;
+          canvasA.style.height = `${cssHeight}px`;
           const ctxA = canvasA.getContext('2d');
           ctxA.fillStyle = '#ffffff';
-          ctxA.fillRect(0, 0, targetWidth, commonHeight);
+          ctxA.fillRect(0, 0, rasterWidth, commonHeight);
           await pageA.render({ canvasContext: ctxA, viewport: viewportA }).promise;
         }
 
         const canvasB = canvasBRef.current;
         if (canvasB) {
-          canvasB.width = targetWidth;
+          canvasB.width = rasterWidth;
           canvasB.height = commonHeight;
+          canvasB.style.width = `${targetWidth}px`;
+          canvasB.style.height = `${cssHeight}px`;
           const ctxB = canvasB.getContext('2d');
           ctxB.fillStyle = '#ffffff';
-          ctxB.fillRect(0, 0, targetWidth, commonHeight);
+          ctxB.fillRect(0, 0, rasterWidth, commonHeight);
           await pageB.render({ canvasContext: ctxB, viewport: viewportB }).promise;
         }
 
         // 2. Swipe Overlay Canvases
         const canvasAOverlay = canvasAOverlayRef.current;
         if (canvasAOverlay) {
-          canvasAOverlay.width = targetWidth;
+          canvasAOverlay.width = rasterWidth;
           canvasAOverlay.height = commonHeight;
+          canvasAOverlay.style.width = `${targetWidth}px`;
+          canvasAOverlay.style.height = `${cssHeight}px`;
           const ctxAOverlay = canvasAOverlay.getContext('2d');
           ctxAOverlay.fillStyle = '#ffffff';
-          ctxAOverlay.fillRect(0, 0, targetWidth, commonHeight);
+          ctxAOverlay.fillRect(0, 0, rasterWidth, commonHeight);
           await pageA.render({ canvasContext: ctxAOverlay, viewport: viewportA }).promise;
         }
 
         const canvasBOverlay = canvasBOverlayRef.current;
         if (canvasBOverlay) {
-          canvasBOverlay.width = targetWidth;
+          canvasBOverlay.width = rasterWidth;
           canvasBOverlay.height = commonHeight;
+          canvasBOverlay.style.width = `${targetWidth}px`;
+          canvasBOverlay.style.height = `${cssHeight}px`;
           const ctxBOverlay = canvasBOverlay.getContext('2d');
           ctxBOverlay.fillStyle = '#ffffff';
-          ctxBOverlay.fillRect(0, 0, targetWidth, commonHeight);
+          ctxBOverlay.fillRect(0, 0, rasterWidth, commonHeight);
           await pageB.render({ canvasContext: ctxBOverlay, viewport: viewportB }).promise;
         }
 
         // 3. Pixel Heatmap
         if (canvasA && canvasB && canvasHeatmapRef.current) {
+          canvasHeatmapRef.current.width = rasterWidth;
+          canvasHeatmapRef.current.height = commonHeight;
+          canvasHeatmapRef.current.style.width = `${targetWidth}px`;
+          canvasHeatmapRef.current.style.height = `${cssHeight}px`;
           const stats = computePixelDiff(canvasA, canvasB, canvasHeatmapRef.current, heatmapThreshold);
           if (!isCancelled) {
             setHeatmapStats(stats);
@@ -268,7 +306,7 @@ export default function ComparePdf() {
     return () => {
       isCancelled = true;
     };
-  }, [pdfA, pdfB, currentPage, viewMode, heatmapThreshold, zoomScale]);
+  }, [pdfA, pdfB, currentPage, viewMode, heatmapThreshold, debouncedRenderZoom, dpi]);
 
   // 7. Compute Semantic Text Diff
   useEffect(() => {
@@ -320,7 +358,7 @@ export default function ComparePdf() {
   const copyDiffSummary = () => {
     if (!textDiffResult) return;
     const summary = [
-      `=== DocForge PDF Diff Summary ===`,
+      `=== DocScalar PDF Diff Summary ===`,
       `Original: ${fileA?.name || 'Document A'}`,
       `Revision: ${fileB?.name || 'Document B'}`,
       `Scope: ${textDiffScope === 'page' ? `Page ${currentPage}` : 'Entire Document'}`,
@@ -417,7 +455,7 @@ export default function ComparePdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Compare PDF Files Online Free — Visual Diff & Heatmap | DocForge"
+        title="Compare PDF Files Online Free — Visual Diff & Heatmap | DocScalar"
         description="Spot changes between PDF revisions with pixel heatmaps, word-level text diffs, and interactive swipe overlays. 100% Client-side."
       />
 
@@ -547,14 +585,14 @@ export default function ComparePdf() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
               {/* Sticky Canvas Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2 flex-wrap">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2.5 overflow-visible">
+                  <div className="flex items-center gap-2.5 flex-wrap">
                     {/* View Mode Tabs */}
-                    <div className="flex items-center gap-1 p-1 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)]">
+                    <div className="h-8 flex items-center gap-1 p-0.5 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] shrink-0">
                       <button
                         type="button"
                         onClick={() => setViewMode('side-by-side')}
-                        className={`py-1 px-2.5 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all cursor-pointer ${
+                        className={`h-7 px-3 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
                           viewMode === 'side-by-side'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -567,7 +605,7 @@ export default function ComparePdf() {
                       <button
                         type="button"
                         onClick={() => setViewMode('swipe')}
-                        className={`py-1 px-2.5 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all cursor-pointer ${
+                        className={`h-7 px-3 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
                           viewMode === 'swipe'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -580,7 +618,7 @@ export default function ComparePdf() {
                       <button
                         type="button"
                         onClick={() => setViewMode('heatmap')}
-                        className={`py-1 px-2.5 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all cursor-pointer ${
+                        className={`h-7 px-3 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
                           viewMode === 'heatmap'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -593,7 +631,7 @@ export default function ComparePdf() {
                       <button
                         type="button"
                         onClick={() => setViewMode('text-diff')}
-                        className={`py-1 px-2.5 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all cursor-pointer ${
+                        className={`h-7 px-3 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
                           viewMode === 'text-diff'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -606,12 +644,12 @@ export default function ComparePdf() {
 
                     {/* Pagination Capsule */}
                     {totalPages > 0 && (
-                      <div className="flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] px-1 py-0.5">
+                      <div className="h-8 flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] px-2.5 py-1 shrink-0">
                         <button
                           type="button"
                           onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                           disabled={currentPage === 1}
-                          className="p-1 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                          className="p-0.5 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
                           title="Previous Page"
                         >
                           <span className="material-symbols-outlined text-[16px]">chevron_left</span>
@@ -623,7 +661,7 @@ export default function ComparePdf() {
                           type="button"
                           onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                           disabled={currentPage >= totalPages}
-                          className="p-1 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                          className="p-0.5 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
                           title="Next Page"
                         >
                           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
@@ -634,13 +672,13 @@ export default function ComparePdf() {
 
                   {/* Zoom & Reset */}
                   <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1 bg-[var(--bg-secondary)] px-2 py-1 rounded-lg border border-[var(--border-subtle)]">
+                    <div className="h-8 flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
                       <span className="material-symbols-outlined text-[15px] text-[var(--text-secondary)]">zoom_in</span>
                       <input
                         type="range"
-                        min="0.5"
-                        max="1.5"
-                        step="0.1"
+                        min="0.3"
+                        max="3.0"
+                        step="0.05"
                         value={zoomScale}
                         onChange={(e) => setZoomScale(parseFloat(e.target.value))}
                         className="w-16 h-1 bg-[var(--border-subtle)] accent-[var(--color-primary)] rounded-lg cursor-pointer"
@@ -650,10 +688,12 @@ export default function ComparePdf() {
                       </span>
                     </div>
 
+                    <DpiQualitySelector dpi={dpi} onChange={setDpi} align="right" compact={true} dropDirection="down" />
+
                     <button
                       type="button"
                       onClick={handleReset}
-                      className="p-1 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer"
+                      className="h-8 w-8 flex items-center justify-center hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-red-500/20"
                       title="Reset comparison"
                     >
                       <span className="material-symbols-outlined text-[18px]">restart_alt</span>
@@ -663,10 +703,10 @@ export default function ComparePdf() {
               </div>
 
               {/* Viewport Canvas Stage */}
-              <div className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center relative bg-pattern select-none">
+              <div ref={viewportContainerRef} className="flex-1 overflow-auto p-4 sm:p-8 flex items-start justify-center relative bg-pattern select-none">
                 {/* 1. Side-by-Side Mode */}
                 {viewMode === 'side-by-side' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl animate-[fadeIn_0.15s_ease-out]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl animate-[fadeIn_0.15s_ease-out] my-auto">
                     <div className="flex flex-col items-center gap-2">
                       <div className="w-full flex items-center justify-between px-2 text-xs font-bold text-[var(--color-primary)]">
                         <span className="truncate max-w-[200px]">Doc A: {fileA?.name}</span>

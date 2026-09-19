@@ -101,7 +101,7 @@ export default function Pricing() {
 
   return (
     <div className="bg-background min-h-screen py-24 px-margin-mobile md:px-margin-desktop relative">
-      <SEOHead title="Pricing Plans (DocForge)" description="Choose between our free local toolset and pro batch features. Secure, private document utilities." />
+      <SEOHead title="Pricing Plans (DocScalar)" description="Choose between our free local toolset and pro batch features. Secure, private document utilities." />
       <div className="absolute inset-0 bg-pattern opacity-10 pointer-events-none"></div>
 
       <div className="max-w-container-max mx-auto relative z-10">
@@ -224,7 +224,7 @@ export default function Pricing() {
             <div>
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <h3 className="font-h3 text-h3 font-semibold text-on-background mb-1">DocForge Pro</h3>
+                  <h3 className="font-h3 text-h3 font-semibold text-on-background mb-1">DocScalar Pro</h3>
                   <p className="font-body-sm text-sm text-on-surface-variant">For power users and high-volume batch processing.</p>
                 </div>
               </div>
@@ -305,7 +305,7 @@ export default function Pricing() {
                   <th className="py-5 px-6 font-semibold text-on-background w-[34%]">Features & Specs</th>
                   <th className="py-5 px-6 font-semibold text-on-background text-center w-[22%]">Guest Mode</th>
                   <th className="py-5 px-6 font-semibold text-on-background text-center w-[22%]">Standard Utility</th>
-                  <th className="py-5 px-6 font-semibold text-on-background text-center w-[22%]">DocForge Pro</th>
+                  <th className="py-5 px-6 font-semibold text-on-background text-center w-[22%]">DocScalar Pro</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/30">
@@ -451,7 +451,7 @@ export default function Pricing() {
             {/* Header */}
             <div className="flex items-center gap-2 mb-6 pb-4 border-b border-outline-variant">
               <span className="material-symbols-outlined text-primary text-[24px]">lock</span>
-              <span className="font-h3 text-[18px] font-semibold text-on-background">DocForge Secure Checkout</span>
+              <span className="font-h3 text-[18px] font-semibold text-on-background">DocScalar Secure Checkout</span>
             </div>
 
             {success ? (
@@ -459,7 +459,7 @@ export default function Pricing() {
                 <span className="material-symbols-outlined text-[64px] text-primary fill animate-pulse">verified</span>
                 <h3 className="font-h2 text-[22px] font-bold text-on-background">Payment Confirmed!</h3>
                 <p className="font-body-md text-sm text-on-surface-variant">
-                  Welcome to DocForge Pro. Upgrading your account...
+                  Welcome to DocScalar Pro. Upgrading your account...
                 </p>
               </div>
             ) : (
@@ -467,7 +467,7 @@ export default function Pricing() {
                 
                 {/* Total */}
                 <div className="bg-surface-container-low p-4 rounded-lg border border-outline-variant flex justify-between items-center mb-2">
-                  <span className="font-body-md font-semibold text-on-surface-variant">DocForge Pro Subscription</span>
+                  <span className="font-body-md font-semibold text-on-surface-variant">DocScalar Pro Subscription</span>
                   <span className="font-h3 text-primary font-bold text-[20px]">$9.00/mo</span>
                 </div>
 
@@ -568,8 +568,9 @@ export default function Pricing() {
                 </button>
 
                 {/* Footer Safe Note */}
-                <span className="text-[11px] text-on-surface-variant/60 text-center leading-relaxed mt-2 select-none">
-                  🔒 Encrypted connection. DocForge is local and Client Side first. This mock transaction completes entirely inside your browser.
+                <span className="text-[11px] text-on-surface-variant/60 text-center leading-relaxed mt-2 select-none flex items-center justify-center gap-1.5">
+                  <span className="material-symbols-outlined text-[13px]">lock</span>
+                  <span>Encrypted connection. DocScalar is local and Client Side first. This mock transaction completes entirely inside your browser.</span>
                 </span>
 
               </form>

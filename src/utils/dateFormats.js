@@ -1,5 +1,5 @@
 /**
- * Date Formatting Utility for DocForge Sign Studio
+ * Date Formatting Utility for DocScalar Sign Studio
  * Provides standard international date patterns including Slash, Hyphen, Dot, and Textual formats.
  */
 

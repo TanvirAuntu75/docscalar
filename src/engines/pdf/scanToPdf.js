@@ -1,5 +1,6 @@
 /* Scan to PDF Engine with Multi-Filter Enhancement & Geometry Baking */
 import { PDFDocument, degrees } from 'pdf-lib';
+import { cleanAndRefitDocument } from './cleanAndRefitPage.js';
 
 /**
  * Helper to convert data URL or blob to Uint8Array bytes
@@ -7,8 +8,8 @@ import { PDFDocument, degrees } from 'pdf-lib';
 async function dataUrlToBytes(dataUrl) {
   if (dataUrl.startsWith('data:')) {
     const base64 = dataUrl.split(',')[1];
-    if (typeof Buffer !== 'undefined') {
-      return Buffer.from(base64, 'base64');
+    if (typeof globalThis !== 'undefined' && globalThis.Buffer) {
+      return globalThis.Buffer.from(base64, 'base64');
     }
     const binaryStr = atob(base64);
     const bytes = new Uint8Array(binaryStr.length);
@@ -139,6 +140,16 @@ export async function compileScansToPdf(pages = [], options = {}) {
     }
   }
 
-  const pdfBytes = await pdfDoc.save();
+  // VisionClean: Universal Smart Cropper
+  let finalDoc = pdfDoc;
+  if (options && options.autoCropBlackBorders) {
+    finalDoc = await cleanAndRefitDocument(pdfDoc, options.pageCropBoxes || options.cropBox || {}, {
+      margin: options.cleanMargin ?? 0,
+      enabledEdges: options.enabledEdges,
+      pageIndices: options.pageIndices
+    });
+  }
+
+  const pdfBytes = await finalDoc.save();
   return new Blob([pdfBytes], { type: 'application/pdf' });
 }

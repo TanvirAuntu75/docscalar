@@ -15,6 +15,6 @@ def test_pdf_validation_missing():
 
 
 if __name__ == "__main__":
-    print("Running DocForge Backend Unit Tests...")
+    print("Running DocScalar Backend Unit Tests...")
     test_pdf_validation_missing()
     print("All backend tests completed successfully!")

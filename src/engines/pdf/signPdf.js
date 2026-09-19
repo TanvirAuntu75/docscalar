@@ -1,4 +1,5 @@
 import { PDFDocument, rgb, degrees, StandardFonts } from 'pdf-lib';
+import { cleanAndRefitDocument } from './cleanAndRefitPage.js';
 import { getPageGeometry, screenRatioToPdfPoints } from '../../utils/pdfCoordinates.js';
 import { formatDateByPattern } from '../../utils/dateFormats.js';
 
@@ -14,6 +15,7 @@ function sanitizePdfText(str) {
     .replace(/[\u2022]/g, '*')
     .replace(/[\u2026]/g, '...')
     .normalize('NFKD')
+    // eslint-disable-next-line no-control-regex
     .replace(/[^\x00-\xFF]/g, '');
 }
 
@@ -32,16 +34,36 @@ function hexToPdfRgb(hex = '#000000') {
 }
 
 /**
- * Converts data URL (base64) to Uint8Array
+ * Converts data URL (base64) to Uint8Array safely
  */
 function dataUrlToUint8Array(dataUrl) {
-  const base64 = dataUrl.split(',')[1];
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
+  try {
+    const parts = dataUrl.split(',');
+    if (parts.length < 2) return null;
+    const binary = atob(parts[1]);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+  } catch (err) {
+    console.warn('Failed to decode dataUrl to Uint8Array:', err);
+    return null;
   }
-  return bytes;
+}
+
+/**
+ * Sniffs image magic bytes: PNG [0x89, 0x50, 0x4E, 0x47] vs JPEG [0xFF, 0xD8]
+ */
+function isPngImageBytes(bytes) {
+  if (!bytes || bytes.length < 4) return true;
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
+    return true;
+  }
+  if (bytes[0] === 0xFF && bytes[1] === 0xD8) {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -50,23 +72,41 @@ function dataUrlToUint8Array(dataUrl) {
 async function extractImageBytes(source) {
   if (!source) return null;
   if (typeof source === 'string' && source.startsWith('data:')) {
+    const bytes = dataUrlToUint8Array(source);
+    if (!bytes) return null;
     return {
-      bytes: dataUrlToUint8Array(source),
-      isPng: source.startsWith('data:image/png')
+      bytes,
+      isPng: source.startsWith('data:image/png') || isPngImageBytes(bytes)
     };
   }
   if (source instanceof Uint8Array) {
-    return { bytes: source, isPng: true };
+    return { bytes: source, isPng: isPngImageBytes(source) };
   }
   if (source instanceof ArrayBuffer) {
-    return { bytes: new Uint8Array(source), isPng: true };
+    const bytes = new Uint8Array(source);
+    return { bytes, isPng: isPngImageBytes(bytes) };
   }
   if (typeof source.arrayBuffer === 'function') {
     const buf = await source.arrayBuffer();
-    const isPng = source.type ? source.type.includes('png') : true;
-    return { bytes: new Uint8Array(buf), isPng };
+    const bytes = new Uint8Array(buf);
+    const isPng = source.type ? source.type.includes('png') : isPngImageBytes(bytes);
+    return { bytes, isPng };
   }
   return null;
+}
+
+/**
+ * Transforms a 2D local offset (u, v) in an element's coordinate space to physical PDF coordinates,
+ * taking element rotation into account.
+ */
+function localToPdf(pt, u, v) {
+  const rad = ((pt.rotateDegrees || 0) * Math.PI) / 180;
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+  return {
+    x: pt.x + u * cos - v * sin,
+    y: pt.y + u * sin + v * cos
+  };
 }
 
 /**
@@ -137,8 +177,8 @@ export async function signPdf(file, fieldsOrOptions = [], optionsOrCb = {}) {
   let pdfBytes;
   if (file instanceof ArrayBuffer) {
     pdfBytes = file;
-  } else if (file instanceof Uint8Array) {
-    pdfBytes = file.buffer;
+  } else if (file instanceof Uint8Array || (typeof Buffer !== 'undefined' && Buffer.isBuffer(file))) {
+    pdfBytes = file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);
   } else if (typeof file.arrayBuffer === 'function') {
     pdfBytes = await file.arrayBuffer();
   } else {
@@ -146,7 +186,17 @@ export async function signPdf(file, fieldsOrOptions = [], optionsOrCb = {}) {
   }
 
   onProgress(25);
-  const pdfDoc = await PDFDocument.load(pdfBytes);
+  let pdfDoc = await PDFDocument.load(pdfBytes);
+
+  // VisionClean: Universal Smart Cropper
+  if (options && options.autoCropBlackBorders) {
+    pdfDoc = await cleanAndRefitDocument(pdfDoc, options.pageCropBoxes || options.cropBox || {}, {
+      margin: options.cleanMargin ?? 0,
+      enabledEdges: options.enabledEdges,
+      pageIndices: options.pageIndices
+    });
+  }
+
   const pages = pdfDoc.getPages();
   const totalPages = pages.length;
 
@@ -158,9 +208,7 @@ export async function signPdf(file, fieldsOrOptions = [], optionsOrCb = {}) {
   const fontHelvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontHelveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
   const fontTimesRoman = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-  const fontTimesRomanBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
   const fontCourier = await pdfDoc.embedFont(StandardFonts.Courier);
-  const fontCourierBold = await pdfDoc.embedFont(StandardFonts.CourierBold);
 
   // Group fields by pageIndex
   const fieldsByPage = {};
@@ -225,32 +273,58 @@ export async function signPdf(file, fieldsOrOptions = [], optionsOrCb = {}) {
           height: boxSize,
           borderColor: fieldColor,
           borderWidth: 1.5,
-          color: rgb(1, 1, 1)
+          color: rgb(1, 1, 1),
+          rotate: degrees(pt.rotateDegrees)
         });
 
         if (field.checked !== false) {
+          const pad = boxSize * 0.22;
           if (field.checkStyle === 'square') {
-            const pad = boxSize * 0.22;
+            const innerAnchor = localToPdf(pt, pad, pad);
+            const innerSize = boxSize - (pad * 2);
             page.drawRectangle({
-              x: pt.x + pad,
-              y: pt.y + pad,
-              width: boxSize - (pad * 2),
-              height: boxSize - (pad * 2),
+              x: innerAnchor.x,
+              y: innerAnchor.y,
+              width: innerSize,
+              height: innerSize,
+              color: fieldColor,
+              rotate: degrees(pt.rotateDegrees)
+            });
+          } else if (field.checkStyle === 'cross') {
+            // Draw X / Cross
+            const l1_start = localToPdf(pt, pad, pad);
+            const l1_end = localToPdf(pt, boxSize - pad, boxSize - pad);
+            const l2_start = localToPdf(pt, pad, boxSize - pad);
+            const l2_end = localToPdf(pt, boxSize - pad, pad);
+
+            page.drawLine({
+              start: l1_start,
+              end: l1_end,
+              thickness: 1.8,
+              color: fieldColor
+            });
+            page.drawLine({
+              start: l2_start,
+              end: l2_end,
+              thickness: 1.8,
               color: fieldColor
             });
           } else {
-            // Draw X / Cross
-            const pad = boxSize * 0.22;
+            // Draw Authentic Vector Checkmark (✓)
+            const p1 = localToPdf(pt, boxSize * 0.20, boxSize * 0.48);
+            const p2 = localToPdf(pt, boxSize * 0.42, boxSize * 0.22);
+            const p3 = localToPdf(pt, boxSize * 0.82, boxSize * 0.78);
+
             page.drawLine({
-              start: { x: pt.x + pad, y: pt.y + pad },
-              end: { x: pt.x + boxSize - pad, y: pt.y + boxSize - pad },
-              thickness: 1.5,
+              start: p1,
+              end: p2,
+              thickness: 2.0,
               color: fieldColor
             });
             page.drawLine({
-              start: { x: pt.x + pad, y: pt.y + boxSize - pad },
-              end: { x: pt.x + boxSize - pad, y: pt.y + pad },
-              thickness: 1.5,
+              start: p2,
+              end: p3,
+              thickness: 2.0,
               color: fieldColor
             });
           }
@@ -300,7 +374,8 @@ export async function signPdf(file, fieldsOrOptions = [], optionsOrCb = {}) {
             width: pt.width,
             height: pt.height,
             color: rgb(1, 1, 1),
-            opacity: 0.98
+            opacity: 0.98,
+            rotate: degrees(pt.rotateDegrees)
           });
         }
 
@@ -313,19 +388,20 @@ export async function signPdf(file, fieldsOrOptions = [], optionsOrCb = {}) {
           textWidth = chosenFont.widthOfTextAtSize(safeText, fontSize);
         }
 
-        // Compute text horizontal alignment offset
-        let textX = pt.x + 2;
+        // Compute text local coordinates relative to the field box
+        let localTextX = 2;
         if (field.textAlign === 'center' && pt.width > textWidth) {
-          textX = pt.x + (pt.width - textWidth) / 2;
+          localTextX = (pt.width - textWidth) / 2;
         } else if (field.textAlign === 'right' && pt.width > textWidth) {
-          textX = pt.x + pt.width - textWidth - 2;
+          localTextX = pt.width - textWidth - 2;
         }
 
-        const textY = pt.y + Math.max(2, (pt.height - fontSize) / 2);
+        const localTextY = Math.max(2, (pt.height - fontSize) / 2);
+        const textPos = localToPdf(pt, localTextX, localTextY);
 
         page.drawText(safeText, {
-          x: textX,
-          y: textY,
+          x: textPos.x,
+          y: textPos.y,
           size: fontSize,
           font: chosenFont,
           color: fieldColor,

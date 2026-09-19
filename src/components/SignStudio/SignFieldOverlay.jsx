@@ -43,56 +43,28 @@ export default function SignFieldOverlay({
     }
   }, [isSelected]);
 
-  // Keyboard navigation when selected
+  // Enter / Space shortcut to toggle checkbox or enter inline edit mode
   useEffect(() => {
     if (!isSelected) return;
 
     const handleKeyDown = (e) => {
-      // Don't intercept if user is typing in an input
+      // Don't intercept if user is typing in an input or textarea
       if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
 
-      const step = e.shiftKey ? 0.02 : 0.005;
-
-      switch (e.key) {
-        case 'Delete':
-        case 'Backspace':
+      if (e.key === 'Enter' || e.key === ' ') {
+        if (field.type === 'checkbox') {
           e.preventDefault();
-          onRemove(field.id);
-          break;
-        case 'Enter':
-        case ' ':
-          if (field.type === 'checkbox') {
-            e.preventDefault();
-            onUpdate(field.id, { checked: !field.checked });
-          } else if (['text', 'name', 'date'].includes(field.type)) {
-            e.preventDefault();
-            setIsEditingInline(true);
-          }
-          break;
-        case 'ArrowLeft':
+          onUpdate(field.id, { checked: !field.checked });
+        } else if (['text', 'name', 'date', 'title', 'company'].includes(field.type)) {
           e.preventDefault();
-          onUpdate(field.id, { x: Math.max(0, field.x - step) });
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          onUpdate(field.id, { x: Math.min(1 - field.width, field.x + step) });
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          onUpdate(field.id, { y: Math.max(0, field.y - step) });
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          onUpdate(field.id, { y: Math.min(1 - field.height, field.y + step) });
-          break;
-        default:
-          break;
+          setIsEditingInline(true);
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isSelected, field, onUpdate, onRemove]);
+  }, [isSelected, field, onUpdate]);
 
   // Drag start handler
   const handleDragStart = (e) => {
@@ -435,6 +407,16 @@ export default function SignFieldOverlay({
           : 'border-0 outline-none'
       }`}
     >
+      {/* Signer Tag Badge (Multi-Party Contract Workflow) */}
+      {field.signerRole && (
+        <div
+          className="absolute -top-3 left-1 px-1.5 py-0.2 rounded-full text-[8.5px] font-bold text-white shadow-xs pointer-events-none z-30"
+          style={{ backgroundColor: field.signerColor || '#1D4ED8' }}
+        >
+          {field.signerRole}
+        </div>
+      )}
+
       {/* Visual Field Content */}
       <div className="w-full h-full relative overflow-hidden">
         {renderFieldContent()}
@@ -453,9 +435,11 @@ export default function SignFieldOverlay({
             />
           ))}
 
-          {/* Floating Context Action Capsule */}
+          {/* Floating Context Action Capsule (flips below if near top margin) */}
           <div
-            className="field-action-btn absolute left-1/2 -translate-x-1/2 -top-10 bg-[var(--bg-primary)] border border-[var(--border-medium)] shadow-xl rounded-xl px-1.5 py-1 flex items-center gap-1 z-40 animate-[fadeIn_0.1s_ease-out]"
+            className={`field-action-btn absolute left-1/2 -translate-x-1/2 ${
+              field.y < 0.08 ? '-bottom-10' : '-top-10'
+            } bg-[var(--bg-primary)] border border-[var(--border-medium)] shadow-xl rounded-xl px-1.5 py-1 flex items-center gap-1 z-40 animate-[fadeIn_0.1s_ease-out]`}
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
           >

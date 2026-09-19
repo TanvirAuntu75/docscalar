@@ -6,7 +6,7 @@ from PIL import Image
 
 def test_image_conversions():
     print("==================================================")
-    print("DocForge Image Format Conversion Test Run")
+    print("DocScalar Image Format Conversion Test Run")
     print("==================================================")
 
     input_path = Path("C:/Users/Tanvir Alam/Desktop/cinematic_map_1971_recording.webp")

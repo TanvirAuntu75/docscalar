@@ -6,7 +6,7 @@ const DESKTOP_BACKEND = 'http://127.0.0.1:8765';
 export const BACKEND_URL =
   IS_TAURI
     ? DESKTOP_BACKEND
-    : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000');
+    : (import.meta.env?.VITE_BACKEND_URL || 'http://127.0.0.1:8000');
 
 /**
  * Secure wrapper around native fetch that automatically injects the stored JWT
@@ -86,7 +86,7 @@ export async function uploadFileSecure(backendUrl, file, onProgress) {
   } else {
     // Regular single file upload
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', file, file.name || 'document.pdf');
 
     const res = await apiFetch(`${backendUrl}/api/upload`, {
       method: 'POST',

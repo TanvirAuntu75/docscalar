@@ -7,7 +7,7 @@ export function generateOxfordBurgundyHtml(
   themeColor = '#831843',
   themeFont = 'Playfair Display',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
@@ -25,19 +25,17 @@ export function generateOxfordBurgundyHtml(
   const expHtml = data.experience && data.experience.length ? `
     <section class="cv-section">
       <div class="pill-header">
-        <span class="pill-title">Academic & Professional Appointments</span>
+        <span class="pill-title section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'Academic & Professional Appointments'}</span>
       </div>
       <div class="entries-list">
-        ${data.experience.map(e => `
+        ${data.experience.map((e, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${e.role}</span>
-              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
-            </div>
-            <div class="entry-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+              <span class="entry-role" data-df-field="exp:${idx}:role">${e.role}</span>
+              <span class="entry-date" ><span data-df-field="exp:${idx}:company">${e.company || ''}</span>${(e.company && (e.start || e.end)) ? ' | ' : ''}<span data-df-field="exp:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span></div>
             ${e.highlights && e.highlights.filter(Boolean).length ? `
               <ul class="entry-desc">
-                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+                ${e.highlights.filter(Boolean).map((h, hIdx) => `<li data-df-field="exp:${idx}:highlight:${hIdx}">${h}</li>`).join('')}
               </ul>
             ` : ''}
           </div>
@@ -49,16 +47,16 @@ export function generateOxfordBurgundyHtml(
   const eduHtml = data.education && data.education.length ? `
     <section class="cv-section">
       <div class="pill-header">
-        <span class="pill-title">Education & Qualifications</span>
+        <span class="pill-title section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'Education & Qualifications'}</span>
       </div>
       <div class="entries-list">
-        ${data.education.map(e => `
+        ${data.education.map((e, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${e.degree}</span>
-              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+              <span class="entry-role" data-df-field="edu:${idx}:degree">${e.degree}</span>
+              <span class="entry-date" data-df-field="edu:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
             </div>
-            <div class="entry-company">${e.school}${e.note ? ` · ${e.note}` : ''}</div>
+            <div class="entry-company"><span data-df-field="edu:${idx}:school">${e.school}</span>${e.note ? ` · ${e.note}` : ''}</div>
           </div>
         `).join('')}
       </div>
@@ -68,10 +66,10 @@ export function generateOxfordBurgundyHtml(
   const skillsHtml = data.skills && data.skills.length ? `
     <section class="cv-section">
       <div class="pill-header">
-        <span class="pill-title">Areas of Expertise</span>
+        <span class="pill-title section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Areas of Expertise'}</span>
       </div>
       <div class="skills-grid">
-        ${data.skills.map((s) => {
+        ${data.skills.map((s, idx) => {
           let name = s;
           let levelText = '';
           if (s.includes(' - ')) {
@@ -82,7 +80,7 @@ export function generateOxfordBurgundyHtml(
           return `
             <div class="skill-item">
               <span class="s-bullet">§</span>
-              <span class="s-name">${name}</span>
+              <span class="s-name" data-df-field="skill:${idx}">${name}</span>
               ${levelText ? `<span class="s-level">(${levelText})</span>` : ''}
             </div>
           `;
@@ -97,10 +95,10 @@ export function generateOxfordBurgundyHtml(
         <span class="pill-title">Funded Research & Publications</span>
       </div>
       <div class="entries-list">
-        ${data.projects.map(p => `
+        ${data.projects.map((p, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${p.name}</span>
+              <span class="entry-role" data-df-field="proj:${idx}:name">${p.name}</span>
               ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
             </div>
             ${p.description ? `<div style="font-size: 8.5pt; color: #475569; margin-top: 2px;">${p.description}</div>` : ''}
@@ -116,30 +114,32 @@ export function generateOxfordBurgundyHtml(
         <span class="pill-title">Fellowships & Honors</span>
       </div>
       <ul class="entry-desc" style="padding-left: 18px;">
-        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+        ${data.certifications.map((c, idx) => `<li data-df-field="cert:${idx}">${c}</li>`).join('')}
       </ul>
     </section>
   ` : '';
 
-  const contactHtml = `
+  const hasContact = Boolean(data.phone || data.email || data.location || data.website || data.linkedin);
+  const contactHtml = hasContact ? `
     <div class="contact-line">
-      ${data.phone ? `<span>${data.phone}</span>` : ''}
+      ${data.phone ? `<span data-df-field="phone">${data.phone}</span>` : ''}
       ${data.phone && data.email ? `<span class="c-sep">|</span>` : ''}
-      ${data.email ? `<a href="mailto:${data.email}" style="color: inherit; text-decoration: none;">${data.email}</a>` : ''}
+      ${data.email ? `<a href="mailto:${data.email}" style="color: inherit; text-decoration: none;" data-df-field="email">${data.email}</a>` : ''}
       ${data.email && data.location ? `<span class="c-sep">|</span>` : ''}
-      ${data.location ? `<span>${data.location}</span>` : ''}
+      ${data.location ? `<span data-df-field="location">${data.location}</span>` : ''}
       ${data.location && data.linkedin ? `<span class="c-sep">|</span>` : ''}
-      ${data.linkedin ? `<a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a>` : ''}
+      ${data.linkedin ? `<a data-df-field="linkedin" href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a>` : ''}
       ${data.linkedin && data.website ? `<span class="c-sep">|</span>` : ''}
-      ${data.website ? `<a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a>` : ''}
+      ${data.website ? `<a data-df-field="website" href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a>` : ''}
     </div>
-  `;
+  ` : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${data.name ? `${data.name} - Resume` : 'Resume'}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
@@ -155,7 +155,7 @@ export function generateOxfordBurgundyHtml(
     }
     
     #main-container {
-      width: 210mm;
+      width: 794px;
       min-height: 297mm;
       margin: 0 auto;
       background: #ffffff;
@@ -187,11 +187,30 @@ export function generateOxfordBurgundyHtml(
       color: ${accent};
       margin-bottom: 8px;
     }
+    .avatar-mask {
+      width: 145px;
+      height: 145px;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid ${accent};
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    .avatar-mask .avatar, .avatar-mask img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
     .avatar {
-      width: 80px;
-      height: 80px;
+      width: 135px;
+      height: 135px;
       border-radius: 50%;
       border: 3px solid ${accent};
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
       object-fit: cover;
       margin-bottom: 8px;
     }
@@ -331,18 +350,49 @@ export function generateOxfordBurgundyHtml(
       color: #64748b;
       font-size: 7.8pt;
     }
+  
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        margin-bottom: 0 !important;
+      }
+      #main-container, .page-container, .cv-page, .container, .page {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+    }
+  
+    .avatar, .profile-photo, .photo, .headshot, .profile-img, .photo-wrapper, .avatar-wrapper {
+      border-radius: 50%;
+      overflow: hidden;
+    }
   </style>
 </head>
 <body>
-<div id="main-container">
+<div class="cv-page" id="main-container">
   <div class="oxford-header">
-    ${data.photoUrl ? `<img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />` : `
+    ${data.photoUrl ? `<div class="avatar-mask"><img class="avatar" src="${data.photoUrl}" alt="Profile Photo" /></div>` : `
       <div class="crest-shield">
         <span>${getInitials(data.name)}</span>
       </div>
     `}
-    <h1>${data.name || 'Candidate Name'}</h1>
-    ${data.title ? `<div class="title">${data.title}</div>` : ''}
+    <h1 data-df-field="name">${data.name || ''}</h1>
+    <div class="candidate-title title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${data.title || ''}</div>
     ${contactHtml}
   </div>
   
@@ -351,7 +401,7 @@ export function generateOxfordBurgundyHtml(
       <div class="pill-header">
         <span class="pill-title">Summary & Statement</span>
       </div>
-      <div class="summary-text">${data.summary}</div>
+      <div class="summary-text" data-df-field="summary">${data.summary}</div>
     </section>
   ` : ''}
   

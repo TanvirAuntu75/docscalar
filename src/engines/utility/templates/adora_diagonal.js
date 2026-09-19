@@ -3,11 +3,11 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export function generateAdoraDiagonalHtml(
-  data,
+  data = {},
   themeColor = '#0284c7',
   themeFont = 'Inter',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
@@ -15,114 +15,153 @@ export function generateAdoraDiagonalHtml(
   const secondaryAccent = '#0f172a';
   const fontFam = themeFont === 'Playfair Display' ? "'Playfair Display', Georgia, serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : "'Inter', -apple-system, sans-serif";
 
-  const expHtml = data.experience && data.experience.length ? `
+  const safeData = data && typeof data === 'object' ? data : {};
+  const name = safeData.name !== undefined && safeData.name !== null ? String(safeData.name).trim() : '';
+  const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';
+  const summaryText = (safeData.summary || safeData.profile || safeData.about || '').trim();
+  const phoneText = (safeData.phone || '').trim();
+  const emailText = (safeData.email || '').trim();
+  const locationText = (safeData.location || safeData.address || '').trim();
+  const linkedinText = (safeData.linkedin || '').trim();
+  const websiteText = (safeData.website || '').trim();
+  const photoSrc = (safeData.photoUrl || '').trim();
+
+  const skillsList = Array.isArray(safeData.skills) ? safeData.skills : [];
+  const educationList = Array.isArray(safeData.education) ? safeData.education : [];
+  const experienceList = Array.isArray(safeData.experience) ? safeData.experience : [];
+  const projectList = Array.isArray(safeData.projects) ? safeData.projects : [];
+  const certList = Array.isArray(safeData.certifications) ? safeData.certifications : [];
+  const referenceList = Array.isArray(safeData.references) ? safeData.references : [];
+  const customSections = Array.isArray(safeData.customSections) ? safeData.customSections : [];
+
+  const langSection = customSections.find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');
+  const otherCustomSections = customSections.filter(cs => cs !== langSection);
+
+  const hasContact = Boolean(phoneText || emailText || locationText || linkedinText || websiteText);
+
+  const expHtml = experienceList.length ? `
     <div class="timeline-group">
       <div class="section-title-wrap">
-        <h2>Experience</h2>
+        <h2 class="section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'Experience'}</h2>
       </div>
       <div class="timeline-line-wrap">
-        ${data.experience.map(e => `
+        ${experienceList.map((e, idx) => `
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="item-header">
-              <span class="timeline-role">${e.role}</span>
-              <span class="timeline-year">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
-            </div>
-            <div class="timeline-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+              <span class="timeline-role" data-df-field="exp:${idx}:role">${e.role || ''}</span>
+              <span class="timeline-year" ><span data-df-field="exp:${idx}:company">${e.company || ''}</span>${(e.company && (e.start || e.end)) ? ' | ' : ''}<span data-df-field="exp:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span></span>${locationText ? ` · ${locationText}` : ''}</div>
             ${e.highlights && e.highlights.filter(Boolean).length ? `
               <ul class="timeline-desc">
-                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+                ${e.highlights.filter(Boolean).map((h, hIdx) => `<li data-df-field="exp:${idx}:highlight:${hIdx}">${h}</li>`).join('')}
               </ul>
-            ` : ''}
+            ` : (e.description ? `<div style="font-size: 8.5pt; color: #475569; margin-top: 4px;" data-df-field="exp:${idx}:highlight:0">${e.description}</div>` : '')}
           </div>
         `).join('')}
       </div>
     </div>
   ` : '';
 
-  const eduHtml = data.education && data.education.length ? `
+  const eduHtml = educationList.length ? `
     <div class="timeline-group">
       <div class="section-title-wrap">
-        <h2>Education</h2>
+        <h2 class="section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'Education'}</h2>
       </div>
       <div class="timeline-line-wrap">
-        ${data.education.map(e => `
+        ${educationList.map((e, idx) => `
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="item-header">
-              <span class="timeline-role">${e.degree}</span>
-              <span class="timeline-year">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+              <span class="timeline-role" data-df-field="edu:${idx}:degree">${e.degree || ''}</span>
+              <span class="timeline-year" data-df-field="edu:${idx}:date">${e.date || (e.start ? `${e.start}${e.end ? ` – ${e.end}` : ''}` : '')}</span>
             </div>
-            <div class="timeline-company">${e.school}${e.note ? ` · ${e.note}` : ''}</div>
+            <div class="timeline-company"><span data-df-field="edu:${idx}:school">${e.school || ''}</span>${e.note ? ` · ${e.note}` : ''}</div>
           </div>
         `).join('')}
       </div>
     </div>
   ` : '';
 
-  const projHtml = data.projects && data.projects.length ? `
+  const projHtml = projectList.length ? `
     <div class="timeline-group">
       <div class="section-title-wrap">
-        <h2>Projects</h2>
+        <h2 class="section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'Projects'}</h2>
       </div>
       <div class="timeline-line-wrap">
-        ${data.projects.map(p => `
+        ${projectList.map((p, idx) => `
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="item-header">
-              <span class="timeline-role">${p.name}</span>
-              ${p.url ? `<span class="timeline-year"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
+              <span class="timeline-role" data-df-field="proj:${idx}:name">${p.name || ''}</span>
+              ${p.url ? `<span class="timeline-year"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="proj:${idx}:url" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
             </div>
-            ${p.description ? `<div style="font-size: 8.5pt; color: #475569; margin-top: 2px;">${p.description}</div>` : ''}
+            ${p.description ? `<div style="font-size: 8.5pt; color: #475569; margin-top: 2px;" data-df-field="proj:${idx}:description">${p.description}</div>` : ''}
           </div>
         `).join('')}
       </div>
     </div>
   ` : '';
 
-  const certHtml = data.certifications && data.certifications.length ? `
+  const refHtml = referenceList.length ? `
+    <div class="timeline-group">
+      <div class="section-title-wrap">
+        <h2 class="section-heading" data-df-field="heading:references">${data.sectionTitles?.references || 'References'}</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
+        ${referenceList.map((r, idx) => `
+          <div style="font-size: 8.5pt; color: #475569;">
+            <div data-df-field="ref:${idx}:name" style="font-weight: 700; color: #0f172a;">${r.name || ''}</div>
+            <div data-df-field="ref:${idx}:relation" style="font-style: italic;">${r.relation || ''}</div>
+            <div data-df-field="ref:${idx}:contact">${r.phone ? `Phone: ${r.phone} · ` : ''}${r.email ? `Email: ${r.email}` : ''}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  const certHtml = certList.length ? `
     <div class="sidebar-section">
       <div class="sidebar-title-wrap">
-        <h3>Certifications</h3>
+        <h3 class="section-heading" data-df-field="heading:certifications">${data.sectionTitles?.certifications || 'Certifications'}</h3>
       </div>
       <ul class="cert-list" style="margin-top: 8px;">
-        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+        ${certList.map((c, idx) => `<li data-df-field="cert:${idx}">${typeof c === 'string' ? c : c.name || ''}</li>`).join('')}
       </ul>
     </div>
   ` : '';
 
-  const contactHtml = `
+  const contactHtml = hasContact ? `
     <div class="sidebar-section">
       <div class="sidebar-title-wrap">
-        <h3>Contact</h3>
+        <h3 class="section-heading" data-df-field="heading:contact">${data.sectionTitles?.contact || 'Contact'}</h3>
       </div>
       <div class="contact-list">
-        ${data.phone ? `<div class="contact-row"><span>${data.phone}</span></div>` : ''}
-        ${data.email ? `<div class="contact-row"><a href="mailto:${data.email}" style="color: inherit; text-decoration: none; word-break: break-all;">${data.email}</a></div>` : ''}
-        ${data.location ? `<div class="contact-row"><span>${data.location}</span></div>` : ''}
-        ${data.linkedin ? `<div class="contact-row"><a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
-        ${data.website ? `<div class="contact-row"><a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${phoneText ? `<div class="contact-row"><span data-df-field="phone">${phoneText}</span></div>` : ''}
+        ${emailText ? `<div class="contact-row"><a href="mailto:${emailText}" style="color: inherit; text-decoration: none; word-break: break-all;" data-df-field="email">${emailText}</a></div>` : ''}
+        ${locationText ? `<div class="contact-row"><span data-df-field="location">${locationText}</span></div>` : ''}
+        ${linkedinText ? `<div class="contact-row"><a data-df-field="linkedin" href="https://${linkedinText.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${linkedinText.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${websiteText ? `<div class="contact-row"><a data-df-field="website" href="https://${websiteText.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${websiteText.replace(/^https?:\/\//, '')}</a></div>` : ''}
       </div>
     </div>
-  `;
+  ` : '';
 
-  const skillsHtml = data.skills && data.skills.length ? `
+  const skillsHtml = skillsList.length ? `
     <div class="sidebar-section">
       <div class="sidebar-title-wrap">
-        <h3>Skills</h3>
+        <h3 class="section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Skills'}</h3>
       </div>
       <div class="skills-grid" style="margin-top: 8px;">
-        ${data.skills.map((s) => {
-          let name = s;
+        ${skillsList.map((s, idx) => {
+          let sName = typeof s === 'string' ? s : s.name || '';
           let levelText = '';
-          if (s.includes(' - ')) {
+          if (typeof s === 'string' && s.includes(' - ')) {
             const parts = s.split(' - ');
-            name = parts[0];
+            sName = parts[0];
             levelText = parts[1];
           }
           return `
             <div class="skill-item">
-              <span>• ${name}</span>
+              <span data-df-field="skill:${idx}">• ${sName}</span>
               ${levelText ? `<span style="color: #64748b; font-size: 7.8pt;">${levelText}</span>` : ''}
             </div>
           `;
@@ -131,130 +170,181 @@ export function generateAdoraDiagonalHtml(
     </div>
   ` : '';
 
-  const langSection = (data.customSections || []).find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');
   const langHtml = langSection && langSection.items?.length ? `
     <div class="sidebar-section">
       <div class="sidebar-title-wrap">
-        <h3>${langSection.title || 'Languages'}</h3>
+        <h3 data-df-field="custom:${langSection.id}:title">${langSection.title || 'Languages'}</h3>
       </div>
       <div class="skills-grid" style="margin-top: 8px;">
-        ${langSection.items.map(i => `
+        ${langSection.items.map((i, idx) => `
           <div class="skill-item">
-            <span>• ${i.title}</span>
-            ${i.value ? `<span style="color: #64748b; font-size: 7.8pt;">${i.value}</span>` : ''}
+            <span data-df-field="custom:${langSection.id}:${idx}:title">• ${typeof i === 'string' ? i : (i.title || i.name || '')}</span>
+            ${typeof i === 'object' && i !== null && i.value ? `<span data-df-field="custom:${langSection.id}:${idx}:value" style="color: #64748b; font-size: 7.8pt;">${i.value}</span>` : ''}
           </div>
         `).join('')}
       </div>
     </div>
   ` : '';
 
+  const customHtml = otherCustomSections.map(cs => {
+    if (!cs || !cs.items || !cs.items.length) return '';
+    return `
+      <div class="timeline-group">
+        <div class="section-title-wrap">
+          <h2 data-df-field="custom:${cs.id}:title">${cs.title || 'Additional Information'}</h2>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+          ${cs.items.map((i, idx) => `
+            <div style="font-size: 8.5pt;">
+              <strong data-df-field="custom:${cs.id}:${idx}:title">${typeof i === 'string' ? i : (i.title || i.name || '')}</strong>${typeof i === 'object' && i !== null && i.value ? `: <span data-df-field="custom:${cs.id}:${idx}:value">${i.value}</span>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <title>${name ? `${name} - Resume` : 'Resume'}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     @page { margin: 0; size: A4; }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: transparent;
       font-family: ${fontFam};
-      background: #ffffff;
-      color: #1e293b;
+      color: #334155;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
-    
-    #main-container {
-      width: 210mm;
-      min-height: 297mm;
-      margin: 0 auto;
+    .cv-page {
+      width: 794px;
+      height: 1123px;
+      min-height: 1123px;
+      max-height: 1123px;
       background: #ffffff;
-      display: flex;
-      flex-direction: column;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      box-sizing: border-box;
+      page-break-after: always;
+      break-after: page;
     }
-    
-    /* Clean Geometric Header */
-    .header-band {
-      background: linear-gradient(135deg, ${secondaryAccent} 0%, ${accent} 100%);
+    .cv-page:last-child {
+      page-break-after: avoid !important;
+      break-after: avoid !important;
+    }
+    .diagonal-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      background: ${accent};
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%);
+      z-index: 1;
+    }
+    .diagonal-header-sub {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 155px;
+      background: ${secondaryAccent};
+      clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+      opacity: 0.15;
+      z-index: 0;
+    }
+    .header-content {
+      position: relative;
+      z-index: 2;
+      padding: ${24 + pageMargin}px 36px 0 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .name-title-wrap {
       color: #ffffff;
-      padding: ${35 + pageMargin}px 40px;
+    }
+    .candidate-name {
+      font-size: 26pt;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .candidate-title {
+      font-size: 11pt;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      opacity: 0.95;
+      margin-top: 4px;
+    }
+    .avatar-mask {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid #ffffff;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      background: #ffffff;
+      flex-shrink: 0;
       display: flex;
       align-items: center;
-      gap: 24px;
+      justify-content: center;
+      position: relative;
     }
-    .avatar {
-      width: 105px;
-      height: 105px;
-      border-radius: 50%;
-      border: 3.5px solid #ffffff;
+    .avatar-img.avatar {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      flex-shrink: 0;
+      display: block;
     }
-    .header-text h1 {
-      font-size: 26pt;
-      font-weight: 900;
-      color: #ffffff;
-      letter-spacing: -0.5px;
-      line-height: 1.05;
-      text-transform: uppercase;
-    }
-    .header-text .role {
-      font-size: 10.5pt;
-      font-weight: 600;
-      color: #e0f2fe;
-      margin-top: 4px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-    
-    /* Content Columns */
-    .body-grid {
+    .body-layout {
+      position: relative;
+      z-index: 2;
       display: flex;
-      flex: 1;
+      padding: 24px 36px ${28 + pageMargin}px 36px;
+      gap: 32px;
+      margin-top: 8px;
     }
     .sidebar {
-      width: 32%;
-      background: #f1f5f9;
-      color: #1e293b;
-      padding: ${30 + pageMargin}px 22px;
+      width: 210px;
+      flex-shrink: 0;
       display: flex;
       flex-direction: column;
       gap: 18px;
-      border-right: 1.5px solid #e2e8f0;
+      border-right: 1px solid #e2e8f0;
+      padding-right: 20px;
     }
-    .main-content {
-      width: 68%;
-      padding: ${35 + pageMargin}px 32px;
+    .sidebar-section {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-    }
-    
-    .sidebar-section {
-      break-inside: avoid;
-      page-break-inside: avoid;
     }
     .sidebar-title-wrap h3 {
       font-size: 9.5pt;
-      font-weight: 800;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1.2px;
+      letter-spacing: 1px;
       color: ${accent};
-      border-bottom: 1.5px solid #cbd5e1;
+      border-bottom: 2px solid ${accent};
       padding-bottom: 4px;
+      margin-bottom: 8px;
     }
     .contact-list {
       display: flex;
       flex-direction: column;
-      gap: 7px;
-      margin-top: 8px;
+      gap: 6px;
     }
     .contact-row {
-      font-size: 8.3pt;
+      font-size: 8.5pt;
       color: #475569;
+      line-height: 1.35;
       word-break: break-all;
     }
     .skills-grid {
@@ -265,60 +355,72 @@ export function generateAdoraDiagonalHtml(
     .skill-item {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      font-size: 8.3pt;
+      align-items: center;
+      font-size: 8.5pt;
       color: #334155;
+      font-weight: 500;
     }
     .cert-list {
-      padding-left: 16px;
-      font-size: 8.3pt;
-      color: #475569;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
     }
     .cert-list li {
-      margin-bottom: 3px;
+      font-size: 8.5pt;
+      color: #334155;
     }
-    
-    .timeline-group {
-      break-inside: auto;
+    .cert-list li::before {
+      content: '• ';
+      color: ${accent};
+      font-weight: bold;
     }
-    .section-title-wrap h2 {
-      font-size: 10.5pt;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #0f172a;
-      border-bottom: 1.5px solid #e2e8f0;
-      padding-bottom: 4px;
-      margin-bottom: 8px;
+    .main-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
     .summary-text {
       font-size: 9pt;
-      color: #475569;
       line-height: ${lineSpacing};
-      text-align: justify;
+      color: #475569;
+      background: #f8fafc;
+      border-left: 3px solid ${accent};
+      padding: 8px 12px;
+      border-radius: 0 4px 4px 0;
+    }
+    .section-title-wrap h2 {
+      font-size: 11pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #0f172a;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding-bottom: 3px;
+      margin-bottom: 10px;
+    }
+    .timeline-group {
+      display: flex;
+      flex-direction: column;
     }
     .timeline-line-wrap {
-      border-left: 2px solid #e2e8f0;
-      margin-left: 6px;
-      padding-left: 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
     .timeline-item {
       position: relative;
-      break-inside: avoid;
-      page-break-inside: avoid;
+      padding-left: 14px;
     }
     .timeline-dot {
       position: absolute;
-      left: -21px;
-      top: 5px;
-      width: 8px;
-      height: 8px;
+      left: 0;
+      top: 4px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: #ffffff;
-      border: 2px solid ${accent};
+      background: ${accent};
     }
     .item-header {
       display: flex;
@@ -326,69 +428,90 @@ export function generateAdoraDiagonalHtml(
       align-items: baseline;
     }
     .timeline-role {
-      font-weight: 700;
       font-size: 9.5pt;
+      font-weight: 700;
       color: #0f172a;
     }
     .timeline-year {
-      font-size: 8.2pt;
-      font-weight: 600;
+      font-size: 8.5pt;
       color: #64748b;
-      font-variant-numeric: tabular-nums;
+      font-weight: 500;
     }
     .timeline-company {
       font-size: 8.8pt;
-      color: #475569;
+      color: ${accent};
       font-weight: 600;
       margin-top: 1px;
-      margin-bottom: 3px;
     }
     .timeline-desc {
-      padding-left: 16px;
-      font-size: 8.8pt;
-      color: #475569;
+      margin-top: 4px;
+      padding-left: 14px;
+      font-size: 8.5pt;
       line-height: ${lineSpacing};
+      color: #475569;
     }
     .timeline-desc li {
       margin-bottom: 2px;
-      text-align: justify;
+    }
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+      }
+      .cv-page {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .cv-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
     }
   </style>
 </head>
 <body>
-<div id="main-container">
-  <div class="header-band">
-    ${data.photoUrl ? `<img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />` : ''}
-    <div class="header-text">
-      <h1>${data.name || 'Candidate Name'}</h1>
-      ${data.title ? `<div class="role">${data.title}</div>` : ''}
-    </div>
-  </div>
-  
-  <div class="body-grid">
-    <div class="sidebar">
-      ${contactHtml}
-      ${skillsHtml}
-      ${langHtml}
-      ${certHtml}
-    </div>
+  <div class="cv-page" id="page-1">
+    <div class="diagonal-header-sub"></div>
+    <div class="diagonal-header"></div>
     
-    <div class="main-content">
-      ${data.summary ? `
-        <div class="timeline-group">
-          <div class="section-title-wrap">
-            <h2>About Me</h2>
-          </div>
-          <div class="summary-text">${data.summary}</div>
+    <div class="header-content">
+      <div class="name-title-wrap">
+        <h1 class="candidate-name" data-df-field="name">${name}</h1>
+        <div class="candidate-title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${title || ''}</div>
+      </div>
+      ${photoSrc ? `
+        <div class="avatar-mask">
+          <img class="avatar-img avatar" src="${photoSrc}" alt="${name || 'Profile Photo'}">
         </div>
       ` : ''}
-      
-      ${expHtml}
-      ${eduHtml}
-      ${projHtml}
+    </div>
+
+    <div class="body-layout">
+      <div class="sidebar">
+        ${contactHtml}
+        ${skillsHtml}
+        ${langHtml}
+        ${certHtml}
+      </div>
+
+      <div class="main-col">
+        ${summaryText ? `<div class="summary-text" data-df-field="summary">${summaryText}</div>` : ''}
+        ${expHtml}
+        ${eduHtml}
+        ${projHtml}
+        ${refHtml}
+        ${customHtml}
+      </div>
     </div>
   </div>
-</div>
 </body>
 </html>`;
 }

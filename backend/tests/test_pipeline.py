@@ -13,7 +13,7 @@ from backend.services.smart_service import process_smart_convert
 
 async def run_tests():
     print("==================================================")
-    print("DocForge Backend Engine Test Suite")
+    print("DocScalar Backend Engine Test Suite")
     print("==================================================")
 
     # 1. Setup paths
@@ -71,7 +71,7 @@ async def run_tests():
         print(f"Failed: {ai_result.error_message}")
 
     print("==================================================")
-    print("DocForge Engine Test Suite Complete.")
+    print("DocScalar Engine Test Suite Complete.")
     print("==================================================")
 
 

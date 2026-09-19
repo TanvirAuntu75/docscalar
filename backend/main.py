@@ -23,6 +23,8 @@ from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, Upload
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse
+from typing import Any, Dict, Optional
+
 from pydantic import BaseModel, EmailStr
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -57,12 +59,13 @@ from backend.services.pdf_to_pdfa import convert_pdf_to_pdfa
 from backend.services.pdf_to_powerpoint import convert_pdf_to_powerpoint
 from backend.services.pdf_to_word import convert_pdf_to_docx
 from backend.services.redaction import redact_pdf
+from backend.services.repair import repair_pdf
 from backend.services.security import protect_pdf, unlock_pdf
 from backend.services.smart_service import process_smart_convert
 from backend.services.split import split_pdf
 from backend.services.url_to_pdf import convert_url_to_pdf
 
-logger = logging.getLogger("docforge_api")
+logger = logging.getLogger("docscalar_api")
 
 # Initialize Sentry if configured
 SENTRY_DSN = os.getenv("SENTRY_DSN", "")
@@ -77,7 +80,7 @@ if SENTRY_DSN:
 limiter = Limiter(key_func=get_remote_address, enabled=False)
 
 app = FastAPI(
-    title="DocForge API Server",
+    title="DocScalar API Server",
     description="Hybrid conversion backend using headless LibreOffice and advanced document parsing.",
     version="1.0.0",
 )
@@ -110,6 +113,7 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
 app.add_middleware(RequestSizeLimitMiddleware)
 
 
+@app.get("/health")
 @app.get("/api/health")
 async def health_check():
     """Basic health check endpoint."""
@@ -136,13 +140,13 @@ scheduler.add_job(
 def startup_event():
     init_db()
     scheduler.start()
-    print("DocForge Server: Initialized Database tables and started cleanup scheduler.")
+    print("DocScalar Server: Initialized Database tables and started cleanup scheduler.")
 
 
 @app.on_event("shutdown")
 def shutdown_event():
     scheduler.shutdown()
-    print("DocForge Server: Shut down scheduler.")
+    print("DocScalar Server: Shut down scheduler.")
 
 
 ALLOWED_EXTENSIONS = {
@@ -647,14 +651,14 @@ async def api_digitally_sign_pdf(
         cert_bytes = await certificate.read()
         pfx_bytes_hex = cert_bytes.hex()
     else:
-        cn = common_name or "DocForge Trust Seal"
-        em = email or "security@docforge.com"
+        cn = common_name or "DocScalar Trust Seal"
+        em = email or "security@docscalar.com"
         try:
             from backend.services.digital_sign import generate_self_signed_pfx
 
             pfx_bytes = generate_self_signed_pfx(email=em, common_name=cn)
             pfx_bytes_hex = pfx_bytes.hex()
-            passphrase_val = "docforge"
+            passphrase_val = "docscalar"
         except Exception as e:
             raise HTTPException(
                 status_code=500, detail=f"Failed to generate self-signed key: {e!s}"
@@ -756,6 +760,34 @@ async def api_pdf_to_excel(
     return {"success": True, "job_id": job_id, "status": "queued"}
 
 
+@app.post("/api/convert/excel-to-pdf")
+@limiter.limit("5/minute")
+async def api_excel_to_pdf(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    page_size: Optional[str] = Form("a4"),
+    orientation: Optional[str] = Form("auto"),
+    gridlines: Optional[bool] = Form(True),
+    current_user: User = Depends(get_current_user_optional),
+):
+    """
+    Queue a job to convert Excel spreadsheet (.xlsx, .xls, .csv) to high-fidelity PDF.
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+
+    if not input_path.exists():
+        raise HTTPException(
+            status_code=404, detail="Uploaded file not found or expired"
+        )
+
+    job_id = enqueue_job(convert_with_libreoffice, str(input_path), "pdf")
+
+    return {"success": True, "job_id": job_id, "status": "queued"}
+
+
+
 @app.post("/api/convert/pdf-to-powerpoint")
 @limiter.limit("5/minute")
 async def api_pdf_to_powerpoint(
@@ -834,6 +866,33 @@ async def api_redact_pdf(
     return {"success": True, "job_id": job_id, "status": "queued"}
 
 
+@app.post("/api/repair-pdf")
+@app.post("/api/convert/repair-pdf")
+@limiter.limit("10/minute")
+async def api_repair_pdf(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    mode: str = Form("standard"),
+    strip_corrupt_metadata: bool = Form(True),
+    current_user: User = Depends(get_current_user_optional),
+):
+    """
+    Queue a job to repair a damaged or corrupted PDF structure.
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+
+    if not input_path.exists():
+        raise HTTPException(
+            status_code=404, detail="Uploaded file not found or expired"
+        )
+
+    job_id = enqueue_job(repair_pdf, str(input_path), mode, strip_corrupt_metadata)
+
+    return {"success": True, "job_id": job_id, "status": "queued"}
+
+
 @app.post("/api/convert/ocr-pdf")
 @limiter.limit("5/minute")
 async def api_ocr_pdf(
@@ -866,10 +925,12 @@ async def api_compress_pdf(
     file_id: str = Form(...),
     filename: str = Form(...),
     quality: float = Form(0.6),
+    target_size_bytes: Optional[int] = Form(None),
+    rasterize_fallback: bool = Form(False),
     current_user: User = Depends(get_current_user_optional),
 ):
     """
-    Queue a job to perform PDF compression (Ghostscript or PyMuPDF).
+    Queue a job to perform PDF compression (Ghostscript, PyMuPDF, pikepdf, or compact rasterizer).
     """
     upload_folder = config.UPLOAD_DIR / file_id
     input_path = upload_folder / filename
@@ -879,7 +940,13 @@ async def api_compress_pdf(
             status_code=404, detail="Uploaded file not found or expired"
         )
 
-    job_id = enqueue_job(compress_pdf, str(input_path), quality)
+    job_id = enqueue_job(
+        compress_pdf,
+        str(input_path),
+        quality,
+        target_size_bytes,
+        rasterize_fallback,
+    )
 
     return {"success": True, "job_id": job_id, "status": "queued"}
 
@@ -906,6 +973,44 @@ async def api_url_to_pdf(
     )
 
     return {"success": True, "job_id": job_id, "status": "queued"}
+
+
+class HtmlToPdfRequest(BaseModel):
+    html: str
+    filename: Optional[str] = "document.pdf"
+    options: Optional[Dict[str, Any]] = None
+
+
+@app.post("/api/convert/html-to-pdf")
+async def convert_html_to_pdf_endpoint(payload: HtmlToPdfRequest):
+    """
+    Dedicated endpoint to convert raw HTML (with CSS and print layouts) directly to PDF.
+    Returns binary PDF stream with attachment filename for direct download or preview.
+    """
+    if not payload.html or not payload.html.strip():
+        raise HTTPException(status_code=400, detail="HTML content cannot be empty")
+
+    try:
+        pdf_bytes = await convert_html_to_pdf(payload.html, options=payload.options)
+    except Exception as e:
+        logger.error(f"[HTML_TO_PDF_ENDPOINT] Conversion failed: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500, detail=f"HTML to PDF conversion failed: {e!s}"
+        )
+
+    filename = payload.filename if payload.filename else "document.pdf"
+    if not filename.endswith(".pdf"):
+        filename = f"{filename}.pdf"
+
+    safe_filename = re.sub(r'[\r\n"\\/]', '_', filename)
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{safe_filename}"'
+        },
+    )
 
 
 @app.post("/api/convert/split-pdf")

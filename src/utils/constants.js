@@ -64,7 +64,7 @@ export const TOOLS = [
     category: 'organize-pdf',
     title: 'Merge PDF',
     description: 'Combine multiple PDF files into one document in seconds',
-    icon: '📎',
+    icon: 'call_merge',
     iconBg: 'rgba(239, 68, 68, 0.15)',
     iconColor: 'hsl(0, 84%, 60%)',
     path: '/merge-pdf',
@@ -78,7 +78,7 @@ export const TOOLS = [
     category: 'organize-pdf',
     title: 'Split PDF',
     description: 'Extract specific page ranges or split a PDF into individual files',
-    icon: '✂️',
+    icon: 'content_cut',
     iconBg: 'rgba(239, 68, 68, 0.15)',
     iconColor: 'hsl(0, 84%, 60%)',
     path: '/split-pdf',
@@ -150,7 +150,7 @@ export const TOOLS = [
     category: 'optimize-pdf',
     title: 'Compress PDF',
     description: 'Reduce PDF file size while maintaining maximal quality',
-    icon: '📦',
+    icon: 'folder_zip',
     iconBg: 'rgba(239, 68, 68, 0.15)',
     iconColor: 'hsl(0, 84%, 60%)',
     path: '/compress-pdf',
@@ -171,7 +171,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'pro',
+    minTier: 'guest',
   },
   {
     id: 'ocr-pdf',
@@ -190,7 +190,7 @@ export const TOOLS = [
   {
     id: 'un-ocr-pdf',
     category: 'optimize-pdf',
-    title: 'Un-OCR PDF',
+    title: 'Un OCR PDF',
     description: 'Flatten a PDF to remove selectable/copyable text layers',
     icon: 'text_format_off',
     iconBg: 'rgba(239, 68, 68, 0.15)',
@@ -249,7 +249,7 @@ export const TOOLS = [
     id: 'powerpoint-to-pdf',
     category: 'convert-to-pdf',
     title: 'POWERPOINT to PDF',
-    description: 'Convert PPTX presentations into high-fidelity PDF slides',
+    description: 'Convert PPTX presentations into high fidelity PDF slides',
     icon: 'slideshow',
     iconBg: 'rgba(239, 68, 68, 0.15)',
     iconColor: 'hsl(0, 84%, 60%)',
@@ -263,7 +263,7 @@ export const TOOLS = [
     id: 'excel-to-pdf',
     category: 'convert-to-pdf',
     title: 'EXCEL to PDF',
-    description: 'Convert Excel spreadsheets into clean multi-page PDFs',
+    description: 'Convert Excel spreadsheets into clean multi page PDFs',
     icon: 'table_view',
     iconBg: 'rgba(239, 68, 68, 0.15)',
     iconColor: 'hsl(0, 84%, 60%)',
@@ -293,7 +293,7 @@ export const TOOLS = [
     id: 'pdf-to-image',
     category: 'convert-from-pdf',
     title: 'PDF to JPG',
-    description: 'Convert PDF pages into high-quality JPEG or PNG images',
+    description: 'Convert PDF pages into high quality JPEG or PNG images',
     icon: 'image',
     iconBg: 'rgba(239, 68, 68, 0.15)',
     iconColor: 'hsl(0, 84%, 60%)',
@@ -366,7 +366,7 @@ export const TOOLS = [
     category: 'edit-pdf',
     title: 'Rotate PDF',
     description: 'Rotate PDF pages by 90, 180, or 270 degrees permanently',
-    icon: '🔄',
+    icon: 'rotate_right',
     iconBg: 'rgba(239, 68, 68, 0.15)',
     iconColor: 'hsl(0, 84%, 60%)',
     path: '/rotate-pdf',
@@ -415,7 +415,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'edit-pdf',
@@ -429,7 +429,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'pdf-forms',
@@ -441,9 +441,9 @@ export const TOOLS = [
     iconColor: 'hsl(0, 84%, 60%)',
     path: '/pdf-forms',
     accept: '.pdf',
-    multiple: false,
+    multiple: true,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
 
   // ── PDF Security ──────────────────────────────────
@@ -501,13 +501,13 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'pro',
+    minTier: 'guest',
   },
   {
     id: 'compare-pdf',
     category: 'pdf-security',
     title: 'Compare PDF',
-    description: 'Compare two PDF files and visually highlight differences side-by-side',
+    description: 'Compare two PDF files and visually highlight differences side by side',
     icon: 'compare',
     iconBg: 'rgba(239, 68, 68, 0.15)',
     iconColor: 'hsl(0, 84%, 60%)',
@@ -522,7 +522,7 @@ export const TOOLS = [
   {
     id: 'ai-summarizer',
     category: 'pdf-intelligence',
-    title: 'AI Summarizer (Coming Soon)',
+    title: 'AI Summarizer',
     description: 'Extract structure summaries and bullet insights natively',
     icon: 'text_fields',
     iconBg: 'rgba(99, 102, 241, 0.15)',
@@ -530,8 +530,8 @@ export const TOOLS = [
     path: '/ai-summarizer',
     accept: '.txt,.docx,.pdf,.md',
     multiple: false,
-    implemented: false,
-    minTier: 'pro',
+    implemented: true,
+    minTier: 'guest',
   },
   {
     id: 'ai-translator',
@@ -544,8 +544,8 @@ export const TOOLS = [
     path: '/ai-translator',
     accept: '.txt,.docx,.pdf,.md',
     multiple: false,
-    implemented: false,
-    minTier: 'pro',
+    implemented: true,
+    minTier: 'guest',
   },
 
   // ── Image Tools ───────────────────────────────────
@@ -553,8 +553,8 @@ export const TOOLS = [
     id: 'image-converter',
     category: 'image',
     title: 'Image Converter',
-    description: 'Convert format between PNG, JPG, WEBP, and BMP seamlessly',
-    icon: '🔄',
+    description: 'Convert format between PNG, JPG, WEBP, and BMP directly',
+    icon: 'sync',
     iconBg: 'rgba(168, 85, 247, 0.15)',
     iconColor: 'hsl(270, 80%, 65%)',
     path: '/image-converter',
@@ -568,7 +568,7 @@ export const TOOLS = [
     category: 'image',
     title: 'Image Compressor',
     description: 'Compress image dimensions or quality slider per file',
-    icon: '📦',
+    icon: 'folder_zip',
     iconBg: 'rgba(168, 85, 247, 0.15)',
     iconColor: 'hsl(270, 80%, 65%)',
     path: '/image-compressor',
@@ -582,7 +582,7 @@ export const TOOLS = [
     category: 'image',
     title: 'Image Resizer',
     description: 'Resize image dimensions by percentage, exact bounds or pixel width',
-    icon: '📐',
+    icon: 'photo_size_select_large',
     iconBg: 'rgba(168, 85, 247, 0.15)',
     iconColor: 'hsl(270, 80%, 65%)',
     path: '/image-resizer',
@@ -625,8 +625,8 @@ export const TOOLS = [
     id: 'qr-generator',
     category: 'utility',
     title: 'QR Code Generator',
-    description: 'Generate customizable, high-resolution QR codes Client Side',
-    icon: '📱',
+    description: 'Generate customizable, high resolution QR codes Client Side',
+    icon: 'qr_code_2',
     iconBg: 'rgba(245, 158, 11, 0.15)',
     iconColor: 'hsl(38, 92%, 55%)',
     path: '/qr-generator',
@@ -667,8 +667,8 @@ export const TOOLS = [
     id: 'resume-builder',
     category: 'utility',
     title: 'Resume Builder',
-    description: 'Build a professional CV with live preview templates and export to ATS-friendly PDF',
-    icon: '📋',
+    description: 'Build a professional CV with live preview templates and export to ATS friendly PDF',
+    icon: 'badge',
     iconBg: 'rgba(16, 185, 129, 0.15)',
     iconColor: 'hsl(160, 84%, 39%)',
     path: '/resume-builder',
@@ -702,11 +702,15 @@ export function getToolsByCategory(categoryId) {
 }
 
 export function formatFileSize(bytes) {
-  if (bytes === 0) return '0 B';
+  if (bytes === null || bytes === undefined || typeof bytes !== 'number' || !Number.isFinite(bytes) || bytes === 0) {
+    return '0 B';
+  }
   const isNegative = bytes < 0;
   const absBytes = Math.abs(bytes);
+  if (absBytes < 1) return '0 B';
   const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(absBytes) / Math.log(k));
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.min(Math.floor(Math.log(absBytes) / Math.log(k)), sizes.length - 1);
   return (isNegative ? '-' : '') + parseFloat((absBytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
+

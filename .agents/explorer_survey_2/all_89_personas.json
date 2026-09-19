@@ -1,0 +1,803 @@
+[
+  {
+    "index": 1,
+    "key": "harvard_classic",
+    "label": "🛡️ Harvard Classic",
+    "candidateName": "David H. Sterling",
+    "badge": "100% ATS Ultra",
+    "atsTier": "ultra",
+    "atsRating": "100"
+  },
+  {
+    "index": 2,
+    "key": "silicon_valley_ats",
+    "label": "🛡️ Silicon Valley ATS",
+    "candidateName": "Alex Chen",
+    "badge": "100% ATS Tech",
+    "atsTier": "ultra",
+    "atsRating": "100"
+  },
+  {
+    "index": 3,
+    "key": "wall_street_executive",
+    "label": "🛡️ Wall Street Exec",
+    "candidateName": "Julian Thorne",
+    "badge": "100% ATS Finance",
+    "atsTier": "ultra",
+    "atsRating": "100"
+  },
+  {
+    "index": 4,
+    "key": "oxford_minimalist",
+    "label": "🛡️ Oxford Minimalist",
+    "candidateName": "Dr. Lawrence Sterling",
+    "badge": "100% ATS Academic",
+    "atsTier": "ultra",
+    "atsRating": "100"
+  },
+  {
+    "index": 5,
+    "key": "adeline_palmerston",
+    "label": "👑 Adeline Palmerston",
+    "candidateName": "Adeline Palmerston",
+    "badge": "Exact Slate & Bronze",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 6,
+    "key": "mariana",
+    "label": "✨ Mariana",
+    "candidateName": "Mariana Anderson",
+    "badge": "Premium Headshot",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 7,
+    "key": "diagonal_wedge",
+    "label": "✨ Diagonal Wedge",
+    "candidateName": "Marcus Sterling",
+    "badge": "Polygon Cut & 5-Dots",
+    "atsTier": "creative",
+    "atsRating": "70"
+  },
+  {
+    "index": 8,
+    "key": "olivia",
+    "label": "✨ Olivia",
+    "candidateName": "Olivia Sterling",
+    "badge": "Premium Bronze",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 9,
+    "key": "jonathan",
+    "label": "✨ Jonathan",
+    "candidateName": "Jonathan Brewer",
+    "badge": "Classic Serif",
+    "atsTier": "ultra",
+    "atsRating": "100"
+  },
+  {
+    "index": 10,
+    "key": "adora_montminy",
+    "label": "👑 Adora Montminy",
+    "candidateName": "Adora Montminy",
+    "badge": "Exact Gradient Blue & Slate",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 11,
+    "key": "emma",
+    "label": "✨ Emma",
+    "candidateName": "Emma Sinclair",
+    "badge": "Balanced Split",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 12,
+    "key": "floating_card_matrix",
+    "label": "✨ Floating Cards",
+    "candidateName": "Clara Oswald",
+    "badge": "Modular Cards & Bars",
+    "atsTier": "creative",
+    "atsRating": "70"
+  },
+  {
+    "index": 13,
+    "key": "charles",
+    "label": "✨ Charles",
+    "candidateName": "Charles Rodriguez",
+    "badge": "Ocean Teal",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 14,
+    "key": "kathleen",
+    "label": "✨ Kathleen",
+    "candidateName": "Kathleen Jenkins",
+    "badge": "Modern Accent",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 15,
+    "key": "adam_fletcher",
+    "label": "👑 Adam Fletcher",
+    "candidateName": "Adam Fletcher",
+    "badge": "Exact Charcoal Bar Header",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 16,
+    "key": "richard",
+    "label": "✨ Richard",
+    "candidateName": "Richard Fowler",
+    "badge": "Split Band",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 17,
+    "key": "split_dual_block",
+    "label": "✨ Split Dual Block",
+    "candidateName": "Evelyn St. Claire",
+    "badge": "Forest & Peach Box",
+    "atsTier": "creative",
+    "atsRating": "70"
+  },
+  {
+    "index": 18,
+    "key": "sanchez_dark",
+    "label": "✨ Sanchez Dark",
+    "candidateName": "Mateo Sanchez",
+    "badge": "Timeline Sidebar",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 19,
+    "key": "wilson_light",
+    "label": "✨ Wilson Light",
+    "candidateName": "Marcus Wilson",
+    "badge": "Modern Navy",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 20,
+    "key": "richard_sanchez",
+    "label": "👑 Richard Sanchez",
+    "candidateName": "Richard Sanchez",
+    "badge": "Exact Royal Blue Banner",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 21,
+    "key": "sanchez_mono",
+    "label": "✨ Sanchez Mono",
+    "candidateName": "Yuki Sanchez",
+    "badge": "Minimalist Timeline",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 22,
+    "key": "overlapping_badge",
+    "label": "✨ Overlap Badge",
+    "candidateName": "Alexander Hayes",
+    "badge": "Navy Banner Halo Badge",
+    "atsTier": "creative",
+    "atsRating": "70"
+  },
+  {
+    "index": 23,
+    "key": "sanchez_wave",
+    "label": "✨ Sanchez Wave",
+    "candidateName": "Mei Sanchez",
+    "badge": "Elegant Waves",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 24,
+    "key": "ong_burgundy",
+    "label": "✨ Howard Burgundy",
+    "candidateName": "David Howard",
+    "badge": "Burgundy Classic",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 25,
+    "key": "sebastian_bennett",
+    "label": "👑 Sebastian Bennett",
+    "candidateName": "Sebastian Bennett",
+    "badge": "Exact Executive Rounded Card",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 26,
+    "key": "schumacher_charcoal",
+    "label": "✨ Schumacher Charcoal",
+    "candidateName": "Layla Schumacher",
+    "badge": "Curved Headshot",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 27,
+    "key": "card_matrix",
+    "label": "✨ Card Matrix",
+    "candidateName": "Alex Mercer",
+    "badge": "Boxed Tech Cards",
+    "atsTier": "creative",
+    "atsRating": "70"
+  },
+  {
+    "index": 28,
+    "key": "ziv_olive",
+    "label": "✨ Catrine Olive",
+    "candidateName": "Catrine Olive",
+    "badge": "Sage Split",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 29,
+    "key": "adora_diagonal",
+    "label": "✨ Adora Diagonal",
+    "candidateName": "Adora Sharma",
+    "badge": "Diagonal Waves",
+    "atsTier": "creative",
+    "atsRating": "70"
+  },
+  {
+    "index": 30,
+    "key": "lorna_alvarado",
+    "label": "👑 Lorna Alvarado",
+    "candidateName": "Lorna Alvarado",
+    "badge": "Exact 3D Folded Ribbon",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 31,
+    "key": "wilson_minimal",
+    "label": "✨ Wilson Minimal",
+    "candidateName": "Mariana Wilson",
+    "badge": "Elegant Border",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 32,
+    "key": "date_capsule",
+    "label": "✨ Date Capsule",
+    "candidateName": "Jason Vance",
+    "badge": "Capsule Timeline",
+    "atsTier": "creative",
+    "atsRating": "70"
+  },
+  {
+    "index": 33,
+    "key": "alvarado_slate",
+    "label": "✨ Lorna Slate",
+    "candidateName": "Lorna Slate",
+    "badge": "Slate Ribbon",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 34,
+    "key": "kelly_mint",
+    "label": "✨ Kelly Mint",
+    "candidateName": "Kelly Blackwell",
+    "badge": "Mint Highlight",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 35,
+    "key": "donna_stroupe",
+    "label": "👑 Donna Stroupe",
+    "candidateName": "Donna Stroupe",
+    "badge": "Exact Espresso Banner & Taupe",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 36,
+    "key": "violet_modern",
+    "label": "✨ Violet Modern",
+    "candidateName": "Elena Rostova",
+    "badge": "Electric Violet",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 37,
+    "key": "berlin_two_tone",
+    "label": "✨ Berlin Two-Tone",
+    "candidateName": "David Berlin",
+    "badge": "Warm Tan Card",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 38,
+    "key": "sage_pastel",
+    "label": "✨ Sage Mist",
+    "candidateName": "Claire Laurent",
+    "badge": "Pastel Sage",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 39,
+    "key": "lilac_sidebar",
+    "label": "✨ Lilac Harmony",
+    "candidateName": "Chloe Bennett",
+    "badge": "Lavender Sidebar",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 40,
+    "key": "isabel_schumacher",
+    "label": "👑 Isabel Schumacher",
+    "candidateName": "Isabel Schumacher",
+    "badge": "Exact Charcoal Halo & Nodes",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 41,
+    "key": "ocean_block",
+    "label": "✨ Ocean Block",
+    "candidateName": "Julian Hayes",
+    "badge": "Navy Block Header",
+    "atsTier": "creative",
+    "atsRating": "70"
+  },
+  {
+    "index": 42,
+    "key": "geneva_charcoal",
+    "label": "✨ Geneva Charcoal",
+    "candidateName": "Henri Laurent",
+    "badge": "Charcoal Gold Exec",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 43,
+    "key": "cambridge_rose",
+    "label": "✨ Cambridge Rose",
+    "candidateName": "Clara Cambridge",
+    "badge": "Rose Duo-Tone",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 44,
+    "key": "stockholm_yellow",
+    "label": "✨ Stockholm Gold",
+    "candidateName": "Astrid Lindqvist",
+    "badge": "Gold Asymmetric",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 45,
+    "key": "howard_ong",
+    "label": "👑 Howard Ong",
+    "candidateName": "Howard Ong",
+    "badge": "Exact Burgundy Banner & Headroom",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 46,
+    "key": "bordeaux_wine",
+    "label": "✨ Bordeaux Wine",
+    "candidateName": "Genevieve Bordeaux",
+    "badge": "Wine Executive Split",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 47,
+    "key": "tokyo_ice_blue",
+    "label": "✨ Tokyo Ice Blue",
+    "candidateName": "Kenji Takahashi",
+    "badge": "Steel Studio Cards",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 48,
+    "key": "vienna_crest",
+    "label": "✨ Vienna Crest",
+    "candidateName": "Dr. Stefan Weber",
+    "badge": "European Academic",
+    "atsTier": "ultra",
+    "atsRating": "100"
+  },
+  {
+    "index": 49,
+    "key": "oslo_taupe",
+    "label": "✨ Oslo Taupe",
+    "candidateName": "Freja Lind",
+    "badge": "Warm Espresso Minimal",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 50,
+    "key": "terracotta_arch",
+    "label": "👑 Terracotta Arch",
+    "candidateName": "Harper Montgomery",
+    "badge": "Exact Terracotta & Sage Overview",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 51,
+    "key": "kyoto_coral",
+    "label": "✨ Kyoto Coral",
+    "candidateName": "Hana Tanaka",
+    "badge": "Coral Minimalist Grid",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 52,
+    "key": "manhattan_noir",
+    "label": "✨ Manhattan Noir",
+    "candidateName": "Alexander Vance",
+    "badge": "Monochrome Wall St",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 53,
+    "key": "zurich_slate_block",
+    "label": "✨ Zurich Slate",
+    "candidateName": "Dominik Weber",
+    "badge": "Slate Indigo Block",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 54,
+    "key": "barcelona_cyan",
+    "label": "✨ Barcelona Cyan",
+    "candidateName": "Javier Gomez",
+    "badge": "Cyan Tech Modern",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 55,
+    "key": "korina_villanueva",
+    "label": "👑 Korina Villanueva",
+    "candidateName": "Korina Villanueva",
+    "badge": "Exact Chevron Pennant & Dots",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 56,
+    "key": "milan_blush",
+    "label": "✨ Milan Blush",
+    "candidateName": "Alessandra Rossi",
+    "badge": "Blush Peach Editorial",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 57,
+    "key": "dublin_forest",
+    "label": "✨ Dublin Forest",
+    "candidateName": "Ciara O’Connor",
+    "badge": "Forest Ochre Botanical",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 58,
+    "key": "helsinki_navy",
+    "label": "✨ Helsinki Navy",
+    "candidateName": "Elias Lindqvist",
+    "badge": "Navy Mint Tech",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 59,
+    "key": "oxford_burgundy",
+    "label": "🛡️ Oxford Burgundy",
+    "candidateName": "Prof. Lawrence Sterling",
+    "badge": "100% ATS Academic",
+    "atsTier": "ultra",
+    "atsRating": "100"
+  },
+  {
+    "index": 60,
+    "key": "isabel_mercado",
+    "label": "👑 Isabel Mercado",
+    "candidateName": "Isabel Mercado",
+    "badge": "Exact Framed Portrait & Pills",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 61,
+    "key": "montreal_frost",
+    "label": "✨ Montreal Frost",
+    "candidateName": "Camille Beaulieu",
+    "badge": "Azure Frost Cards",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 62,
+    "key": "florence_terracotta",
+    "label": "✨ Florence Terracotta",
+    "candidateName": "Matteo Moretti",
+    "badge": "Terracotta Linen",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 63,
+    "key": "copenhagen_sand",
+    "label": "✨ Copenhagen Sand",
+    "candidateName": "Signe Møller",
+    "badge": "Nordic Sand Minimal",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 64,
+    "key": "austin_amber",
+    "label": "✨ Austin Amber",
+    "candidateName": "Wyatt Sterling",
+    "badge": "Teal Amber Startup",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 65,
+    "key": "jonathan_patterson",
+    "label": "👑 Jonathan Patterson",
+    "candidateName": "Jonathan Patterson",
+    "badge": "Exact Navy Arch Dome & Donut",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 66,
+    "key": "edinburgh_navy",
+    "label": "🛡️ Edinburgh Navy",
+    "candidateName": "Alistair MacLeod",
+    "badge": "100% ATS Linear",
+    "atsTier": "ultra",
+    "atsRating": "100"
+  },
+  {
+    "index": 67,
+    "key": "seoul_neon",
+    "label": "✨ Seoul Neon",
+    "candidateName": "Ji-hoon Park",
+    "badge": "Midnight Violet Matrix",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 68,
+    "key": "kyiv_golden",
+    "label": "✨ Kyiv Golden",
+    "candidateName": "Oksana Kovalenko",
+    "badge": "Golden Wheat Split",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 69,
+    "key": "singapore_ruby",
+    "label": "✨ Singapore Ruby",
+    "candidateName": "Derrick Chen",
+    "badge": "Ruby Crimson Fintech",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 70,
+    "key": "alfredo_torres",
+    "label": "👑 Alfredo Torres",
+    "candidateName": "Alfredo Torres",
+    "badge": "Exact Geometric Vector Header",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 71,
+    "key": "boston_crimson",
+    "label": "✨ Boston Crimson",
+    "candidateName": "Harrison Ford",
+    "badge": "Ivy League Crimson",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 72,
+    "key": "cairo_gold",
+    "label": "✨ Cairo Gold",
+    "candidateName": "Tarek Mansour",
+    "badge": "Obsidian Gold Luxury",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 73,
+    "key": "madrid_sun",
+    "label": "✨ Madrid Sun",
+    "candidateName": "Carlos Vega",
+    "badge": "Solar Gold High-Contrast",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 74,
+    "key": "osaka_minimal",
+    "label": "✨ Osaka Minimal",
+    "candidateName": "Ren Sato",
+    "badge": "Technical Monospace",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 75,
+    "key": "marcus_vance",
+    "label": "👑 Marcus Vance",
+    "candidateName": "Marcus Vance",
+    "badge": "Exact Monolithic Slate & Teal",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 76,
+    "key": "san_francisco_skyline",
+    "label": "✨ SF Skyline",
+    "candidateName": "Jordan Hayes",
+    "badge": "Sky Blue Tech",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 77,
+    "key": "venice_sand_split",
+    "label": "✨ Venice Sand",
+    "candidateName": "Gianna Bellini",
+    "badge": "Sand Espresso Luxury",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 78,
+    "key": "amsterdam_orange",
+    "label": "✨ Amsterdam Orange",
+    "candidateName": "Lars van der Meer",
+    "badge": "Indigo Orange Dutch",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 79,
+    "key": "stockholm_monochrome",
+    "label": "✨ Stockholm Mono",
+    "candidateName": "Frederik Lind",
+    "badge": "Nordic Pure Mono Grid",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 80,
+    "key": "arthur_pendelton",
+    "label": "👑 Arthur Pendelton",
+    "candidateName": "Arthur Pendelton",
+    "badge": "Exact Editorial Swiss & Newsreader",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 81,
+    "key": "prague_brass",
+    "label": "✨ Prague Brass",
+    "candidateName": "Václav Dvořák",
+    "badge": "Olive Brass Academic",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 82,
+    "key": "emerald_prestige",
+    "label": "✨ Emerald Prestige",
+    "candidateName": "Arthur Vance",
+    "badge": "Forest Badge Matrix",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 83,
+    "key": "reykjavik_slate",
+    "label": "✨ Reykjavik Slate",
+    "candidateName": "Astrid Jónsdóttir",
+    "badge": "Glacial Ice Nordic",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 84,
+    "key": "buenos_aires_tango",
+    "label": "✨ Buenos Aires Tango",
+    "candidateName": "Valentina Soler",
+    "badge": "Plum Champagne Arts",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 85,
+    "key": "vancouver_pine",
+    "label": "✨ Vancouver Pine",
+    "candidateName": "Liam MacIntyre",
+    "badge": "Pine Timber CleanTech",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 86,
+    "key": "lyon_lavender",
+    "label": "✨ Lyon Lavender",
+    "candidateName": "Amélie Laurent",
+    "badge": "Lavender Creative Studio",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 87,
+    "key": "seattle_emerald",
+    "label": "✨ Seattle Emerald",
+    "candidateName": "Noah Vance",
+    "badge": "Emerald Teal Cloud",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 88,
+    "key": "cape_town_sunset",
+    "label": "✨ Cape Town Sunset",
+    "candidateName": "Thabo Ndlovu",
+    "badge": "Terracotta Gold Coastal",
+    "atsTier": "corporate",
+    "atsRating": "85"
+  },
+  {
+    "index": 89,
+    "key": "helsinki_frost",
+    "label": "🛡️ Helsinki Frost",
+    "candidateName": "Matti Virtanen",
+    "badge": "100% ATS Frosted",
+    "atsTier": "ultra",
+    "atsRating": "100"
+  }
+]

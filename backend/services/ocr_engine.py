@@ -54,8 +54,8 @@ logger = logging.getLogger("RobustOCREngine")
 # ─────────────────────────────────────────────────────────────────────────────
 @dataclass
 class OCRConfig:
-    min_confidence_threshold: float = 60.0
-    catastrophic_threshold: float = 30.0  # lowered: HITL only truly bad images
+    min_confidence_threshold: float = 30.0
+    catastrophic_threshold: float = 5.0  # Only reject truly empty/broken results — low-confidence PaddleOCR words are better than none
     target_dpi: int = 300
     assumed_source_dpi: int = 96
     max_pixels: int = 40_000_000
@@ -65,7 +65,7 @@ class OCRConfig:
     deskew_max_angle: float = 15.0  # tightened: focus on fine angles
     enable_orientation_fix: bool = True
     enable_nlm_denoising: bool = False  # Disable slow non-local means denoising by default for a 4x preprocessing speedup
-    paddleocr_max_side: int = 1200  # Downscale to 1200px max side for a 3.1x faster PaddleOCR inference with high quality
+    paddleocr_max_side: int = 1200  # Diagnostic proved 98%+ line-level detection at 1200; word drops were from confidence filters not resolution
     field_schema: dict = field(default_factory=dict)
 
 
@@ -116,7 +116,8 @@ class LayoutReconstructor:
             return ""
 
         # --- Try Layout-Aware Column & Table Reconstruction ---
-        if binary is not None:
+        # Disabled for standard OCR to eliminate massive RAM bloat from SLANet/LayoutDetection
+        if False and binary is not None:
             try:
                 import tempfile
 
@@ -739,6 +740,7 @@ PADDLE_LANG_MAPPING = {
     "ch": "ch",
     "zh": "ch",
     "zh-cn": "ch",
+    "chi_sim": "ch",
     "chinese": "ch",
     # English
     "en": "en",
@@ -790,6 +792,10 @@ PADDLE_LANG_MAPPING = {
     "chinese_cht": "chinese_cht",
     "zh-tw": "chinese_cht",
     "cht": "chinese_cht",
+    # Multilingual / Auto-Detect
+    "all": "ch",
+    "auto": "ch",
+    "multilingual": "ch",
     # Tamil
     "ta": "ta",
     "tam": "ta",
@@ -817,6 +823,41 @@ PADDLE_LANG_MAPPING = {
 }
 
 
+def clear_paddleocr_readers():
+    """
+    Forcefully releases all cached PaddleOCR / PaddleX reader instances,
+    unloads ONNX Runtime sessions, empties GPU memory cache, and triggers
+    full garbage collection to return RAM to the operating system immediately.
+    """
+    global _PADDLEOCR_READERS
+    with _reader_lock:
+        for key in list(_PADDLEOCR_READERS.keys()):
+            try:
+                reader = _PADDLEOCR_READERS.pop(key, None)
+                if reader is not None:
+                    for attr in ("_pipeline", "predictor", "paddlex_pipeline", "page_ocr", "text_detector", "text_recognizer", "text_classifier"):
+                        if hasattr(reader, attr):
+                            try:
+                                delattr(reader, attr)
+                            except Exception:
+                                pass
+                    del reader
+            except Exception as e:
+                logger.warning("Error releasing PaddleOCR reader for %s: %s", key, e)
+        _PADDLEOCR_READERS.clear()
+
+    try:
+        import paddle
+        if paddle.device.is_compiled_with_cuda():
+            paddle.device.cuda.empty_cache()
+    except Exception:
+        pass
+
+    import gc
+    gc.collect()
+    logger.info("PaddleOCR reader cache cleared and memory reclaimed.")
+
+
 def get_paddleocr_reader(lang: str = "en", device: str = "cpu"):
     global _PADDLEOCR_READERS
     resolved_lang = PADDLE_LANG_MAPPING.get(lang.lower().strip(), lang.lower().strip())
@@ -824,8 +865,22 @@ def get_paddleocr_reader(lang: str = "en", device: str = "cpu"):
     with _reader_lock:
         key = (resolved_lang, device)
         if key not in _PADDLEOCR_READERS:
+            # Memory Guard: Evict any idle transient reader (not 'ch' or 'en') before creating a new one
+            for cached_key in list(_PADDLEOCR_READERS.keys()):
+                if cached_key[0] not in ("ch", "en"):
+                    evicted = _PADDLEOCR_READERS.pop(cached_key, None)
+                    if evicted is not None:
+                        for attr in ("_pipeline", "predictor", "paddlex_pipeline", "page_ocr", "text_detector", "text_recognizer", "text_classifier"):
+                            if hasattr(evicted, attr):
+                                try:
+                                    delattr(evicted, attr)
+                                except Exception:
+                                    pass
+                        del evicted
+                    import gc
+                    gc.collect()
+
             import logging
-            import shutil
 
             import paddle
             from paddleocr import PaddleOCR
@@ -842,304 +897,26 @@ def get_paddleocr_reader(lang: str = "en", device: str = "cpu"):
                 os.environ["FLAGS_eager_delete_tensor_gb"] = "0.0"
                 os.environ["FLAGS_fast_eager_deletion_mode"] = "1"
 
+            actual_device = "gpu" if use_gpu else "cpu"
             logger.info(
-                "Initializing global PaddleOCR reader for language '%s' (device=%s, gpu_available=%s)...",
+                "Initializing global PaddleOCR reader for language '%s' (device=%s, actual_device=%s, gpu_available=%s)...",
                 resolved_lang,
                 device,
+                actual_device,
                 gpu_available,
             )
-            paddle.set_device("gpu" if use_gpu else "cpu")
-
-            backend_dir = os.path.dirname(os.path.dirname(__file__))
-            custom_rec = os.path.join(backend_dir, "models", "ocr", "rec")
-
-            # Setup subdirectories for routing
-            handwriting_dir = os.path.join(custom_rec, "handwriting")
-            multilingual_dir = os.path.join(custom_rec, "multilingual")
-            os.makedirs(handwriting_dir, exist_ok=True)
-            os.makedirs(multilingual_dir, exist_ok=True)
-
-            # 1. Handwriting model setup (if source ONNX file exists)
-            src_handwriting = os.path.join(custom_rec, "rec_handwriting.onnx")
-            dest_handwriting = os.path.join(handwriting_dir, "inference.onnx")
-            if os.path.isfile(src_handwriting):
-                if not os.path.isfile(dest_handwriting) or os.path.getsize(
-                    src_handwriting
-                ) != os.path.getsize(dest_handwriting):
-                    shutil.copy2(src_handwriting, dest_handwriting)
-
-                dest_handwriting_yml = os.path.join(handwriting_dir, "inference.yml")
-                # Dynamically check model output shape to write matching inference.yml
-                try:
-                    import onnx
-                    import yaml
-
-                    model = onnx.load(dest_handwriting)
-                    output_dim = 97  # Default fallback
-                    for output in model.graph.output:
-                        for dim in output.type.tensor_type.shape.dim:
-                            if dim.HasField("dim_value"):
-                                output_dim = dim.dim_value
-
-                    logger.info("Handwriting model output dimension: %d", output_dim)
-
-                    if output_dim == 97:
-                        # Write the 96-character handwriting dictionary
-                        # Aligned with HW_CHARS in public/workers/ocr.worker.js
-                        dict_chars = [
-                            ">",
-                            "?",
-                            "@",
-                            "[",
-                            "\\",
-                            "]",
-                            "^",
-                            "_",
-                            "`",
-                            "{",
-                            "|",
-                            "}",
-                            "~",
-                            "0",
-                            "1",
-                            "2",
-                            "3",
-                            "4",
-                            "5",
-                            "6",
-                            "7",
-                            "8",
-                            "9",
-                            "A",
-                            "B",
-                            "C",
-                            "D",
-                            "E",
-                            "F",
-                            "G",
-                            "H",
-                            "I",
-                            "J",
-                            "K",
-                            "L",
-                            "M",
-                            "N",
-                            "O",
-                            "P",
-                            "Q",
-                            "R",
-                            "S",
-                            "T",
-                            "U",
-                            "V",
-                            "W",
-                            "X",
-                            "Y",
-                            "Z",
-                            "a",
-                            "b",
-                            "c",
-                            "d",
-                            "e",
-                            "f",
-                            "g",
-                            "h",
-                            "i",
-                            "j",
-                            "k",
-                            "l",
-                            "m",
-                            "n",
-                            "o",
-                            "p",
-                            "q",
-                            "r",
-                            "s",
-                            "t",
-                            "u",
-                            "v",
-                            "w",
-                            "x",
-                            "y",
-                            "z",
-                            "\u00a2",
-                            "\u00a3",
-                            "\u00a4",
-                            "\u00a5",
-                            "\u00a6",
-                            "\u00a7",
-                            "\u00a8",
-                            "\u00a9",
-                            "\u00aa",
-                            "\u00ab",
-                            "\u00ac",
-                            "\u00ae",
-                            "\u00af",
-                            "\u00b0",
-                            "\u00b1",
-                            "\u00b2",
-                            "\u00b3",
-                            "\u00b4",
-                            "\u00b5",
-                            "\u00b6",
-                            " ",
-                        ]
-                        # Load from base inference.yml if it exists, otherwise generate a minimal one
-                        base_yml_path = os.path.join(custom_rec, "inference.yml")
-                        if os.path.isfile(base_yml_path):
-                            with open(base_yml_path, "r", encoding="utf-8") as bf:
-                                yml_content = yaml.safe_load(bf)
-                        else:
-                            yml_content = {}
-
-                        if "Global" not in yml_content:
-                            yml_content["Global"] = {}
-                        yml_content["Global"]["model_name"] = "en_PP-OCRv4_mobile_rec"
-
-                        if "PostProcess" not in yml_content:
-                            yml_content["PostProcess"] = {}
-                        yml_content["PostProcess"]["name"] = "CTCLabelDecode"
-                        yml_content["PostProcess"]["character_dict"] = dict_chars
-
-                        # Ensure PreProcess is there
-                        if "PreProcess" not in yml_content:
-                            yml_content["PreProcess"] = {
-                                "transform_ops": [
-                                    {
-                                        "DecodeImage": {
-                                            "channel_first": False,
-                                            "img_mode": "BGR",
-                                        }
-                                    },
-                                    {
-                                        "MultiLabelEncode": {
-                                            "gtc_encode": "NRTRLabelEncode"
-                                        }
-                                    },
-                                    {"RecResizeImg": {"image_shape": [3, 48, 320]}},
-                                    {
-                                        "KeepKeys": {
-                                            "keep_keys": [
-                                                "image",
-                                                "label_ctc",
-                                                "label_gtc",
-                                                "length",
-                                                "valid_ratio",
-                                            ]
-                                        }
-                                    },
-                                ]
-                            }
-
-                        with open(dest_handwriting_yml, "w", encoding="utf-8") as f:
-                            yaml.dump(
-                                yml_content,
-                                f,
-                                default_flow_style=False,
-                                allow_unicode=True,
-                            )
-                        logger.info(
-                            "Generated custom 97-class inference.yml for handwriting model."
-                        )
-                    else:
-                        # Fallback/default: copy from paddlex cache if exists
-                        home_dir = os.path.expanduser("~")
-                        cached_yml = os.path.join(
-                            home_dir,
-                            ".paddlex",
-                            "official_models",
-                            "PP-OCRv6_medium_rec_onnx",
-                            "inference.yml",
-                        )
-                        if os.path.isfile(cached_yml):
-                            shutil.copy2(cached_yml, dest_handwriting_yml)
-                            logger.info(
-                                "Copied base PP-OCRv6 inference.yml from cache."
-                            )
-                except Exception as ex:
-                    logger.error(
-                        "Failed to dynamically configure handwriting inference.yml: %s",
-                        ex,
-                    )
-
-            # 2. Multilingual model setup
-            src_yml = os.path.join(custom_rec, "inference.yml")
-            dest_yml = os.path.join(multilingual_dir, "inference.yml")
-            if os.path.isfile(src_yml):
-                if not os.path.isfile(dest_yml) or os.path.getsize(
-                    src_yml
-                ) != os.path.getsize(dest_yml):
-                    shutil.copy2(src_yml, dest_yml)
-
-            src_multi_onnx = os.path.join(custom_rec, "rec_multilingual.onnx")
-            dest_multi_onnx = os.path.join(multilingual_dir, "inference.onnx")
-            if os.path.isfile(src_multi_onnx):
-                if not os.path.isfile(dest_multi_onnx) or os.path.getsize(
-                    src_multi_onnx
-                ) != os.path.getsize(dest_multi_onnx):
-                    shutil.copy2(src_multi_onnx, dest_multi_onnx)
-
-            for fname in ["inference.pdmodel", "inference.pdiparams"]:
-                src_pd = os.path.join(custom_rec, fname)
-                dest_pd = os.path.join(multilingual_dir, fname)
-                if os.path.isfile(src_pd):
-                    if not os.path.isfile(dest_pd) or os.path.getsize(
-                        src_pd
-                    ) != os.path.getsize(dest_pd):
-                        shutil.copy2(src_pd, dest_pd)
+            paddle.set_device(actual_device)
 
             ocr_kwargs = {
+                "use_doc_unwarping": False,  # CRITICAL: Disable unwarping/cropping to preserve exact 1:1 original coordinate mapping
+                "use_doc_orientation_classify": False,  # OSD already handles rotation globally
                 "use_textline_orientation": False,  # Disable line orientation check (already fixed globally by OSD) for massive speedup
-                "device": "gpu" if use_gpu else "cpu",
+                "text_det_limit_side_len": 960,
+                "text_det_limit_type": "max",
+                "device": actual_device,
+                "engine": "onnxruntime",
                 "lang": resolved_lang,
             }
-
-            # Route models
-            if resolved_lang == "en":
-                # Check if custom handwriting ONNX model is ready
-                if os.path.isfile(dest_handwriting) and os.path.isfile(
-                    os.path.join(handwriting_dir, "inference.yml")
-                ):
-                    ocr_kwargs["text_recognition_model_dir"] = handwriting_dir
-                    ocr_kwargs["engine"] = "onnxruntime"
-
-                    # Dynamically read model_name from inference.yml to prevent model name mismatch
-                    try:
-                        import yaml
-
-                        with open(
-                            os.path.join(handwriting_dir, "inference.yml"),
-                            "r",
-                            encoding="utf-8",
-                        ) as f:
-                            yml_data = yaml.safe_load(f)
-                            ocr_kwargs["text_recognition_model_name"] = yml_data[
-                                "Global"
-                            ]["model_name"]
-                    except Exception:
-                        ocr_kwargs["text_recognition_model_name"] = (
-                            "en_PP-OCRv4_mobile_rec"
-                        )
-
-                    logger.info(
-                        "Custom handwriting model routed successfully with name: %s",
-                        ocr_kwargs.get("text_recognition_model_name"),
-                    )
-            elif resolved_lang == "ch":
-                # Check if custom multilingual model is ready
-                if os.path.isfile(dest_yml):
-                    ocr_kwargs["text_recognition_model_dir"] = multilingual_dir
-                    ocr_kwargs["text_recognition_model_name"] = "en_PP-OCRv4_mobile_rec"
-                    if os.path.isfile(dest_multi_onnx):
-                        ocr_kwargs["engine"] = "onnxruntime"
-                        logger.info(
-                            "Custom multilingual model routed successfully (ONNX mode)."
-                        )
-                    else:
-                        logger.info(
-                            "Custom multilingual model routed successfully (Native mode)."
-                        )
-
             try:
                 _PADDLEOCR_READERS[key] = PaddleOCR(**ocr_kwargs)
             except Exception as e:
@@ -1151,8 +928,13 @@ def get_paddleocr_reader(lang: str = "en", device: str = "cpu"):
                 )
                 # Fallback to standard config without custom directories
                 fallback_kwargs = {
-                    "use_textline_orientation": True,
+                    "use_doc_unwarping": False,
+                    "use_doc_orientation_classify": False,
+                    "use_textline_orientation": False,
+                    "text_det_limit_side_len": 960,
+                    "text_det_limit_type": "max",
                     "device": "cpu",
+                    "engine": "onnxruntime",
                     "lang": resolved_lang,
                 }
                 try:
@@ -1213,7 +995,10 @@ class RobustOCREngine:
 
             src_dpi = self._read_dpi(image_path)
 
-            # Fast Path for PaddleOCR
+            # Fast Path for PaddleOCR — ALWAYS use raw image, never fall to slow path.
+            # The slow path's preprocessing (CLAHE, binarization, de-speckling) was designed
+            # for Tesseract and DESTROYS handwriting strokes when applied before PaddleOCR.
+            # Diagnostic proved: slow path finds same/fewer words at worse confidence and 2× time.
             run_slow_path = True
             if engine_name == "paddleocr":
                 try:
@@ -1237,13 +1022,14 @@ class RobustOCREngine:
                         lang=lang,
                     )
 
-                    if text and confidence >= self.cfg.min_confidence_threshold:
-                        run_slow_path = False
-                        flags += p3
-                        binary = cv2.cvtColor(img_proc, cv2.COLOR_BGR2GRAY)
-                    else:
+                    # Always use fast path results for PaddleOCR — even at low confidence.
+                    # PaddleOCR works best on raw unprocessed images.
+                    run_slow_path = False
+                    flags += p3
+                    binary = cv2.cvtColor(img_proc, cv2.COLOR_BGR2GRAY)
+                    if confidence < self.cfg.min_confidence_threshold:
                         logger.info(
-                            "PaddleOCR Fast Path confidence low (%.1f < %.1f), falling back to slow path...",
+                            "PaddleOCR Fast Path confidence low (%.1f < %.1f) but using results anyway (slow path would be worse).",
                             confidence,
                             self.cfg.min_confidence_threshold,
                         )
@@ -1639,11 +1425,17 @@ class RobustOCREngine:
 
         try:
             if engine_name == "paddleocr":
-                paddle_lang = "en"
-                if lang:
-                    paddle_lang = PADDLE_LANG_MAPPING.get(
-                        lang.lower().strip(), lang.lower().strip()
-                    )
+                is_auto_lang = bool(
+                    lang and lang.lower().strip() in ("all", "auto", "multilingual")
+                )
+                if is_auto_lang:
+                    paddle_lang = "ch"
+                else:
+                    paddle_lang = "en"
+                    if lang:
+                        paddle_lang = PADDLE_LANG_MAPPING.get(
+                            lang.lower().strip(), lang.lower().strip()
+                        )
 
                 # Determine device dynamically based on POST-RESIZED image size to prevent VRAM OOM
                 max_side = self.cfg.paddleocr_max_side
@@ -1654,9 +1446,12 @@ class RobustOCREngine:
                 h_down_temp = int(img_h * scale_down_temp)
                 downscaled_pixels = w_down_temp * h_down_temp
 
-                import paddle
-
-                gpu_available = paddle.device.is_compiled_with_cuda()
+                gpu_available = False
+                try:
+                    import paddle
+                    gpu_available = paddle.device.is_compiled_with_cuda()
+                except Exception:
+                    gpu_available = False
 
                 device = "gpu"
                 if gpu_available:
@@ -1711,6 +1506,206 @@ class RobustOCREngine:
 
                 # Run PaddleOCR
                 results = reader.predict(binary_color)
+
+                # Intelligent script auto-detection when lang in ("all", "auto", "multilingual")
+                if is_auto_lang:
+                    has_texts = bool(
+                        results and results[0] and results[0].get("rec_texts")
+                    )
+                    rec_texts = (
+                        results[0].get("rec_texts", []) if has_texts else []
+                    )
+                    rec_scores = (
+                        results[0].get("rec_scores", []) if has_texts else []
+                    )
+                    avg_conf = (
+                        float(np.mean(rec_scores)) * 100.0 if rec_scores else 0.0
+                    )
+
+                    first_lines = rec_texts[:5]
+                    header_text = " ".join(first_lines).lower()
+
+                    target_script = None
+
+                    # 1. Direct keyword detection in header lines
+                    if any(k in header_text for k in ("russian", "русск", "росси", "poetry draft")):
+                        target_script = "ru"
+                    elif any(k in header_text for k in ("arabic", "عرب", "letter")):
+                        target_script = "ar"
+                    elif any(k in header_text for k in ("korean", "krn", "한국", "조선", "공부", "stdv", "nts")):
+                        target_script = "korean"
+                    elif any(k in header_text for k in ("hindi", "हिन्द", "भारत")):
+                        target_script = "hi"
+                    elif any(k in header_text for k in ("japan", "日記", "nihon")):
+                        target_script = "japan"
+
+                    # 2. Character-level unicode checks across all lines
+                    if target_script is None:
+                        for line in rec_texts:
+                            if any("\u0400" <= ch <= "\u04ff" or "\u0500" <= ch <= "\u052f" for ch in line):
+                                target_script = "ru"
+                                break
+                            if any("\u0600" <= ch <= "\u06ff" or "\u0750" <= ch <= "\u077f" or "\ufb50" <= ch <= "\ufdff" or "\ufe70" <= ch <= "\ufeff" for ch in line):
+                                target_script = "ar"
+                                break
+                            if any("\uac00" <= ch <= "\ud7af" or "\u1100" <= ch <= "\u11ff" or "\u3130" <= ch <= "\u318f" for ch in line):
+                                target_script = "korean"
+                                break
+                            if any("\u0900" <= ch <= "\u097f" for ch in line):
+                                target_script = "hi"
+                                break
+
+                    # 3. Dynamic candidate probing for non-English documents without explicit keywords
+                    # If valid line ratio < 75% or average confidence < 88%
+                    valid_line_count = sum(1 for t in rec_texts if len(t.strip()) > 1)
+                    line_ratio = valid_line_count / float(max(1, len(rec_texts)))
+
+                    if target_script is None and (line_ratio < 0.75 or avg_conf < 88.0):
+                        probe_boxes = (
+                            results[0].get("rec_boxes")
+                            or results[0].get("dt_polys")
+                            or results[0].get("rec_polys")
+                            if (results and results[0])
+                            else None
+                        )
+
+                        if probe_boxes:
+                            crops = []
+                            h_img, w_img = binary_color.shape[:2]
+                            for box in probe_boxes[:2]:
+                                try:
+                                    if len(box) == 4 and isinstance(box[0], (int, float, np.integer, np.floating)):
+                                        x0, y0, x1, y1 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
+                                    else:
+                                        x0 = int(min(pt[0] for pt in box))
+                                        y0 = int(min(pt[1] for pt in box))
+                                        x1 = int(max(pt[0] for pt in box))
+                                        y1 = int(max(pt[1] for pt in box))
+                                    x0, y0 = max(0, min(x0, w_img - 1)), max(0, min(y0, h_img - 1))
+                                    x1, y1 = max(0, min(x1, w_img)), max(0, min(y1, h_img))
+                                    if x1 > x0 and y1 > y0:
+                                        crops.append(binary_color[y0:y1, x0:x1])
+                                except Exception:
+                                    continue
+
+                            if crops:
+                                logger.info(
+                                    "Probing candidate readers on %d line crops for language discrimination (valid_ratio=%.2f, avg_conf=%.1f%%)...",
+                                    len(crops),
+                                    line_ratio,
+                                    avg_conf,
+                                )
+                                best_script = None
+                                best_char_count = 0
+                                best_conf = avg_conf
+
+                                for cand in ("ru", "korean", "ar", "hi"):
+                                    try:
+                                        cand_reader = get_paddleocr_reader(lang=cand, device=device)
+                                        c_texts = []
+                                        c_scores = []
+                                        for crop in crops:
+                                            try:
+                                                if hasattr(cand_reader, "paddlex_pipeline"):
+                                                    p_res = cand_reader.paddlex_pipeline.predict(crop)
+                                                else:
+                                                    p_res = cand_reader.predict(crop)
+
+                                                if hasattr(p_res, "__iter__") and not isinstance(p_res, (dict, list)):
+                                                    p_res = list(p_res)
+                                                elif not isinstance(p_res, list):
+                                                    p_res = [p_res] if p_res else []
+
+                                                for item in p_res:
+                                                    if not item:
+                                                        continue
+                                                    if isinstance(item, dict) or hasattr(item, "get"):
+                                                        txts = item.get("rec_texts") or []
+                                                        if isinstance(txts, str):
+                                                            txts = [txts]
+                                                        elif not txts and item.get("rec_text"):
+                                                            t = item.get("rec_text")
+                                                            txts = [t] if isinstance(t, str) else list(t)
+                                                        scs = item.get("rec_scores") or []
+                                                        if isinstance(scs, (int, float)):
+                                                            scs = [scs]
+                                                        c_texts.extend(txts)
+                                                        c_scores.extend(scs)
+                                            except Exception as crop_err:
+                                                logger.warning("Crop probe for '%s' failed: %s", cand, crop_err)
+
+                                        c_conf = float(np.mean(c_scores)) * 100.0 if c_scores else 0.0
+
+                                        # Count native script characters
+                                        if cand == "ru":
+                                            c_chars = sum(1 for t in c_texts for ch in t if "\u0400" <= ch <= "\u04ff")
+                                        elif cand == "korean":
+                                            c_chars = sum(1 for t in c_texts for ch in t if "\uac00" <= ch <= "\ud7af")
+                                        elif cand == "ar":
+                                            c_chars = sum(1 for t in c_texts for ch in t if "\u0600" <= ch <= "\u06ff")
+                                        elif cand == "hi":
+                                            c_chars = sum(1 for t in c_texts for ch in t if "\u0900" <= ch <= "\u097f")
+                                        else:
+                                            c_chars = 0
+
+                                        logger.info(
+                                            "Candidate '%s': %d native chars, conf=%.1f%%",
+                                            cand, c_chars, c_conf
+                                        )
+                                        if c_chars >= 3 and c_conf > 60.0 and c_chars > best_char_count:
+                                            best_char_count = c_chars
+                                            best_script = cand
+                                            best_conf = c_conf
+                                    except Exception as pe:
+                                        logger.warning("Probe '%s' failed: %s", cand, pe)
+
+                                if best_script is not None:
+                                    target_script = best_script
+                                    logger.info(
+                                        "Probe determined script '%s' with %d native chars (conf=%.1f%%)",
+                                        target_script, best_char_count, best_conf
+                                    )
+
+                    # 4. Execute re-routing if target_script was determined
+                    if target_script is not None:
+                        logger.info(
+                            "Auto-detected script cue '%s' (ch avg_conf=%.1f%%). Re-routing page to '%s'...",
+                            target_script,
+                            avg_conf,
+                            target_script,
+                        )
+                        try:
+                            script_reader = get_paddleocr_reader(
+                                lang=target_script, device=device
+                            )
+                            script_results = script_reader.predict(binary_color)
+                            if (
+                                script_results
+                                and script_results[0]
+                                and script_results[0].get("rec_texts")
+                            ):
+                                script_scores = script_results[0].get(
+                                    "rec_scores", []
+                                )
+                                script_conf = (
+                                    float(np.mean(script_scores)) * 100.0
+                                    if script_scores
+                                    else 0.0
+                                )
+                                logger.info(
+                                    "Re-routed to '%s': confidence %.1f%% (vs ch %.1f%%)",
+                                    target_script,
+                                    script_conf,
+                                    avg_conf,
+                                )
+                                results = script_results
+                                flags.append(f"script_rerouted_{target_script}")
+                        except Exception as script_err:
+                            logger.warning(
+                                "Failed running re-routed reader for '%s': %s",
+                                target_script,
+                                script_err,
+                            )
 
                 if (
                     not results

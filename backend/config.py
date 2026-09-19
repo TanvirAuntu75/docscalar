@@ -17,11 +17,14 @@ if sys.platform == "win32":
 
 # Base Paths
 IS_PACKAGED = getattr(sys, "frozen", False)
-IS_DESKTOP_MODE = os.getenv("DOCFORGE_DESKTOP", "false").lower() == "true"
+IS_DESKTOP_MODE = os.getenv("DOCSCALAR_DESKTOP", os.getenv("DOCFORGE_DESKTOP", "false")).lower() == "true"
 
 if IS_PACKAGED or IS_DESKTOP_MODE:
-    # Resolve to AppData/Local/DocForge
-    app_data_dir = Path(os.getenv("LOCALAPPDATA", os.path.expanduser("~"))) / "DocForge"
+    # Resolve to AppData/Local/DocScalar (with fallback to legacy DocForge directory)
+    local_app_data = Path(os.getenv("LOCALAPPDATA", os.path.expanduser("~")))
+    legacy_dir = local_app_data / "DocForge"
+    primary_dir = local_app_data / "DocScalar"
+    app_data_dir = primary_dir if (primary_dir.exists() or not legacy_dir.exists()) else legacy_dir
     UPLOAD_DIR = app_data_dir / "uploads"
     OUTPUT_DIR = app_data_dir / "output"
     DB_DIR = app_data_dir / "database"
@@ -51,7 +54,7 @@ REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 R2_ACCOUNT_ID = os.getenv("R2_ACCOUNT_ID", "")
 R2_ACCESS_KEY_ID = os.getenv("R2_ACCESS_KEY_ID", "")
 R2_SECRET_ACCESS_KEY = os.getenv("R2_SECRET_ACCESS_KEY", "")
-R2_BUCKET_NAME = os.getenv("R2_BUCKET_NAME", "docforge-shares")
+R2_BUCKET_NAME = os.getenv("R2_BUCKET_NAME", "docscalar-shares")
 
 # Anthropic Claude API Key (for SmartConvert AI features)
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")

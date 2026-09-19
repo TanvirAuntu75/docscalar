@@ -1,6 +1,6 @@
 {
-  "name": "DocForge — Free Document & PDF Studio",
-  "short_name": "DocForge",
+  "name": "DocScalar — Free Document & PDF Studio",
+  "short_name": "DocScalar",
   "description": "Fast, 100% private in-browser document processing and visual studio.",
   "start_url": "/",
   "display": "standalone",

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'docforge-pwa-cache-v2';
+const CACHE_NAME = 'docscalar-pwa-cache-v2';
 
 // Assets to cache immediately on SW install (warm-up cache)
 const PRECACHE_ASSETS = [
@@ -104,7 +104,7 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         }).catch(() => {
           // Network failed — return an offline fallback so respondWith is never undefined
-          return new Response('Offline: DocForge is unavailable without a network connection.', {
+          return new Response('Offline: DocScalar is unavailable without a network connection.', {
             status: 503,
             statusText: 'Service Unavailable',
             headers: { 'Content-Type': 'text/plain' }

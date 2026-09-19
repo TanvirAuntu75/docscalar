@@ -199,7 +199,7 @@ export default function TextToPdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Text to PDF Online Free — Convert TXT or Notes to PDF | DocForge"
+        title="Text to PDF Online Free — Convert TXT or Notes to PDF | DocScalar"
         description="Convert raw text or text files (.txt) to formatted PDF documents with customizable fonts, margins, and page numbers. 100% private in-browser tool."
       />
 
@@ -334,7 +334,7 @@ export default function TextToPdf() {
                   {/* Page Footer Simulation */}
                   {pageNumbers && (
                     <div className="pt-6 mt-auto border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-                      <span>DocForge Typesetter</span>
+                      <span>DocScalar Typesetter</span>
                       <span>Page 1 of {estimatedPages}</span>
                     </div>
                   )}
@@ -499,14 +499,16 @@ export default function TextToPdf() {
               {/* Progress Bar (While Processing) */}
               {processing && (
                 <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                  <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                    <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                      <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                  <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                         progress_activity
                       </span>
-                      {statusMessage || 'Compiling PDF pages...'}
-                    </span>
-                    <span>{progress}%</span>
+                      <span className="truncate" title={statusMessage || 'Compiling PDF pages...'}>
+                        {statusMessage || 'Compiling PDF pages...'}
+                      </span>
+                    </div>
+                    <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                   </div>
                   <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div

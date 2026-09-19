@@ -370,7 +370,7 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
       cards: [
         { icon: 'high_quality', title: 'Quality Preserved', desc: 'Optimized conversion keeps colors and gradients vibrant.' },
         { icon: 'bolt', title: 'Super Fast', desc: 'Images are processed in milliseconds, saving bandwidth.' },
-        { icon: 'layers', title: 'Format Versatility', desc: 'Seamlessly convert between PNG, JPG, WEBP, and BMP.' },
+        { icon: 'layers', title: 'Format Versatility', desc: 'Convert between PNG, JPG, WEBP, and BMP directly.' },
         { icon: 'security', title: '100% Secure', desc: 'Your photos and personal graphics remain on your device.' }
       ]
     };
@@ -428,7 +428,7 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
             </div>
             <h2 className="text-2xl font-h2 font-bold text-gray-900 dark:text-gray-100">Drop files to upload</h2>
             <p className="text-sm text-text-secondary text-center max-w-md leading-relaxed">
-              Release your files anywhere on this page to instantly load them into DocForge.
+              Release your files anywhere on this page to instantly load them into DocScalar.
             </p>
           </div>
         </div>

@@ -1,12 +1,13 @@
 import { PDFDocument } from 'pdf-lib';
 import JSZip from 'jszip';
+import { cleanAndRefitDocument } from './cleanAndRefitPage.js';
 
 /**
  * Extract specified pages into a new PDF or separate PDF files in a ZIP.
  * @param {File} file - The uploaded PDF file.
  * @param {number[]} indicesToKeep - 0-indexed page numbers to keep.
  * @param {function} onProgress - Progress reporting callback.
- * @param {object} [options] - { splitSeparate: boolean }
+ * @param {object} [options] - { splitSeparate: boolean, autoCropBlackBorders?: boolean, ... }
  * @returns {Promise<Blob>} The processed PDF blob or ZIP blob.
  */
 export async function extractPages(file, indicesToKeep, onProgress, options = {}) {
@@ -14,8 +15,22 @@ export async function extractPages(file, indicesToKeep, onProgress, options = {}
   const pdfBytes = await file.arrayBuffer();
   if (onProgress) onProgress(30);
   
-  const pdfDoc = await PDFDocument.load(pdfBytes);
+  let pdfDoc = await PDFDocument.load(pdfBytes);
   if (onProgress) onProgress(50);
+
+  // VisionClean: Universal Smart Cropping (Auto-Crop Black Scan Borders & Refit Dimensions)
+  if (options && (options.autoCropBlackBorders || options.smartCrop)) {
+    const targetCropBoxes = options.pageCropBoxes || options.docCropBoxes || (options.docCropBox ? { 0: options.docCropBox } : {});
+    const hasAnyScanBorders = Object.values(targetCropBoxes).some(
+      (b) => b && b.hasBlackBorders === true && (b.cropTop > 0 || b.cropBottom > 0 || b.cropLeft > 0 || b.cropRight > 0)
+    );
+    if (hasAnyScanBorders) {
+      pdfDoc = await cleanAndRefitDocument(pdfDoc, targetCropBoxes, {
+        margin: options.cleanMargin ?? 0,
+        enabledEdges: options.enabledEdges || { top: true, bottom: true, left: true, right: true }
+      });
+    }
+  }
   
   const totalPages = pdfDoc.getPageCount();
   const validIndices = indicesToKeep.filter((idx) => idx >= 0 && idx < totalPages);

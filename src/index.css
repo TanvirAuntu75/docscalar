@@ -56,7 +56,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   DocForge Design System V3 — Lumina Doc Dark Theme
+   DocScalar Design System V3 — Lumina Doc Dark Theme
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── CSS Custom Properties (Design Tokens) ────────────────────────────────── */
@@ -602,19 +602,25 @@ input, select, textarea {
   animation: fadeInUp 0.45s var(--transition-slow);
 }
 
-/* ── Resume Builder: full-viewport-width override ─────────────────────────────
-   The CV builder uses a sticky two-panel layout that needs to fill the screen.
-   Override the default 960px max-width and reduce padding so the grid expands. */
-.tool-page:has(.resume-builder-page) {
-  max-width: 100%;
+/* ── Resume Builder & Template Selection: full-viewport-width override ───────
+   The CV builder and template selection gallery need to fill the available screen width.
+   Override the default 960px max-width and reduce padding so the layout expands. */
+.tool-page:has(.resume-builder-page),
+.tool-page:has(.cv-template-selection-page) {
+  max-width: 100% !important;
+  width: 100% !important;
   padding: 0 !important;
 }
 
-/* Compact the header and hide trust/subtitle/related on resume builder */
+/* Compact the header and hide trust/subtitle/related on resume builder & gallery */
 .tool-page:has(.resume-builder-page) .trust-bar,
 .tool-page:has(.resume-builder-page) .tool-page-subtitle,
 .tool-page:has(.resume-builder-page) .tool-page-header,
-.tool-page:has(.resume-builder-page) .related-tools {
+.tool-page:has(.resume-builder-page) .related-tools,
+.tool-page:has(.cv-template-selection-page) .trust-bar,
+.tool-page:has(.cv-template-selection-page) .tool-page-subtitle,
+.tool-page:has(.cv-template-selection-page) .tool-page-header,
+.tool-page:has(.cv-template-selection-page) .related-tools {
   display: none !important;
 }
 
@@ -629,21 +635,35 @@ input, select, textarea {
 .cv-color-swatches {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 0.85rem;
   margin: 1.25rem 0 2rem 0;
+  touch-action: manipulation;
 }
 .cv-color-swatch {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
   border-radius: 50%;
   cursor: pointer;
   border: 3px solid transparent;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   position: relative;
+  touch-action: manipulation;
 }
 .cv-color-swatch:hover {
   transform: scale(1.15);
+}
+.cv-color-swatch:focus-visible {
+  outline: none;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 3px #ffffff, 0 0 0 5px var(--color-primary);
+}
+.cv-color-swatch.swatch-default {
+  background: conic-gradient(from 180deg at 50% 50%, #3e4e68 0deg, #a97d5d 60deg, #4e5d4c 120deg, #802b3e 180deg, #0d9488 240deg, #2f2e2d 300deg, #3e4e68 360deg);
+  border: 2px solid rgba(255, 255, 255, 0.4);
 }
 .cv-color-swatch.active {
   border-color: #ffffff;
@@ -705,43 +725,38 @@ input, select, textarea {
   background: var(--color-success);
 }
 
-/* Template Gallery Grid */
+/* Template Gallery Grid — responsive fit-to-width card layout */
 .cv-template-grid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
   margin-top: 1rem;
-}
-@media (min-width: 600px) {
-  .cv-template-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (min-width: 1024px) {
-  .cv-template-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  width: 100%;
 }
 
 /* Outer card shell — looks like a floating sheet with soft shadow */
 .cv-template-card {
   position: relative;
-  background: var(--bg-card);
-  border: 1px solid rgba(0, 0, 0, 0.12); /* Visible crisp light border */
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Crisp subtle border */
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
 }
 .dark .cv-template-card {
-  border-color: rgba(255, 255, 255, 0.12); /* Crisp dark border */
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
-.cv-template-card:hover {
-  transform: translateY(-6px) scale(1.01);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.16);
+.cv-template-card:hover,
+.cv-template-card:focus-visible {
+  outline: none;
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.14), 0 0 0 2.5px var(--color-primary);
   border-color: var(--color-primary);
 }
 
@@ -780,23 +795,50 @@ input, select, textarea {
   z-index: 1;
 }
 
-/* Card Hover Overlay */
+/* Card Hover Overlay — Zero Blur, 100% Crisp Document Visibility */
 .cv-template-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(15, 10, 40, 0.72);
-  backdrop-filter: blur(6px);
+  background: transparent;
+  backdrop-filter: none; /* NO BLUR — document stays 100% sharp & readable */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end; /* Positioned at bottom so entire top/body of resume remains unobstructed */
+  padding-bottom: 1.25rem;
   gap: 0.5rem;
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 10;
+  pointer-events: none;
 }
-.cv-template-card:hover .cv-template-overlay {
+.cv-template-card:hover .cv-template-overlay,
+.cv-template-card:focus-visible .cv-template-overlay {
   opacity: 1;
+}
+.cv-template-overlay-btn {
+  pointer-events: auto;
+  transform: translateY(8px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.84rem;
+  padding: 0.55rem 1.35rem;
+  border-radius: 9999px;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.4), 0 4px 10px -2px rgba(0, 0, 0, 0.2);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+}
+.cv-template-card:hover .cv-template-overlay-btn {
+  transform: translateY(0);
+}
+.cv-template-overlay-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 14px 28px -3px rgba(0, 0, 0, 0.5);
 }
 .cv-template-card-label {
   background: var(--bg-card);
@@ -958,17 +1000,17 @@ body.studio-mode-active .site-header-nav {
   border-top: none !important;
   border-bottom: 1px solid var(--border-subtle) !important;
   padding: 0 1.5rem !important;
-  height: 48px !important;
+  height: 56px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
 }
 
 body.studio-mode-active .site-header-inner {
-  height: 48px !important;
+  height: 56px !important;
   padding: 0 !important;
 }
 
 body.studio-mode-active .main-content {
-  padding-top: 64px !important;
+  padding-top: 56px !important;
 }
 
 body.studio-mode-active {
@@ -980,6 +1022,42 @@ body.studio-mode-active {
 body.studio-mode-active footer,
 body.studio-mode-active .site-footer,
 body.studio-mode-active .footer {
+  display: none !important;
+}
+
+/* Studio Editor Mode for CV Builder & Multi-Column Document Editors */
+body.studio-editor-active .site-header-wrapper {
+  top: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+}
+
+body.studio-editor-active .site-header-nav {
+  max-width: 100vw !important;
+  width: 100vw !important;
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  padding: 0 1.5rem !important;
+  height: 56px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+}
+
+body.studio-editor-active .site-header-inner {
+  height: 56px !important;
+  padding: 0 !important;
+}
+
+body.studio-editor-active .main-content {
+  padding-top: 60px !important;
+}
+
+body.studio-editor-active footer,
+body.studio-editor-active .site-footer,
+body.studio-editor-active .footer {
   display: none !important;
 }
 
@@ -1107,6 +1185,110 @@ body.studio-mode-active .footer {
   max-width: 800px;
   margin: 0 auto;
   width: 100%;
+}
+
+/* ==========================================================================
+   STUDIO DOCKED LAYOUT - ENTERPRISE IDE-GRADE ARCHITECTURE
+   ========================================================================== */
+
+/* Full-height flush docked sidebar for studio modes */
+.studio-viewport .options-panel,
+.tool-page.studio-viewport .options-panel,
+.workspace-canvas-wrapper ~ .options-panel,
+div:has(> .workspace-canvas-wrapper) > .options-panel {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: 1px solid var(--border-subtle) !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  background: var(--bg-primary) !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  width: 380px !important;
+  min-width: 380px !important;
+  max-width: 380px !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  position: relative !important;
+  z-index: 20;
+}
+
+/* Responsive sidebar widths for compact laptop displays */
+@media (max-width: 1279px) and (min-width: 1024px) {
+  .studio-viewport .options-panel,
+  .tool-page.studio-viewport .options-panel,
+  .workspace-canvas-wrapper ~ .options-panel,
+  div:has(> .workspace-canvas-wrapper) > .options-panel {
+    width: 340px !important;
+    min-width: 340px !important;
+    max-width: 340px !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .studio-viewport .options-panel,
+  .tool-page.studio-viewport .options-panel,
+  .workspace-canvas-wrapper ~ .options-panel,
+  div:has(> .workspace-canvas-wrapper) > .options-panel {
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+  }
+}
+
+/* Studio Header Height & Divider Parity (Zero-Misalignment Invariant) */
+.studio-viewport .workspace-canvas-wrapper > div:first-child,
+.studio-viewport .workspace-canvas-wrapper .sticky.top-0 {
+  min-height: 52px !important;
+  height: auto !important;
+  max-height: none !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  background: var(--bg-primary) !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+}
+
+.studio-viewport .workspace-toolbar {
+  height: 51px !important;
+  min-height: 51px !important;
+  max-height: 51px !important;
+  padding: 0 1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+}
+
+.studio-viewport .options-panel > div:first-child {
+  height: 52px !important;
+  min-height: 52px !important;
+  max-height: 52px !important;
+  padding: 0 1.25rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  background: var(--bg-primary) !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* Document Preview Canvas Viewport Container */
+.canvas-viewport-container {
+  touch-action: pan-x pan-y;
+  overscroll-behavior: contain;
 }
 
 .tool-page-header {
@@ -2595,7 +2777,7 @@ html, body {
   background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
 }
 
-/* highlight.js custom dark theme styling overrides for DocForge code previews */
+/* highlight.js custom dark theme styling overrides for DocScalar code previews */
 .hljs {
   display: block;
   overflow-x: auto;
@@ -2745,6 +2927,167 @@ table {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
+
+/* ── CV / Resume Studio Professional Button Design System ─────────────────── */
+.cv-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  background: var(--color-primary, #2563eb);
+  color: #ffffff !important;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.cv-btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-light, #3b82f6);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  transform: translateY(-0.5px);
+}
+
+.cv-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.cv-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cv-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-weight: 500;
+  font-size: 0.85rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  background: var(--bg-card, #1e293b);
+  color: var(--text-primary, #f8fafc) !important;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.cv-btn-secondary:hover:not(:disabled) {
+  background: var(--bg-card-hover, #334155);
+  border-color: var(--border-medium, rgba(255, 255, 255, 0.2));
+  color: var(--text-primary, #ffffff) !important;
+}
+
+.cv-btn-secondary.active {
+  background: rgba(37, 99, 235, 0.12);
+  border-color: var(--color-primary, #2563eb);
+  color: var(--color-primary, #3b82f6) !important;
+}
+
+.cv-btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cv-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  font-weight: 500;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary, #94a3b8);
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.cv-btn-ghost:hover:not(:disabled) {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--text-primary, #f8fafc);
+}
+
+.cv-btn-ghost.active {
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--color-primary, #3b82f6);
+  font-weight: 600;
+}
+
+.cv-btn-ghost:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cv-btn-autotune {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.28rem 0.65rem;
+  border-radius: 6px;
+  background: var(--color-primary, #2563eb);
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.cv-btn-autotune:hover {
+  background: var(--color-primary-light, #3b82f6);
+  transform: translateY(-0.5px);
+}
+
+/* ── CV Studio Responsive Layout Invariants ───────────────────────────────── */
+@media (min-width: 901px) {
+  .cv-studio-workspace {
+    grid-template-columns: minmax(420px, 45%) 1fr !important;
+  }
+  .cv-mobile-view-tabs {
+    display: none !important;
+  }
+  .cv-form-panel.cv-mobile-hidden,
+  .cv-preview-panel.cv-mobile-hidden {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .cv-studio-workspace {
+    grid-template-columns: 1fr !important;
+  }
+  .cv-mobile-view-tabs {
+    display: block !important;
+  }
+  .cv-form-panel.cv-mobile-hidden,
+  .cv-preview-panel.cv-mobile-hidden {
+    display: none !important;
+  }
+  .cv-form-panel.cv-mobile-visible,
+  .cv-preview-panel.cv-mobile-visible {
+    display: flex !important;
+    height: 100% !important;
+  }
+}
+
 
 
 

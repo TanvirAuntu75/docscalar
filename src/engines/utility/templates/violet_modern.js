@@ -7,28 +7,27 @@ export function generateVioletModernHtml(
   themeColor = '#7c3aed',
   themeFont = 'Inter',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
+  const safeData = data || {};
   const accent = themeColor === 'default' || !themeColor ? '#7c3aed' : themeColor;
   const fontFam = themeFont === 'Playfair Display' ? "'Playfair Display', Georgia, serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : "'Inter', -apple-system, sans-serif";
 
-  const expHtml = data.experience && data.experience.length ? `
+  const expHtml = safeData.experience && safeData.experience.length ? `
     <section class="main-section">
-      <h3 class="section-title">Experience</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'Experience'}</h3>
       <div class="violet-bar"></div>
       <div class="entries-list">
-        ${data.experience.map(e => `
+        ${safeData.experience.map((e, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${e.role}</span>
-              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
-            </div>
-            <div class="entry-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+              <span class="entry-role" data-df-field="exp:${idx}:role">${e.role || ''}</span>
+              <span class="entry-date" ><span data-df-field="exp:${idx}:company">${e.company || ''}</span>${(e.company && (e.start || e.end)) ? ' | ' : ''}<span data-df-field="exp:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span></span>${safeData.location ? ` · <span data-df-field="location">${safeData.location}</span>` : ''}</div>
             ${e.highlights && e.highlights.filter(Boolean).length ? `
               <ul class="entry-desc">
-                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+                ${e.highlights.filter(Boolean).map((h, hIdx) => `<li data-df-field="exp:${idx}:highlight:${hIdx}">${h}</li>`).join('')}
               </ul>
             ` : ''}
           </div>
@@ -37,16 +36,16 @@ export function generateVioletModernHtml(
     </section>
   ` : '';
 
-  const eduHtml = data.education && data.education.length ? `
+  const eduHtml = safeData.education && safeData.education.length ? `
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Education</h3>
+      <h3 class="sidebar-title section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'Education'}</h3>
       <div class="sidebar-bar"></div>
       <div class="edu-list">
-        ${data.education.map(e => `
+        ${safeData.education.map((e, idx) => `
           <div class="edu-item">
-            <div class="edu-degree">${e.degree}</div>
-            <div class="edu-school">${e.school}</div>
-            <div class="edu-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
+            <div class="edu-degree" data-df-field="edu:${idx}:degree">${e.degree || ''}</div>
+            <div class="edu-school" data-df-field="edu:${idx}:school">${e.school || ''}</div>
+            <div class="edu-date" data-df-field="edu:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
             ${e.note ? `<div class="edu-note">${e.note}</div>` : ''}
           </div>
         `).join('')}
@@ -54,22 +53,22 @@ export function generateVioletModernHtml(
     </div>
   ` : '';
 
-  const skillsHtml = data.skills && data.skills.length ? `
+  const skillsHtml = safeData.skills && safeData.skills.length ? `
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Skills</h3>
+      <h3 class="sidebar-title section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Skills'}</h3>
       <div class="sidebar-bar"></div>
       <div class="skills-grid">
-        ${data.skills.map((s) => {
-          let name = s;
+        ${safeData.skills.map((s, idx) => {
+          let name = typeof s === 'string' ? s : s.name || '';
           let levelText = '';
-          if (s.includes(' - ')) {
+          if (typeof s === 'string' && s.includes(' - ')) {
             const parts = s.split(' - ');
             name = parts[0];
             levelText = parts[1];
           }
           return `
             <div class="skill-item">
-              <span>• ${name}</span>
+              <span data-df-field="skill:${idx}">• ${name}</span>
               ${levelText ? `<span class="skill-level">${levelText}</span>` : ''}
             </div>
           `;
@@ -78,47 +77,48 @@ export function generateVioletModernHtml(
     </div>
   ` : '';
 
-  const projHtml = data.projects && data.projects.length ? `
+  const projHtml = safeData.projects && safeData.projects.length ? `
     <section class="main-section">
-      <h3 class="section-title">Projects</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'Projects'}</h3>
       <div class="violet-bar"></div>
       <div class="entries-list">
-        ${data.projects.map(p => `
+        ${safeData.projects.map((p, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${p.name}</span>
-              ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
+              <span class="entry-role" data-df-field="proj:${idx}:name">${p.name || ''}</span>
+              ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="proj:${idx}:url" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
             </div>
-            ${p.description ? `<div style="font-size: 8.5pt; color: #475569; margin-top: 2px;">${p.description}</div>` : ''}
+            ${p.description ? `<div data-df-field="proj:${idx}:description" style="font-size: 8.5pt; color: #475569; margin-top: 2px;">${p.description}</div>` : ''}
           </div>
         `).join('')}
       </div>
     </section>
   ` : '';
 
-  const certHtml = data.certifications && data.certifications.length ? `
+  const certHtml = safeData.certifications && safeData.certifications.length ? `
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Certifications</h3>
+      <h3 class="sidebar-title section-heading" data-df-field="heading:certifications">${data.sectionTitles?.certifications || 'Certifications'}</h3>
       <div class="sidebar-bar"></div>
       <ul class="cert-list">
-        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+        ${safeData.certifications.map((c, idx) => `<li data-df-field="cert:${idx}">${c}</li>`).join('')}
       </ul>
     </div>
   ` : '';
 
-  const contactHtml = `
+  const hasContact = safeData.phone || safeData.email || safeData.location || safeData.linkedin || safeData.website;
+  const contactHtml = hasContact ? `
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Contact</h3>
+      <h3 class="sidebar-title section-heading" data-df-field="heading:contact">${data.sectionTitles?.contact || 'Contact'}</h3>
       <div class="sidebar-bar"></div>
       <div class="contact-list">
-        ${data.phone ? `<div class="contact-row"><span>${data.phone}</span></div>` : ''}
-        ${data.email ? `<div class="contact-row"><a href="mailto:${data.email}" style="color: inherit; text-decoration: none; word-break: break-all;">${data.email}</a></div>` : ''}
-        ${data.location ? `<div class="contact-row"><span>${data.location}</span></div>` : ''}
-        ${data.linkedin ? `<div class="contact-row"><a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
-        ${data.website ? `<div class="contact-row"><a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${safeData.phone ? `<div class="contact-row"><span data-df-field="phone">${safeData.phone}</span></div>` : ''}
+        ${safeData.email ? `<div class="contact-row"><a href="mailto:${safeData.email}" style="color: inherit; text-decoration: none; word-break: break-all;" data-df-field="email">${safeData.email}</a></div>` : ''}
+        ${safeData.location ? `<div class="contact-row"><span data-df-field="location">${safeData.location}</span></div>` : ''}
+        ${safeData.linkedin ? `<div class="contact-row"><a data-df-field="linkedin" href="https://${safeData.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${safeData.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${safeData.website ? `<div class="contact-row"><a data-df-field="website" href="https://${safeData.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${safeData.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
       </div>
     </div>
-  `;
+  ` : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -139,46 +139,60 @@ export function generateVioletModernHtml(
       print-color-adjust: exact;
     }
     
-    #main-container {
-      width: 210mm;
-      min-height: 297mm;
+    .cv-page {
+      width: 794px;
+      min-height: 1123px;
+      height: 1123px;
       margin: 0 auto;
       background: #ffffff;
       display: flex;
       flex-direction: column;
+      position: relative;
+      overflow: hidden;
     }
     
-    /* Top Violet Header Strip */
+    /* Top Header Band */
     .header-band {
-      background: #faf5ff;
-      border-bottom: 2px solid #e9d5ff;
-      padding: ${30 + pageMargin}px 40px;
+      background: #f5f3ff;
+      border-bottom: 3px solid ${accent};
+      padding: ${25 + pageMargin}px 40px;
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 24px;
+    }
+    .avatar-mask {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid ${accent};
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
     .avatar {
-      width: 85px;
-      height: 85px;
-      border-radius: 50%;
-      border: 2.5px solid ${accent};
+      width: 100%;
+      height: 100%;
       object-fit: cover;
+      display: block;
     }
     .header-text h1 {
-      font-size: 24pt;
-      font-weight: 900;
+      font-size: 26pt;
+      font-weight: 800;
       color: #1e1b4b;
       letter-spacing: -0.5px;
-      line-height: 1.1;
+      line-height: 1.05;
       text-transform: uppercase;
     }
     .header-text .title {
-      font-size: 10pt;
-      font-weight: 700;
+      font-size: 10.5pt;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       color: ${accent};
-      margin-top: 3px;
+      margin-top: 4px;
     }
     
     /* Content Columns */
@@ -213,8 +227,12 @@ export function generateVioletModernHtml(
       margin-bottom: 3px;
     }
     .violet-bar {
-      border-bottom: 2px solid ${accent};
+      border-bottom: 2.5px solid ${accent};
       width: 35px;
+      margin-bottom: 12px;
+    }
+    .sidebar-bar {
+      border-bottom: 1.5px solid #ddd6fe;
       margin-bottom: 10px;
     }
     .summary-text {
@@ -241,7 +259,7 @@ export function generateVioletModernHtml(
     .entry-role {
       font-weight: 700;
       font-size: 9.5pt;
-      color: #0f172a;
+      color: #1e1b4b;
     }
     .entry-date {
       font-size: 8.3pt;
@@ -275,20 +293,20 @@ export function generateVioletModernHtml(
       color: #1e1b4b;
       margin-bottom: 4px;
     }
-    .sidebar-bar {
-      border-bottom: 1.5px solid #e9d5ff;
-      margin-bottom: 10px;
-    }
     .contact-list {
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 6px;
       font-size: 8.3pt;
     }
     .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
       color: #475569;
       word-break: break-all;
     }
+    
     .edu-item {
       margin-bottom: 10px;
       font-size: 8.3pt;
@@ -296,7 +314,7 @@ export function generateVioletModernHtml(
     }
     .edu-degree {
       font-weight: 700;
-      color: #0f172a;
+      color: #1e1b4b;
     }
     .edu-school {
       color: #475569;
@@ -311,6 +329,7 @@ export function generateVioletModernHtml(
       font-size: 7.8pt;
       margin-top: 1px;
     }
+    
     .skills-grid {
       display: flex;
       flex-direction: column;
@@ -321,12 +340,13 @@ export function generateVioletModernHtml(
       justify-content: space-between;
       align-items: baseline;
       font-size: 8.3pt;
-      color: #334155;
+      color: #475569;
     }
     .skill-level {
       font-size: 7.8pt;
-      color: #64748b;
+      color: ${accent};
     }
+    
     .cert-list {
       padding-left: 16px;
       font-size: 8.3pt;
@@ -335,25 +355,54 @@ export function generateVioletModernHtml(
     .cert-list li {
       margin-bottom: 3px;
     }
+  
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .cv-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+    }
   </style>
 </head>
 <body>
-<div id="main-container">
+<div class="cv-page" id="page-1">
   <div class="header-band">
-    ${data.photoUrl ? `<img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />` : ''}
+    ${safeData.photoUrl ? `
+      <div class="avatar-mask">
+        <img class="avatar" src="${safeData.photoUrl}" alt="Profile Photo" />
+      </div>
+    ` : ''}
     <div class="header-text">
-      <h1>${data.name || 'Candidate Name'}</h1>
-      ${data.title ? `<div class="title">${data.title}</div>` : ''}
+      <h1 data-df-field="name">${safeData.name || ''}</h1>
+      <div class="candidate-title title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${safeData.title || ''}</div>
     </div>
   </div>
   
   <div class="content-columns">
     <div class="main-col">
-      ${data.summary ? `
+      ${safeData.summary ? `
         <section class="main-section">
-          <h3 class="section-title">Summary</h3>
+          <h3 class="section-title section-heading" data-df-field="heading:summary">${data.sectionTitles?.summary || 'Summary'}</h3>
           <div class="violet-bar"></div>
-          <div class="summary-text">${data.summary}</div>
+          <div class="summary-text" data-df-field="summary">${safeData.summary}</div>
         </section>
       ` : ''}
       

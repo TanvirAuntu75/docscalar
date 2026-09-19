@@ -1,3 +1,7 @@
+# ===================================================
+# DocScalar Production .gitignore
+# ===================================================
+
 # Logs
 logs
 *.log
@@ -7,66 +11,93 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-repo_map.md
-.agents/repo_map.md
-scratch/
+# Dependencies
+node_modules/
 pnpm-lock.yaml
 yarn.lock
-*.bak
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# Agent memory (auto-generated)
+.agents/repo_map.md
+
+# Scratch / dev-only artifacts
+scratch/
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.bak
 
-# Env files
+# Environment variables & secrets
 .env
 .env.local
 .env.*
+backend/.jwt_secret
+.jwt_secret
+*.jwt_secret
+*.pat
+*.token
+*.key
+*.pem
+mcp_config.json
 
-# Local SQLite databases
+# SQLite databases (DocScalar + legacy DocForge)
+docscalar.db
+docscalar.db-shm
+docscalar.db-wal
+docscalar.db-journal
 docforge.db
 docforge.db-shm
 docforge.db-wal
 docforge.db-journal
 
-# Python pycache
+# Python
 __pycache__/
-backend/__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
 
-# Backend upload/output folders
+# Backend runtime directories
 backend/uploads/
 backend/output/
 backend/test_output/
-venv/
-.venv/
 backend/models/
+
+# Frontend model cache
 public/models/
-*.zip
-docforge-studio/
+
+# Tauri desktop build artifacts
 src-tauri/target/
 src-tauri/binaries/
 src-tauri/wix-bin/
 src-tauri/*.exe
 src-tauri/docforge-backend-*
+src-tauri/docscalar-backend-*
 
-# Secrets, Tokens and Credentials
-backend/.jwt_secret
-.jwt_secret
-*.jwt_secret
-mcp_config.json
-*.pat
-*.token
-*.key
-*.pem
+# Archive bundles
+*.zip
 
+# Benchmarks heavy datasets
+benchmarks/ARC-AGI/
+
+# Legacy / deprecated
+docforge-studio/
+
+# OCR training data (heavy, stored separately)
+training/datasets/
+ocr_data/

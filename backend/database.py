@@ -15,7 +15,10 @@ from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 Base = declarative_base()
 
 # Use DATABASE_URL from env if available (e.g. Railway/Supabase), fallback to local SQLite in sandbox directory
-default_db_path = f"sqlite:///{DB_DIR / 'docforge.db'}"
+legacy_db_file = DB_DIR / "docforge.db"
+primary_db_file = DB_DIR / "docscalar.db"
+active_db_file = legacy_db_file if (legacy_db_file.exists() and not primary_db_file.exists()) else primary_db_file
+default_db_path = f"sqlite:///{active_db_file}"
 DATABASE_URL = os.getenv("DATABASE_URL", default_db_path)
 
 # SQLite needs separate check for threading in multi-threaded environments

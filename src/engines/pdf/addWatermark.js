@@ -1,5 +1,6 @@
 import { PDFDocument, StandardFonts, rgb, degrees } from 'pdf-lib';
 import { cleanTextForWinAnsi } from '../../utils/pdfSanitizer.js';
+import { cleanAndRefitDocument } from './cleanAndRefitPage.js';
 
 // Parse hex colors to standard rgb values (0.0 to 1.0)
 const hexToRgb = (hex) => {
@@ -23,8 +24,17 @@ export async function addWatermark(file, options = {}, onProgress) {
   const pdfBytes = await file.arrayBuffer();
   if (onProgress) onProgress(30);
   
-  const pdfDoc = await PDFDocument.load(pdfBytes);
+  let pdfDoc = await PDFDocument.load(pdfBytes);
   if (onProgress) onProgress(45);
+
+  // VisionClean: Universal Smart Cropper
+  if (options.autoCropBlackBorders) {
+    pdfDoc = await cleanAndRefitDocument(pdfDoc, options.pageCropBoxes || options.cropBox || {}, {
+      margin: options.cleanMargin ?? 0,
+      enabledEdges: options.enabledEdges,
+      pageIndices: options.pageIndices
+    });
+  }
 
   const pages = pdfDoc.getPages();
 

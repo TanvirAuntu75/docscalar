@@ -13,8 +13,7 @@ import {
   Code,
   Sparkles,
   Download,
-  Cpu,
-  Server,
+  Zap,
   FileCheck,
   Eye,
   FileCode,
@@ -36,7 +35,7 @@ const DEFAULT_HTML_SAMPLE = `<!DOCTYPE html>
   </style>
 </head>
 <body>
-  <span class="badge">DocForge Document</span>
+  <span class="badge">DocScalar Document</span>
   <h1>Executive Summary Report</h1>
   <p>This document was compiled directly from HTML into a high-fidelity vector PDF.</p>
   
@@ -49,7 +48,7 @@ const DEFAULT_HTML_SAMPLE = `<!DOCTYPE html>
     </ul>
   </div>
   
-  <p>DocForge delivers instant, enterprise-grade document tools right in your browser.</p>
+  <p>DocScalar delivers instant, enterprise-grade document tools right in your browser.</p>
 </body>
 </html>`;
 
@@ -177,10 +176,10 @@ export default function HtmlToPdf() {
         });
     } else if (poller.status === 'failed') {
       setProcessing(false);
-      setError(poller.error || 'Server conversion failed.');
+      setError(poller.error || 'Full Precision capture could not be completed.');
     } else if (poller.status === 'started' || poller.status === 'queued') {
       setProgress(poller.progress || 20);
-      setStatusMessage('Rendering HTML page via LibreOffice engine...');
+      setStatusMessage('Rendering HTML page via Chromium engine...');
     }
   }, [poller.status, poller.result, poller.error, poller.progress, files, activeFileIndex]);
 
@@ -203,8 +202,8 @@ export default function HtmlToPdf() {
 
     try {
       if (engineMode === 'server') {
-        if (!backendActive) throw new Error('Conversion server is unreachable. Please switch to Fast Browser Mode.');
-        setStatusMessage('Uploading HTML document for LibreOffice PDF conversion...');
+        if (!backendActive) throw new Error('Cloud conversion engine is currently offline. Please switch to Fast Mode.');
+        setStatusMessage('Preparing document for full-precision PDF conversion...');
 
         const fileToUpload = inputType === 'file' && files[activeFileIndex]
           ? files[activeFileIndex]
@@ -292,7 +291,7 @@ export default function HtmlToPdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="HTML to PDF Online Free — Convert HTML to PDF | DocForge"
+        title="HTML to PDF Online Free — Convert HTML to PDF | DocScalar"
         description="Convert HTML code or files to PDF with full CSS support. 100% private in-browser tool with live sandboxed preview."
       />
 
@@ -508,8 +507,9 @@ export default function HtmlToPdf() {
                         : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                     }`}
                   >
-                    <Cpu size={14} />
-                    <span>Fast Browser (Private)</span>
+                    <Zap size={14} />
+                    <span>Fast Mode</span>
+                    <span className={`text-[10px] ${engineMode === 'client' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>Instant · Private</span>
                   </button>
 
                   <button
@@ -521,8 +521,9 @@ export default function HtmlToPdf() {
                         : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                     }`}
                   >
-                    <Server size={14} />
-                    <span>LibreOffice Server</span>
+                    <Sparkles size={14} />
+                    <span>Full Precision</span>
+                    <span className={`text-[10px] ${engineMode === 'server' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>High Fidelity</span>
                   </button>
                 </div>
               </div>
@@ -596,14 +597,16 @@ export default function HtmlToPdf() {
               {/* Progress Bar (While Processing) */}
               {processing && (
                 <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                  <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                    <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                      <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                  <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                         progress_activity
                       </span>
-                      {statusMessage || 'Compiling PDF pages...'}
-                    </span>
-                    <span>{progress}%</span>
+                      <span className="truncate" title={statusMessage || 'Compiling PDF pages...'}>
+                        {statusMessage || 'Compiling PDF pages...'}
+                      </span>
+                    </div>
+                    <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                   </div>
                   <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div
@@ -688,7 +691,7 @@ export default function HtmlToPdf() {
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Engine</span>
                 <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1 capitalize">
-                  {result.engineMode === 'server' ? 'LibreOffice' : 'Vector Sandbox'}
+                  {result.engineMode === 'server' ? 'Full Precision' : 'Fast Mode'}
                 </span>
               </div>
             </div>

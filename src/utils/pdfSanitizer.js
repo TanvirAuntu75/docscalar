@@ -23,6 +23,14 @@ const UNICODE_MAP = {
   '\u03C0': 'pi',    // π
   '\u2211': 'sum',   // ∑
   '\u2206': 'delta', // ∆
+  '\u2713': '[v]',  // ✓
+  '\u2714': '[v]',  // ✔
+  '\u2717': '[x]',  // ✗
+  '\u2718': '[x]',  // ✘
+  '\u2605': '*',    // ★
+  '\u2606': '*',    // ☆
+  '\u25A0': '[#]',  // ■
+  '\u25A1': '[ ]',  // □
 };
 
 // Caches character validation results to optimize performance

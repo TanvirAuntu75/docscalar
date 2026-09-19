@@ -1,16 +1,26 @@
 import { PDFDocument } from 'pdf-lib';
+import { cleanAndRefitDocument } from './cleanAndRefitPage.js';
 
 /**
  * Crop PDF pages visually with target page scope support.
  * @param {File} file - The PDF file.
  * @param {object} bounds - Relative percentages: { xPercent, yPercent, widthPercent, heightPercent }.
  * @param {function} [onProgress] - Progress callback.
- * @param {object} [options] - Additional options: { targetPages: number[], perPageBounds: Record<number, object> }.
+ * @param {object} [options] - Additional options: { targetPages: number[], perPageBounds: Record<number, object>, fitToOriginalDimension: boolean, cleanMargins: number }.
  * @returns {Promise<Blob>} The cropped PDF.
  */
 export async function cropPdf(file, bounds, onProgress, options = {}) {
   if (onProgress) onProgress(10);
-  const pdfBytes = await file.arrayBuffer();
+  let pdfBytes;
+  if (file instanceof ArrayBuffer) {
+    pdfBytes = file;
+  } else if (file instanceof Uint8Array || (typeof Buffer !== 'undefined' && Buffer.isBuffer(file))) {
+    pdfBytes = file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);
+  } else if (file && typeof file.arrayBuffer === 'function') {
+    pdfBytes = await file.arrayBuffer();
+  } else {
+    throw new Error('Invalid file passed to cropPdf engine.');
+  }
   if (onProgress) onProgress(35);
   
   const pdfDoc = await PDFDocument.load(pdfBytes);
@@ -21,6 +31,31 @@ export async function cropPdf(file, bounds, onProgress, options = {}) {
   const targetPages = Array.isArray(options.targetPages) && options.targetPages.length > 0
     ? options.targetPages
     : Array.from({ length: totalPages }, (_, i) => i);
+
+  // VisionClean: Fit cropped content back to original page dimensions
+  if (options.fitToOriginalDimension) {
+    const pageCropBoxes = {};
+    pages.forEach((page, idx) => {
+      if (!targetPages.includes(idx)) return;
+      const pageBounds = (options.perPageBounds && options.perPageBounds[idx]) || bounds;
+      const { xPercent, yPercent, widthPercent, heightPercent } = pageBounds;
+      const { width, height } = page.getSize();
+      pageCropBoxes[idx] = {
+        left: width * xPercent,
+        bottom: height * (1 - yPercent - heightPercent),
+        right: width * (xPercent + widthPercent),
+        top: height * (1 - yPercent),
+        hasBlackBorders: true
+      };
+    });
+
+    const refittedDoc = await cleanAndRefitDocument(pdfDoc, pageCropBoxes, {
+      margin: options.cleanMargins ?? 0
+    });
+    const savedBytes = await refittedDoc.save();
+    if (onProgress) onProgress(100);
+    return new Blob([savedBytes], { type: 'application/pdf' });
+  }
 
   pages.forEach((page, idx) => {
     if (!targetPages.includes(idx)) return;

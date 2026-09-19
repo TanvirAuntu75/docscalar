@@ -176,6 +176,7 @@ class ClassifiedContent:
     tables: list  # same table dicts from PageScan
     median_body_size: float
     body_fontname: str
+    scalar_fields: list = field(default_factory=list)  # [(key, value, line_top)]
 
 
 @dataclass
@@ -199,6 +200,7 @@ class Section:
     subtitle: str | None = None
     tables: list = field(default_factory=list)  # list[TableGroup]
     page_range: tuple = (0, 0)  # (first_page, last_page)
+    scalar_fields: list = field(default_factory=list)
 
 
 @dataclass
@@ -209,6 +211,7 @@ class DocumentStructure:
     orphan_tables: list = field(default_factory=list)  # list[TableGroup]
     metadata: dict = field(default_factory=dict)
     stats: dict = field(default_factory=dict)
+    scalar_fields: list = field(default_factory=list)
 
 
 # ============================================================================
@@ -994,7 +997,10 @@ class PageScanner:
             found_text = page.find_tables(table_settings=TEXT_TABLE_SETTINGS)
             if found_text:
                 found_text = PageScanner._filter_nested_tables(found_text)
-                valid = [t for t in found_text if len((t.extract() or [[]])[0]) > 1]
+                valid = [
+                    t for t in found_text
+                    if len((t.extract() or [[]])[0]) > 1 and not PageScanner._is_shredded_table(t.extract() or [])
+                ]
                 if valid:
                     return PageScanner._package_tables(valid)
 
@@ -1002,7 +1008,225 @@ class PageScanner:
         if found:
             return PageScanner._package_tables(found)
 
+        # S5: fallback document grid from word coordinates so document data is never lost
+        fallback = PageScanner._extract_fallback_grid(page)
+        if fallback:
+            return [fallback]
+
         return []
+
+    @staticmethod
+    def _is_shredded_table(rows: list[list]) -> bool:
+        """
+        Detect if pdfplumber's text strategy sliced words across column boundaries.
+        Hallmarks of shredded tables:
+          - Cells starting with lowercase letter (e.g. 'hitecture', 'voice Number')
+          - Consecutive non-empty cells on the same row that concatenate to standard words
+          - High ratio of 1-2 character non-symbol fragments
+        """
+        if not rows or len(rows) < 2:
+            return False
+
+        fragment_count = 0
+        continuation_count = 0
+        total_non_empty = 0
+
+        for r in rows:
+            prev_cell = ""
+            for cell in r:
+                if cell is None:
+                    continue
+                text = str(cell).strip()
+                if not text:
+                    continue
+                total_non_empty += 1
+
+                # Check if cell begins with lowercase letter immediately after another text cell
+                if prev_cell and text[0].islower() and prev_cell[-1].isalpha():
+                    continuation_count += 1
+
+                # Check 1-2 char fragments that are alphabetical (not symbols or numbers)
+                if len(text) <= 2 and text.isalpha():
+                    fragment_count += 1
+
+                prev_cell = text
+
+        if total_non_empty == 0:
+            return False
+
+        shred_ratio = (continuation_count * 2 + fragment_count) / total_non_empty
+        return shred_ratio >= 0.12
+
+    @staticmethod
+    def _extract_fallback_grid(page) -> dict | None:
+        """
+        Coordinate-based fallback extractor for pages with structured text
+        where line-based and layout-based table detectors found no bordered tables.
+        Clusters horizontal phrases and column boundaries to construct an aligned table.
+        """
+        try:
+            if hasattr(page, "extract_words"):
+                words = page.extract_words(x_tolerance=3, y_tolerance=3)
+                page_width = float(getattr(page, "width", 612.0))
+                page_height = float(getattr(page, "height", 792.0))
+            elif isinstance(page, list):
+                words = page
+                page_width = 612.0
+                page_height = 792.0
+            else:
+                return None
+
+            if not words or len(words) < 3:
+                return None
+
+            # 1. Group words into visual lines by baseline top (within 3.5pt)
+            sorted_w = sorted(words, key=lambda w: (w["top"], w["x0"]))
+            lines = []
+            cur_line = [sorted_w[0]]
+            cur_top = sorted_w[0]["top"]
+
+            for w in sorted_w[1:]:
+                if abs(w["top"] - cur_top) <= 3.5:
+                    cur_line.append(w)
+                else:
+                    lines.append(cur_line)
+                    cur_line = [w]
+                    cur_top = w["top"]
+            if cur_line:
+                lines.append(cur_line)
+
+            if len(lines) < 2:
+                return None
+
+            # 2. Cluster adjacent words in each line into cohesive cell spans
+            line_entries = []
+            kv_pattern = re.compile(r'([A-Z0-9][A-Za-z0-9\s#\-\/\.]{1,30}?)\s*:\s*([^:]+?)(?=\s{2,}[A-Z0-9][A-Za-z0-9\s#\-\/\.]{1,30}?\s*:|$)')
+
+            for idx, lw in enumerate(lines):
+                sorted_lw = sorted(lw, key=lambda w: w["x0"])
+                spans = []
+                curr_span = dict(sorted_lw[0])
+                for w in sorted_lw[1:]:
+                    gap = w["x0"] - curr_span["x1"]
+                    if gap <= 6.0 and gap >= -3.0:
+                        curr_span["text"] += " " + w["text"]
+                        curr_span["x1"] = max(curr_span["x1"], w["x1"])
+                    else:
+                        spans.append(curr_span)
+                        curr_span = dict(w)
+                spans.append(curr_span)
+
+                text = " ".join(w["text"] for w in sorted_lw).strip()
+                max_size = max((w.get("size", 0) for w in lw), default=0)
+                is_kv = bool(kv_pattern.search(text)) or (":" in text and not text.endswith(":") and any(k in text.lower() for k in ["total", "subtotal", "tax", "invoice", "date", "terms", "id", "client", "amount"]))
+
+                top = sorted_lw[0]["top"]
+                bottom = max(w["bottom"] for w in sorted_lw)
+
+                line_entries.append({
+                    "idx": idx,
+                    "words": sorted_lw,
+                    "spans": spans,
+                    "text": text,
+                    "max_size": max_size,
+                    "is_kv": is_kv,
+                    "top": top,
+                    "bottom": bottom,
+                })
+
+            # Detect table candidates: exclude pure scalar lines and document titles
+            table_candidates = []
+            for e in line_entries:
+                if e["is_kv"]:
+                    continue
+                if e["idx"] <= 1 and (e["max_size"] >= 14 or "invoice" in e["text"].lower() or len(e["spans"]) == 1):
+                    continue
+                if len(e["spans"]) >= 2 or len(e["words"]) >= 4:
+                    table_candidates.append(e)
+
+            # If distinct table candidates found, use them; otherwise fall back to all non-KV lines or all lines
+            if len(table_candidates) >= 2:
+                active_entries = table_candidates
+            else:
+                non_kv = [e for e in line_entries if not e["is_kv"]]
+                active_entries = non_kv if len(non_kv) >= 2 else line_entries
+
+            target_spans = [e["spans"] for e in active_entries]
+
+            # 3. Detect column tracks across active lines
+            all_x0 = [s["x0"] for spans in target_spans for s in spans]
+            if not all_x0:
+                return None
+
+            all_x0.sort()
+            col_tracks = []
+            COL_TOL = 20.0
+            for x in all_x0:
+                matched = None
+                for col in col_tracks:
+                    if abs(col["avg"] - x) <= COL_TOL:
+                        matched = col
+                        break
+                if not matched:
+                    col_tracks.append({"points": [x], "avg": x})
+                else:
+                    matched["points"].append(x)
+                    matched["avg"] = sum(matched["points"]) / len(matched["points"])
+
+            # Keep distinct column tracks
+            col_tracks.sort(key=lambda c: c["avg"])
+            max_spans = max((len(s) for s in target_spans), default=1)
+            valid_cols = [c["avg"] for c in col_tracks if len(c["points"]) >= 2 or max_spans <= 2]
+
+            if len(valid_cols) < 2 and max_spans >= 2:
+                widest_line = max(target_spans, key=lambda s: len(s))
+                valid_cols = [s["x0"] for s in widest_line]
+
+            if not valid_cols:
+                valid_cols = [page_width * 0.1, page_width * 0.5]
+
+            # 4. Map each active line's spans into the column tracks
+            rows = []
+            for spans in target_spans:
+                row_vals = [""] * len(valid_cols)
+                for s in spans:
+                    # Find closest column
+                    best_ci = 0
+                    min_diff = float("inf")
+                    for ci, cx in enumerate(valid_cols):
+                        diff = abs(cx - s["x0"])
+                        if diff < min_diff:
+                            min_diff = diff
+                            best_ci = ci
+                    if row_vals[best_ci]:
+                        row_vals[best_ci] += " " + s["text"].strip()
+                    else:
+                        row_vals[best_ci] = s["text"].strip()
+
+                if any(v for v in row_vals):
+                    rows.append(row_vals)
+
+            if not rows:
+                return None
+
+            col_width = page_width / max(len(valid_cols), 1)
+            active_words = [w for e in active_entries for w in e["words"]]
+            table_x0 = max(0.0, min(w["x0"] for w in active_words) - 4)
+            table_top = max(0.0, min(e["top"] for e in active_entries) - 4)
+            table_x1 = min(page_width, max(w["x1"] for w in active_words) + 4)
+            table_bottom = min(page_height, max(e["bottom"] for e in active_entries) + 4)
+
+            return {
+                "bbox": (table_x0, table_top, table_x1, table_bottom),
+                "rows": rows,
+                "col_count": len(valid_cols),
+                "col_widths": [col_width] * len(valid_cols),
+                "extracted_title": "Extracted Table",
+                "_pre_packaged": True,
+            }
+        except Exception as e:
+            logger.warning("Fallback document grid extraction encountered: %s", e)
+            return None
 
     @staticmethod
     def _package_tables(found_tables) -> list:
@@ -1050,6 +1274,12 @@ class PageScanner:
             rows_data = PageScanner._fix_header_rowspan(rows_data)
 
             col_count = len(rows_data[0]) if rows_data else col_count
+
+            # Eliminate multiline row splitting in data rows
+            rows_data = PageScanner._consolidate_multiline_rows(rows_data)
+
+            # Resolve merged-cell bleeding and row length normalization
+            rows_data = PageScanner._resolve_merged_cell_bleeding(rows_data, col_count)
 
             result.append(
                 {
@@ -1122,6 +1352,105 @@ class PageScanner:
             return [rows_data[i] for i in range(0, len(rows_data), 2)]
 
         return rows_data
+
+    @staticmethod
+    def _consolidate_multiline_rows(rows_data: list) -> list:
+        """
+        Eliminates multiline row splitting in PDF tables.
+        When text in a cell wraps across multiple lines in a borderless or grid table,
+        pdfplumber often creates a new row with text only in the wrapped column(s)
+        and None/empty in key numeric, date, or identity columns.
+        This function merges continuation fragments back into the parent data row.
+        """
+        if not rows_data or len(rows_data) <= 1:
+            return rows_data
+
+        consolidated = [list(rows_data[0])]  # Keep header untouched
+        col_count = len(rows_data[0])
+
+        for r_idx in range(1, len(rows_data)):
+            curr_row = list(rows_data[r_idx])
+            if not curr_row:
+                continue
+
+            prev_row = consolidated[-1]
+
+            curr_non_empty = [
+                c for c in curr_row if c is not None and str(c).strip() != ""
+            ]
+            prev_non_empty = [
+                c for c in prev_row if c is not None and str(c).strip() != ""
+            ]
+
+            if not curr_non_empty:
+                continue
+
+            is_continuation = False
+            active_cols = []
+            if (
+                len(consolidated) > 1
+                and col_count >= 2
+                and len(curr_non_empty) < max(2, len(prev_non_empty))
+            ):
+                active_cols = [
+                    c
+                    for c in range(min(len(curr_row), len(prev_row)))
+                    if curr_row[c] is not None and str(curr_row[c]).strip() != ""
+                ]
+
+                if active_cols:
+                    matches = True
+                    for c in active_cols:
+                        curr_val = str(curr_row[c]).strip()
+                        prev_val = (
+                            str(prev_row[c]).strip()
+                            if prev_row[c] is not None
+                            else ""
+                        )
+                        if not prev_val:
+                            matches = False
+                            break
+                        if re.match(r"^(\d+[\.\)]|\b[A-Z]\b[\.\)])", curr_val):
+                            matches = False
+                            break
+
+                    if matches and len(active_cols) <= max(1, col_count // 2):
+                        is_continuation = True
+
+            if is_continuation:
+                for c in active_cols:
+                    prev_txt = str(prev_row[c]).strip()
+                    curr_txt = str(curr_row[c]).strip()
+                    prev_row[c] = f"{prev_txt} {curr_txt}"
+            else:
+                consolidated.append(curr_row)
+
+        return consolidated
+
+    @staticmethod
+    def _resolve_merged_cell_bleeding(rows_data: list, target_col_count: int) -> list:
+        """
+        Normalizes row lengths and prevents merged-cell bleeding.
+        - Pads short rows with None so that every row has exact target_col_count columns.
+        - Merges spurious trailing split fragments when row exceeds target_col_count.
+        """
+        if not rows_data or target_col_count <= 0:
+            return rows_data
+
+        resolved = []
+        for row in rows_data:
+            r = list(row)
+            if len(r) < target_col_count:
+                r.extend([None] * (target_col_count - len(r)))
+            elif len(r) > target_col_count:
+                excess = " ".join(
+                    str(c).strip()
+                    for c in r[target_col_count - 1 :]
+                    if c is not None and str(c).strip()
+                )
+                r = r[: target_col_count - 1] + [excess if excess else None]
+            resolved.append(r)
+        return resolved
 
 
 # ============================================================================
@@ -1201,6 +1530,7 @@ class ContentClassifier:
         sub_headers = []
         captions = []
         footnotes = []
+        scalar_fields = []
 
         # Group words into visual text lines
         text_lines = self._group_into_lines(scan.words)
@@ -1217,6 +1547,13 @@ class ContentClassifier:
 
             # Skip text that sits inside a table bounding box
             if self._inside_any_table(line_top, scan.tables):
+                continue
+
+            # Scalar recognition: check for Key-Value pattern (supports multi-pair lines e.g. "Invoice #: ...  Client: ...")
+            line_scalars = self._extract_scalars_from_line(line_words, stripped)
+            if line_scalars:
+                for k_str, v_str in line_scalars:
+                    scalar_fields.append((k_str, v_str, line_top))
                 continue
 
             # Compute line properties
@@ -1269,6 +1606,7 @@ class ContentClassifier:
             tables=scan.tables,
             median_body_size=median_size,
             body_fontname=body_font,
+            scalar_fields=scalar_fields,
         )
 
     # ------------------------------------------------------------------
@@ -1323,6 +1661,65 @@ class ContentClassifier:
         cleaned = re.sub(r"\s+", " ", cleaned).strip()
         cleaned = cleaned.rstrip(". ")
         return cleaned
+
+    @staticmethod
+    def _extract_scalars_from_line(line_words: list, line_text: str) -> list[tuple[str, str]]:
+        """
+        Extract key-value scalar fields from a line, handling:
+        1. Single key-value pairs (e.g. 'Subtotal: $12,500.00' or 'Due Date: 2026-10-15')
+        2. Side-by-side multi-column key-value pairs (e.g. 'Invoice Number: INV-001  Client: Acme Corp')
+        3. Word-cluster separation when words have significant horizontal gaps.
+        """
+        stripped = line_text.strip()
+        if ":" not in stripped:
+            return []
+
+        colon_count = stripped.count(":")
+
+        # Case 1: Exactly one colon on the line
+        if colon_count == 1:
+            parts = stripped.split(":", 1)
+            k, v = parts[0].strip(), parts[1].strip()
+            if k.lower() not in ("http", "https") and 1 <= len(k) <= 35 and v:
+                return [(k, v)]
+            return []
+
+        # Case 2: Multiple colons on the line
+        # Check if line_words can be clustered by horizontal gap
+        if line_words and len(line_words) > 1:
+            clusters = []
+            cur_c = [line_words[0]]
+            for w in line_words[1:]:
+                if w["x0"] - cur_c[-1]["x1"] > 15:
+                    clusters.append(cur_c)
+                    cur_c = [w]
+                else:
+                    cur_c.append(w)
+            clusters.append(cur_c)
+
+            results = []
+            if len(clusters) > 1 and all(any(":" in w.get("text", "") for w in c) for c in clusters):
+                for c in clusters:
+                    txt = " ".join(w.get("text", "") for w in c).strip()
+                    if ":" in txt:
+                        parts = txt.split(":", 1)
+                        k, v = parts[0].strip(), parts[1].strip()
+                        if k.lower() not in ("http", "https") and 1 <= len(k) <= 35 and v:
+                            results.append((k, v))
+                if results:
+                    return results
+
+        # Fallback regex for multi-colon line
+        kv_pattern = re.compile(r'([A-Za-z0-9\s#\-\/\.]{1,30}?)\s*:\s*([^:]+?)(?=\s+[A-Za-z0-9\s#\-\/\.]{1,30}?\s*:|$)')
+        matches = list(kv_pattern.finditer(stripped))
+        results = []
+        if matches:
+            for m in matches:
+                k = m.group(1).strip()
+                v = m.group(2).strip()
+                if k.lower() not in ("http", "https") and 1 <= len(k) <= 35 and v:
+                    results.append((k, v))
+        return results
 
 
 # ============================================================================
@@ -1398,6 +1795,15 @@ class StructuralAnalyzer:
                     else:
                         doc.orphan_tables.append(tg)
 
+            # --- aggregate scalar key-values from page into document ---
+            if page.scalar_fields:
+                for k, v, line_top in page.scalar_fields:
+                    # Deduplicate identical keys
+                    if not any(s[0].lower() == k.lower() for s in doc.scalar_fields):
+                        doc.scalar_fields.append((k, v))
+                if current_section is not None:
+                    current_section.scalar_fields.extend(page.scalar_fields)
+
         # close final section
         if current_section is not None:
             last_page = (
@@ -1415,6 +1821,7 @@ class StructuralAnalyzer:
             "total_orphan_tables": len(doc.orphan_tables),
             "total_table_groups": total_tg,
             "total_classified_pages": len(classified_pages),
+            "total_scalars": len(doc.scalar_fields),
         }
         return doc
 
@@ -1550,6 +1957,12 @@ class DataNormalizer:
         r"^([£$€¥₹₽¢])\s*([+-]?\d{1,3}(?:[,.\s]\d{3})*(?:[.,]\d+)?)\s*$|"
         r"^([+-]?\d{1,3}(?:[,.\s]\d{3})*(?:[.,]\d+)?)\s*([£$€¥₹₽¢])\s*$"
     )
+    _RE_ACCOUNTING = re.compile(
+        r"^\s*\(\s*([£$€¥₹₽¢]?)\s*([0-9]{1,3}(?:[,.\s]\d{3})*(?:[.,]\d+)?|[0-9]+(?:[.,]\d+)?)\s*\)\s*$"
+    )
+    _RE_PERCENT = re.compile(
+        r"^\s*([+-]?\d{1,3}(?:,\d{3})*(?:\.\d+)?|[+-]?\d+(?:\.\d+)?)\s*%\s*$"
+    )
     _RE_SCI = re.compile(r"^[+-]?\d+\.?\d*[eE][+-]?\d+$")
     _RE_INT_COMMA = re.compile(r"^[+-]?\d{1,3}(?:,\d{3})*$")
     _RE_FLOAT_COMMA = re.compile(r"^[+-]?\d{1,3}(?:,\d{3})*\.\d+$")
@@ -1576,13 +1989,14 @@ class DataNormalizer:
         Type cascade (order matters — first match wins):
           1. None/empty  → (None, "empty")
           2. Boolean      → (True/False, "boolean")
-          3. Percentage   → (0.45, "percentage")
+          3. Accounting   → (-1234.56, "currency_$")
           4. Currency     → (1234.56, "currency_$")
-          5. Date         → (datetime, "date")
-          6. Scientific   → (1.23e10, "scientific")
-          7. Integer      → (1234, "integer")
-          8. Float        → (12.34, "float")
-          9. String       → (cleaned_str, "string")
+          5. Percentage   → (0.15, "percentage")
+          6. Date         → (datetime, "date")
+          7. Scientific   → (1.23e10, "scientific")
+          8. Integer      → (1234, "integer")
+          9. Float        → (12.34, "float")
+          10. String      → (cleaned_str, "string")
         """
         if raw is None or str(raw) == "":
             return (None, "empty")
@@ -1595,12 +2009,21 @@ class DataNormalizer:
 
         # 1. Boolean
         low = text.lower()
-        if low in ("true", "✓", "✔", "☑"):
+        if low in ("true", "yes", "✓", "✔", "☑"):
             return (True, "boolean")
-        if low in ("false", "✗", "✘", "☐"):
+        if low in ("false", "no", "✗", "✘", "☐"):
             return (False, "boolean")
 
-        # 2. Percentage (Removed: Percentages are now treated as strings so <2.5% and +12.4% are handled consistently)
+        # 2. Accounting negative e.g. (1,234.56) or ($500.00)
+        m_acct = DataNormalizer._RE_ACCOUNTING.match(text)
+        if m_acct:
+            sym = m_acct.group(1)
+            num_str = re.sub(r"[,\s]", "", m_acct.group(2))
+            try:
+                val = -abs(float(num_str))
+                return (val, f"currency_{sym}" if sym else "float")
+            except ValueError:
+                pass
 
         # 3. Currency
         m = DataNormalizer._RE_CURRENCY.match(text)
@@ -1613,7 +2036,16 @@ class DataNormalizer:
             except ValueError:
                 pass
 
-        # 4. Date
+        # 4. Percentage
+        m_pct = DataNormalizer._RE_PERCENT.match(text)
+        if m_pct:
+            num_str = re.sub(r"[,\s]", "", m_pct.group(1))
+            try:
+                return (float(num_str) / 100.0, "percentage")
+            except ValueError:
+                pass
+
+        # 5. Date
         for pat in DataNormalizer._DATE_PATS:
             if pat.match(text):
                 try:
@@ -1624,22 +2056,26 @@ class DataNormalizer:
                     pass
                 break
 
-        # 5. Scientific notation
+        # 6. Scientific notation
         if DataNormalizer._RE_SCI.match(text):
             try:
                 return (float(text), "scientific")
             except ValueError:
                 pass
 
-        # 6. Integer (with optional comma grouping)
+        # 7. Integer (with optional comma grouping)
+        # Avoid stripping leading zeros on codes like "00142"
+        if text.startswith("0") and len(text) > 1 and text.isdigit():
+            return (text, "string")
+
         if DataNormalizer._RE_INT_COMMA.match(text):
             return (int(text.replace(",", "")), "integer")
 
-        # 7. Float (with optional comma grouping)
+        # 8. Float (with optional comma grouping)
         if DataNormalizer._RE_FLOAT_COMMA.match(text):
             return (round(float(text.replace(",", "")), 4), "float")
 
-        # 8. Plain number (no grouping separators)
+        # 9. Plain number (no grouping separators)
         try:
             if "." in text:
                 return (round(float(text), 4), "float")
@@ -1647,7 +2083,7 @@ class DataNormalizer:
         except ValueError:
             pass
 
-        # 9. String — unicode normalize + strip control chars
+        # 10. String — unicode normalize + strip control chars
         cleaned = unicodedata.normalize("NFKC", text)
         cleaned = "".join(
             c
@@ -1656,8 +2092,6 @@ class DataNormalizer:
         )
 
         # Repair visual text wrapping: replace single newlines with spaces.
-        # But preserve double newlines (paragraphs) and bulleted list newlines.
-        # Bullet patterns: -, •, *, 1.
         if "\n" in cleaned:
             parts = cleaned.split("\n")
             fixed_parts = []
@@ -1667,48 +2101,23 @@ class DataNormalizer:
                     fixed_parts.append(part)
                     continue
 
-                # Check if this part looks like the start of a new item
                 is_bullet = bool(re.match(r"^[-•*]|\d+\.", stripped))
                 prev_is_empty = parts[i - 1].strip() == ""
 
                 if prev_is_empty:
-                    # We need to preserve the double newline
                     fixed_parts.append("\n\n" + part)
                 elif is_bullet:
                     fixed_parts.append("\n" + part)
                 else:
-                    # It's a visual wrap continuation, replace newline with space
-                    # Ensure we don't double space if there's trailing/leading spaces
-                    if fixed_parts[-1].endswith(" ") or part.startswith(" "):
-                        # Append directly but strip the newline from original
-                        fixed_parts[-1] += (
-                            part.lstrip(" ") if fixed_parts[-1].endswith(" ") else part
-                        )
-                    else:
-                        fixed_parts[-1] += " " + part.lstrip(" ")
-
-            # Reconstruct the string, properly keeping double newlines if they existed
+                    fixed_parts.append(" " + part.lstrip())
             cleaned = "".join(fixed_parts)
-            # Cleanup any weird spacing artifacts created by the join
-            cleaned = cleaned.replace(" \n", "\n").replace("\n ", "\n")
-            # Fix triple newlines from the double newline logic
-            cleaned = cleaned.replace("\n\n\n", "\n\n")
 
         return (cleaned, "string")
 
     @staticmethod
-    def normalize_table(tg: TableGroup) -> tuple[list, list[list[tuple]], dict]:
-        """
-        Normalize all cells in a TableGroup.
-        Returns (norm_header, norm_data_rows, dominant_col_formats).
-        """
-        # Header
-        norm_header = []
-        for cell in tg.header_row:
-            val, _ = DataNormalizer.normalize_cell(cell)
-            norm_header.append(val if val is not None else "")
-
-        # Data rows + column format tracking
+    def normalize_table(tg: TableGroup) -> tuple[list, list, dict]:
+        """Normalize a TableGroup's cells and infer dominant column types."""
+        norm_header = tg.header_row if tg.header_row else []
         norm_data = []
         col_fmts: dict[int, Counter] = {}
 
@@ -1725,13 +2134,19 @@ class DataNormalizer:
         return norm_header, norm_data, dominant
 
     @staticmethod
-    def prune_trailing(header: list, data: list[list[tuple]]) -> tuple[list, list]:
+    def prune_trailing(header: list, data: list) -> tuple[list, list]:
         """Remove fully-empty trailing rows and columns. Interior empties are preserved."""
         if not data:
             return header, data
 
+        def _is_empty(cell):
+            if cell is None:
+                return True
+            val = cell[0] if isinstance(cell, (tuple, list)) else cell
+            return val is None or str(val).strip() == ""
+
         # Trailing empty rows
-        while data and all(cell[0] is None for cell in data[-1]):
+        while data and all(_is_empty(cell) for cell in data[-1]):
             data.pop()
 
         # Trailing empty columns
@@ -1740,8 +2155,8 @@ class DataNormalizer:
         max_cols = max(len(header), *(len(r) for r in data))
         keep = max_cols
         for ci in range(max_cols - 1, -1, -1):
-            h_empty = ci >= len(header) or not header[ci]
-            d_empty = all(ci >= len(r) or r[ci][0] is None for r in data)
+            h_empty = ci >= len(header) or not header[ci] or str(header[ci]).strip() == ""
+            d_empty = all(ci >= len(r) or _is_empty(r[ci]) for r in data)
             if h_empty and d_empty:
                 keep = ci
             else:
@@ -1856,14 +2271,45 @@ class ExcelRenderer:
 
         current_row = 1
 
+        # Render document-level scalar summary block if present
+        if doc.scalar_fields:
+            title_cell = ws.cell(row=current_row, column=1, value="Document Information & Summary")
+            title_cell.font = self._font_section
+            current_row += 2
+
+            for i in range(0, len(doc.scalar_fields), 2):
+                k1, v1 = doc.scalar_fields[i]
+                c_k1 = ws.cell(row=current_row, column=1, value=k1)
+                c_k1.font = Font(name="Calibri", size=10, bold=True, color="1F4E79")
+                c_k1.fill = PatternFill(start_color="F2F4F8", end_color="F2F4F8", fill_type="solid")
+
+                norm_v1, _ = DataNormalizer.normalize_cell(v1)
+                c_v1 = ws.cell(row=current_row, column=2, value=norm_v1)
+                c_v1.font = self._font_data
+
+                if i + 1 < len(doc.scalar_fields):
+                    k2, v2 = doc.scalar_fields[i + 1]
+                    c_k2 = ws.cell(row=current_row, column=3, value=k2)
+                    c_k2.font = Font(name="Calibri", size=10, bold=True, color="1F4E79")
+                    c_k2.fill = PatternFill(start_color="F2F4F8", end_color="F2F4F8", fill_type="solid")
+
+                    norm_v2, _ = DataNormalizer.normalize_cell(v2)
+                    c_v2 = ws.cell(row=current_row, column=4, value=norm_v2)
+                    c_v2.font = self._font_data
+
+                current_row += 1
+
+            current_row += 1
+            has_content = True
+
         # Render all sections onto the single worksheet
         for section in doc.sections:
             if not section.tables:
                 continue
 
-            # If we already wrote some tables/sections, leave a gap
+            # If we already wrote some tables/sections, leave a clean gap
             if current_row > 1:
-                current_row += 3
+                current_row += 1
 
             written = self._write_section(ws, section, start_row=current_row)
             current_row += written
@@ -2015,6 +2461,9 @@ class ExcelRenderer:
                     c.alignment = self._align_right
                 elif fmt == "date":
                     c.number_format = "YYYY-MM-DD"
+                    c.alignment = self._align_right
+                elif fmt == "percentage":
+                    c.number_format = "0.0%"
                     c.alignment = self._align_right
                 elif fmt in ("integer", "float", "scientific"):
                     c.number_format = {

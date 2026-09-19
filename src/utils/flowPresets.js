@@ -1,6 +1,8 @@
 /**
- * DocForge Workflow Blueprints & Shareable DAG Flow Engine
+ * DocScalar Workflow Blueprints & Shareable DAG Flow Engine
  */
+
+import { TOOLS_MANIFEST } from './toolsManifest.js';
 
 export const WORKFLOW_PRESETS = [
   {
@@ -107,25 +109,88 @@ export function encodeFlowToUrl(operations) {
   }
 }
 
+function sanitizeParams(rawParams) {
+  if (!rawParams || typeof rawParams !== 'object' || Array.isArray(rawParams)) {
+    return {};
+  }
+  const clean = {};
+  for (const [key, value] of Object.entries(rawParams)) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      continue;
+    }
+    if (value !== null && typeof value === 'object') {
+      clean[key] = sanitizeParams(value);
+    } else {
+      clean[key] = value;
+    }
+  }
+  return clean;
+}
+
 /**
- * Deserializes base64 flow string into operations graph
+ * Deserializes and strictly sanitizes base64 flow string into operations graph.
+ * Enforces:
+ * 1. Array-type payload validation.
+ * 2. Whitelisted tool IDs matching TOOLS_MANIFEST.
+ * 3. Bounded coordinate clamping (0 <= x, y <= 10000).
+ * 4. Prototype pollution filtration (__proto__, constructor, prototype).
  */
 export function decodeFlowFromUrl(urlHash) {
   try {
+    if (!urlHash || typeof urlHash !== 'string') return null;
     const jsonStr = atob(decodeURIComponent(urlHash));
     const compact = JSON.parse(jsonStr);
-    return compact.map((item, idx) => ({
-      id: `op-shared-${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${idx}`,
-      toolId: item.t,
-      params: item.p || {},
-      x: item.x || (300 + idx * 260),
-      y: item.y || 200,
-      inputIds: item.i || [],
-      inputPortMap: item.m || {},
-      outputId: null,
-      status: 'idle',
-      progress: 0
-    }));
+    if (!Array.isArray(compact) || compact.length === 0) return null;
+
+    const validatedOps = [];
+    for (let idx = 0; idx < compact.length; idx++) {
+      const item = compact[idx];
+      if (!item || typeof item !== 'object') continue;
+
+      const toolId = String(item.toolId || item.t || '').trim();
+      // Whitelist tool ID against canonical TOOLS_MANIFEST (using hasOwnProperty to block __proto__ etc.)
+      if (!toolId || !Object.prototype.hasOwnProperty.call(TOOLS_MANIFEST, toolId)) {
+        console.warn(`[Flow Security] Unknown or prototype toolId '${toolId}' dropped during deserialization.`);
+        continue;
+      }
+
+      // Sanitize coordinates and clamp to safe canvas limits (0 - 10000)
+      const rawX = Number(item.x);
+      const rawY = Number(item.y);
+      const safeX = Number.isFinite(rawX) ? Math.max(0, Math.min(10000, Math.round(rawX))) : (300 + idx * 260);
+      const safeY = Number.isFinite(rawY) ? Math.max(0, Math.min(10000, Math.round(rawY))) : 200;
+
+      // Sanitize parameters against prototype pollution
+      const rawParams = (item.params && typeof item.params === 'object') ? item.params : item.p;
+      const safeParams = sanitizeParams(rawParams);
+
+      // Validate inputs array
+      const rawInputs = Array.isArray(item.inputIds) ? item.inputIds : item.i;
+      const safeInputIds = Array.isArray(rawInputs)
+        ? rawInputs.filter(id => typeof id === 'string' && id.length > 0 && id.length < 128)
+        : [];
+
+      // Validate inputPortMap
+      const rawPortMap = (item.inputPortMap && typeof item.inputPortMap === 'object') ? item.inputPortMap : item.m;
+      const safePortMap = (rawPortMap && typeof rawPortMap === 'object' && !Array.isArray(rawPortMap))
+        ? sanitizeParams(rawPortMap)
+        : {};
+
+      validatedOps.push({
+        id: `op-shared-${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${idx}`,
+        toolId,
+        params: safeParams,
+        x: safeX,
+        y: safeY,
+        inputIds: safeInputIds,
+        inputPortMap: safePortMap,
+        outputId: null,
+        status: 'idle',
+        progress: 0
+      });
+    }
+
+    return validatedOps.length > 0 ? validatedOps : null;
   } catch (e) {
     console.error('Failed to decode flow:', e);
     return null;
@@ -137,7 +202,7 @@ export function decodeFlowFromUrl(urlHash) {
  */
 export function saveFlowToStorage(flowName, operations) {
   try {
-    const saved = JSON.parse(localStorage.getItem('docforge_saved_flows') || '[]');
+    const saved = JSON.parse(localStorage.getItem('docscalar_saved_flows') || localStorage.getItem('docforge_saved_flows') || '[]');
     const filtered = saved.filter(f => f.name !== flowName);
     filtered.push({
       name: flowName,
@@ -150,7 +215,7 @@ export function saveFlowToStorage(flowName, operations) {
         inputIds: op.inputIds
       }))
     });
-    localStorage.setItem('docforge_saved_flows', JSON.stringify(filtered));
+    localStorage.setItem('docscalar_saved_flows', JSON.stringify(filtered));
     return true;
   } catch (e) {
     console.error('Failed to save flow to storage:', e);
@@ -163,7 +228,7 @@ export function saveFlowToStorage(flowName, operations) {
  */
 export function loadSavedFlows() {
   try {
-    return JSON.parse(localStorage.getItem('docforge_saved_flows') || '[]');
+    return JSON.parse(localStorage.getItem('docscalar_saved_flows') || localStorage.getItem('docforge_saved_flows') || '[]');
   } catch (e) {
     return [];
   }

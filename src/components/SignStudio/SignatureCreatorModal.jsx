@@ -68,12 +68,24 @@ function processPaperBackground(imageSource, threshold = 220) {
   return new Promise((resolve) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
+    img.onerror = () => {
+      resolve(imageSource);
+    };
     img.onload = () => {
+      let targetW = img.naturalWidth || img.width;
+      let targetH = img.naturalHeight || img.height;
+      const MAX_DIM = 1600;
+      if (targetW > MAX_DIM || targetH > MAX_DIM) {
+        const ratio = Math.min(MAX_DIM / targetW, MAX_DIM / targetH);
+        targetW = Math.max(1, Math.round(targetW * ratio));
+        targetH = Math.max(1, Math.round(targetH * ratio));
+      }
+
       const canvas = document.createElement('canvas');
-      canvas.width = img.naturalWidth || img.width;
-      canvas.height = img.naturalHeight || img.height;
+      canvas.width = targetW;
+      canvas.height = targetH;
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
+      ctx.drawImage(img, 0, 0, targetW, targetH);
 
       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const d = imgData.data;
@@ -112,7 +124,15 @@ function generateTypedSignatureDataUrl(text, font, color) {
   canvas.height = 240;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, 800, 240);
-  ctx.font = `60px "${font}", cursive, sans-serif`;
+
+  let fontSize = 60;
+  ctx.font = `${fontSize}px "${font}", cursive, sans-serif`;
+  const metrics = ctx.measureText(text || '');
+  if (metrics.width > 740 && metrics.width > 0) {
+    fontSize = Math.max(20, Math.floor(fontSize * (740 / metrics.width)));
+    ctx.font = `${fontSize}px "${font}", cursive, sans-serif`;
+  }
+
   ctx.fillStyle = color;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -153,7 +173,7 @@ export default function SignatureCreatorModal({
 
   // Load Google Fonts link dynamically
   useEffect(() => {
-    const linkId = 'docforge-cursive-fonts';
+    const linkId = 'docscalar-cursive-fonts';
     if (!document.getElementById(linkId)) {
       const link = document.createElement('link');
       link.id = linkId;
@@ -166,7 +186,7 @@ export default function SignatureCreatorModal({
   // Load saved vault signatures from LocalStorage
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('docforge_signature_vault');
+      const stored = localStorage.getItem('docscalar_signature_vault');
       if (stored) {
         setVault(JSON.parse(stored));
       }
@@ -188,46 +208,50 @@ export default function SignatureCreatorModal({
     }
   }, [rawUploadedImage, autoRemovePaper, paperThreshold]);
 
-  // Drawing event handlers with Quadratic Bézier smoothing
+  // Drawing event handlers with Quadratic Bézier smoothing and velocity dynamics
   const getCanvasCoords = (e) => {
     const canvas = canvasRef.current;
-    if (!canvas) return { x: 0, y: 0 };
+    if (!canvas) return { x: 0, y: 0, time: Date.now(), pressure: 0.5 };
     const rect = canvas.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const clientX = e.clientX !== undefined ? e.clientX : (e.touches ? e.touches[0].clientX : 0);
+    const clientY = e.clientY !== undefined ? e.clientY : (e.touches ? e.touches[0].clientY : 0);
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
     return {
       x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
+      y: (clientY - rect.top) * scaleY,
+      time: Date.now(),
+      pressure: (e.pressure !== undefined && e.pressure > 0) ? e.pressure : 0.5
     };
   };
 
   const handlePointerDown = (e) => {
-    e.preventDefault();
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (e.target.setPointerCapture && e.pointerId) {
+      try { e.target.setPointerCapture(e.pointerId); } catch {}
+    }
     isDrawingRef.current = true;
     const pt = getCanvasCoords(e);
     pointsRef.current = [pt];
 
+    const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.strokeStyle = selectedColor;
-    ctx.lineWidth = strokeWidth;
+    const baseW = strokeWidth * 2; // 2x DPR
+    ctx.lineWidth = baseW;
 
-    // Draw small dot on click
+    // Draw small dot on initial touch
     ctx.fillStyle = selectedColor;
     ctx.beginPath();
-    ctx.arc(pt.x, pt.y, strokeWidth / 2, 0, Math.PI * 2);
+    ctx.arc(pt.x, pt.y, baseW / 2, 0, Math.PI * 2);
     ctx.fill();
     setHasDrawnContent(true);
   };
 
   const handlePointerMove = (e) => {
     if (!isDrawingRef.current) return;
-    e.preventDefault();
     const canvas = canvasRef.current;
     if (!canvas) return;
     const pt = getCanvasCoords(e);
@@ -239,11 +263,20 @@ export default function SignatureCreatorModal({
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.strokeStyle = selectedColor;
-      ctx.lineWidth = strokeWidth;
 
       const p0 = pts[pts.length - 3];
       const p1 = pts[pts.length - 2];
       const p2 = pts[pts.length - 1];
+
+      // Velocity-based stroke tapering formula (authentic ink fountain pen)
+      const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+      const dt = Math.max(1, p2.time - p1.time);
+      const velocity = dist / dt;
+      const speedFactor = Math.max(0.65, Math.min(1.35, 1 - (velocity - 1.2) * 0.15));
+      const pressureFactor = 0.75 + (p2.pressure * 0.5);
+      const computedLineWidth = Math.max(2.0, Math.min(strokeWidth * 4, strokeWidth * 2 * speedFactor * pressureFactor));
+
+      ctx.lineWidth = computedLineWidth;
 
       const mid1 = { x: (p0.x + p1.x) / 2, y: (p0.y + p1.y) / 2 };
       const mid2 = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
@@ -255,8 +288,11 @@ export default function SignatureCreatorModal({
     }
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e) => {
     isDrawingRef.current = false;
+    if (e?.target?.releasePointerCapture && e?.pointerId) {
+      try { e.target.releasePointerCapture(e.pointerId); } catch {}
+    }
   };
 
   const clearCanvas = () => {
@@ -302,7 +338,7 @@ export default function SignatureCreatorModal({
       };
       try {
         const updatedVault = [newItem, ...vault.slice(0, 7)];
-        localStorage.setItem('docforge_signature_vault', JSON.stringify(updatedVault));
+        localStorage.setItem('docscalar_signature_vault', JSON.stringify(updatedVault));
         setVault(updatedVault);
       } catch (err) {
         console.error('Failed to save signature to vault:', err);
@@ -334,7 +370,7 @@ export default function SignatureCreatorModal({
     const updated = vault.filter((v) => v.id !== id);
     setVault(updated);
     try {
-      localStorage.setItem('docforge_signature_vault', JSON.stringify(updated));
+      localStorage.setItem('docscalar_signature_vault', JSON.stringify(updated));
     } catch {}
   };
 
@@ -438,15 +474,12 @@ export default function SignatureCreatorModal({
               <div className="relative border-2 border-dashed border-outline-variant/60 rounded-2xl bg-surface-container-low/40 overflow-hidden group">
                 <canvas
                   ref={canvasRef}
-                  width={600}
-                  height={220}
-                  onMouseDown={handlePointerDown}
-                  onMouseMove={handlePointerMove}
-                  onMouseUp={handlePointerUp}
-                  onMouseLeave={handlePointerUp}
-                  onTouchStart={handlePointerDown}
-                  onTouchMove={handlePointerMove}
-                  onTouchEnd={handlePointerUp}
+                  width={1200}
+                  height={440}
+                  onPointerDown={handlePointerDown}
+                  onPointerMove={handlePointerMove}
+                  onPointerUp={handlePointerUp}
+                  onPointerCancel={handlePointerUp}
                   className="w-full h-[180px] block cursor-crosshair touch-none"
                 />
                 

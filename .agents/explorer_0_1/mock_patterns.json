@@ -1,0 +1,682 @@
+{
+  "adam_fletcher": {
+    "nameFallback": "Adam Fletcher",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 3
+  },
+  "adeline_palmerston": {
+    "nameFallback": "Adeline Palmerston",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 4
+  },
+  "adora_diagonal": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "adora_montminy": {
+    "nameFallback": "NONE",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "alfredo_torres": {
+    "nameFallback": "Alfredo Torres",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 3
+  },
+  "alvarado_slate": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "amsterdam_orange": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "arthur_pendelton": {
+    "nameFallback": "Arthur Pendelton",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 3
+  },
+  "austin_amber": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "barcelona_cyan": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "berlin_two_tone": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "bordeaux_wine": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "boston_crimson": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "buenos_aires_tango": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "cairo_gold": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "cambridge_rose": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "cape_town_sunset": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "card_matrix": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "charles": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "copenhagen_sand": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "date_capsule": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "diagonal_wedge": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "donna_stroupe": {
+    "nameFallback": "Donna Stroupe",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "dublin_forest": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "edinburgh_navy": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "emerald_prestige": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "emma": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "floating_card_matrix": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "florence_terracotta": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "geneva_charcoal": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "helsinki_frost": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "helsinki_navy": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "howard_ong": {
+    "nameFallback": "Howard Ong",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "isabel_mercado": {
+    "nameFallback": "ISABEL MERCADO",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "isabel_schumacher": {
+    "nameFallback": "Isabel Schumacher",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 3
+  },
+  "jonathan": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "jonathan_patterson": {
+    "nameFallback": "Jonathan Patterson",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 3
+  },
+  "kathleen": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "kelly_mint": {
+    "nameFallback": "Kelly Blackwell",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "korina_villanueva": {
+    "nameFallback": "Korina Villanueva",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "kyiv_golden": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "kyoto_coral": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "lilac_sidebar": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "lorna_alvarado": {
+    "nameFallback": "Lorna Alvarado",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 3
+  },
+  "lyon_lavender": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "madrid_sun": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "manhattan_noir": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "marcus_vance": {
+    "nameFallback": "Marcus Vance",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 3
+  },
+  "mariana": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 3
+  },
+  "milan_blush": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "montreal_frost": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "ocean_block": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "olivia": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 3
+  },
+  "ong_burgundy": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "osaka_minimal": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "oslo_taupe": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "overlapping_badge": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "oxford_burgundy": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "prague_brass": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "reykjavik_slate": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "richard": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "richard_sanchez": {
+    "nameFallback": "Richard Sanchez",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 3
+  },
+  "sage_pastel": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "sanchez_dark": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "sanchez_mono": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "sanchez_wave": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "san_francisco_skyline": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "schumacher_charcoal": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "seattle_emerald": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "sebastian_bennett": {
+    "nameFallback": "Sebastian Bennett",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "seoul_neon": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "singapore_ruby": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "split_dual_block": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "stockholm_monochrome": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "stockholm_yellow": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "terracotta_arch": {
+    "nameFallback": "Adeline Palmerston",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "tokyo_ice_blue": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "vancouver_pine": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "venice_sand_split": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "vienna_crest": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "violet_modern": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "wilson_light": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "wilson_minimal": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  },
+  "ziv_olive": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 2
+  },
+  "zurich_slate_block": {
+    "nameFallback": "Candidate Name",
+    "titleFallback": "NONE",
+    "emailFallback": "NONE",
+    "phoneFallback": "NONE",
+    "hasSummaryFallback": false,
+    "mockCount": 1
+  }
+}

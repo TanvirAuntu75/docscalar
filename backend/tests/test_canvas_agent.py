@@ -5,7 +5,7 @@ from pathlib import Path
 # Add root folder to sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from backend.services.canvas_agent import generate_heuristic_plan
+from backend.services.canvas_agent import generate_heuristic_plan, validate_planned_steps
 
 
 class TestCanvasAgent(unittest.TestCase):
@@ -69,6 +69,33 @@ class TestCanvasAgent(unittest.TestCase):
         self.assertEqual(plan[2]["actionId"], "pdf-to-word")
         self.assertEqual(plan[1]["inputs"], ["output:0"])
         self.assertEqual(plan[2]["inputs"], ["output:1"])
+
+    def test_validate_planned_steps(self):
+        # Invalid container types
+        self.assertEqual(validate_planned_steps(None), [])
+        self.assertEqual(validate_planned_steps("invalid"), [])
+        self.assertEqual(validate_planned_steps(123), [])
+
+        # Filter out malformed steps and hallucinated tools
+        raw_steps = [
+            {"step_id": 0, "actionId": "merge-pdf", "inputs": ["a.pdf", "b.pdf"]},
+            {"step_id": 1, "actionId": "fake-hallucinated-tool", "inputs": ["output:0"]},
+            "not a dict",
+            {"no_action_id": True},
+            {"step_id": 2, "actionId": "pdf-to-word", "inputs": "single-string.pdf"},
+            {"step_id": 3, "actionId": "compress-pdf", "inputs": ["output:2", None]},
+        ]
+
+        sanitized = validate_planned_steps(raw_steps)
+        self.assertEqual(len(sanitized), 3)
+        self.assertEqual(sanitized[0]["actionId"], "merge-pdf")
+        self.assertEqual(sanitized[0]["inputs"], ["a.pdf", "b.pdf"])
+
+        self.assertEqual(sanitized[1]["actionId"], "pdf-to-word")
+        self.assertEqual(sanitized[1]["inputs"], ["single-string.pdf"])
+
+        self.assertEqual(sanitized[2]["actionId"], "compress-pdf")
+        self.assertEqual(sanitized[2]["inputs"], ["output:2"])
 
 
 if __name__ == "__main__":

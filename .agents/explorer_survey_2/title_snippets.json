@@ -1,0 +1,536 @@
+[
+  {
+    "file": "adam_fletcher.js",
+    "templateKey": "adam_fletcher",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "368:       <div class=\"name-line-1\" data-df-field=\"name\">${firstName}</div>\n369:       ${lastName ? `<div class=\"name-line-2\" data-df-field=\"name\">${lastName}</div>` : ''}\n370:       ${title ? `<div class=\"header-job-title\" data-df-field=\"title\">${title}</div>` : ''}\n371:     </div>\n372: "
+  },
+  {
+    "file": "adeline_palmerston.js",
+    "templateKey": "adeline_palmerston",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "750:     <div class=\"main-panel\">\n751:       <div class=\"candidate-name\" data-df-field=\"name\">${firstName}${lastName ? `<br>${lastName}` : ''}</div>\n752:       ${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}\n753:       ${!isSplit ? renderContactBar() : ''}\n754: "
+  },
+  {
+    "file": "adora_diagonal.js",
+    "templateKey": "adora_diagonal",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "486:       <div class=\"name-title-wrap\">\n487:         <h1 class=\"candidate-name\" data-df-field=\"name\">${name}</h1>\n488:         ${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}\n489:       </div>\n490:       ${photoSrc ? `"
+  },
+  {
+    "file": "adora_montminy.js",
+    "templateKey": "adora_montminy",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "600:     <div class=\"name-title-box\">\n601:       <h1 data-df-field=\"name\">${name ? name.replace(' ', '<br>') : ''}</h1>\n602:       ${title ? `<div class=\"job-title\" data-df-field=\"title\">${title}</div>` : ''}\n603:     </div>\n604:   </div>"
+  },
+  {
+    "file": "alfredo_torres.js",
+    "templateKey": "alfredo_torres",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "370:       <div class=\"header-text\">\n371:         <div class=\"candidate-name\" data-df-field=\"name\">${name}</div>\n372:         ${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}\n373:       </div>\n374:     </div>"
+  },
+  {
+    "file": "alvarado_slate.js",
+    "templateKey": "alvarado_slate",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "493:     <div class=\"header-text\">\n494:       <h1 data-df-field=\"name\">${name}</h1>\n495:       ${title ? `<div class=\"role\" data-df-field=\"title\">${title}</div>` : ''}\n496:     </div>\n497:   </div>"
+  },
+  {
+    "file": "amsterdam_orange.js",
+    "templateKey": "amsterdam_orange",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "518:     <div class=\"header-text\">\n519:       <h1 data-df-field=\"name\">${name}</h1>\n520:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n521:     </div>\n522:     ${photoSrc ? `"
+  },
+  {
+    "file": "arthur_pendelton.js",
+    "templateKey": "arthur_pendelton",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "412:       <div class=\"header-left\">\n413:         <h1 class=\"candidate-name\" data-df-field=\"name\">${name}</h1>\n414:         ${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}\n415:       </div>\n416:       ${photoSrc ? `"
+  },
+  {
+    "file": "austin_amber.js",
+    "templateKey": "austin_amber",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "518:     <div class=\"header-text\">\n519:       <h1 data-df-field=\"name\">${name}</h1>\n520:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n521:     </div>\n522:     ${photoSrc ? `"
+  },
+  {
+    "file": "barcelona_cyan.js",
+    "templateKey": "barcelona_cyan",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "491:     <div class=\"header-text\">\n492:       <h1 data-df-field=\"name\">${name}</h1>\n493:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n494:     </div>\n495:     ${photoSrc ? `"
+  },
+  {
+    "file": "berlin_two_tone.js",
+    "templateKey": "berlin_two_tone",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "562:     <div class=\"header-info\">\n563:       ${name ? `<h1 data-df-field=\"name\">${name}</h1>` : ''}\n564:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n565:       ${!isSplit ? renderContactBar() : ''}\n566:       ${summaryText ? `<div class=\"summary\" data-df-field=\"summary\">${summaryText}</div>` : ''}"
+  },
+  {
+    "file": "bordeaux_wine.js",
+    "templateKey": "bordeaux_wine",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "499:     <div class=\"header-text\">\n500:       <h1 data-df-field=\"name\">${name}</h1>\n501:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n502:     </div>\n503:     ${photoSrc ? `"
+  },
+  {
+    "file": "boston_crimson.js",
+    "templateKey": "boston_crimson",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "491:     <div class=\"header-text\">\n492:       <h1 data-df-field=\"name\">${name}</h1>\n493:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n494:     </div>\n495:     ${photoSrc ? `"
+  },
+  {
+    "file": "buenos_aires_tango.js",
+    "templateKey": "buenos_aires_tango",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "519:     <div class=\"header-text\">\n520:       <h1 data-df-field=\"name\">${name}</h1>\n521:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n522:     </div>\n523:     ${photoSrc ? `"
+  },
+  {
+    "file": "cairo_gold.js",
+    "templateKey": "cairo_gold",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "518:     <div class=\"header-text\">\n519:       <h1 data-df-field=\"name\">${name}</h1>\n520:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n521:     </div>\n522:     ${photoSrc ? `"
+  },
+  {
+    "file": "cambridge_rose.js",
+    "templateKey": "cambridge_rose",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "500:     <div class=\"header-text\">\n501:       <h1 data-df-field=\"name\">${name}</h1>\n502:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n503:     </div>\n504:     ${photoSrc ? `"
+  },
+  {
+    "file": "cape_town_sunset.js",
+    "templateKey": "cape_town_sunset",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "513:     <div class=\"header-text\">\n514:       <h1 data-df-field=\"name\">${name}</h1>\n515:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n516:     </div>\n517:     ${photoSrc ? `"
+  },
+  {
+    "file": "card_matrix.js",
+    "templateKey": "card_matrix",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "454:     <div class=\"header-main\">\n455:       <h1 data-df-field=\"name\">${name}</h1>\n456:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n457:       ${contactHtml}\n458:     </div>"
+  },
+  {
+    "file": "charles.js",
+    "templateKey": "charles",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "503:     <div class=\"header-area\">\n504:       <h1 data-df-field=\"name\">${name}</h1>\n505:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n506:       ${summaryText ? `<div class=\"summary\" data-df-field=\"summary\">${summaryText}</div>` : ''}\n507:     </div>"
+  },
+  {
+    "file": "copenhagen_sand.js",
+    "templateKey": "copenhagen_sand",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "496:     <div class=\"header-text\">\n497:       <h1 data-df-field=\"name\">${name}</h1>\n498:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n499:     </div>\n500:     ${photoSrc ? `"
+  },
+  {
+    "file": "date_capsule.js",
+    "templateKey": "date_capsule",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "432:     <div class=\"header-main\">\n433:       <h1 data-df-field=\"name\">${name}</h1>\n434:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n435:       ${contactHtml}\n436:     </div>"
+  },
+  {
+    "file": "diagonal_wedge.js",
+    "templateKey": "diagonal_wedge",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "757:       <div class=\"header-text\">\n758:         <h1 data-df-field=\"name\">${name}</h1>\n759:         ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n760:         ${!runtime.isSplit ? renderContactBar() : ''}\n761:       </div>"
+  },
+  {
+    "file": "donna_stroupe.js",
+    "templateKey": "donna_stroupe",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "392:     <div class=\"dark-header-banner\">\n393:       <div class=\"candidate-name\" data-df-field=\"name\">${name}</div>\n394:       ${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}\n395:     </div>\n396: "
+  },
+  {
+    "file": "dublin_forest.js",
+    "templateKey": "dublin_forest",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "497:     <div class=\"header-text\">\n498:       <h1 data-df-field=\"name\">${name}</h1>\n499:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n500:     </div>\n501:     ${photoSrc ? `"
+  },
+  {
+    "file": "edinburgh_navy.js",
+    "templateKey": "edinburgh_navy",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "433:     <div class=\"header-main\">\n434:       <h1 data-df-field=\"name\">${name}</h1>\n435:       ${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}\n436:       ${contactHtml}\n437:     </div>"
+  },
+  {
+    "file": "emerald_prestige.js",
+    "templateKey": "emerald_prestige",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "415:     <div class=\"main-header\">\r\n416:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n417:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n418:       ${data.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${data.summary}</div>` : ''}\r\n419:     </div>\r"
+  },
+  {
+    "file": "emma.js",
+    "templateKey": "emma",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "383:   <div class=\"top-band\">\n384:     <h1 data-df-field=\"name\">${data.name || ''}</h1>\n385:     ${data.title ? `<div class=\"title-sub\" data-df-field=\"title\">${data.title}</div>` : ''}\n386:     <div class=\"line-accent\"></div>\n387:   </div>"
+  },
+  {
+    "file": "floating_card_matrix.js",
+    "templateKey": "floating_card_matrix",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "451:     <div class=\"header-left\">\r\n452:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n453:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n454:     </div>\r\n455:     ${data.photoUrl ? `<img class=\"avatar avatar-mask\" style=\"overflow: hidden; border-radius: 50%;\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />` : ''}\r"
+  },
+  {
+    "file": "florence_terracotta.js",
+    "templateKey": "florence_terracotta",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "411:     <div class=\"main-header\">\r\n412:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n413:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n414:       ${data.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${data.summary}</div>` : ''}\r\n415:     </div>\r"
+  },
+  {
+    "file": "geneva_charcoal.js",
+    "templateKey": "geneva_charcoal",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "411:     <div class=\"main-header\">\r\n412:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n413:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n414:       ${data.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${data.summary}</div>` : ''}\r\n415:     </div>\r"
+  },
+  {
+    "file": "harvard_classic.js",
+    "templateKey": "harvard_classic",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "331:       ${safeData.photoUrl ? `<div class=\"avatar-mask\"><img src=\"${safeData.photoUrl}\" alt=\"${safeData.name || 'Candidate'}\" class=\"profile-photo\" /></div>` : ''}\n332:       ${safeData.name ? `<h1 class=\"candidate-name\" data-df-field=\"name\">${safeData.name}</h1>` : ''}\n333:       ${safeData.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n334:       ${contactParts.length > 0 ? `<div class=\"contact-bar\">${contactParts.join(' · ')}</div>` : ''}\n335:     </div>"
+  },
+  {
+    "file": "helsinki_frost.js",
+    "templateKey": "helsinki_frost",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "332:     ${data.photoUrl ? `<img class=\"avatar avatar-mask\" style=\"overflow: hidden; border-radius: 50%;\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />` : ''}\r\n333:     <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n334:     ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n335:     ${contactHtml}\r\n336:   </div>\r"
+  },
+  {
+    "file": "helsinki_navy.js",
+    "templateKey": "helsinki_navy",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "412:     <div class=\"header-text\">\r\n413:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n414:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n415:     </div>\r\n416:     ${data.photoUrl ? `<img class=\"avatar avatar-mask\" style=\"overflow: hidden; border-radius: 50%;\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />` : ''}\r"
+  },
+  {
+    "file": "howard_ong.js",
+    "templateKey": "howard_ong",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "459:       <div class=\"header-text-container\">\n460:         ${candidateName ? `<h1 class=\"candidate-name\" data-df-field=\"name\">${candidateName}</h1>` : ''}\n461:         ${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}\n462:       </div>\n463:       ` : ''}"
+  },
+  {
+    "file": "isabel_mercado.js",
+    "templateKey": "isabel_mercado",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "475:           ${lastName ? `<div class=\"name-last\">${lastName}</div>` : ''}\n476:         </div>\n477:         ${data.title ? `<div class=\"job-title\" data-df-field=\"title\">${data.title}</div>` : ''}\n478:       </div>\n479:       ` : ''}"
+  },
+  {
+    "file": "isabel_schumacher.js",
+    "templateKey": "isabel_schumacher",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "491:     <div class=\"main-panel\">\n492:       ${(firstName || lastName) ? `<h1 class=\"candidate-name\" data-df-field=\"name\">${firstName}${lastName ? `<br>${lastName}` : ''}</h1>` : ''}\n493:       ${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}\n494: \n495:       ${educationList.length > 0 ? `"
+  },
+  {
+    "file": "jonathan.js",
+    "templateKey": "jonathan",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "457:       <div class=\"name-header\">\n458:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n459:         ${data.title ? `<div class=\"title-sub\" data-df-field=\"title\">${data.title}</div>` : ''}\n460:         ${contactParts.length ? `<div class=\"contact\">${contactParts.join('  |  ')}</div>` : ''}\n461:       </div>"
+  },
+  {
+    "file": "jonathan_patterson.js",
+    "templateKey": "jonathan_patterson",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "493:     <div class=\"header-text-block\">\n494:       ${nameFormatted ? `<h1 class=\"candidate-name\" data-df-field=\"name\">${nameFormatted}</h1>` : ''}\n495:       ${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}\n496:     </div>\n497: "
+  },
+  {
+    "file": "kathleen.js",
+    "templateKey": "kathleen",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "470:       <div class=\"main-header\">\n471:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n472:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n473:         ${data.summary ? `<div class=\"summary\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n474:       </div>"
+  },
+  {
+    "file": "kelly_mint.js",
+    "templateKey": "kelly_mint",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "443:     <div class=\"header-left\">\n444:       ${data.name ? `<div class=\"name-badge\" data-df-field=\"name\">${data.name}</div>` : ''}\n445:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n446:     </div>\n447:     ${data.photoUrl ? `"
+  },
+  {
+    "file": "korina_villanueva.js",
+    "templateKey": "korina_villanueva",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "472:       <div class=\"header-details\">\n473:         ${candidateName ? `<h1 class=\"candidate-name\" data-df-field=\"name\">${candidateName}</h1>` : ''}\n474:         ${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}\n475:         ${summaryText ? `\n476:         <p class=\"summary-text\" data-df-field=\"summary\">"
+  },
+  {
+    "file": "kyiv_golden.js",
+    "templateKey": "kyiv_golden",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "438:       <div class=\"main-header\">\n439:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n440:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n441:         ${data.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n442:       </div>"
+  },
+  {
+    "file": "kyoto_coral.js",
+    "templateKey": "kyoto_coral",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "423:     <div class=\"header-left\">\r\n424:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n425:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n426:     </div>\r\n427:     ${data.photoUrl ? `<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />` : ''}\r"
+  },
+  {
+    "file": "lilac_sidebar.js",
+    "templateKey": "lilac_sidebar",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "410:       <div class=\"main-header\">\n411:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n412:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n413:         ${data.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n414:       </div>"
+  },
+  {
+    "file": "lorna_alvarado.js",
+    "templateKey": "lorna_alvarado",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "541:       <div>\n542:         ${(firstName || lastName) ? `<h1 class=\"candidate-name\" data-df-field=\"name\">${firstName}${lastName ? `<br>${lastName}` : ''}</h1>` : ''}\n543:         ${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}\n544:       </div>\n545:       ` : ''}"
+  },
+  {
+    "file": "lyon_lavender.js",
+    "templateKey": "lyon_lavender",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "431:     <div class=\"header-text\">\r\n432:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n433:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n434:     </div>\r\n435:     ${data.photoUrl ? `<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />` : ''}\r"
+  },
+  {
+    "file": "madrid_sun.js",
+    "templateKey": "madrid_sun",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "435:     <div class=\"header-text\">\r\n436:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n437:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n438:     </div>\r\n439:     ${data.photoUrl ? `<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />` : ''}\r"
+  },
+  {
+    "file": "manhattan_noir.js",
+    "templateKey": "manhattan_noir",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "418:     <div class=\"header-text\">\r\n419:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n420:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n421:     </div>\r\n422:     ${data.photoUrl ? `<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />` : ''}\r"
+  },
+  {
+    "file": "marcus_vance.js",
+    "templateKey": "marcus_vance",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "539:       <div class=\"header-details\">\n540:         ${data.name ? `<h1 class=\"candidate-name\" data-df-field=\"name\">${data.name}</h1>` : ''}\n541:         ${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}\n542:         ${hasContact ? `\n543:         <div class=\"header-meta-row\">"
+  },
+  {
+    "file": "mariana.js",
+    "templateKey": "mariana",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "731:         ` : ''}\n732:         ${safeData.name ? `<h1 data-df-field=\"name\">${safeData.name}</h1>` : ''}\n733:         ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n734:         ${!runtime.isSplit ? renderContactBar() : ''}\n735:       </div>"
+  },
+  {
+    "file": "milan_blush.js",
+    "templateKey": "milan_blush",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "436:       <div class=\"main-header\">\n437:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n438:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n439:         ${data.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n440:       </div>"
+  },
+  {
+    "file": "montreal_frost.js",
+    "templateKey": "montreal_frost",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "452:       <div class=\"main-header\">\n453:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n454:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n455:         ${data.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n456:       </div>"
+  },
+  {
+    "file": "ocean_block.js",
+    "templateKey": "ocean_block",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "394:     <div class=\"header-content\">\r\n395:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n396:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n397:     </div>\r\n398:     ${data.photoUrl ? `<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />` : ''}\r"
+  },
+  {
+    "file": "olivia.js",
+    "templateKey": "olivia",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "613:       <div class=\"main-header\">\r\n614:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\r\n615:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n616:         ${data.summary ? `<div class=\"summary\" data-df-field=\"summary\">${data.summary}</div>` : ''}\r\n617:       </div>\r"
+  },
+  {
+    "file": "ong_burgundy.js",
+    "templateKey": "ong_burgundy",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "435:     <div class=\"header-text\">\r\n436:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n437:       ${data.title ? `<div class=\"role\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n438:     </div>\r\n439:   </div>\r"
+  },
+  {
+    "file": "osaka_minimal.js",
+    "templateKey": "osaka_minimal",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "423:     <div class=\"header-left\">\r\n424:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n425:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n426:     </div>\r\n427:     ${data.photoUrl ? `<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />` : ''}\r"
+  },
+  {
+    "file": "oslo_taupe.js",
+    "templateKey": "oslo_taupe",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "421:       <div class=\"main-header\">\n422:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n423:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n424:         ${data.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n425:       </div>"
+  },
+  {
+    "file": "overlapping_badge.js",
+    "templateKey": "overlapping_badge",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "346:       <div>\n347:         <h1 class=\"candidate-name\" data-df-field=\"name\">${data.name || ''}</h1>\n348:         ${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}\n349:       </div>\n350:       ${data.photoUrl ? `"
+  },
+  {
+    "file": "oxford_burgundy.js",
+    "templateKey": "oxford_burgundy",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "393:     `}\r\n394:     <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n395:     ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n396:     ${contactHtml}\r\n397:   </div>\r"
+  },
+  {
+    "file": "oxford_minimalist.js",
+    "templateKey": "oxford_minimalist",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "284:       <div class=\"header-text\">\n285:         ${data.name ? `<h1 class=\"candidate-name\" data-df-field=\"name\">${data.name}</h1>` : ''}\n286:         ${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}\n287:         ${contactParts.length > 0 ? `<div class=\"contact-bar\">${contactParts.join(' · ')}</div>` : ''}\n288:       </div>"
+  },
+  {
+    "file": "prague_brass.js",
+    "templateKey": "prague_brass",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "437:       <div class=\"main-header\">\n438:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n439:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n440:         ${data.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n441:       </div>"
+  },
+  {
+    "file": "reykjavik_slate.js",
+    "templateKey": "reykjavik_slate",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "427:       <div class=\"main-header\">\n428:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n429:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n430:         ${data.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n431:       </div>"
+  },
+  {
+    "file": "richard.js",
+    "templateKey": "richard",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "405:       <div class=\"main-header\">\n406:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n407:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n408:         ${data.summary ? `<div class=\"summary\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n409:       </div>"
+  },
+  {
+    "file": "richard_sanchez.js",
+    "templateKey": "richard_sanchez",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "444:     <div class=\"header-info\">\n445:       ${(firstName || lastName) ? `<h1 class=\"candidate-name\" data-df-field=\"name\">${firstName}${lastName ? ` ${lastName}` : ''}</h1>` : ''}\n446:       ${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}\n447:     </div>\n448: "
+  },
+  {
+    "file": "sage_pastel.js",
+    "templateKey": "sage_pastel",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "410:       <div class=\"main-header\">\n411:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n412:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n413:         ${data.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n414:       </div>"
+  },
+  {
+    "file": "sanchez_dark.js",
+    "templateKey": "sanchez_dark",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "474:       <div class=\"main-header\">\n475:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n476:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n477:         ${data.summary ? `<div class=\"summary\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n478:       </div>"
+  },
+  {
+    "file": "sanchez_mono.js",
+    "templateKey": "sanchez_mono",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "437:       <div class=\"main-header\">\n438:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n439:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n440:         ${data.summary ? `<div class=\"summary\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n441:       </div>"
+  },
+  {
+    "file": "sanchez_wave.js",
+    "templateKey": "sanchez_wave",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "347:     <div class=\"header-text\">\r\n348:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n349:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n350:       <div class=\"contact-strip\">\r\n351:         ${data.phone ? `<span data-df-field=\"phone\">${data.phone}</span>` : ''}\r"
+  },
+  {
+    "file": "san_francisco_skyline.js",
+    "templateKey": "san_francisco_skyline",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "435:     <div class=\"header-text\">\r\n436:       <h1 data-df-field=\"name\">${data.name || ''}</h1>\r\n437:       ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\r\n438:     </div>\r\n439:     ${data.photoUrl ? `<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />` : ''}\r"
+  },
+  {
+    "file": "schumacher_charcoal.js",
+    "templateKey": "schumacher_charcoal",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "423:       <div class=\"main-header\">\n424:         ${data.name ? `<h1 data-df-field=\"name\">${data.name}</h1>` : ''}\n425:         ${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}\n426:         ${data.summary ? `<div class=\"summary\" data-df-field=\"summary\">${data.summary}</div>` : ''}\n427:       </div>"
+  },
+  {
+    "file": "seattle_emerald.js",
+    "templateKey": "seattle_emerald",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "424:     <div class=\"main-header\">\n425:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n426:       ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n427:       ${safeData.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${safeData.summary}</div>` : ''}\n428:     </div>"
+  },
+  {
+    "file": "sebastian_bennett.js",
+    "templateKey": "sebastian_bennett",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "361:       <div class=\"header-left\">\n362:         <h1 class=\"candidate-name\" data-df-field=\"name\">${firstName}${lastName ? `<br>${lastName}` : ''}</h1>\n363:         ${safeData.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n364:       </div>\n365:       ${photoSrc ? `"
+  },
+  {
+    "file": "seoul_neon.js",
+    "templateKey": "seoul_neon",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "405:     <div class=\"header-text\">\n406:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n407:       ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n408:     </div>\n409:     ${safeData.photoUrl ? `"
+  },
+  {
+    "file": "silicon_valley_ats.js",
+    "templateKey": "silicon_valley_ats",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "320:       ${safeData.photoUrl ? `<div class=\"avatar-mask\"><img src=\"${safeData.photoUrl}\" alt=\"${safeData.name || 'Candidate'}\" class=\"profile-photo\" /></div>` : ''}\n321:       ${safeData.name ? `<h1 class=\"candidate-name\" data-df-field=\"name\">${safeData.name}</h1>` : ''}\n322:       ${safeData.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n323:       ${contactParts.length > 0 ? `<div class=\"contact-bar\">${contactParts.join(' · ')}</div>` : ''}\n324:     </div>"
+  },
+  {
+    "file": "singapore_ruby.js",
+    "templateKey": "singapore_ruby",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "405:     <div class=\"header-text\">\n406:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n407:       ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n408:     </div>\n409:     ${safeData.photoUrl ? `"
+  },
+  {
+    "file": "split_dual_block.js",
+    "templateKey": "split_dual_block",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "472:     <div class=\"peach-header-box\">\n473:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n474:       ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n475:     </div>\n476:     "
+  },
+  {
+    "file": "stockholm_monochrome.js",
+    "templateKey": "stockholm_monochrome",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "385:     <div class=\"header-left\">\n386:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n387:       ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n388:     </div>\n389:     ${safeData.photoUrl ? `"
+  },
+  {
+    "file": "stockholm_yellow.js",
+    "templateKey": "stockholm_yellow",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "411:     <div class=\"header-text\">\n412:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n413:       ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n414:     </div>\n415:     ${safeData.photoUrl ? `"
+  },
+  {
+    "file": "terracotta_arch.js",
+    "templateKey": "terracotta_arch",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "372:         <div class=\"subtitle-row\">\n373:           <div class=\"subtitle-line\"></div>\n374:           <span class=\"candidate-title\" data-df-field=\"title\">${safeData.title}</span>\n375:         </div>\n376:         ` : ''}"
+  },
+  {
+    "file": "tokyo_ice_blue.js",
+    "templateKey": "tokyo_ice_blue",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "434:     <div class=\"main-header\">\n435:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n436:       ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n437:       ${safeData.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${safeData.summary}</div>` : ''}\n438:     </div>"
+  },
+  {
+    "file": "vancouver_pine.js",
+    "templateKey": "vancouver_pine",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "438:     <div class=\"main-header\">\n439:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n440:       ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n441:       ${safeData.summary ? `<div class=\"summary-text\" data-df-field=\"summary\">${safeData.summary}</div>` : ''}\n442:     </div>"
+  },
+  {
+    "file": "venice_sand_split.js",
+    "templateKey": "venice_sand_split",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "408:     <div class=\"header-text\">\n409:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n410:       ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n411:     </div>\n412:     ${safeData.photoUrl ? `"
+  },
+  {
+    "file": "vienna_crest.js",
+    "templateKey": "vienna_crest",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "369:     ` : '')}\n370:     <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n371:     ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n372:     ${contactHtml}\n373:   </div>"
+  },
+  {
+    "file": "violet_modern.js",
+    "templateKey": "violet_modern",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "393:     <div class=\"header-text\">\n394:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n395:       ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n396:     </div>\n397:   </div>"
+  },
+  {
+    "file": "wall_street_executive.js",
+    "templateKey": "wall_street_executive",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "295:       <div class=\"header-text\">\n296:         ${data.name ? `<h1 class=\"candidate-name\" data-df-field=\"name\">${data.name}</h1>` : ''}\n297:         ${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}\n298:         ${contactParts.length > 0 ? `<div class=\"contact-bar\">${contactParts.join(' · ')}</div>` : ''}\n299:       </div>"
+  },
+  {
+    "file": "wilson_light.js",
+    "templateKey": "wilson_light",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "417:       <div class=\"main-header\">\n418:         <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n419:         ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n420:         ${safeData.summary ? `<div class=\"summary\" data-df-field=\"summary\">${safeData.summary}</div>` : ''}\n421:       </div>"
+  },
+  {
+    "file": "wilson_minimal.js",
+    "templateKey": "wilson_minimal",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "372:     <div class=\"header-left\">\n373:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n374:       ${safeData.title ? `<div class=\"role\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n375:     </div>\n376:     ${safeData.photoUrl ? `"
+  },
+  {
+    "file": "ziv_olive.js",
+    "templateKey": "ziv_olive",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "401:     <div class=\"header-text-box\">\n402:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n403:       ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n404:     </div>\n405:   </div>"
+  },
+  {
+    "file": "zurich_slate_block.js",
+    "templateKey": "zurich_slate_block",
+    "hasDataDfFieldTitle": true,
+    "titleSnippet": "413:     <div class=\"header-text\">\n414:       <h1 data-df-field=\"name\">${safeData.name || ''}</h1>\n415:       ${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}\n416:     </div>\n417:     ${safeData.photoUrl ? `"
+  }
+]

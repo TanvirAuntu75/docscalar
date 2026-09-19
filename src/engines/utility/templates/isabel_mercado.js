@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 // ISABEL MERCADO — Exact 1:1 Pixel-Perfect Replica from User Template
-// Rectangular Framed Portrait (#ede9e3), Charcoal Pill Badges (#31353d), & 7-Dot Skill Ratings
+// Rectangular Framed Portrait (#ede9e3), Charcoal Pill Badges (${charcoalColor}), & 7-Dot Skill Ratings
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export function generateIsabelMercadoHtml(
@@ -8,7 +8,7 @@ export function generateIsabelMercadoHtml(
   themeColor = '#31353d',
   themeFont = 'Montserrat',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
@@ -16,24 +16,21 @@ export function generateIsabelMercadoHtml(
   const fontFam = themeFont === 'Playfair Display' ? "'Playfair Display', Georgia, serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : themeFont === 'Inter' ? "'Inter', sans-serif" : "'Montserrat', sans-serif";
 
   // Two-tone name splitting: light first name + bold last name
-  const nameParts = (data.name || 'ISABEL MERCADO').trim().split(' ');
-  const firstName = (nameParts[0] || 'ISABEL').toUpperCase();
-  const lastName = (nameParts.slice(1).join(' ') || 'MERCADO').toUpperCase();
+  const nameParts = (data.name || '').trim().split(' ').filter(Boolean);
+  const firstName = nameParts.length ? nameParts[0].toUpperCase() : '';
+  const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ').toUpperCase() : '';
 
-  const photoSrc = data.photoUrl || '/images/candidates/isabel.jpg';
+  const photoSrc = data.photoUrl || '';
+  const summaryText = data.summary || data.profile || '';
 
-  const summaryText = data.summary || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet.';
+  const phoneText = data.phone || '';
+  const emailText = data.email || '';
+  const websiteText = data.website || '';
+  const locationText = data.location || '';
+  const linkedinText = data.linkedin || '';
+  const hasContact = Boolean(phoneText || emailText || locationText || websiteText || linkedinText);
 
-  const phoneText = data.phone || '+123-456-7890';
-  const emailText = data.email || 'hello@reallygreatsite.com';
-  const websiteText = data.website || 'www.reallygreatsite.com';
-  const locationText = data.location || '123 Anywhere St., Any City';
-
-  const rawSkills = data.skills && data.skills.length ? data.skills : [
-    'Project Management', 'Problem Solving', 'Creativity', 'Leadership'
-  ];
-
-  // Map skills to 7-dot ratings
+  const rawSkills = (data.skills && data.skills.length) ? data.skills : [];
   const defaultRatings = [5, 5, 5, 5];
   const skillsWithRatings = rawSkills.map((s, idx) => {
     let name = typeof s === 'string' ? s : s.name || '';
@@ -48,49 +45,19 @@ export function generateIsabelMercadoHtml(
       else rating = 4;
     }
     return { name, rating };
-  });
+  }).filter(s => s.name);
 
-  const educationList = data.education && data.education.length ? data.education : [
-    { degree: 'Masters in Product Design', dates: '2004 - 2008', school: 'Really Great University' },
-    { degree: 'BA in Product Design', dates: '2008 - 2010', school: 'Really Great University' }
-  ];
-
-  const experienceList = data.experience && data.experience.length ? data.experience : [
-    {
-      company: 'Really Great Company',
-      dates: '2018-2020',
-      role: 'Senior Graphic Designer',
-      highlights: [
-        'Manage website appearance, as well as SEO content and marketing, as well as brand and logo design.',
-        'Collaborate with other development teams.'
-      ]
-    },
-    {
-      company: 'Really Great Company',
-      dates: '2017-2018',
-      role: 'Graphic Designer',
-      highlights: [
-        'Manage website appearance, as well as SEO content and marketing, as well as brand and logo design.',
-        'Collaborate with other development teams.'
-      ]
-    },
-    {
-      company: 'Really Great Company',
-      dates: '2016-2017',
-      role: 'Junior Graphic Designer',
-      highlights: [
-        'Manage website appearance, as well as SEO content and marketing, as well as brand and logo design.',
-        'Collaborate with other development teams.'
-      ]
-    }
-  ];
+  const educationList = (data.education && data.education.length) ? data.education : [];
+  const experienceList = (data.experience && data.experience.length) ? data.experience : [];
+  const referenceList = (data.references && data.references.length) ? data.references : [];
+  const projectsList = (data.projects && data.projects.length) ? data.projects : [];
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Isabel Mercado - Resume</title>
+  <title>${data.name ? `${data.name} - Resume` : 'Resume'}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -108,16 +75,15 @@ export function generateIsabelMercadoHtml(
       margin: 0;
       padding: 0;
       width: 794px;
-      height: 1123px;
-      overflow: hidden;
+      min-height: 1123px;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
 
     /* Fixed A4 Page Container with Rounded Corners */
-    .resume-canvas {
+    .cv-page, .resume-canvas {
       width: 794px;
-      height: 1123px;
+      min-height: 1123px;
       background-color: #ffffff;
       border-radius: 28px;
       position: relative;
@@ -125,7 +91,16 @@ export function generateIsabelMercadoHtml(
       padding: 55px 48px 40px 48px;
       display: flex;
       gap: 46px;
-      margin: 0 auto;
+      margin: 0 auto 20px auto;
+      page-break-after: always;
+      break-after: page;
+      box-sizing: border-box;
+    }
+
+    .cv-page:last-child {
+      page-break-after: avoid !important;
+      break-after: avoid !important;
+      margin-bottom: 0 !important;
     }
 
     /* Left Sidebar Column */
@@ -145,7 +120,18 @@ export function generateIsabelMercadoHtml(
       margin-bottom: 24px;
     }
 
-    .profile-photo {
+    .avatar-mask {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #ffffff;
+    }
+
+    .profile-photo, .avatar {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -161,7 +147,7 @@ export function generateIsabelMercadoHtml(
     .name-first {
       font-size: 32px;
       font-weight: 300;
-      color: #31353d;
+      color: ${charcoalColor};
       letter-spacing: 1.5px;
       line-height: 1;
       text-transform: uppercase;
@@ -447,132 +433,216 @@ export function generateIsabelMercadoHtml(
       font-size: 9.8px;
       line-height: 1.4;
       color: #4a4d55;
-      text-align: justify;
+    }
+
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page, .resume-canvas {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        width: 794px !important;
+        height: 1123px !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .cv-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="resume-canvas">
+  <div class="cv-page resume-canvas" id="page-1">
     
-    <!-- Left Column -->
-    <div class="left-col">
-      <!-- Portrait Photo -->
-      <div class="photo-container">
-        <img class="profile-photo" src="${photoSrc}" alt="${data.name || 'Isabel Mercado'}">
-      </div>
-
-      <!-- Name & Job Title -->
+    
       <div class="name-block">
-        <div class="name-first">${firstName}</div>
-        <div class="name-last">${lastName}</div>
-        <div class="job-title">${(data.title || 'GRAPHICS DESIGNER').toUpperCase()}</div>
+        <div data-df-field="name">
+          ${firstName ? `<div class="name-first">${firstName}</div>` : ''}
+          ${lastName ? `<div class="name-last">${lastName}</div>` : ''}
+        </div>
+        <div class="candidate-title job-title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${data.title || ''}</div>
       </div>
 
-      <!-- Contact -->
+      ${hasContact ? `
+      <!-- Contact Details -->
       <div class="contact-section">
         <div class="pill-header">
-          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-          <span>Contact</span>
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"/></svg>
+          <span class="section-heading" data-df-field="heading:contact">${data.sectionTitles?.contact || 'Contact'}</span>
         </div>
         <div class="contact-list">
-          <div class="contact-item">
-            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-            <span>${locationText}</span>
-          </div>
+          ${phoneText ? `
           <div class="contact-item">
             <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-            <span>${phoneText}</span>
+            <span data-df-field="phone">${phoneText}</span>
           </div>
-          <div class="contact-item">
-            <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2H0c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2h-4zM4 5h16v11H4V5z"/></svg>
-            <span>${websiteText}</span>
-          </div>
+          ` : ''}
+          ${emailText ? `
           <div class="contact-item">
             <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-            <span style="word-break: break-all;">${emailText}</span>
+            <a href="mailto:${emailText}" data-df-field="email" style="color: inherit; text-decoration: none; word-break: break-all;">${emailText}</a>
           </div>
+          ` : ''}
+          ${locationText ? `
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            <span data-df-field="location">${locationText}</span>
+          </div>
+          ` : ''}
+          ${websiteText ? `
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <a href="https://${websiteText.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="website" style="color: inherit; text-decoration: none;">${websiteText.replace(/^https?:\/\//, '')}</a>
+          </div>
+          ` : ''}
+          ${linkedinText ? `
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45a1.63 1.63 0 1 0 .01 3.25 1.63 1.63 0 0 0 0-3.25z"/></svg>
+            <a href="https://${linkedinText.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="linkedin" style="color: inherit; text-decoration: none;">${linkedinText.replace(/^https?:\/\//, '')}</a>
+          </div>
+          ` : ''}
         </div>
       </div>
+      ` : ''}
 
-      <!-- Skills -->
+      ${skillsWithRatings.length > 0 ? `
+      <!-- Skills Rating Section -->
       <div class="skills-section">
         <div class="pill-header">
           <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-          <span>Skills</span>
+          <span class="section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Skills'}</span>
         </div>
         <div class="skills-list">
-          ${skillsWithRatings.map(s => `
+          ${skillsWithRatings.map((s, idx) => `
             <div class="skill-item">
-              <span class="skill-name">${s.name}</span>
+              <span class="skill-name" data-df-field="skill:${idx}">${s.name}</span>
               <div class="rating-dots">
-                ${[1, 2, 3, 4, 5, 6, 7].map(idx => `
-                  <span class="dot ${idx <= s.rating ? 'filled' : 'empty'}"></span>
+                ${[1, 2, 3, 4, 5, 6, 7].map(dotNum => `
+                  <div class="dot ${dotNum <= s.rating ? 'filled' : 'empty'}"></div>
                 `).join('')}
               </div>
             </div>
           `).join('')}
         </div>
       </div>
+      ` : ''}
+
     </div>
 
     <!-- Right Column -->
     <div class="right-col">
+      ${summaryText ? `
       <!-- About Me -->
       <div class="about-section">
         <div class="pill-header">
           <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-          <span>About Me</span>
+          <span class="section-heading" data-df-field="heading:summary">${data.sectionTitles?.summary || 'About Me'}</span>
         </div>
-        <p class="about-text">
+        <p class="about-text" data-df-field="summary">
           ${summaryText}
         </p>
       </div>
+      ` : ''}
 
+      ${educationList.length > 0 ? `
       <!-- Education -->
       <div class="edu-section">
         <div class="pill-header">
           <svg viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
-          <span>Education</span>
+          <span class="section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'Education'}</span>
         </div>
         <div class="timeline-list">
-          ${educationList.map(e => `
+          ${educationList.map((e, idx) => `
             <div class="timeline-item">
-              <div class="edu-degree">${e.degree || 'BA in Product Design'}</div>
-              <div class="edu-dates">${e.dates || `${e.start || '2008'} - ${e.end || '2010'}`}</div>
-              <div class="edu-school">${e.school || 'Really Great University'}</div>
+              <div class="edu-degree" data-df-field="edu:${idx}:degree">${e.degree || ''}</div>
+              <div class="edu-dates" data-df-field="edu:${idx}:date">${e.date || (e.start ? `${e.start}${e.end ? ` – ${e.end}` : ''}` : '')}</div>
+              <div class="edu-school" data-df-field="edu:${idx}:school">${e.school || ''}${e.note ? ` · ${e.note}` : ''}</div>
               <span class="node-bottom"></span>
             </div>
           `).join('')}
         </div>
       </div>
+      ` : ''}
 
+      ${experienceList.length > 0 ? `
       <!-- Work Experience -->
       <div class="experience-section">
         <div class="pill-header">
           <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
-          <span>Work Experience</span>
+          <span class="section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'WORK EXPERIENCE'}</span>
         </div>
         <div class="timeline-list">
-          ${experienceList.map(e => {
-            const company = e.company || 'Really Great Company';
-            const dates = e.dates || `${e.start || '2018'}-${e.end || '2020'}`;
-            const role = e.role || 'Graphic Designer';
-            const bullets = e.highlights && e.highlights.filter(Boolean).length ? e.highlights.filter(Boolean) : [e.description || 'Manage website appearance, as well as SEO content and marketing.'];
+          ${experienceList.map((e, idx) => {
+            const bullets = e.highlights && e.highlights.filter(Boolean).length ? e.highlights.filter(Boolean) : (e.description ? [e.description] : []);
             return `
               <div class="exp-item">
-                <div class="exp-company">${company}</div>
-                <div class="exp-dates">${dates}</div>
-                <div class="exp-role">${role}</div>
+                <div class="exp-company" data-df-field="exp:${idx}:company">${e.company || ''}</div>
+                <div class="exp-dates" data-df-field="exp:${idx}:date">${e.dates || (e.start ? `${e.start}${e.end ? ` – ${e.end}` : ''}` : '')}</div>
+                <div class="exp-role" data-df-field="exp:${idx}:role">${e.role || ''}</div>
+                ${bullets.length > 0 ? `
                 <ul class="exp-bullets">
-                  ${bullets.map(b => `<li>${b.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
+                  ${bullets.map((b, bIdx) => `<li data-df-field="exp:${idx}:highlight:${bIdx}">${b.replace(/^[•\-\*]\s*/, '')}</li>`).join('')}
                 </ul>
+                ` : ''}
                 <span class="node-bottom"></span>
               </div>
             `;
           }).join('')}
         </div>
       </div>
+      ` : ''}
+
+      ${projectsList.length > 0 ? `
+      <!-- Projects -->
+      <div class="experience-section" style="margin-top: 18px;">
+        <div class="pill-header">
+          <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          <span class="section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'Projects'}</span>
+        </div>
+        <div class="timeline-list">
+          ${projectsList.map((p, idx) => `
+            <div class="exp-item">
+              <div class="exp-company" data-df-field="proj:${idx}:name">${p.name || ''}</div>
+              ${p.url ? `<div class="edu-dates" data-df-field="proj:${idx}:url"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${p.url}</a></div>` : ''}
+              ${p.description ? `<div class="about-text" data-df-field="proj:${idx}:description" style="padding-left: 0; margin-top: 3px;">${p.description}</div>` : ''}
+              <span class="node-bottom"></span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      ` : ''}
+
+      ${referenceList.length > 0 ? `
+      <!-- References -->
+      <div class="experience-section" style="margin-top: 18px;">
+        <div class="pill-header">
+          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          <span class="section-heading" data-df-field="heading:references">${data.sectionTitles?.references || 'References'}</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 6px;">
+          ${referenceList.map((r, idx) => `
+            <div>
+              <div class="exp-company" data-df-field="ref:${idx}:name">${r.name || ''}</div>
+              <div class="edu-school" data-df-field="ref:${idx}:relation">${r.relation || ''}</div>
+              ${r.contact ? `<div class="edu-dates" data-df-field="ref:${idx}:contact">${r.contact}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      ` : ''}
     </div>
 
   </div>

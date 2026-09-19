@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// DocForge Professional CV & Resume Template Engine Registry (73 Distinct Templates)
+// DocScalar Professional CV & Resume Template Engine Registry (85 Distinct Templates)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // Core 17 Perfected Templates
@@ -110,6 +110,17 @@ export { generateHowardOngHtml } from './templates/howard_ong';
 export { generateTerracottaArchHtml } from './templates/terracotta_arch';
 export { generateKorinaVillanuevaHtml } from './templates/korina_villanueva';
 export { generateIsabelMercadoHtml } from './templates/isabel_mercado';
+export { generateJonathanPattersonHtml } from './templates/jonathan_patterson';
+export { generateAlfredoTorresHtml } from './templates/alfredo_torres';
+export { generateMarcusVanceHtml } from './templates/marcus_vance';
+export { generateArthurPendeltonHtml } from './templates/arthur_pendelton';
+
+// Dedicated 100% ATS Ultra-Compliant Single-Column Templates
+export { generateHarvardClassicHtml } from './templates/harvard_classic';
+export { generateSiliconValleyAtsHtml } from './templates/silicon_valley_ats';
+export { generateWallStreetExecutiveHtml } from './templates/wall_street_executive';
+export { generateOxfordMinimalistHtml } from './templates/oxford_minimalist';
+
 
 
 

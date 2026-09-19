@@ -1,0 +1,1021 @@
+[
+  {
+    "slug": "adam_fletcher",
+    "file": "adam_fletcher.js",
+    "fnKey": "generateAdamFletcherHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7161,
+    "foundSuspicious": [
+      "Adam Fletcher"
+    ],
+    "dfCount": 2,
+    "pageCount": 0
+  },
+  {
+    "slug": "adeline_palmerston",
+    "file": "adeline_palmerston.js",
+    "fnKey": "generateAdelinePalmerstonHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 10540,
+    "foundSuspicious": [
+      "Adeline Palmerston",
+      "Candidate Name"
+    ],
+    "dfCount": 4,
+    "pageCount": 1
+  },
+  {
+    "slug": "adora_diagonal",
+    "file": "adora_diagonal.js",
+    "fnKey": "generateAdoraDiagonalHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6319,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "adora_montminy",
+    "file": "adora_montminy.js",
+    "fnKey": "generateAdoraMontminyHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7993,
+    "foundSuspicious": [],
+    "dfCount": 2,
+    "pageCount": 0
+  },
+  {
+    "slug": "alfredo_torres",
+    "file": "alfredo_torres.js",
+    "fnKey": "generateAlfredoTorresHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 9308,
+    "foundSuspicious": [
+      "Alfredo Torres"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "alvarado_slate",
+    "file": "alvarado_slate.js",
+    "fnKey": "generateAlvaradoSlateHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6372,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "amsterdam_orange",
+    "file": "amsterdam_orange.js",
+    "fnKey": "generateAmsterdamOrangeHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7065,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "arthur_pendelton",
+    "file": "arthur_pendelton.js",
+    "fnKey": "generateArthurPendeltonHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7978,
+    "foundSuspicious": [
+      "Arthur Pendelton"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "austin_amber",
+    "file": "austin_amber.js",
+    "fnKey": "generateAustinAmberHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7055,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "barcelona_cyan",
+    "file": "barcelona_cyan.js",
+    "fnKey": "generateBarcelonaCyanHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6725,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "berlin_two_tone",
+    "file": "berlin_two_tone.js",
+    "fnKey": "generateBerlinTwoToneHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 5934,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "bordeaux_wine",
+    "file": "bordeaux_wine.js",
+    "fnKey": "generateBordeauxWineHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7045,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "boston_crimson",
+    "file": "boston_crimson.js",
+    "fnKey": "generateBostonCrimsonHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6962,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "buenos_aires_tango",
+    "file": "buenos_aires_tango.js",
+    "fnKey": "generateBuenosAiresTangoHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7425,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "cairo_gold",
+    "file": "cairo_gold.js",
+    "fnKey": "generateCairoGoldHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7442,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "cambridge_rose",
+    "file": "cambridge_rose.js",
+    "fnKey": "generateCambridgeRoseHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7315,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "cape_town_sunset",
+    "file": "cape_town_sunset.js",
+    "fnKey": "generateCapeTownSunsetHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6945,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "card_matrix",
+    "file": "card_matrix.js",
+    "fnKey": "generateCardMatrixHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 5282,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "charles",
+    "file": "charles.js",
+    "fnKey": "generateCharlesHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6731,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "copenhagen_sand",
+    "file": "copenhagen_sand.js",
+    "fnKey": "generateCopenhagenSandHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6699,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "date_capsule",
+    "file": "date_capsule.js",
+    "fnKey": "generateDateCapsuleHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 5093,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "diagonal_wedge",
+    "file": "diagonal_wedge.js",
+    "fnKey": "generateDiagonalWedgeHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 8295,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 1
+  },
+  {
+    "slug": "donna_stroupe",
+    "file": "donna_stroupe.js",
+    "fnKey": "generateDonnaStroupeHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7703,
+    "foundSuspicious": [
+      "Donna Stroupe"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "dublin_forest",
+    "file": "dublin_forest.js",
+    "fnKey": "generateDublinForestHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6923,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "edinburgh_navy",
+    "file": "edinburgh_navy.js",
+    "fnKey": "generateEdinburghNavyHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 5286,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "emerald_prestige",
+    "file": "emerald_prestige.js",
+    "fnKey": "generateEmeraldPrestigeHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7116,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "emma",
+    "file": "emma.js",
+    "fnKey": "generateEmmaHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6705,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "floating_card_matrix",
+    "file": "floating_card_matrix.js",
+    "fnKey": "generateFloatingCardMatrixHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7450,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "florence_terracotta",
+    "file": "florence_terracotta.js",
+    "fnKey": "generateFlorenceTerracottaHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7096,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "geneva_charcoal",
+    "file": "geneva_charcoal.js",
+    "fnKey": "generateGenevaCharcoalHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6920,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "helsinki_frost",
+    "file": "helsinki_frost.js",
+    "fnKey": "generateHelsinkiFrostHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 5356,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "helsinki_navy",
+    "file": "helsinki_navy.js",
+    "fnKey": "generateHelsinkiNavyHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7050,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "howard_ong",
+    "file": "howard_ong.js",
+    "fnKey": "generateHowardOngHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7387,
+    "foundSuspicious": [
+      "Howard Ong"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "isabel_mercado",
+    "file": "isabel_mercado.js",
+    "fnKey": "generateIsabelMercadoHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 8516,
+    "foundSuspicious": [
+      "Isabel Mercado"
+    ],
+    "dfCount": 2,
+    "pageCount": 0
+  },
+  {
+    "slug": "isabel_schumacher",
+    "file": "isabel_schumacher.js",
+    "fnKey": "generateIsabelSchumacherHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7824,
+    "foundSuspicious": [
+      "Isabel Schumacher"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "jonathan",
+    "file": "jonathan.js",
+    "fnKey": "generateJonathanHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 5392,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 1
+  },
+  {
+    "slug": "jonathan_patterson",
+    "file": "jonathan_patterson.js",
+    "fnKey": "generateJonathanPattersonHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 8685,
+    "foundSuspicious": [
+      "Jonathan Patterson"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "kathleen",
+    "file": "kathleen.js",
+    "fnKey": "generateKathleenHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6888,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "kelly_mint",
+    "file": "kelly_mint.js",
+    "fnKey": "generateKellyMintHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6764,
+    "foundSuspicious": [
+      "Kelly Blackwell"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "korina_villanueva",
+    "file": "korina_villanueva.js",
+    "fnKey": "generateKorinaVillanuevaHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 8219,
+    "foundSuspicious": [
+      "Korina Villanueva"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "kyiv_golden",
+    "file": "kyiv_golden.js",
+    "fnKey": "generateKyivGoldenHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6817,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "kyoto_coral",
+    "file": "kyoto_coral.js",
+    "fnKey": "generateKyotoCoralHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6824,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "lilac_sidebar",
+    "file": "lilac_sidebar.js",
+    "fnKey": "generateLilacSidebarHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6314,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "lorna_alvarado",
+    "file": "lorna_alvarado.js",
+    "fnKey": "generateLornaAlvaradoHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7260,
+    "foundSuspicious": [
+      "Lorna Alvarado"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "lyon_lavender",
+    "file": "lyon_lavender.js",
+    "fnKey": "generateLyonLavenderHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6963,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "madrid_sun",
+    "file": "madrid_sun.js",
+    "fnKey": "generateMadridSunHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7064,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "manhattan_noir",
+    "file": "manhattan_noir.js",
+    "fnKey": "generateManhattanNoirHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6915,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "marcus_vance",
+    "file": "marcus_vance.js",
+    "fnKey": "generateMarcusVanceHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 9629,
+    "foundSuspicious": [
+      "Marcus Vance"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "mariana",
+    "file": "mariana.js",
+    "fnKey": "generateMarianaHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 9472,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 1
+  },
+  {
+    "slug": "milan_blush",
+    "file": "milan_blush.js",
+    "fnKey": "generateMilanBlushHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6987,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "montreal_frost",
+    "file": "montreal_frost.js",
+    "fnKey": "generateMontrealFrostHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7096,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "ocean_block",
+    "file": "ocean_block.js",
+    "fnKey": "generateOceanBlockHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6343,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "olivia",
+    "file": "olivia.js",
+    "fnKey": "generateOliviaHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 8909,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 1
+  },
+  {
+    "slug": "ong_burgundy",
+    "file": "ong_burgundy.js",
+    "fnKey": "generateOngBurgundyHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6581,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "osaka_minimal",
+    "file": "osaka_minimal.js",
+    "fnKey": "generateOsakaMinimalHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7077,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "oslo_taupe",
+    "file": "oslo_taupe.js",
+    "fnKey": "generateOsloTaupeHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6488,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "overlapping_badge",
+    "file": "overlapping_badge.js",
+    "fnKey": "generateOverlappingBadgeHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6648,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "oxford_burgundy",
+    "file": "oxford_burgundy.js",
+    "fnKey": "generateOxfordBurgundyHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 5821,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "prague_brass",
+    "file": "prague_brass.js",
+    "fnKey": "generatePragueBrassHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7087,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "reykjavik_slate",
+    "file": "reykjavik_slate.js",
+    "fnKey": "generateReykjavikSlateHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6623,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "richard",
+    "file": "richard.js",
+    "fnKey": "generateRichardHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 5846,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "richard_sanchez",
+    "file": "richard_sanchez.js",
+    "fnKey": "generateRichardSanchezHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7756,
+    "foundSuspicious": [
+      "Richard Sanchez"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "sage_pastel",
+    "file": "sage_pastel.js",
+    "fnKey": "generateSagePastelHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6313,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "sanchez_dark",
+    "file": "sanchez_dark.js",
+    "fnKey": "generateSanchezDarkHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6338,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "sanchez_mono",
+    "file": "sanchez_mono.js",
+    "fnKey": "generateSanchezMonoHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6107,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "sanchez_wave",
+    "file": "sanchez_wave.js",
+    "fnKey": "generateSanchezWaveHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 5541,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "san_francisco_skyline",
+    "file": "san_francisco_skyline.js",
+    "fnKey": "generateSanFranciscoSkylineHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7040,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "schumacher_charcoal",
+    "file": "schumacher_charcoal.js",
+    "fnKey": "generateSchumacherCharcoalHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6265,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "seattle_emerald",
+    "file": "seattle_emerald.js",
+    "fnKey": "generateSeattleEmeraldHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6918,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "sebastian_bennett",
+    "file": "sebastian_bennett.js",
+    "fnKey": "generateSebastianBennettHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6388,
+    "foundSuspicious": [
+      "Sebastian Bennett"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "seoul_neon",
+    "file": "seoul_neon.js",
+    "fnKey": "generateSeoulNeonHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6793,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "singapore_ruby",
+    "file": "singapore_ruby.js",
+    "fnKey": "generateSingaporeRubyHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6722,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "split_dual_block",
+    "file": "split_dual_block.js",
+    "fnKey": "generateSplitDualBlockHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7456,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "stockholm_monochrome",
+    "file": "stockholm_monochrome.js",
+    "fnKey": "generateStockholmMonochromeHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6335,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "stockholm_yellow",
+    "file": "stockholm_yellow.js",
+    "fnKey": "generateStockholmYellowHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6975,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "terracotta_arch",
+    "file": "terracotta_arch.js",
+    "fnKey": "generateTerracottaArchHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7859,
+    "foundSuspicious": [
+      "Adeline Palmerston"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "tokyo_ice_blue",
+    "file": "tokyo_ice_blue.js",
+    "fnKey": "generateTokyoIceBlueHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6991,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "vancouver_pine",
+    "file": "vancouver_pine.js",
+    "fnKey": "generateVancouverPineHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7010,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "venice_sand_split",
+    "file": "venice_sand_split.js",
+    "fnKey": "generateVeniceSandSplitHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7044,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "vienna_crest",
+    "file": "vienna_crest.js",
+    "fnKey": "generateViennaCrestHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 5779,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "violet_modern",
+    "file": "violet_modern.js",
+    "fnKey": "generateVioletModernHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6295,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "wilson_light",
+    "file": "wilson_light.js",
+    "fnKey": "generateWilsonLightHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 7005,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "wilson_minimal",
+    "file": "wilson_minimal.js",
+    "fnKey": "generateWilsonMinimalHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6046,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "ziv_olive",
+    "file": "ziv_olive.js",
+    "fnKey": "generateZivOliveHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6504,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  },
+  {
+    "slug": "zurich_slate_block",
+    "file": "zurich_slate_block.js",
+    "fnKey": "generateZurichSlateBlockHtml",
+    "rendersSuccessfully": true,
+    "htmlLength": 6881,
+    "foundSuspicious": [
+      "Candidate Name"
+    ],
+    "dfCount": 1,
+    "pageCount": 0
+  }
+]

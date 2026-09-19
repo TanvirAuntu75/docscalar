@@ -1,16 +1,18 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { DATE_FORMAT_PRESETS, formatDateByPattern, validateAndFormatDate, formatTypingDate } from '../../utils/dateFormats.js';
 import { STAMP_PRESETS, generateStampDataUrl } from '../../utils/stampGenerator.js';
+import SmartCropperPanel from '../SmartCropperPanel';
 
 export default function SignOptionsSidebar({
   signatureData,
   initialsData,
+  cropper,
   onOpenSignatureModal,
   onOpenInitialsModal,
   onAddFieldToActivePage,
   fields = [],
   selectedFieldId = null,
-  onSelectField = () => {},
   onUpdateField = () => {},
   onRemoveField = () => {},
   onDuplicateField = () => {},
@@ -19,25 +21,28 @@ export default function SignOptionsSidebar({
   activePageIndex,
   totalPages,
   onClearAllFields,
-  securityMode,
-  setSecurityMode,
-  flattenDocument,
-  setFlattenDocument,
-  generateCertificate,
-  setGenerateCertificate,
-  digitalCertSettings,
-  setDigitalCertSettings,
+  securityMode = 'simple',
+  setSecurityMode = () => {},
+  flattenDocument = true,
+  setFlattenDocument = () => {},
+  generateCertificate = true,
+  setGenerateCertificate = () => {},
+  digitalCertSettings = {},
+  setDigitalCertSettings = () => {},
   onExecuteSigning,
   processing = false,
   progress = 0,
-  error = null
+  error = null,
+  isPro = false,
+  detectedZones = [],
+  onApplyDetectedZone = () => {}
 }) {
-  const [selectedDateFormat, setSelectedDateFormat] = useState('MM/DD/YYYY');
+  const [selectedDateFormat] = useState('MM/DD/YYYY');
   const [customSignerName, setCustomSignerName] = useState('Signer Name');
   const [customSignerEmail, setCustomSignerEmail] = useState('signer@example.com');
   const [customJobTitle, setCustomJobTitle] = useState('Authorized Signatory');
-  const [customCompany, setCustomCompany] = useState('DocForge Organization');
-  const [customTextContent, setCustomTextContent] = useState('Approved & Verified');
+  const [customCompany, setCustomCompany] = useState('DocScalar Organization');
+  const [customTextContent] = useState('Approved & Verified');
   const [showFieldConfig, setShowFieldConfig] = useState(false);
   const [showStampPicker, setShowStampPicker] = useState(false);
 
@@ -90,7 +95,7 @@ export default function SignOptionsSidebar({
       ...extraProps
     };
 
-    e.dataTransfer.setData('application/docforge-sign-field', JSON.stringify(payload));
+    e.dataTransfer.setData('application/docscalar-sign-field', JSON.stringify(payload));
     e.dataTransfer.effectAllowed = 'copy';
   };
 
@@ -298,6 +303,42 @@ export default function SignOptionsSidebar({
               </div>
             </div>
 
+            {/* Multi-Signer Party Attribution (Contract Signing Workflow) */}
+            <div className="flex flex-col gap-1.5 bg-[var(--bg-primary)] p-2.5 rounded-xl border border-[var(--border-subtle)]">
+              <label className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider flex items-center justify-between">
+                <span>Signer Attribution</span>
+                {isPro && <span className="text-[9px] bg-blue-500/15 text-blue-600 dark:text-blue-400 font-bold px-1.5 py-0.2 rounded">PRO</span>}
+              </label>
+              <div className="grid grid-cols-3 gap-1">
+                {[
+                  { label: 'Signer 1', role: 'Signer 1 (Me)', color: '#1D4ED8' },
+                  { label: 'Signer 2', role: 'Signer 2 (Client)', color: '#059669' },
+                  { label: 'Witness', role: 'Witness / Notary', color: '#7C3AED' }
+                ].map((s) => {
+                  const isAssigned = (selectedField.signerRole || 'Signer 1') === s.label;
+                  return (
+                    <button
+                      key={s.label}
+                      type="button"
+                      onClick={() => onUpdateField(selectedField.id, { signerRole: s.label, signerColor: s.color })}
+                      className={`py-1 px-1.5 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1 border transition-all cursor-pointer ${
+                        isAssigned
+                          ? 'text-white shadow-xs'
+                          : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border-[var(--border-subtle)]'
+                      }`}
+                      style={{
+                        backgroundColor: isAssigned ? s.color : undefined,
+                        borderColor: isAssigned ? s.color : undefined
+                      }}
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: isAssigned ? '#ffffff' : s.color }} />
+                      <span>{s.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Date Specific Format Controls */}
             {selectedField.type === 'date' && (
               <div className="flex flex-col gap-2 bg-[var(--bg-primary)] p-2.5 rounded-xl border border-[var(--border-subtle)]">
@@ -493,9 +534,9 @@ export default function SignOptionsSidebar({
                   <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase">Symbol Style</span>
                   <div className="flex items-center gap-1 bg-[var(--bg-primary)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
                     {[
-                      { id: 'check', label: '✓ Check' },
-                      { id: 'cross', label: '✗ Cross' },
-                      { id: 'square', label: '■ Filled' }
+                      { id: 'check', label: 'Check' },
+                      { id: 'cross', label: 'Cross' },
+                      { id: 'square', label: 'Filled' }
                     ].map((st) => (
                       <button
                         key={st.id}
@@ -742,6 +783,31 @@ export default function SignOptionsSidebar({
             </div>
           )}
 
+          {/* Smart Signature Line Detection Indicator */}
+          {detectedZones && detectedZones.length > 0 && (
+            <div className="bg-[var(--bg-secondary)] border border-emerald-500/30 rounded-xl p-2.5 flex items-center justify-between shadow-xs animate-[fadeIn_0.15s_ease-out]">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px] text-emerald-500">auto_awesome</span>
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-[var(--text-primary)]">
+                    {detectedZones.length} Signature Line{detectedZones.length > 1 ? 's' : ''} Found
+                  </span>
+                  <span className="text-[10px] text-[var(--text-secondary)]">AcroForm & text cues detected</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const currentZone = detectedZones.find((z) => z.pageIndex === activePageIndex) || detectedZones[0];
+                  if (currentZone) onApplyDetectedZone(currentZone);
+                }}
+                className="btn btn-primary btn-sm text-[11px] font-bold py-1 px-2.5 shadow-xs cursor-pointer"
+              >
+                Auto-Place
+              </button>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-2">
             {/* Date Field */}
             <button
@@ -905,14 +971,142 @@ export default function SignOptionsSidebar({
           )}
         </div>
 
-        {/* ========================================================================= */}
-        {/* 4. SECURITY & COMPLIANCE TOGGLES                                          */}
-        {/* ========================================================================= */}
-        <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl p-3 flex flex-col gap-2.5 text-xs shadow-xs">
-          <div className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-            Compliance & Security
+        {/* Universal Smart Cropper Panel */}
+        {cropper && (
+          <div className="pt-2 border-t border-[var(--border-subtle)]">
+            <SmartCropperPanel
+              cropper={cropper}
+              totalPages={totalPages}
+              onActivate={() => {}}
+              onRevert={() => {}}
+            />
           </div>
-          
+        )}
+
+        {/* ========================================================================= */}
+        {/* 4. SECURITY & COMPLIANCE                                                  */}
+        {/* ========================================================================= */}
+        <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl p-3 flex flex-col gap-3 text-xs shadow-xs">
+          <div className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+            Signature Security Standard
+          </div>
+
+          {/* Security Mode Selector Tabs */}
+          <div className="grid grid-cols-2 gap-1.5 p-1 bg-[var(--bg-primary)] rounded-xl border border-[var(--border-subtle)]">
+            <button
+              type="button"
+              onClick={() => setSecurityMode('simple')}
+              className={`py-1.5 px-2 rounded-lg text-xs font-bold flex flex-col items-center gap-0.5 transition-all cursor-pointer ${
+                securityMode === 'simple'
+                  ? 'bg-[var(--color-primary)] text-white shadow-xs'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              <span>Standard (SES)</span>
+              <span className="text-[9px] font-normal opacity-80">100% Local Privacy</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSecurityMode('digital')}
+              className={`py-1.5 px-2 rounded-lg text-xs font-bold flex flex-col items-center gap-0.5 transition-all cursor-pointer ${
+                securityMode === 'digital'
+                  ? 'bg-[var(--color-primary)] text-white shadow-xs'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              <div className="flex items-center gap-1">
+                <span>Digital Seal</span>
+                <span className="text-[8px] bg-amber-400 text-amber-950 font-black px-1 rounded">X.509</span>
+              </div>
+              <span className="text-[9px] font-normal opacity-80">pyHanko Cryptographic</span>
+            </button>
+          </div>
+
+          {/* Digital Signature Detailed Certificate Options */}
+          {securityMode === 'digital' && (
+            <div className="bg-[var(--bg-primary)] p-2.5 rounded-xl border border-[var(--border-subtle)] flex flex-col gap-2 animate-[fadeIn_0.15s_ease-out]">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase">X.509 Certificate Settings</span>
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
+                  <span className="material-symbols-outlined text-[13px]">verified_user</span>
+                  Tamper-Sealed
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-semibold text-[var(--text-secondary)]">Signer Common Name (CN)</label>
+                <input
+                  type="text"
+                  value={digitalCertSettings.commonName || ''}
+                  onChange={(e) => setDigitalCertSettings({ ...digitalCertSettings, commonName: e.target.value })}
+                  placeholder="DocScalar Verified Signer"
+                  className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg px-2 py-1 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--color-primary)]"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-semibold text-[var(--text-secondary)]">Signer Email</label>
+                <input
+                  type="email"
+                  value={digitalCertSettings.email || ''}
+                  onChange={(e) => setDigitalCertSettings({ ...digitalCertSettings, email: e.target.value })}
+                  placeholder="signer@company.com"
+                  className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg px-2 py-1 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--color-primary)]"
+                />
+              </div>
+
+              {/* Custom PKCS#12 (.pfx / .p12) Certificate Upload (Pro Feature) */}
+              <div className="flex flex-col gap-1 pt-1 border-t border-[var(--border-subtle)]">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-semibold text-[var(--text-secondary)] flex items-center gap-1">
+                    <span>Enterprise PKCS#12 (.pfx)</span>
+                    <span className="text-[8.5px] bg-blue-500/15 text-blue-600 dark:text-blue-400 font-bold px-1.5 py-0.2 rounded">PRO</span>
+                  </label>
+                  {digitalCertSettings.customCertificateFile && (
+                    <button
+                      type="button"
+                      onClick={() => setDigitalCertSettings({ ...digitalCertSettings, customCertificateFile: null })}
+                      className="text-[10px] text-red-500 hover:underline cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                {digitalCertSettings.customCertificateFile ? (
+                  <div className="p-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-[10px] text-emerald-800 dark:text-emerald-300 flex items-center justify-between">
+                    <span className="truncate max-w-[180px] font-mono">{digitalCertSettings.customCertificateFile.name}</span>
+                    <span className="text-[9px] font-bold">Attached</span>
+                  </div>
+                ) : (
+                  <label className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] border border-dashed border-[var(--border-subtle)] rounded-lg text-[11px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer transition-colors">
+                    <span className="material-symbols-outlined text-[14px]">file_upload</span>
+                    <span>Upload .pfx or .p12 certificate</span>
+                    <input
+                      type="file"
+                      accept=".pfx,.p12"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) setDigitalCertSettings({ ...digitalCertSettings, customCertificateFile: file });
+                      }}
+                      className="sr-only"
+                    />
+                  </label>
+                )}
+
+                <input
+                  type="password"
+                  value={digitalCertSettings.passphrase || ''}
+                  onChange={(e) => setDigitalCertSettings({ ...digitalCertSettings, passphrase: e.target.value })}
+                  placeholder="Certificate passphrase (optional)"
+                  className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg px-2 py-1 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--color-primary)] mt-1"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Flatten Document & Audit Trail Toggles */}
           <label className="flex items-start justify-between gap-2 cursor-pointer group">
             <div className="flex flex-col gap-0.5">
               <span className="font-semibold text-[var(--text-primary)] group-hover:text-[var(--color-primary)] transition-colors">

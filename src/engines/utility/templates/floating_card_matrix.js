@@ -8,7 +8,7 @@ export function generateFloatingCardMatrixHtml(
   themeColor = '#0284c7',
   themeFont = 'Inter',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
@@ -38,19 +38,17 @@ export function generateFloatingCardMatrixHtml(
     <div class="floating-card">
       <div class="card-header">
         <div class="card-icon-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
-        <h3 class="card-title">Work Experience</h3>
+        <h3 class="card-title section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'Work Experience'}</h3>
       </div>
       <div class="entries-list">
-        ${data.experience.map(e => `
+        ${data.experience.map((e, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${e.role}</span>
-              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
-            </div>
-            <div class="entry-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+              <span class="entry-role" data-df-field="exp:${idx}:role">${e.role}</span>
+              <span class="entry-date" ><span data-df-field="exp:${idx}:company">${e.company || ''}</span>${(e.company && (e.start || e.end)) ? ' | ' : ''}<span data-df-field="exp:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span></div>
             ${e.highlights && e.highlights.filter(Boolean).length ? `
               <ul class="entry-desc">
-                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+                ${e.highlights.filter(Boolean).map((h, hIdx) => `<li data-df-field="exp:${idx}:highlight:${hIdx}">${h}</li>`).join('')}
               </ul>
             ` : ''}
           </div>
@@ -63,14 +61,14 @@ export function generateFloatingCardMatrixHtml(
     <div class="floating-card">
       <div class="card-header">
         <div class="card-icon-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
-        <h3 class="card-title">Education</h3>
+        <h3 class="card-title section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'Education'}</h3>
       </div>
       <div class="edu-list">
-        ${data.education.map(e => `
+        ${data.education.map((e, idx) => `
           <div class="edu-item">
-            <div class="edu-degree">${e.degree}</div>
-            <div class="edu-school">${e.school}</div>
-            <div class="edu-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
+            <div class="edu-degree" data-df-field="edu:${idx}:degree">${e.degree}</div>
+            <div class="edu-school" data-df-field="edu:${idx}:school">${e.school}</div>
+            <div class="edu-date" data-df-field="edu:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
             ${e.note ? `<div class="edu-note">${e.note}</div>` : ''}
           </div>
         `).join('')}
@@ -82,10 +80,10 @@ export function generateFloatingCardMatrixHtml(
     <div class="floating-card">
       <div class="card-header">
         <div class="card-icon-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-        <h3 class="card-title">Core Skills</h3>
+        <h3 class="card-title section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Core Skills'}</h3>
       </div>
       <div class="skills-list">
-        ${data.skills.map((s) => {
+        ${data.skills.map((s, idx) => {
           let name = s;
           let levelText = '';
           if (s.includes(' - ')) {
@@ -96,7 +94,7 @@ export function generateFloatingCardMatrixHtml(
           return `
             <div class="skill-meter-row">
               <div class="skill-labels">
-                <span class="skill-name">${name}</span>
+                <span class="skill-name" data-df-field="skill:${idx}">${name}</span>
                 ${levelText ? `<span class="skill-level-text">${levelText}</span>` : ''}
               </div>
               ${renderProgressBar(levelText)}
@@ -111,16 +109,16 @@ export function generateFloatingCardMatrixHtml(
     <div class="floating-card">
       <div class="card-header">
         <div class="card-icon-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
-        <h3 class="card-title">Selected Projects</h3>
+        <h3 class="card-title section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'Selected Projects'}</h3>
       </div>
       <div class="entries-list">
-        ${data.projects.map(p => `
+        ${data.projects.map((p, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${p.name}</span>
-              ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
+              <span class="entry-role" data-df-field="proj:${idx}:name">${p.name || ''}</span>
+              ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="proj:${idx}:url" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
             </div>
-            ${p.description ? `<div style="font-size: 8.5pt; color: #475569; margin-top: 2px;">${p.description}</div>` : ''}
+            ${p.description ? `<div style="font-size: 8.5pt; color: #475569; margin-top: 2px;" data-df-field="proj:${idx}:description">${p.description}</div>` : ''}
           </div>
         `).join('')}
       </div>
@@ -131,29 +129,29 @@ export function generateFloatingCardMatrixHtml(
     <div class="floating-card">
       <div class="card-header">
         <div class="card-icon-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div>
-        <h3 class="card-title">Certifications</h3>
+        <h3 class="card-title section-heading" data-df-field="heading:certifications">${data.sectionTitles?.certifications || 'Certifications'}</h3>
       </div>
       <ul class="cert-list">
-        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+        ${data.certifications.map((c, idx) => `<li data-df-field="cert:${idx}">${c}</li>`).join('')}
       </ul>
     </div>
   ` : '';
 
-  const contactHtml = `
+  const contactHtml = (data.phone || data.email || data.location || data.linkedin || data.website) ? `
     <div class="floating-card">
       <div class="card-header">
         <div class="card-icon-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-        <h3 class="card-title">Contact</h3>
+        <h3 class="card-title section-heading" data-df-field="heading:contact">${data.sectionTitles?.contact || 'Contact'}</h3>
       </div>
       <div class="contact-list">
-        ${data.phone ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>${data.phone}</span></div>` : ''}
-        ${data.email ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:${data.email}" style="color: inherit; text-decoration: none; word-break: break-all;">${data.email}</a></div>` : ''}
-        ${data.location ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>${data.location}</span></div>` : ''}
-        ${data.linkedin ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
-        ${data.website ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"/></svg><a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${data.phone ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span data-df-field="phone">${data.phone}</span></div>` : ''}
+        ${data.email ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:${data.email}" style="color: inherit; text-decoration: none; word-break: break-all;" data-df-field="email" >${data.email}</a></div>` : ''}
+        ${data.location ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-df-field="location">${data.location}</span></div>` : ''}
+        ${data.linkedin ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><a data-df-field="linkedin" href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${data.website ? `<div class="contact-row"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"/></svg><a data-df-field="website" href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
       </div>
     </div>
-  `;
+  ` : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -175,7 +173,7 @@ export function generateFloatingCardMatrixHtml(
     }
     
     #main-container {
-      width: 210mm;
+      width: 794px;
       min-height: 297mm;
       margin: 0 auto;
       background: #f1f5f9;
@@ -213,8 +211,8 @@ export function generateFloatingCardMatrixHtml(
       margin-top: 4px;
     }
     .avatar {
-      width: 85px;
-      height: 85px;
+      width: 135px;
+      height: 135px;
       border-radius: 10px;
       border: 2.5px solid ${accent};
       object-fit: cover;
@@ -417,16 +415,44 @@ export function generateFloatingCardMatrixHtml(
     .cert-list li {
       margin-bottom: 3px;
     }
+  
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      
+    .cv-page:last-child { break-after: avoid !important; page-break-after: avoid !important; }
+  }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      #main-container, .page-container, .cv-page, .container, .page {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+    }
+  
+    .avatar, .profile-photo, .photo, .headshot, .profile-img, .photo-wrapper, .avatar-wrapper {
+      border-radius: 50%;
+      overflow: hidden;
+    }
   </style>
 </head>
 <body>
-<div id="main-container">
+<div id="main-container" class="cv-page">
   <div class="header-card">
     <div class="header-left">
-      <h1>${data.name || 'Candidate Name'}</h1>
-      ${data.title ? `<div class="title">${data.title}</div>` : ''}
+      <h1 data-df-field="name">${data.name || ''}</h1>
+      <div class="candidate-title title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${data.title || ''}</div>
     </div>
-    ${data.photoUrl ? `<img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />` : ''}
+    ${data.photoUrl ? `<img class="avatar avatar-mask" style="overflow: hidden; border-radius: 50%;" src="${data.photoUrl}" alt="Profile Photo" />` : ''}
   </div>
   
   <div class="content-columns">
@@ -435,9 +461,9 @@ export function generateFloatingCardMatrixHtml(
         <div class="floating-card">
           <div class="card-header">
             <div class="card-icon-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-            <h3 class="card-title">Professional Summary</h3>
+            <h3 class="card-title section-heading" data-df-field="heading:summary">${data.sectionTitles?.summary || 'Professional Summary'}</h3>
           </div>
-          <div class="summary-text">${data.summary}</div>
+          <div class="summary-text" data-df-field="summary">${data.summary}</div>
         </div>
       ` : ''}
       

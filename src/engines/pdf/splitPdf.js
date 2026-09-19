@@ -8,16 +8,17 @@ import ConversionWorker from '../../workers/pdf.worker.js?worker';
  * @param {string} mode - 'all' (each page) | 'range' (specific pages)
  * @param {string} range - e.g. "1-3,5,7-9" (only used in 'range' mode)
  * @param {function} onProgress
+ * @param {object} [options] - Options including autoCropBlackBorders and smartCrop
  * @returns {Promise<{blobs: Blob[], names: string[]}>}
  */
-export async function splitPdf(file, mode = 'all', range = '', onProgress) {
+export async function splitPdf(file, mode = 'all', range = '', onProgress, options = {}) {
   return new Promise((resolve, reject) => {
     const worker = new ConversionWorker();
 
     file.arrayBuffer().then((arrayBuffer) => {
       worker.postMessage({
         type: 'splitPdf',
-        payload: { arrayBuffer, mode, range }
+        payload: { arrayBuffer, mode, range, options }
       }, [arrayBuffer]);
     }).catch(reject);
 

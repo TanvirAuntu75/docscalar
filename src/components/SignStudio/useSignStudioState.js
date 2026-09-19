@@ -273,9 +273,10 @@ export function useSignStudioState(initialFields = []) {
    */
   const clearAllFields = useCallback(() => {
     setFields([]);
-    recordHistory([]);
+    setHistory([[]]);
+    setHistoryIndex(0);
     setSelectedFieldId(null);
-  }, [recordHistory]);
+  }, []);
 
   /**
    * Get all fields for a specific page index

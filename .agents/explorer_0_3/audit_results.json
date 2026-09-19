@@ -1,0 +1,3041 @@
+[
+  {
+    "filename": "adam_fletcher.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Adam Fletcher",
+      "Adam Fletcher"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Adam Fletcher",
+      "Adam",
+      "Adam Fletcher",
+      "Language"
+    ],
+    "df_field_count": 16,
+    "unique_df_field_count": 15,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "custom:custom_languages:${idx}:title",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location"
+    ]
+  },
+  {
+    "filename": "adeline_palmerston.js",
+    "has_pagination": true,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Adeline Palmerston",
+      "Adeline Palmerston",
+      "Adeline Palmerston"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Adeline Palmerston",
+      "Adeline",
+      "Additional Information",
+      "Adeline Palmerston",
+      "Adeline Palmerston"
+    ],
+    "df_field_count": 28,
+    "unique_df_field_count": 26,
+    "duplicate_stamps": 2,
+    "sample_df_fields": [
+      "cert:${actualIdx}",
+      "custom:${cs.id}:${idx}:title",
+      "custom:${cs.id}:${idx}:value",
+      "custom:custom_languages:${idx}:title",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${actualIdx}:company",
+      "exp:${actualIdx}:date"
+    ]
+  },
+  {
+    "filename": "adora_diagonal.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Languages",
+      "Candidate Name"
+    ],
+    "df_field_count": 15,
+    "unique_df_field_count": 14,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "adora_montminy.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Language"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 15,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "custom:custom_languages:${idx}:title",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location"
+    ]
+  },
+  {
+    "filename": "alfredo_torres.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Alfredo Torres",
+      "Alfredo Torres",
+      "Alfredo Torres"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "PRESENT",
+      "Alfredo Torres",
+      "Alfredo Torres",
+      "Alfredo Torres"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "alvarado_slate.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 22,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 2,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:highlight:0",
+      "exp:${idx}:role"
+    ]
+  },
+  {
+    "filename": "amsterdam_orange.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 19,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "arthur_pendelton.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Arthur Pendelton",
+      "Arthur Pendelton",
+      "Arthur Pendelton"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "PRESENT",
+      "Arthur Pendelton",
+      "Arthur Pendelton",
+      "Arthur Pendelton"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "austin_amber.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 19,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "barcelona_cyan.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "berlin_two_tone.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": false,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "bordeaux_wine.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "boston_crimson.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "buenos_aires_tango.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "cairo_gold.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "cambridge_rose.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "cape_town_sunset.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "card_matrix.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 16,
+    "unique_df_field_count": 15,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "charles.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Languages",
+      "Candidate Name"
+    ],
+    "df_field_count": 19,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin",
+      "location"
+    ]
+  },
+  {
+    "filename": "copenhagen_sand.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 19,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "date_capsule.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 11,
+    "unique_df_field_count": 10,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "name",
+      "summary",
+      "title"
+    ]
+  },
+  {
+    "filename": "diagonal_wedge.js",
+    "has_pagination": true,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 24,
+    "unique_df_field_count": 20,
+    "duplicate_stamps": 3,
+    "sample_df_fields": [
+      "cert:${cIdx}",
+      "edu:${eIdx}:date",
+      "edu:${eIdx}:degree",
+      "edu:${eIdx}:school",
+      "email",
+      "exp:${actualIdx}:company",
+      "exp:${actualIdx}:date",
+      "exp:${actualIdx}:highlight:${hIdx}",
+      "exp:${actualIdx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "donna_stroupe.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Donna Stroupe"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Donna Stroupe",
+      "Language"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "dublin_forest.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "edinburgh_navy.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 15,
+    "unique_df_field_count": 14,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "emerald_prestige.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "emma.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": false,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Languages",
+      "Candidate Name"
+    ],
+    "df_field_count": 16,
+    "unique_df_field_count": 15,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "floating_card_matrix.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "florence_terracotta.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "geneva_charcoal.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "helsinki_frost.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 15,
+    "unique_df_field_count": 14,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "helsinki_navy.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 19,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "howard_ong.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Howard Ong"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Howard Ong"
+    ],
+    "df_field_count": 16,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "isabel_mercado.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "ISABEL MERCADO",
+      "Isabel Mercado"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "ISABEL MERCADO",
+      "ISABEL",
+      "Isabel Mercado"
+    ],
+    "df_field_count": 16,
+    "unique_df_field_count": 15,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "isabel_schumacher.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Isabel Schumacher",
+      "Isabel Schumacher"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Isabel Schumacher",
+      "Isabel",
+      "Isabel Schumacher",
+      "Language"
+    ],
+    "df_field_count": 15,
+    "unique_df_field_count": 15,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "custom:custom_languages:${idx}:title",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location"
+    ]
+  },
+  {
+    "filename": "jonathan.js",
+    "has_pagination": true,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": false,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Additional Information",
+      "Candidate Name"
+    ],
+    "df_field_count": 29,
+    "unique_df_field_count": 27,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "custom:${cs.id}:${idx}:title",
+      "custom:${cs.id}:${idx}:value",
+      "custom:${cs.id}:title",
+      "edu:${actualIdx}:date",
+      "edu:${actualIdx}:degree",
+      "edu:${actualIdx}:school",
+      "email",
+      "exp:${actualIdx}:company",
+      "exp:${actualIdx}:date"
+    ]
+  },
+  {
+    "filename": "jonathan_patterson.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Jonathan Patterson",
+      "Jonathan Patterson"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Language",
+      "Jonathan Patterson",
+      "Jonathan Patterson"
+    ],
+    "df_field_count": 19,
+    "unique_df_field_count": 19,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "custom:custom_languages:${idx}:title",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location"
+    ]
+  },
+  {
+    "filename": "kathleen.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Languages",
+      "Candidate Name"
+    ],
+    "df_field_count": 16,
+    "unique_df_field_count": 15,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "kelly_mint.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Kelly Blackwell"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Kelly Blackwell"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "korina_villanueva.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Korina Villanueva"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Language",
+      "Korina Villanueva"
+    ],
+    "df_field_count": 19,
+    "unique_df_field_count": 19,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "custom:custom_languages:${idx}:title",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location"
+    ]
+  },
+  {
+    "filename": "kyiv_golden.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "kyoto_coral.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 19,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "lilac_sidebar.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "lorna_alvarado.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Lorna Alvarado",
+      "Lorna Alvarado"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Lorna Alvarado",
+      "LORNA",
+      "Lorna Alvarado",
+      "Language"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "custom:custom_languages:${idx}:title",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location"
+    ]
+  },
+  {
+    "filename": "lyon_lavender.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "madrid_sun.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 19,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "manhattan_noir.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "marcus_vance.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Marcus Vance",
+      "Marcus Vance",
+      "Marcus Vance"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "PRESENT",
+      "Marcus Vance",
+      "Marcus Vance",
+      "Marcus Vance"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location"
+    ]
+  },
+  {
+    "filename": "mariana.js",
+    "has_pagination": true,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Languages",
+      "Additional Information",
+      "Candidate Name"
+    ],
+    "df_field_count": 30,
+    "unique_df_field_count": 26,
+    "duplicate_stamps": 3,
+    "sample_df_fields": [
+      "cert:${actualIdx}",
+      "custom:${cs.id}:${idx}:title",
+      "custom:${cs.id}:${idx}:value",
+      "custom:${langSection.id}:${idx}:title",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${actualIdx}:company",
+      "exp:${actualIdx}:date"
+    ]
+  },
+  {
+    "filename": "milan_blush.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "montreal_frost.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "ocean_block.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "olivia.js",
+    "has_pagination": true,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Languages",
+      "Additional Information",
+      "Candidate Name"
+    ],
+    "df_field_count": 33,
+    "unique_df_field_count": 29,
+    "duplicate_stamps": 3,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "custom:${cs.id}:${idx}:title",
+      "custom:${cs.id}:${idx}:value",
+      "custom:${cs.id}:title",
+      "custom:${langSection.id}:${idx}:title",
+      "custom:${langSection.id}:${idx}:value",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email"
+    ]
+  },
+  {
+    "filename": "ong_burgundy.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "osaka_minimal.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 19,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "oslo_taupe.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "overlapping_badge.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "oxford_burgundy.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 15,
+    "unique_df_field_count": 14,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "prague_brass.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "reykjavik_slate.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "richard.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Language",
+      "Candidate Name"
+    ],
+    "df_field_count": 15,
+    "unique_df_field_count": 14,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "richard_sanchez.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Richard Sanchez",
+      "Richard Sanchez"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Richard Sanchez",
+      "RICHARD",
+      "Richard Sanchez",
+      "Language"
+    ],
+    "df_field_count": 16,
+    "unique_df_field_count": 15,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "custom:custom_languages:${idx}:title",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:0",
+      "exp:${idx}:role",
+      "location"
+    ]
+  },
+  {
+    "filename": "sage_pastel.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "san_francisco_skyline.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 19,
+    "unique_df_field_count": 18,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "sanchez_dark.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Languages",
+      "Candidate Name"
+    ],
+    "df_field_count": 15,
+    "unique_df_field_count": 14,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "sanchez_mono.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Languages",
+      "Candidate Name"
+    ],
+    "df_field_count": 15,
+    "unique_df_field_count": 14,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "sanchez_wave.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 14,
+    "unique_df_field_count": 13,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "schumacher_charcoal.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Languages",
+      "Candidate Name"
+    ],
+    "df_field_count": 15,
+    "unique_df_field_count": 14,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "seattle_emerald.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "sebastian_bennett.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Sebastian Bennett",
+      "Sebastian Bennett"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Sebastian Bennett",
+      "SEBASTIAN",
+      "Sebastian Bennett"
+    ],
+    "df_field_count": 16,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "seoul_neon.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "singapore_ruby.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "split_dual_block.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "stockholm_monochrome.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "stockholm_yellow.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "terracotta_arch.js",
+    "has_pagination": false,
+    "has_a4_strict": true,
+    "has_794": true,
+    "has_1123": true,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Adeline Palmerston",
+      "Candidate"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Adeline Palmerston",
+      "Adeline",
+      "Candidate"
+    ],
+    "df_field_count": 12,
+    "unique_df_field_count": 12,
+    "duplicate_stamps": 0,
+    "sample_df_fields": [
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${bIdx}",
+      "exp:${idx}:role",
+      "location",
+      "name",
+      "phone",
+      "skill:${idx}"
+    ]
+  },
+  {
+    "filename": "tokyo_ice_blue.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "vancouver_pine.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "venice_sand_split.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 18,
+    "unique_df_field_count": 17,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "vienna_crest.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 15,
+    "unique_df_field_count": 14,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "violet_modern.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "wilson_light.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Language",
+      "Candidate Name"
+    ],
+    "df_field_count": 16,
+    "unique_df_field_count": 15,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "wilson_minimal.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  },
+  {
+    "filename": "ziv_olive.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Languages",
+      "Candidate Name"
+    ],
+    "df_field_count": 16,
+    "unique_df_field_count": 15,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin",
+      "location",
+      "name"
+    ]
+  },
+  {
+    "filename": "zurich_slate_block.js",
+    "has_pagination": false,
+    "has_a4_strict": false,
+    "has_794": true,
+    "has_1123": false,
+    "has_media_print": true,
+    "has_color_adjust": true,
+    "has_page_break": true,
+    "has_photo_url": true,
+    "has_overflow_hidden": true,
+    "fallbacks_name": [
+      "Candidate Name"
+    ],
+    "fallbacks_title": [],
+    "fallbacks_summary": [],
+    "fallbacks_other": [
+      "Candidate Name"
+    ],
+    "df_field_count": 17,
+    "unique_df_field_count": 16,
+    "duplicate_stamps": 1,
+    "sample_df_fields": [
+      "cert:${idx}",
+      "edu:${idx}:date",
+      "edu:${idx}:degree",
+      "edu:${idx}:school",
+      "email",
+      "exp:${idx}:company",
+      "exp:${idx}:date",
+      "exp:${idx}:highlight:${hIdx}",
+      "exp:${idx}:role",
+      "linkedin"
+    ]
+  }
+]

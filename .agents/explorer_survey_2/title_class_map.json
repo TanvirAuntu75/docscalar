@@ -1,0 +1,625 @@
+[
+  {
+    "templateKey": "adam_fletcher",
+    "file": "adam_fletcher.js",
+    "tag": "div",
+    "existingClass": "header-job-title",
+    "titleLine": "${title ? `<div class=\"header-job-title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "adeline_palmerston",
+    "file": "adeline_palmerston.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "adora_diagonal",
+    "file": "adora_diagonal.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "adora_montminy",
+    "file": "adora_montminy.js",
+    "tag": "div",
+    "existingClass": "job-title",
+    "titleLine": "${title ? `<div class=\"job-title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "alfredo_torres",
+    "file": "alfredo_torres.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "alvarado_slate",
+    "file": "alvarado_slate.js",
+    "tag": "div",
+    "existingClass": "role",
+    "titleLine": "${title ? `<div class=\"role\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "amsterdam_orange",
+    "file": "amsterdam_orange.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "arthur_pendelton",
+    "file": "arthur_pendelton.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "austin_amber",
+    "file": "austin_amber.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "barcelona_cyan",
+    "file": "barcelona_cyan.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "berlin_two_tone",
+    "file": "berlin_two_tone.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "bordeaux_wine",
+    "file": "bordeaux_wine.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "boston_crimson",
+    "file": "boston_crimson.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "buenos_aires_tango",
+    "file": "buenos_aires_tango.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "cairo_gold",
+    "file": "cairo_gold.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "cambridge_rose",
+    "file": "cambridge_rose.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "cape_town_sunset",
+    "file": "cape_town_sunset.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "card_matrix",
+    "file": "card_matrix.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "charles",
+    "file": "charles.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "copenhagen_sand",
+    "file": "copenhagen_sand.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "date_capsule",
+    "file": "date_capsule.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "diagonal_wedge",
+    "file": "diagonal_wedge.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "donna_stroupe",
+    "file": "donna_stroupe.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${title ? `<div class=\"candidate-title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "dublin_forest",
+    "file": "dublin_forest.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "edinburgh_navy",
+    "file": "edinburgh_navy.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${title ? `<div class=\"title\" data-df-field=\"title\">${title}</div>` : ''}"
+  },
+  {
+    "templateKey": "emerald_prestige",
+    "file": "emerald_prestige.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "emma",
+    "file": "emma.js",
+    "tag": "div",
+    "existingClass": "title-sub",
+    "titleLine": "${data.title ? `<div class=\"title-sub\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "floating_card_matrix",
+    "file": "floating_card_matrix.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "florence_terracotta",
+    "file": "florence_terracotta.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "geneva_charcoal",
+    "file": "geneva_charcoal.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "harvard_classic",
+    "file": "harvard_classic.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${safeData.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "helsinki_frost",
+    "file": "helsinki_frost.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "helsinki_navy",
+    "file": "helsinki_navy.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "howard_ong",
+    "file": "howard_ong.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "isabel_mercado",
+    "file": "isabel_mercado.js",
+    "tag": "div",
+    "existingClass": "job-title",
+    "titleLine": "${data.title ? `<div class=\"job-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "isabel_schumacher",
+    "file": "isabel_schumacher.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "jonathan",
+    "file": "jonathan.js",
+    "tag": "div",
+    "existingClass": "title-sub",
+    "titleLine": "${data.title ? `<div class=\"title-sub\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "jonathan_patterson",
+    "file": "jonathan_patterson.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "kathleen",
+    "file": "kathleen.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "kelly_mint",
+    "file": "kelly_mint.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "korina_villanueva",
+    "file": "korina_villanueva.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "kyiv_golden",
+    "file": "kyiv_golden.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "kyoto_coral",
+    "file": "kyoto_coral.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "lilac_sidebar",
+    "file": "lilac_sidebar.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "lorna_alvarado",
+    "file": "lorna_alvarado.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "lyon_lavender",
+    "file": "lyon_lavender.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "madrid_sun",
+    "file": "madrid_sun.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "manhattan_noir",
+    "file": "manhattan_noir.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "marcus_vance",
+    "file": "marcus_vance.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "mariana",
+    "file": "mariana.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "milan_blush",
+    "file": "milan_blush.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "montreal_frost",
+    "file": "montreal_frost.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "ocean_block",
+    "file": "ocean_block.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "olivia",
+    "file": "olivia.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "ong_burgundy",
+    "file": "ong_burgundy.js",
+    "tag": "div",
+    "existingClass": "role",
+    "titleLine": "${data.title ? `<div class=\"role\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "osaka_minimal",
+    "file": "osaka_minimal.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "oslo_taupe",
+    "file": "oslo_taupe.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "overlapping_badge",
+    "file": "overlapping_badge.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "oxford_burgundy",
+    "file": "oxford_burgundy.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "oxford_minimalist",
+    "file": "oxford_minimalist.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "prague_brass",
+    "file": "prague_brass.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "reykjavik_slate",
+    "file": "reykjavik_slate.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "richard",
+    "file": "richard.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "richard_sanchez",
+    "file": "richard_sanchez.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "sage_pastel",
+    "file": "sage_pastel.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "san_francisco_skyline",
+    "file": "san_francisco_skyline.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "sanchez_dark",
+    "file": "sanchez_dark.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "sanchez_mono",
+    "file": "sanchez_mono.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "sanchez_wave",
+    "file": "sanchez_wave.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "schumacher_charcoal",
+    "file": "schumacher_charcoal.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${data.title ? `<div class=\"title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "seattle_emerald",
+    "file": "seattle_emerald.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "sebastian_bennett",
+    "file": "sebastian_bennett.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${safeData.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "seoul_neon",
+    "file": "seoul_neon.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "silicon_valley_ats",
+    "file": "silicon_valley_ats.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${safeData.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "singapore_ruby",
+    "file": "singapore_ruby.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "split_dual_block",
+    "file": "split_dual_block.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "stockholm_monochrome",
+    "file": "stockholm_monochrome.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "stockholm_yellow",
+    "file": "stockholm_yellow.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "terracotta_arch",
+    "file": "terracotta_arch.js",
+    "tag": "span",
+    "existingClass": "candidate-title",
+    "titleLine": "<span class=\"candidate-title\" data-df-field=\"title\">${safeData.title}</span>"
+  },
+  {
+    "templateKey": "tokyo_ice_blue",
+    "file": "tokyo_ice_blue.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "vancouver_pine",
+    "file": "vancouver_pine.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "venice_sand_split",
+    "file": "venice_sand_split.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "vienna_crest",
+    "file": "vienna_crest.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "violet_modern",
+    "file": "violet_modern.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "wall_street_executive",
+    "file": "wall_street_executive.js",
+    "tag": "div",
+    "existingClass": "candidate-title",
+    "titleLine": "${data.title ? `<div class=\"candidate-title\" data-df-field=\"title\">${data.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "wilson_light",
+    "file": "wilson_light.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "wilson_minimal",
+    "file": "wilson_minimal.js",
+    "tag": "div",
+    "existingClass": "role",
+    "titleLine": "${safeData.title ? `<div class=\"role\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "ziv_olive",
+    "file": "ziv_olive.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  },
+  {
+    "templateKey": "zurich_slate_block",
+    "file": "zurich_slate_block.js",
+    "tag": "div",
+    "existingClass": "title",
+    "titleLine": "${safeData.title ? `<div class=\"title\" data-df-field=\"title\">${safeData.title}</div>` : ''}"
+  }
+]

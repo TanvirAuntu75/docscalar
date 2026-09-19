@@ -1,26 +1,30 @@
 import { useState, useEffect, useRef } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
-import { docxToPdf } from '../../engines/document/docxToPdf';
+import { docxToPdf, isLegacyDocFormat, extractDocxElements } from '../../engines/document/docxToPdf';
 import { apiFetch, uploadFileSecure, BACKEND_URL } from '../../utils/api';
 import { useJobPoller } from '../../hooks/useJobPoller';
 import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
 import {
   FileText,
   Sparkles,
   Download,
-  Cpu,
-  Server,
+  Zap,
   FileCheck,
   Layout,
-  Maximize2
+  Archive,
+  ArrowLeft,
+  XCircle,
+  AlertCircle
 } from 'lucide-react';
 
 export default function DocxToPdf() {
+  const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [activeFileIndex, setActiveFileIndex] = useState(0);
 
@@ -28,14 +32,16 @@ export default function DocxToPdf() {
   const [zoomScale, setZoomScale] = useState(1.0);
   const [docLoading, setDocLoading] = useState(false);
   const [previewError, setPreviewError] = useState(null);
+  const [isLegacyDoc, setIsLegacyDoc] = useState(false);
+  const [docxTelemetry, setDocxTelemetry] = useState(null);
 
   // Conversion Configuration State
-  const [engineMode, setEngineMode] = useState('client'); // 'client' | 'server'
+  const [engineMode, setEngineMode] = useState('server'); // 'client' | 'server'
   const [pageSize, setPageSize] = useState('a4'); // 'a4' | 'letter'
   const [orientation, setOrientation] = useState('portrait'); // 'portrait' | 'landscape'
   const [outputFileName, setOutputFileName] = useState('');
 
-  // Processing & Poller
+  // Processing, Poller & Cancellation
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [statusMessage, setStatusMessage] = useState('');
@@ -44,19 +50,32 @@ export default function DocxToPdf() {
   const [error, setError] = useState(null);
 
   const previewContainerRef = useRef(null);
+  const abortControllerRef = useRef(null);
   const poller = useJobPoller(BACKEND_URL);
 
   // 1. Check Server Availability
   useEffect(() => {
+    let isMounted = true;
     const checkServer = async () => {
       try {
-        const res = await apiFetch(`${BACKEND_URL}/api/meta/conversions`, { signal: AbortSignal.timeout(1500) });
-        if (res.ok) setBackendActive(true);
+        const res = await apiFetch(`${BACKEND_URL}/api/meta/conversions`, {
+          signal: AbortSignal.timeout(2000)
+        });
+        if (res.ok && isMounted) {
+          setBackendActive(true);
+          setEngineMode('server');
+        }
       } catch (e) {
-        setBackendActive(false);
+        if (isMounted) {
+          setBackendActive(false);
+          setEngineMode('client');
+        }
       }
     };
     checkServer();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // 2. Restore Draft Session on Mount
@@ -80,7 +99,7 @@ export default function DocxToPdf() {
           if (draft.outputFileName) setOutputFileName(draft.outputFileName);
         }
       } catch (err) {
-        console.warn('DOCX to PDF draft recovery failed:', err);
+        console.warn('DOCX to PDF draft recovery notice:', err);
       }
     };
     restoreSession();
@@ -91,7 +110,7 @@ export default function DocxToPdf() {
 
   // 3. Save Draft Session on State Change
   useEffect(() => {
-    if (files.length > 0) {
+    if (files.length > 0 && !result) {
       saveStudioDraft('docx-to-pdf', {
         files,
         engineMode,
@@ -100,7 +119,7 @@ export default function DocxToPdf() {
         outputFileName
       });
     }
-  }, [files, engineMode, pageSize, orientation, outputFileName]);
+  }, [files, engineMode, pageSize, orientation, outputFileName, result]);
 
   // 4. Render Live Word Document Preview using docx-preview
   useEffect(() => {
@@ -113,8 +132,61 @@ export default function DocxToPdf() {
       setDocLoading(true);
       setPreviewError(null);
       try {
-        const { renderAsync } = await import('docx-preview');
         const arrayBuffer = await currentFile.arrayBuffer();
+        if (!isMounted) return;
+
+        // Check if legacy Word 97-2003 format
+        const isLegacy = isLegacyDocFormat(arrayBuffer) || currentFile.name.toLowerCase().endsWith('.doc');
+        setIsLegacyDoc(isLegacy);
+
+        let telemetry = {
+          paragraphsCount: 0,
+          tablesCount: 0,
+          estWords: 0,
+          hasTables: false,
+          format: isLegacy ? 'Word 97-2003 (.doc)' : 'OpenXML (.docx)'
+        };
+
+        if (isLegacy) {
+          if (previewContainerRef.current) previewContainerRef.current.innerHTML = '';
+          setPreviewError('Legacy Word (.doc) format detected. Full Precision mode is recommended for complete formatting.');
+          if (backendActive) setEngineMode('server');
+          if (isMounted) setDocxTelemetry(telemetry);
+          return;
+        }
+
+        // Extract telemetry from OpenXML package
+        try {
+          const zip = await JSZip.loadAsync(arrayBuffer);
+          const docXmlFile = zip.file('word/document.xml');
+          if (docXmlFile) {
+            const xmlStr = await docXmlFile.async('string');
+            const elements = extractDocxElements(xmlStr);
+            let pCount = 0;
+            let tCount = 0;
+            let wordCount = 0;
+            elements.forEach((el) => {
+              if (el.isTable) tCount++;
+              else pCount++;
+              if (el.text) {
+                const words = el.text.trim().split(/\s+/).filter(Boolean);
+                wordCount += words.length;
+              }
+            });
+            telemetry = {
+              paragraphsCount: pCount,
+              tablesCount: tCount,
+              estWords: wordCount,
+              hasTables: tCount > 0,
+              format: 'OpenXML (.docx)'
+            };
+          }
+        } catch (zipErr) {
+          console.warn('Docx telemetry extraction notice:', zipErr);
+        }
+        if (isMounted) setDocxTelemetry(telemetry);
+
+        const { renderAsync } = await import('docx-preview');
         if (!isMounted) return;
 
         if (previewContainerRef.current) {
@@ -127,14 +199,14 @@ export default function DocxToPdf() {
           });
         }
 
-        if (!outputFileName) {
+        if (!outputFileName || files.length > 1) {
           const base = currentFile.name.replace(/\.[^.]+$/, '');
           setOutputFileName(`${base}.pdf`);
         }
       } catch (err) {
         if (isMounted) {
-          console.warn('Live Word preview rendering notice:', err);
-          setPreviewError('Live preview simplified. Document will convert with 100% full fidelity.');
+          console.warn('Live Word preview notice:', err);
+          setPreviewError('Simplified preview active. The document will convert with full fidelity.');
         }
       } finally {
         if (isMounted) setDocLoading(false);
@@ -146,7 +218,7 @@ export default function DocxToPdf() {
     return () => {
       isMounted = false;
     };
-  }, [files, activeFileIndex]);
+  }, [files, activeFileIndex, backendActive]);
 
   // 5. Monitor Backend Poller (Server Mode)
   useEffect(() => {
@@ -160,6 +232,7 @@ export default function DocxToPdf() {
         .then((res) => res.blob())
         .then((blob) => {
           setResult({
+            isBatch: false,
             downloadUrl,
             blob,
             name: finalName,
@@ -171,6 +244,7 @@ export default function DocxToPdf() {
         })
         .catch(() => {
           setResult({
+            isBatch: false,
             downloadUrl,
             name: finalName,
             size: files[activeFileIndex]?.size || 0,
@@ -179,69 +253,182 @@ export default function DocxToPdf() {
         });
     } else if (poller.status === 'failed') {
       setProcessing(false);
-      setError(poller.error || 'Server conversion failed.');
+      setError(poller.error || 'Full Precision conversion could not be completed.');
     } else if (poller.status === 'started' || poller.status === 'queued') {
       setProgress(poller.progress || 20);
-      setStatusMessage('Converting Word layout with LibreOffice engine...');
+      setStatusMessage('Converting Word document with desktop rendering engine...');
     }
   }, [poller.status, poller.result, poller.error, poller.progress, files, activeFileIndex]);
 
-  // 6. Execute DOCX to PDF Conversion
-  const handleConvert = async () => {
+  // 6. Cancel Active Conversion
+  const handleCancel = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    poller.resetPoller();
+    setProcessing(false);
+    setProgress(0);
+    setStatusMessage('');
+    setError('Conversion cancelled by user.');
+  };
+
+  // 7. Execute Single or Batch DOCX to PDF Conversion
+  const handleConvert = async (batchMode = false) => {
     if (!files.length) return;
     setProcessing(true);
     setError(null);
     setResult(null);
     setProgress(5);
-    setStatusMessage('Initializing document compiler...');
 
-    const file = files[activeFileIndex] || files[0];
-    const finalName = outputFileName.trim().endsWith('.pdf') ? outputFileName.trim() : `${outputFileName.trim() || file.name.replace(/\.[^.]+$/, '')}.pdf`;
+    abortControllerRef.current = new AbortController();
 
     try {
-      if (engineMode === 'server') {
-        if (!backendActive) throw new Error('Conversion server is unreachable. Please switch to Fast Browser Mode.');
-        setStatusMessage('Uploading document for LibreOffice PDF conversion...');
-        const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
-        if (!uploadData.success) throw new Error(uploadData.detail || 'Upload failed');
+      if (batchMode && files.length > 1) {
+        // Multi-File Batch Conversion
+        setStatusMessage(`Converting batch of ${files.length} Word documents...`);
+        const zip = new JSZip();
+        const convertedItems = [];
 
-        setProgress(40);
-        setStatusMessage('Queueing PDF conversion task...');
-
-        const convertFormData = new FormData();
-        convertFormData.append('file_id', uploadData.file_id);
-        convertFormData.append('filename', uploadData.filename);
-        convertFormData.append('target_format', 'pdf');
-
-        const convertRes = await apiFetch(`${BACKEND_URL}/api/convert`, {
-          method: 'POST',
-          body: convertFormData
-        });
-
-        if (!convertRes.ok) throw new Error('Failed to queue conversion task.');
-        const convertData = await convertRes.json();
-        poller.startPolling(convertData.job_id);
-      } else {
-        setStatusMessage('Rendering Word document into PDF pages...');
-        const pdfBlob = await docxToPdf(
-          file,
-          { pageSize, orientation },
-          (p) => {
-            setProgress(p);
-            setStatusMessage(`Compiling PDF pages... ${p}%`);
+        for (let idx = 0; idx < files.length; idx++) {
+          if (abortControllerRef.current?.signal?.aborted) {
+            throw new Error('Batch conversion was cancelled.');
           }
-        );
+
+          const currentDoc = files[idx];
+          const baseName = currentDoc.name.replace(/\.[^.]+$/, '');
+          const pdfName = `${baseName}.pdf`;
+          const baseProgress = Math.round((idx / files.length) * 100);
+
+          setStatusMessage(`Converting document ${idx + 1} of ${files.length}: ${currentDoc.name}`);
+          setProgress(baseProgress + 2);
+
+          let pdfBlob;
+          if (engineMode === 'server' && backendActive) {
+            const uploadData = await uploadFileSecure(BACKEND_URL, currentDoc);
+            if (!uploadData.success) throw new Error(`Upload failed for ${currentDoc.name}`);
+
+            const convertFormData = new FormData();
+            convertFormData.append('file_id', uploadData.file_id);
+            convertFormData.append('filename', uploadData.filename);
+            convertFormData.append('target_format', 'pdf');
+
+            const convertRes = await apiFetch(`${BACKEND_URL}/api/convert`, {
+              method: 'POST',
+              body: convertFormData
+            });
+            if (!convertRes.ok) throw new Error(`Failed to convert ${currentDoc.name}`);
+            const convertData = await convertRes.json();
+
+            // Poll synchronously for batch item
+            let completed = false;
+            let attempts = 0;
+            while (!completed && attempts < 60) {
+              await new Promise(r => setTimeout(r, 1000));
+              attempts++;
+              const stRes = await apiFetch(`${BACKEND_URL}/api/job/${convertData.job_id}/status`);
+              if (stRes.ok) {
+                const stData = await stRes.json();
+                if (stData.status === 'finished') {
+                  const downRes = await apiFetch(stData.download_url);
+                  pdfBlob = await downRes.blob();
+                  completed = true;
+                } else if (stData.status === 'failed') {
+                  throw new Error(stData.error || `Failed to convert ${currentDoc.name}`);
+                }
+              }
+            }
+            if (!pdfBlob) throw new Error(`Conversion timed out for ${currentDoc.name}`);
+          } else {
+            pdfBlob = await docxToPdf(
+              currentDoc,
+              { pageSize, orientation },
+              (subPct) => {
+                const docStep = Math.round((subPct / 100) * (90 / files.length));
+                setProgress(Math.min(95, baseProgress + docStep));
+              }
+            );
+          }
+
+          zip.file(pdfName, pdfBlob);
+          convertedItems.push({
+            name: pdfName,
+            blob: pdfBlob,
+            size: pdfBlob.size
+          });
+
+          await saveFile(pdfName, pdfBlob.size, 'application/pdf', 'DOCX to PDF', pdfBlob);
+        }
+
+        setStatusMessage('Packaging batch ZIP archive...');
+        setProgress(96);
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const zipName = `converted_pdf_documents_${Date.now()}.zip`;
 
         setProcessing(false);
         setResult({
-          blob: pdfBlob,
-          name: finalName,
-          size: pdfBlob.size,
-          engineMode: 'client'
+          isBatch: true,
+          zipBlob,
+          name: zipName,
+          size: zipBlob.size,
+          items: convertedItems,
+          engineMode
         });
-
-        await saveFile(finalName, pdfBlob.size, 'application/pdf', 'DOCX to PDF', pdfBlob);
         await clearStudioDraft('docx-to-pdf');
+      } else {
+        // Single Active File Conversion
+        const file = files[activeFileIndex] || files[0];
+        const rawName = outputFileName.trim();
+        const finalName = rawName.endsWith('.pdf') ? rawName : `${rawName || file.name.replace(/\.[^.]+$/, '')}.pdf`;
+
+        if (engineMode === 'server') {
+          if (!backendActive) {
+            throw new Error('Cloud conversion engine is currently offline. Please switch to Fast Mode.');
+          }
+          setStatusMessage('Preparing document for high-precision conversion...');
+          const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
+          if (!uploadData.success) throw new Error(uploadData.detail || 'Upload failed.');
+
+          setProgress(35);
+          setStatusMessage('Queueing PDF conversion task...');
+
+          const convertFormData = new FormData();
+          convertFormData.append('file_id', uploadData.file_id);
+          convertFormData.append('filename', uploadData.filename);
+          convertFormData.append('target_format', 'pdf');
+
+          const convertRes = await apiFetch(`${BACKEND_URL}/api/convert`, {
+            method: 'POST',
+            body: convertFormData,
+            signal: abortControllerRef.current.signal
+          });
+
+          if (!convertRes.ok) throw new Error('Failed to queue conversion task.');
+          const convertData = await convertRes.json();
+          poller.startPolling(convertData.job_id);
+        } else {
+          // Client Browser Engine
+          setStatusMessage('Rendering Word document into PDF pages...');
+          const pdfBlob = await docxToPdf(
+            file,
+            { pageSize, orientation },
+            (p) => {
+              setProgress(p);
+              setStatusMessage(`Compiling PDF pages... ${p}%`);
+            }
+          );
+
+          setProcessing(false);
+          setResult({
+            isBatch: false,
+            blob: pdfBlob,
+            name: finalName,
+            size: pdfBlob.size,
+            engineMode: 'client'
+          });
+
+          await saveFile(finalName, pdfBlob.size, 'application/pdf', 'DOCX to PDF', pdfBlob);
+          await clearStudioDraft('docx-to-pdf');
+        }
       }
     } catch (err) {
       setProcessing(false);
@@ -249,13 +436,27 @@ export default function DocxToPdf() {
     }
   };
 
-  const downloadFile = () => {
+  const downloadFile = (item = null) => {
     if (!result) return;
-    if (result.blob) {
+    if (item && item.blob) {
+      saveAs(item.blob, item.name);
+      return;
+    }
+    if (result.isBatch && result.zipBlob) {
+      saveAs(result.zipBlob, result.name);
+    } else if (result.blob) {
       saveAs(result.blob, result.name);
     } else if (result.downloadUrl) {
       window.open(result.downloadUrl, '_blank');
     }
+  };
+
+  // Return to workspace without clearing the file queue
+  const handleReturnToWorkspace = () => {
+    setResult(null);
+    setError(null);
+    setProgress(0);
+    setStatusMessage('');
   };
 
   const resetWorkspace = () => {
@@ -267,21 +468,22 @@ export default function DocxToPdf() {
     setProgress(0);
     setStatusMessage('');
     setOutputFileName('');
+    setDocxTelemetry(null);
     poller.resetPoller();
   };
 
   return (
     <ToolPageLayout
       toolId="docx-to-pdf"
-      title="Word (DOCX) to PDF Studio"
+      title="Word to PDF"
       description="Convert Microsoft Word (.docx, .doc) documents into crisp, printable PDF files with layout preservation."
       files={files}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Word to PDF Converter Online Free (DOCX to PDF) | DocForge"
-        description="Convert Word documents (.docx, .doc) to PDF with 100% formatting fidelity. Fast, secure, and client-side private conversion."
+        title="Word to PDF Converter Online — Convert DOCX to PDF | DocScalar"
+        description="Convert Microsoft Word documents (.docx, .doc) to PDF with precision layout fidelity. Client-side private conversion and desktop high-fidelity support."
       />
 
       {!result ? (
@@ -293,7 +495,7 @@ export default function DocxToPdf() {
             setFiles={setFiles}
           />
         ) : (
-          <div className="flex-1 flex w-full h-full min-h-0 overflow-hidden relative">
+          <div className="flex-1 flex w-full h-full min-h-0 overflow-hidden relative" role="region" aria-label="Word to PDF Workspace">
             {/* ========================================================================= */}
             {/* LEFT / CENTER: Interactive Document Viewport                               */}
             {/* ========================================================================= */}
@@ -307,6 +509,7 @@ export default function DocxToPdf() {
                       <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
                         <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">description</span>
                         <select
+                          aria-label="Active document selector"
                           value={activeFileIndex}
                           onChange={(e) => setActiveFileIndex(parseInt(e.target.value))}
                           className="bg-transparent text-xs font-semibold text-[var(--text-primary)] outline-none cursor-pointer max-w-[180px] truncate"
@@ -334,6 +537,12 @@ export default function DocxToPdf() {
                       <span className="text-[var(--text-tertiary)]">•</span>
                       <span className="capitalize">{orientation}</span>
                     </div>
+
+                    {isLegacyDoc && (
+                      <span className="px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/30 text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                        DOC 97-2003
+                      </span>
+                    )}
                   </div>
 
                   {/* Right Canvas Controls */}
@@ -342,6 +551,7 @@ export default function DocxToPdf() {
                       <span className="material-symbols-outlined text-[15px] text-[var(--text-secondary)]">zoom_in</span>
                       <input
                         type="range"
+                        aria-label="Preview zoom scale"
                         min="0.5"
                         max="1.5"
                         step="0.1"
@@ -356,6 +566,7 @@ export default function DocxToPdf() {
 
                     <button
                       type="button"
+                      aria-label="Reset workspace"
                       onClick={resetWorkspace}
                       className="p-1 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer"
                       title="Reset workspace"
@@ -373,7 +584,7 @@ export default function DocxToPdf() {
                     <span className="material-symbols-outlined text-[32px] animate-spin text-[var(--color-primary)]">
                       progress_activity
                     </span>
-                    <span className="text-xs font-semibold">Rendering Word document layout...</span>
+                    <span className="text-xs font-semibold">Reading Word document layout...</span>
                   </div>
                 ) : (
                   <div
@@ -386,11 +597,16 @@ export default function DocxToPdf() {
                     }}
                   >
                     {previewError && (
-                      <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-700 dark:text-amber-300 font-medium">
-                        {previewError}
+                      <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-700 dark:text-amber-300 font-medium flex items-center gap-2">
+                        <AlertCircle size={15} className="shrink-0" />
+                        <span>{previewError}</span>
                       </div>
                     )}
-                    <div ref={previewContainerRef} className="docx-preview-host prose prose-slate max-w-none text-left" />
+                    <div
+                      ref={previewContainerRef}
+                      className="docx-preview-host prose prose-slate max-w-none text-left bg-white text-slate-900"
+                      style={{ color: '#1e293b' }}
+                    />
                   </div>
                 )}
               </div>
@@ -408,32 +624,64 @@ export default function DocxToPdf() {
                   </span>
                 </div>
                 <span className="text-xs font-bold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2 py-0.5 rounded-full">
-                  DOCX
+                  {files.length > 1 ? `${files.length} Files` : 'DOCX'}
                 </span>
               </div>
 
               <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+                {/* Pre-Flight Document Telemetry */}
+                {docxTelemetry && (
+                  <div className="p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] space-y-2 text-xs">
+                    <div className="flex justify-between items-center text-[var(--text-secondary)]">
+                      <span className="font-medium">Document Format</span>
+                      <span className={`font-bold px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider ${
+                        isLegacyDoc
+                          ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                          : 'bg-blue-500/15 text-blue-600 dark:text-blue-400'
+                      }`}>
+                        {docxTelemetry.format}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-[var(--text-secondary)]">
+                      <span className="font-medium">Est. Word Count</span>
+                      <span className="font-bold text-[var(--text-primary)]">
+                        {isLegacyDoc ? 'N/A (Binary)' : `~${docxTelemetry.estWords.toLocaleString()}`}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-[var(--text-secondary)]">
+                      <span className="font-medium">Structure</span>
+                      <span className="font-bold text-[var(--text-primary)]">
+                        {isLegacyDoc ? 'Legacy Binary' : `${docxTelemetry.paragraphsCount} p / ${docxTelemetry.tablesCount} ${docxTelemetry.tablesCount === 1 ? 'tbl' : 'tbls'}`}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* 1. Conversion Engine */}
                 <div className="flex flex-col gap-1.5">
                   <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
                     Conversion Engine
                   </span>
-                  <div className="grid grid-cols-2 gap-1.5 bg-[var(--bg-secondary)] p-1 rounded-xl border border-[var(--border-subtle)]">
+                  <div className="grid grid-cols-2 gap-1.5 bg-[var(--bg-secondary)] p-1 rounded-xl border border-[var(--border-subtle)]" role="group" aria-label="Engine Mode">
                     <button
                       type="button"
+                      aria-pressed={engineMode === 'client'}
                       onClick={() => setEngineMode('client')}
+                      disabled={isLegacyDoc}
                       className={`py-2 px-1 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 transition-all cursor-pointer ${
                         engineMode === 'client'
                           ? 'bg-[var(--color-primary)] text-white shadow-xs'
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                      }`}
+                      } ${isLegacyDoc ? 'opacity-40 cursor-not-allowed' : ''}`}
                     >
-                      <Cpu size={14} />
-                      <span>Fast Browser (Private)</span>
+                      <Zap size={14} />
+                      <span>Fast Mode</span>
+                      <span className={`text-[10px] ${engineMode === 'client' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>Instant · Private</span>
                     </button>
 
                     <button
                       type="button"
+                      aria-pressed={engineMode === 'server'}
                       onClick={() => setEngineMode('server')}
                       className={`py-2 px-1 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 transition-all cursor-pointer ${
                         engineMode === 'server'
@@ -441,10 +689,18 @@ export default function DocxToPdf() {
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      <Server size={14} />
-                      <span>LibreOffice Server</span>
+                      <Sparkles size={14} />
+                      <span>Full Precision</span>
+                      <span className={`text-[10px] ${engineMode === 'server' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>Native Layout</span>
                     </button>
                   </div>
+                  <span className="text-[10px] text-[var(--text-tertiary)] px-1">
+                    {isLegacyDoc
+                      ? 'Legacy Word 97-2003 format requires Full Precision mode.'
+                      : engineMode === 'server'
+                      ? 'Full layout fidelity using native document rendering.'
+                      : 'Instant vector compiler for private offline execution.'}
+                  </span>
                 </div>
 
                 {/* 2. Page Size */}
@@ -452,7 +708,7 @@ export default function DocxToPdf() {
                   <label className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
                     Page Size
                   </label>
-                  <div className="grid grid-cols-2 gap-1.5 bg-[var(--bg-secondary)] p-1 rounded-xl border border-[var(--border-subtle)]">
+                  <div className="grid grid-cols-2 gap-1.5 bg-[var(--bg-secondary)] p-1 rounded-xl border border-[var(--border-subtle)]" role="group" aria-label="Page Size">
                     {[
                       { id: 'a4', label: 'A4 (210×297mm)' },
                       { id: 'letter', label: 'US Letter' }
@@ -460,6 +716,7 @@ export default function DocxToPdf() {
                       <button
                         key={ps.id}
                         type="button"
+                        aria-pressed={pageSize === ps.id}
                         onClick={() => setPageSize(ps.id)}
                         className={`py-1.5 text-xs rounded-lg font-semibold transition-all cursor-pointer text-center ${
                           pageSize === ps.id
@@ -478,7 +735,7 @@ export default function DocxToPdf() {
                   <label className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
                     Orientation
                   </label>
-                  <div className="grid grid-cols-2 gap-1.5 bg-[var(--bg-secondary)] p-1 rounded-xl border border-[var(--border-subtle)]">
+                  <div className="grid grid-cols-2 gap-1.5 bg-[var(--bg-secondary)] p-1 rounded-xl border border-[var(--border-subtle)]" role="group" aria-label="Orientation">
                     {[
                       { id: 'portrait', label: 'Portrait' },
                       { id: 'landscape', label: 'Landscape' }
@@ -486,6 +743,7 @@ export default function DocxToPdf() {
                       <button
                         key={o.id}
                         type="button"
+                        aria-pressed={orientation === o.id}
                         onClick={() => setOrientation(o.id)}
                         className={`py-1.5 text-xs rounded-lg font-semibold transition-all cursor-pointer text-center ${
                           orientation === o.id
@@ -499,25 +757,28 @@ export default function DocxToPdf() {
                   </div>
                 </div>
 
-                {/* 4. Output File Name */}
-                <div className="flex flex-col gap-1 pt-2 border-t border-[var(--border-subtle)]">
-                  <label className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-                    Output PDF Name
-                  </label>
-                  <input
-                    type="text"
-                    value={outputFileName}
-                    onChange={(e) => setOutputFileName(e.target.value)}
-                    placeholder="document.pdf"
-                    className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none"
-                  />
-                </div>
+                {/* 4. Output File Name (Single File Mode) */}
+                {files.length === 1 && (
+                  <div className="flex flex-col gap-1 pt-2 border-t border-[var(--border-subtle)]">
+                    <label className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                      Output PDF Name
+                    </label>
+                    <input
+                      type="text"
+                      aria-label="Custom output PDF name"
+                      value={outputFileName}
+                      onChange={(e) => setOutputFileName(e.target.value)}
+                      placeholder="document.pdf"
+                      className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none"
+                    />
+                  </div>
+                )}
 
                 {/* Progress Bar (While Processing) */}
                 {processing && (
-                  <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
+                  <div className="flex flex-col gap-2 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]" aria-live="polite">
                     <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
+                      <span className="flex items-center gap-1.5 truncate max-w-[190px]">
                         <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
                           progress_activity
                         </span>
@@ -531,36 +792,57 @@ export default function DocxToPdf() {
                         style={{ width: `${progress}%` }}
                       />
                     </div>
+                    <button
+                      type="button"
+                      onClick={handleCancel}
+                      className="self-end text-[11px] text-red-500 hover:underline cursor-pointer font-semibold flex items-center gap-1 pt-1"
+                    >
+                      <XCircle size={13} />
+                      <span>Cancel</span>
+                    </button>
                   </div>
                 )}
 
                 {error && (
-                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium">
-                    {error}
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium flex items-start gap-2">
+                    <AlertCircle size={15} className="shrink-0 mt-0.5" />
+                    <span>{error}</span>
                   </div>
                 )}
               </div>
 
-              {/* Sticky Primary CTA Action Button */}
-              <div className="p-4 border-t border-[var(--border-subtle)] bg-[var(--bg-primary)]">
+              {/* Sticky Primary CTA Action Buttons */}
+              <div className="p-4 border-t border-[var(--border-subtle)] bg-[var(--bg-primary)] flex flex-col gap-2">
                 <button
                   type="button"
-                  onClick={handleConvert}
+                  onClick={() => handleConvert(false)}
                   disabled={processing || files.length === 0 || (engineMode === 'server' && !backendActive)}
-                  className="w-full py-3 px-4 bg-[var(--color-primary)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl shadow-lg shadow-[var(--color-primary)]/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
+                  className="w-full py-3 px-4 bg-[var(--color-primary)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl shadow-lg shadow-[var(--color-primary)]/25 flex items-center justify-center gap-2 cursor-pointer transition-all whitespace-nowrap"
                 >
                   {processing ? (
                     <>
                       <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
-                      <span>Converting to PDF ({progress}%)...</span>
+                      <span>Converting ({progress}%)...</span>
                     </>
                   ) : (
                     <>
                       <Sparkles size={16} />
-                      <span>Convert to PDF</span>
+                      <span>{files.length > 1 ? `Convert Active (${files[activeFileIndex]?.name.slice(0, 16)}...)` : 'Convert to PDF'}</span>
                     </>
                   )}
                 </button>
+
+                {files.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleConvert(true)}
+                    disabled={processing || (engineMode === 'server' && !backendActive)}
+                    className="w-full py-2.5 px-3 bg-[var(--bg-secondary)] hover:bg-[var(--border-subtle)] text-[var(--text-primary)] font-semibold text-xs rounded-xl border border-[var(--border-subtle)] flex items-center justify-center gap-1.5 cursor-pointer transition-all whitespace-nowrap"
+                  >
+                    <Archive size={14} className="text-[var(--color-primary)]" />
+                    <span>Convert All {files.length} Documents (ZIP)</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -573,19 +855,21 @@ export default function DocxToPdf() {
           <div className="max-w-xl w-full p-8 sm:p-10 bg-[var(--bg-primary)] border border-[var(--border-subtle)] rounded-3xl shadow-xl shadow-black/5 dark:shadow-black/25 flex flex-col items-center text-center gap-6 animate-[scaleIn_0.22s_ease-out]">
             {/* Celebration Icon Badge */}
             <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/10">
-              <span className="material-symbols-outlined text-[40px]">check_circle</span>
+              {result.isBatch ? <Archive size={40} /> : <span className="material-symbols-outlined text-[40px]">check_circle</span>}
             </div>
 
             {/* Title & Document Pill */}
             <div className="flex flex-col gap-2 max-w-md">
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight">
-                PDF Document Created!
+                {result.isBatch ? 'Batch PDFs Created!' : 'PDF Document Created!'}
               </h2>
               <p className="text-sm text-[var(--text-secondary)]">
-                Your Microsoft Word document has been converted into a high-fidelity PDF.
+                {result.isBatch
+                  ? `Successfully converted ${result.items.length} Word documents into standard PDF files.`
+                  : 'Your Microsoft Word document has been converted into a high-fidelity PDF.'}
               </p>
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-full text-xs font-semibold text-[var(--text-primary)] mx-auto mt-2 max-w-full">
-                <FileCheck size={16} className="text-emerald-500" />
+                <FileCheck size={16} className="text-emerald-500 shrink-0" />
                 <span className="truncate max-w-[220px]">{result.name}</span>
                 {result.size && (
                   <>
@@ -599,8 +883,12 @@ export default function DocxToPdf() {
             {/* Telemetry Diagnostics Grid */}
             <div className="grid grid-cols-3 gap-2.5 w-full">
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
-                <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Page Size</span>
-                <span className="text-base font-extrabold text-[var(--text-primary)] uppercase">{pageSize}</span>
+                <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">
+                  {result.isBatch ? 'Documents' : 'Page Size'}
+                </span>
+                <span className="text-base font-extrabold text-[var(--text-primary)] uppercase">
+                  {result.isBatch ? result.items.length : pageSize}
+                </span>
               </div>
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Orientation</span>
@@ -609,40 +897,79 @@ export default function DocxToPdf() {
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Engine</span>
                 <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1 capitalize">
-                  {result.engineMode === 'server' ? 'LibreOffice' : 'Client Vector'}
+                  {result.engineMode === 'server' ? 'Full Precision' : 'Fast Mode'}
                 </span>
               </div>
             </div>
+
+            {/* Batch items list if applicable */}
+            {result.isBatch && result.items && (
+              <div className="w-full max-h-40 overflow-y-auto p-2 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col gap-1.5 text-left">
+                {result.items.map((it, idx) => (
+                  <div key={idx} className="flex items-center justify-between px-3 py-1.5 bg-[var(--bg-primary)] rounded-lg text-xs">
+                    <span className="truncate max-w-[240px] font-medium text-[var(--text-primary)]">{it.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => downloadFile(it)}
+                      className="text-[var(--color-primary)] hover:underline text-[11px] font-semibold cursor-pointer shrink-0 ml-2"
+                    >
+                      Download
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Action Buttons (Strict Single-Line No Wrap) */}
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center pt-2">
               <button
                 type="button"
                 className="btn btn-success btn-lg flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 w-full sm:w-auto min-w-[200px] text-sm sm:text-base font-bold py-3 px-6 whitespace-nowrap cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
-                onClick={downloadFile}
+                onClick={() => downloadFile()}
               >
                 <Download size={18} />
-                <span>Download PDF</span>
+                <span>{result.isBatch ? 'Download All (ZIP)' : 'Download PDF'}</span>
               </button>
+
+              {files.length > 1 && (
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-lg flex items-center justify-center gap-2 w-full sm:w-auto min-w-[170px] text-sm sm:text-base font-semibold py-3 px-5 whitespace-nowrap cursor-pointer hover:bg-[var(--bg-secondary)] transition-all"
+                  onClick={handleReturnToWorkspace}
+                >
+                  <ArrowLeft size={16} />
+                  <span>Back to Documents</span>
+                </button>
+              )}
 
               <button
                 type="button"
-                className="btn btn-secondary btn-lg flex items-center justify-center gap-2 w-full sm:w-auto min-w-[180px] text-sm sm:text-base font-semibold py-3 px-5 whitespace-nowrap cursor-pointer hover:bg-[var(--bg-secondary)] transition-all"
+                className="btn btn-secondary btn-lg flex items-center justify-center gap-2 w-full sm:w-auto min-w-[160px] text-sm sm:text-base font-semibold py-3 px-5 whitespace-nowrap cursor-pointer hover:bg-[var(--bg-secondary)] transition-all"
                 onClick={resetWorkspace}
               >
                 <span className="material-symbols-outlined text-[18px]">restart_alt</span>
-                <span>Convert Another Word Document</span>
+                <span>New Session</span>
               </button>
             </div>
 
             {/* Quick Next Steps */}
             <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
-                Continue Working with This PDF
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3 text-center">
+                Continue Working with Your PDF
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <Link
-                  to="/compress-pdf"
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!result?.blob) {
+                      navigate('/compress-pdf');
+                      return;
+                    }
+                    const pdfFile = new File([result.blob], result.name || 'document.pdf', {
+                      type: 'application/pdf'
+                    });
+                    navigate('/compress-pdf', { state: { initialFiles: [pdfFile] } });
+                  }}
                   className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[20px] text-[var(--color-primary)]">compress</span>
@@ -650,10 +977,20 @@ export default function DocxToPdf() {
                     <p className="font-bold truncate group-hover:text-[var(--color-primary)]">Compress</p>
                     <p className="text-[10px] text-[var(--text-secondary)] truncate">Reduce file size</p>
                   </div>
-                </Link>
+                </button>
 
-                <Link
-                  to="/sign-pdf"
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!result?.blob) {
+                      navigate('/sign-pdf');
+                      return;
+                    }
+                    const pdfFile = new File([result.blob], result.name || 'document.pdf', {
+                      type: 'application/pdf'
+                    });
+                    navigate('/sign-pdf', { state: { initialFiles: [pdfFile] } });
+                  }}
                   className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[20px] text-[var(--color-primary)]">draw</span>
@@ -661,18 +998,28 @@ export default function DocxToPdf() {
                     <p className="font-bold truncate group-hover:text-[var(--color-primary)]">Sign PDF</p>
                     <p className="text-[10px] text-[var(--text-secondary)] truncate">Add signature</p>
                   </div>
-                </Link>
+                </button>
 
-                <Link
-                  to="/organize-pdf"
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!result?.blob) {
+                      navigate('/edit-pdf');
+                      return;
+                    }
+                    const pdfFile = new File([result.blob], result.name || 'document.pdf', {
+                      type: 'application/pdf'
+                    });
+                    navigate('/edit-pdf', { state: { initialFiles: [pdfFile] } });
+                  }}
                   className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-[20px] text-[var(--color-primary)]">view_module</span>
+                  <span className="material-symbols-outlined text-[20px] text-[var(--color-primary)]">edit_document</span>
                   <div className="min-w-0">
-                    <p className="font-bold truncate group-hover:text-[var(--color-primary)]">Organize</p>
-                    <p className="text-[10px] text-[var(--text-secondary)] truncate">Reorder pages</p>
+                    <p className="font-bold truncate group-hover:text-[var(--color-primary)]">Edit PDF</p>
+                    <p className="text-[10px] text-[var(--text-secondary)] truncate">Modify pages & text</p>
                   </div>
-                </Link>
+                </button>
               </div>
             </div>
           </div>

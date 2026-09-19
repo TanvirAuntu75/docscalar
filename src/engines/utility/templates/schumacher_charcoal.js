@@ -7,7 +7,7 @@ export function generateSchumacherCharcoalHtml(
   themeColor = '#2f2e2d',
   themeFont = 'Inter',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
@@ -17,20 +17,18 @@ export function generateSchumacherCharcoalHtml(
   const expHtml = data.experience && data.experience.length ? `
     <div class="timeline-group">
       <div class="section-title-wrap">
-        <h2>Experience</h2>
+        <h2 class="section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'Experience'}</h2>
       </div>
       <div class="timeline-line-wrap">
-        ${data.experience.map(e => `
+        ${data.experience.map((e, idx) => `
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="item-header">
-              <span class="timeline-role">${e.role}</span>
-              <span class="timeline-year">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
-            </div>
-            <div class="timeline-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+              <span class="timeline-role" data-df-field="exp:${idx}:role">${e.role}</span>
+              <span class="timeline-year" ><span data-df-field="exp:${idx}:company">${e.company || ''}</span>${(e.company && (e.start || e.end)) ? ' | ' : ''}<span data-df-field="exp:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span></div>
             ${e.highlights && e.highlights.filter(Boolean).length ? `
               <ul class="timeline-desc">
-                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+                ${e.highlights.filter(Boolean).map((h, hIdx) => `<li data-df-field="exp:${idx}:highlight:${hIdx}">${h}</li>`).join('')}
               </ul>
             ` : ''}
           </div>
@@ -42,17 +40,17 @@ export function generateSchumacherCharcoalHtml(
   const eduHtml = data.education && data.education.length ? `
     <div class="timeline-group">
       <div class="section-title-wrap">
-        <h2>Education</h2>
+        <h2 class="section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'Education'}</h2>
       </div>
       <div class="timeline-line-wrap">
-        ${data.education.map(e => `
+        ${data.education.map((e, idx) => `
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="item-header">
-              <span class="timeline-role">${e.degree}</span>
-              <span class="timeline-year">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+              <span class="timeline-role" data-df-field="edu:${idx}:degree">${e.degree}</span>
+              <span class="timeline-year" data-df-field="edu:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
             </div>
-            <div class="timeline-company">${e.school}${e.note ? ` · ${e.note}` : ''}</div>
+            <div class="timeline-company"><span data-df-field="edu:${idx}:school">${e.school}</span>${e.note ? ` · ${e.note}` : ''}</div>
           </div>
         `).join('')}
       </div>
@@ -62,10 +60,10 @@ export function generateSchumacherCharcoalHtml(
   const projHtml = data.projects && data.projects.length ? `
     <div class="timeline-group">
       <div class="section-title-wrap">
-        <h2>Projects</h2>
+        <h2 class="section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'Projects'}</h2>
       </div>
       <div class="timeline-line-wrap">
-        ${data.projects.map(p => `
+        ${data.projects.map((p, idx) => `
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="item-header">
@@ -82,36 +80,37 @@ export function generateSchumacherCharcoalHtml(
   const certHtml = data.certifications && data.certifications.length ? `
     <div class="sidebar-section">
       <div class="sidebar-title-wrap">
-        <h3>Certifications</h3>
+        <h3 class="section-heading" data-df-field="heading:certifications">${data.sectionTitles?.certifications || 'Certifications'}</h3>
       </div>
       <ul class="cert-list" style="margin-top: 8px;">
-        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+        ${data.certifications.map((c, idx) => `<li data-df-field="cert:${idx}">${c}</li>`).join('')}
       </ul>
     </div>
   ` : '';
 
-  const contactHtml = `
+  const hasContact = Boolean(data.phone || data.email || data.location || data.website || data.linkedin);
+  const contactHtml = hasContact ? `
     <div class="sidebar-section">
       <div class="sidebar-title-wrap">
-        <h3>Contact</h3>
+        <h3 class="section-heading" data-df-field="heading:contact">${data.sectionTitles?.contact || 'Contact'}</h3>
       </div>
       <div class="contact-list">
-        ${data.phone ? `<div class="contact-row"><span>${data.phone}</span></div>` : ''}
-        ${data.email ? `<div class="contact-row"><a href="mailto:${data.email}" style="color: inherit; text-decoration: none; word-break: break-all;">${data.email}</a></div>` : ''}
-        ${data.location ? `<div class="contact-row"><span>${data.location}</span></div>` : ''}
-        ${data.linkedin ? `<div class="contact-row"><a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
-        ${data.website ? `<div class="contact-row"><a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${data.phone ? `<div class="contact-row"><span data-df-field="phone">${data.phone}</span></div>` : ''}
+        ${data.email ? `<div class="contact-row"><a href="mailto:${data.email}" style="color: inherit; text-decoration: none; word-break: break-all;" data-df-field="email">${data.email}</a></div>` : ''}
+        ${data.location ? `<div class="contact-row"><span data-df-field="location">${data.location}</span></div>` : ''}
+        ${data.linkedin ? `<div class="contact-row"><a data-df-field="linkedin" href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></div>` : ''}
+        ${data.website ? `<div class="contact-row"><a data-df-field="website" href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></div>` : ''}
       </div>
     </div>
-  `;
+  ` : '';
 
   const skillsHtml = data.skills && data.skills.length ? `
     <div class="sidebar-section">
       <div class="sidebar-title-wrap">
-        <h3>Skills</h3>
+        <h3 class="section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Skills'}</h3>
       </div>
       <div class="skills-grid" style="margin-top: 8px;">
-        ${data.skills.map((s) => {
+        ${data.skills.map((s, idx) => {
           let name = s;
           let levelText = '';
           if (s.includes(' - ')) {
@@ -121,7 +120,7 @@ export function generateSchumacherCharcoalHtml(
           }
           return `
             <div class="skill-item">
-              <span>• ${name}</span>
+              <span data-df-field="skill:${idx}">• ${name}</span>
               ${levelText ? `<span style="color: #94a3b8; font-size: 7.8pt;">${levelText}</span>` : ''}
             </div>
           `;
@@ -134,13 +133,13 @@ export function generateSchumacherCharcoalHtml(
   const langHtml = langSection && langSection.items?.length ? `
     <div class="sidebar-section">
       <div class="sidebar-title-wrap">
-        <h3>${langSection.title || 'Languages'}</h3>
+        <h3 data-df-field="custom:${langSection.id}:title">${langSection.title || 'Languages'}</h3>
       </div>
       <div class="skills-grid" style="margin-top: 8px;">
         ${langSection.items.map(i => `
           <div class="skill-item">
-            <span>• ${i.title}</span>
-            ${i.value ? `<span style="color: #94a3b8; font-size: 7.8pt;">${i.value}</span>` : ''}
+            <span>• ${typeof i === 'string' ? i : (i.title || i.name || '')}</span>
+            ${typeof i === 'object' && i !== null && i.value ? `<span style="color: #94a3b8; font-size: 7.8pt;">${i.value}</span>` : ''}
           </div>
         `).join('')}
       </div>
@@ -152,6 +151,7 @@ export function generateSchumacherCharcoalHtml(
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${data.name ? `${data.name} - Resume` : 'Resume'}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
@@ -168,7 +168,7 @@ export function generateSchumacherCharcoalHtml(
     
     #main-container {
       display: flex;
-      width: 210mm;
+      width: 794px;
       min-height: 297mm;
       margin: 0 auto;
       background: #ffffff;
@@ -177,7 +177,7 @@ export function generateSchumacherCharcoalHtml(
     /* Left Sidebar (32%) */
     .sidebar {
       width: 32%;
-      background: #2f2e2d;
+      background: ${accent};
       color: #ffffff;
       padding: ${35 + pageMargin}px 22px;
       font-size: 8.5pt;
@@ -190,14 +190,33 @@ export function generateSchumacherCharcoalHtml(
       justify-content: center;
       margin-bottom: 8px;
     }
+    .avatar-mask {
+      width: 145px;
+      height: 145px;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid ${accent};
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    .avatar-mask .avatar, .avatar-mask img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
     .avatar {
-      width: 105px;
-      height: 105px;
+      width: 145px;
+      height: 145px;
       border-radius: 50%;
       border: 3px solid rgba(255, 255, 255, 0.3);
       object-fit: cover;
       display: block;
-    }
+    
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);}
     .sidebar-section {
       break-inside: avoid;
       page-break-inside: avoid;
@@ -253,7 +272,7 @@ export function generateSchumacherCharcoalHtml(
       gap: 16px;
     }
     .main-header {
-      border-bottom: 2px solid #2f2e2d;
+      border-bottom: 2px solid ${accent};
       padding-bottom: 12px;
       margin-bottom: 4px;
     }
@@ -315,7 +334,7 @@ export function generateSchumacherCharcoalHtml(
       height: 8px;
       border-radius: 50%;
       background: #ffffff;
-      border: 2px solid #2f2e2d;
+      border: 2px solid ${accent};
     }
     .item-header {
       display: flex;
@@ -350,14 +369,47 @@ export function generateSchumacherCharcoalHtml(
       margin-bottom: 2px;
       text-align: justify;
     }
+  
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        margin-bottom: 0 !important;
+      }
+      #main-container, .page-container, .cv-page, .container, .page {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+    }
+  
+    .avatar, .profile-photo, .photo, .headshot, .profile-img, .photo-wrapper, .avatar-wrapper {
+      border-radius: 50%;
+      overflow: hidden;
+    }
   </style>
 </head>
 <body>
-  <div id="main-container">
+  <div class="cv-page" id="main-container">
     <div class="sidebar">
       ${data.photoUrl ? `
         <div class="avatar-container">
-          <img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />
+          <div class="avatar-mask">
+            <img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />
+          </div>
         </div>
       ` : ''}
       ${contactHtml}
@@ -368,9 +420,9 @@ export function generateSchumacherCharcoalHtml(
     
     <div class="main-content">
       <div class="main-header">
-        <h1>${data.name || 'Candidate Name'}</h1>
-        ${data.title ? `<div class="title">${data.title}</div>` : ''}
-        ${data.summary ? `<div class="summary">${data.summary}</div>` : ''}
+        ${data.name ? `<h1 data-df-field="name">${data.name}</h1>` : ''}
+        <div class="candidate-title title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${data.title || ''}</div>
+        ${data.summary ? `<div class="summary" data-df-field="summary">${data.summary}</div>` : ''}
       </div>
       
       ${expHtml}

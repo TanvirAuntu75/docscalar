@@ -8,6 +8,9 @@ import { extractPages } from '../../engines/pdf/extractPages';
 import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
+import useSmartCropper from '../../hooks/useSmartCropper';
+import { SmartCropperToolbarButton } from '../../components/SmartCropperToolbarButton';
+import { detectSmartBorders, computeCleanPdfCropBox } from '../../utils/pdfZoneScanner';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -28,6 +31,8 @@ export default function ExtractPages() {
   const [pageThumbnails, setPageThumbnails] = useState([]);
   const [loadingThumbnails, setLoadingThumbnails] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
+
+  const cropper = useSmartCropper({ totalPages });
 
   // Processing & Result State
   const [processing, setProcessing] = useState(false);
@@ -118,11 +123,41 @@ export default function ExtractPages() {
           canvas.height = viewport.height;
           const ctx = canvas.getContext('2d');
           await page.render({ canvasContext: ctx, viewport }).promise;
+
+          let hasScanBorders = false;
+          let cropBox = null;
+          let borderResult = null;
+          try {
+            borderResult = detectSmartBorders(canvas, viewport);
+            hasScanBorders = borderResult && borderResult.hasBlackBorders === true &&
+              (borderResult.cropTop > 0 || borderResult.cropBottom > 0 || borderResult.cropLeft > 0 || borderResult.cropRight > 0);
+            if (hasScanBorders) {
+              cropBox = computeCleanPdfCropBox(borderResult, { width: page.view[2], height: page.view[3] }, viewport.scale);
+              cropper.activate();
+            }
+          } catch (e) {}
+
+          const rawDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          let croppedDataUrl = rawDataUrl;
+          if (hasScanBorders && borderResult) {
+            const cropCanvas = document.createElement('canvas');
+            cropCanvas.width = canvas.width;
+            cropCanvas.height = canvas.height;
+            const cCtx = cropCanvas.getContext('2d');
+            cCtx.drawImage(canvas, 0, 0);
+            cropper.applyCanvasPreview(cropCanvas, viewport.scale, borderResult, { width: page.view[2], height: page.view[3] }, true);
+            croppedDataUrl = cropCanvas.toDataURL('image/jpeg', 0.8);
+          }
+
           thumbs.push({
             pageNumber: i,
-            dataUrl: canvas.toDataURL('image/jpeg', 0.8),
+            dataUrl: rawDataUrl,
+            rawDataUrl,
+            croppedDataUrl,
             width: viewport.width,
-            height: viewport.height
+            height: viewport.height,
+            hasScanBorders,
+            cropBox
           });
         }
 
@@ -230,11 +265,31 @@ export default function ExtractPages() {
 
     try {
       const sortedIndices = [...selectedIndices].sort((a, b) => a - b);
+      const allPageCropBoxes = {};
+      pageThumbnails.forEach((t) => {
+        if (t.hasScanBorders && t.cropBox) {
+          allPageCropBoxes[t.pageNumber - 1] = t.cropBox;
+        }
+      });
+      const activeCropBox = pageThumbnails.find((t) => t.cropBox)?.cropBox || null;
+      const cropperOptions = await (cropper.getEngineOptionsAsync
+        ? cropper.getEngineOptionsAsync(files[activeFileIndex], pdfjsLib, (p) => setProgress(Math.round(p * 0.25)))
+        : cropper.getEngineOptions());
+      const cropOptions = {
+        splitSeparate: extractMode === 'separate',
+        ...cropperOptions,
+        autoCropBlackBorders: cropper.isActive,
+        smartCrop: cropper.isActive,
+        pageCropBoxes: cropper.isActive ? allPageCropBoxes : {},
+        docCropBox: cropper.isActive ? activeCropBox : null,
+        cleanMargin: cropper.cleanMargin || 0,
+        enabledEdges: cropper.enabledEdges
+      };
       const outputBlob = await extractPages(
         files[activeFileIndex],
         sortedIndices,
         setProgress,
-        { splitSeparate: extractMode === 'separate' }
+        cropOptions
       );
 
       const isZip = extractMode === 'separate';
@@ -310,7 +365,7 @@ export default function ExtractPages() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Extract Pages from PDF Online Free (100% Local Studio) | DocForge"
+        title="Extract Pages from PDF Online Free (100% Local Studio) | DocScalar"
         description="Select specific pages to extract and compile into a standalone PDF document locally in your browser. Complete privacy."
       />
 
@@ -349,16 +404,32 @@ export default function ExtractPages() {
                         </select>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
+                      <div className="h-8 flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-subtle)]">
                         <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
-                        <span className="truncate max-w-[200px]">{files[0]?.name}</span>
-                        <span className="text-[var(--text-secondary)] font-normal">({formatFileSize(files[0]?.size || 0)})</span>
+                        <span className="text-xs font-bold text-[var(--text-primary)] truncate max-w-[180px]" title={files[0]?.name}>
+                          {files[0]?.name}
+                        </span>
+                        <span className="text-[11px] text-[var(--text-secondary)] font-medium">
+                          ({formatFileSize(files[0]?.size || 0)})
+                        </span>
                       </div>
                     )}
 
-                    <label className="btn btn-secondary btn-sm cursor-pointer flex items-center gap-1 shadow-xs text-xs py-1">
-                      <span className="material-symbols-outlined text-[15px]">add_circle</span>
-                      <span>Add PDFs</span>
+                    {/* Selection Counter Pill */}
+                    <div className="h-8 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg text-xs font-extrabold text-emerald-600 dark:text-emerald-400 shrink-0 select-none">
+                      <span className="material-symbols-outlined text-[15px]">check_circle</span>
+                      <span>
+                        {selectedIndices.length} of {totalPages} Selected
+                      </span>
+                    </div>
+
+                    {/* Visual Divider */}
+                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-0.5 shrink-0" />
+
+                    {/* Ergonomic Add PDFs Action Button */}
+                    <label className="h-8 px-3.5 py-1.5 rounded-lg border border-[var(--border-medium)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover,var(--bg-tertiary))] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0 select-none">
+                      <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">add_circle</span>
+                      <span>Add PDF</span>
                       <input
                         ref={fileInputRef}
                         type="file"
@@ -366,16 +437,13 @@ export default function ExtractPages() {
                         accept=".pdf,application/pdf"
                         className="hidden"
                         onChange={handleAddFiles}
+                        title=""
+                        tabIndex={-1}
                       />
                     </label>
 
-                    {/* Selection Counter Pill */}
-                    <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
-                      <span className="material-symbols-outlined text-[14px]">check_circle</span>
-                      <span>
-                        {selectedIndices.length} of {totalPages} Selected
-                      </span>
-                    </div>
+                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-0.5 shrink-0" />
+                    <SmartCropperToolbarButton cropper={cropper} />
                   </div>
 
                   {/* Bulk Quick Pills & Density Controls */}
@@ -512,19 +580,58 @@ export default function ExtractPages() {
                                 : 'bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[var(--text-secondary)]'
                             }`}
                           >
-                            <span className="text-[10px]">Page #{thumb.pageNumber}</span>
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => {}}
-                              className="w-3.5 h-3.5 accent-emerald-500 cursor-pointer pointer-events-none"
-                            />
+                            <span className="text-[10px] font-bold">Page #{thumb.pageNumber}</span>
+                            <div className="flex items-center gap-1">
+                              {cropper.isActive ? (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    cropper.revert();
+                                  }}
+                                  className="text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1 cursor-pointer transition-all bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-500/50 shrink-0"
+                                  title="Smart Cropping Active — Click to restore original document"
+                                >
+                                  <span className="material-symbols-outlined text-[11px]">check_circle</span>
+                                  <span>Cropped</span>
+                                </button>
+                              ) : thumb.hasScanBorders ? (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    cropper.activate();
+                                  }}
+                                  className="text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1 cursor-pointer transition-all bg-amber-500 hover:bg-amber-600 text-white border border-amber-400/50 shrink-0"
+                                  title="Photocopy scan borders detected — Click to remove scan borders"
+                                >
+                                  <span className="material-symbols-outlined text-[11px]">auto_fix_high</span>
+                                  <span>Borders Detected</span>
+                                </button>
+                              ) : (
+                                <div
+                                  className="text-[9px] font-semibold px-2 py-0.5 rounded-md shadow-xs flex items-center gap-1 bg-white text-slate-600 border border-slate-200 shrink-0 select-none cursor-default"
+                                  title="Clean digital document: zero scan borders detected"
+                                >
+                                  <span className="material-symbols-outlined text-[11px] text-slate-500">check_circle</span>
+                                  <span>Clean Page</span>
+                                </div>
+                              )}
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => {}}
+                                className="w-3.5 h-3.5 accent-emerald-500 cursor-pointer pointer-events-none"
+                              />
+                            </div>
                           </div>
 
                           {/* Thumbnail Canvas Frame */}
-                          <div className="p-2 flex items-center justify-center bg-slate-100 dark:bg-slate-900/40 min-h-[140px] relative">
+                          <div className={`p-2 flex items-center justify-center bg-slate-100 dark:bg-slate-900/40 min-h-[140px] relative transition-all ${
+                            cropper.isActive && thumb.hasScanBorders ? 'ring-2 ring-emerald-500/50 bg-emerald-500/5' : ''
+                          }`}>
                             <img
-                              src={thumb.dataUrl}
+                              src={cropper.isActive && thumb.hasScanBorders && thumb.croppedDataUrl ? thumb.croppedDataUrl : thumb.dataUrl}
                               alt={`Page ${thumb.pageNumber}`}
                               className="max-h-48 w-auto object-contain rounded shadow-xs drop-shadow-xs"
                             />

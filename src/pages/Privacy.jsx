@@ -4,7 +4,7 @@ import SEOHead from '../components/SEOHead';
 export default function Privacy() {
   return (
     <div className="bg-background min-h-[80vh] flex flex-col items-center px-margin-mobile py-xl relative">
-      <SEOHead title="Privacy Policy — DocForge" description="Read our privacy policy to understand how we protect your document data." />
+      <SEOHead title="Privacy Policy — DocScalar" description="Read our privacy policy to understand how we protect your document data." />
       <div className="absolute inset-0 bg-pattern opacity-10 pointer-events-none"></div>
 
       <div className="w-full max-w-3xl mb-4 z-10 text-left">
@@ -22,7 +22,7 @@ export default function Privacy() {
           <section className="flex flex-col gap-2">
             <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">1. Introduction & Local-First Commitment</h2>
             <p>
-              Welcome to DocForge ("we", "our", "us"). We are committed to protecting your personal data and privacy. 
+              Welcome to DocScalar ("we", "our", "us"). We are committed to protecting your personal data and privacy. 
               Our primary design principle is **Privacy First**:
             </p>
             <blockquote className="border-l-4 border-primary pl-4 py-1 my-2 bg-surface-container-low/50 rounded-r-lg font-medium text-on-surface">
@@ -78,7 +78,7 @@ export default function Privacy() {
           <section className="flex flex-col gap-2">
             <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">6. Contact Us</h2>
             <p>
-              If you have any questions about this Privacy Policy or wish to exercise your data rights, please contact us at: <strong>privacy@docforge.com</strong>.
+              If you have any questions about this Privacy Policy or wish to exercise your data rights, please contact us at: <strong>privacy@docscalar.com</strong>.
             </p>
           </section>
         </div>

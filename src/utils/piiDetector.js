@@ -57,6 +57,15 @@ export function maskSensitiveValue(val, type) {
     }
   }
   if (type === 'phone') {
+    const digits = val.replace(/\D/g, '');
+    if (digits.length >= 7) {
+      let digitCount = 0;
+      const totalDigits = digits.length;
+      return val.replace(/\d/g, () => {
+        digitCount++;
+        return digitCount <= totalDigits - 4 ? '•' : digits[digitCount - 1];
+      });
+    }
     return val.replace(/\d(?=\d{4})/g, '•');
   }
   return val;
@@ -155,6 +164,18 @@ export async function scanPdfForPII(pdfDoc, options = {}, onProgress = null) {
               continue;
             }
 
+            // Precise token-level sub-string bounds calculation
+            const totalChars = Math.max(1, text.length);
+            const charRatioStart = Math.max(0, match.index / totalChars);
+            const charRatioLen = Math.min(1, rawVal.length / totalChars);
+            const subTx = tx + (charRatioStart * itemWidth);
+            const subWidth = Math.max(6, charRatioLen * itemWidth);
+
+            const xRel = Math.max(0, Math.min(1, (subTx - 1.5) / pageWidth));
+            const yRel = Math.max(0, Math.min(1, (pageHeight - ty - itemHeight * 1.05) / pageHeight));
+            const wRel = Math.max(0.004, Math.min(1, (subWidth + 3.0) / pageWidth));
+            const hRel = Math.max(0.005, Math.min(1, (itemHeight * 1.35) / pageHeight));
+
             const id = `pii-${pageIdx}-${catKey}-${Math.random().toString(36).slice(2, 8)}`;
             detectedItems.push({
               id,
@@ -225,15 +246,24 @@ export async function searchPdfCustomTerms(pdfDoc, searchTerm, isRegex = false, 
         if (!text.trim()) continue;
 
         rx.lastIndex = 0;
-        if (rx.test(text)) {
+        let match;
+        while ((match = rx.exec(text)) !== null) {
+          const matchedText = match[0];
           const [, , , , tx, ty] = item.transform;
           const itemWidth = item.width || 20;
           const itemHeight = item.height || 12;
 
-          const xRel = Math.max(0, Math.min(1, tx / pageWidth));
-          const yRel = Math.max(0, Math.min(1, (pageHeight - ty - itemHeight) / pageHeight));
-          const wRel = Math.max(0.005, Math.min(1, itemWidth / pageWidth));
-          const hRel = Math.max(0.005, Math.min(1, (itemHeight * 1.25) / pageHeight));
+          // Precise sub-string token bounds calculation
+          const totalChars = Math.max(1, text.length);
+          const charRatioStart = Math.max(0, match.index / totalChars);
+          const charRatioLen = Math.min(1, matchedText.length / totalChars);
+          const subTx = tx + (charRatioStart * itemWidth);
+          const subWidth = Math.max(6, charRatioLen * itemWidth);
+
+          const xRel = Math.max(0, Math.min(1, (subTx - 1.5) / pageWidth));
+          const yRel = Math.max(0, Math.min(1, (pageHeight - ty - itemHeight * 1.05) / pageHeight));
+          const wRel = Math.max(0.004, Math.min(1, (subWidth + 3.0) / pageWidth));
+          const hRel = Math.max(0.005, Math.min(1, (itemHeight * 1.35) / pageHeight));
 
           const id = `custom-${pageIdx}-${Math.random().toString(36).slice(2, 8)}`;
           matches.push({
@@ -241,8 +271,8 @@ export async function searchPdfCustomTerms(pdfDoc, searchTerm, isRegex = false, 
             page: pageIdx,
             type: 'custom',
             label: `"${searchTerm.trim()}"`,
-            value: text.trim(),
-            maskedValue: text.trim(),
+            value: matchedText,
+            maskedValue: matchedText,
             x: xRel,
             y: yRel,
             width: wRel,

@@ -187,7 +187,7 @@ export default function ImageCompressor() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Image Compressor Online Free — Reduce JPG, PNG & WebP File Size | DocForge"
+        title="Image Compressor Online Free — Reduce JPG, PNG & WebP File Size | DocScalar"
         description="Compress single or batch images online for free. Adjust compression quality to shrink JPG, PNG, and WebP file sizes instantly with zero data loss."
       />
 
@@ -208,11 +208,11 @@ export default function ImageCompressor() {
               {/* Sticky Top Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
                 <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-2.5 flex-wrap">
                     {/* Active File Switcher */}
                     {files.length > 1 ? (
-                      <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
-                        <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">image</span>
+                      <div className="h-8 flex items-center gap-1.5 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-subtle)]">
+                        <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">image</span>
                         <select
                           value={activeFileIndex}
                           onChange={(e) => setActiveFileIndex(parseInt(e.target.value))}
@@ -226,27 +226,27 @@ export default function ImageCompressor() {
                         </select>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
+                      <div className="h-8 flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-subtle)]">
                         <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">image</span>
-                        <span className="truncate max-w-[200px]">{currentFile?.name}</span>
-                        <span className="text-[var(--text-secondary)] font-normal">({formatFileSize(currentFile?.size || 0)})</span>
+                        <span className="text-xs font-bold text-[var(--text-primary)] truncate max-w-[200px]" title={currentFile?.name}>{currentFile?.name}</span>
+                        <span className="text-[11px] text-[var(--text-secondary)] font-medium">({formatFileSize(currentFile?.size || 0)})</span>
                       </div>
                     )}
 
-                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-1" />
+                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-0.5 shrink-0" />
 
                     {/* Compression Level Capsule */}
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[var(--bg-secondary)] rounded-lg text-xs font-bold text-[var(--text-primary)] border border-[var(--border-subtle)]">
+                    <div className="h-8 flex items-center gap-1.5 px-3 py-1.5 bg-[var(--bg-secondary)] rounded-lg text-xs font-bold text-[var(--text-primary)] border border-[var(--border-subtle)] shrink-0 select-none">
                       <span className="text-[var(--text-secondary)] font-medium">Quality:</span>
                       <span className="text-emerald-500 font-extrabold">{Math.round(quality * 100)}%</span>
                     </div>
 
                     {/* View Mode Toggle */}
-                    <div className="flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
+                    <div className="h-8 flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)] shrink-0">
                       <button
                         type="button"
                         onClick={() => setViewMode('inspect')}
-                        className={`px-2.5 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
+                        className={`h-7 px-3 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
                           viewMode === 'inspect'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -258,7 +258,7 @@ export default function ImageCompressor() {
                       <button
                         type="button"
                         onClick={() => setViewMode('gallery')}
-                        className={`px-2.5 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
+                        className={`h-7 px-3 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
                           viewMode === 'gallery'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -271,23 +271,23 @@ export default function ImageCompressor() {
 
                     {/* Image Navigation */}
                     {files.length > 1 && (
-                      <div className="flex items-center gap-1 bg-[var(--bg-secondary)] px-2 py-0.5 rounded-lg border border-[var(--border-subtle)] text-xs">
+                      <div className="h-8 flex items-center gap-1 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)] text-xs shrink-0">
                         <button
                           type="button"
                           onClick={() => setActiveFileIndex((p) => Math.max(0, p - 1))}
                           disabled={activeFileIndex <= 0}
-                          className="p-1 hover:text-[var(--color-primary)] disabled:opacity-30 cursor-pointer"
+                          className="p-0.5 hover:text-[var(--color-primary)] disabled:opacity-30 cursor-pointer transition-colors"
                         >
                           <ChevronLeft size={14} />
                         </button>
-                        <span className="font-semibold text-[var(--text-primary)] px-1">
+                        <span className="font-semibold text-[var(--text-primary)] px-1.5 select-none">
                           {activeFileIndex + 1} / {files.length}
                         </span>
                         <button
                           type="button"
                           onClick={() => setActiveFileIndex((p) => Math.min(files.length - 1, p + 1))}
                           disabled={activeFileIndex >= files.length - 1}
-                          className="p-1 hover:text-[var(--color-primary)] disabled:opacity-30 cursor-pointer"
+                          className="p-0.5 hover:text-[var(--color-primary)] disabled:opacity-30 cursor-pointer transition-colors"
                         >
                           <ChevronRight size={14} />
                         </button>
@@ -470,14 +470,16 @@ export default function ImageCompressor() {
                 {/* Progress Bar (While Processing) */}
                 {processing && (
                   <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                    <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                           progress_activity
                         </span>
-                        Compressing {files.length} {files.length === 1 ? 'image' : 'images'}...
-                      </span>
-                      <span>{progress}%</span>
+                        <span className="truncate" title={`Compressing ${files.length} ${files.length === 1 ? 'image' : 'images'}...`}>
+                          Compressing {files.length} {files.length === 1 ? 'image' : 'images'}...
+                        </span>
+                      </div>
+                      <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div
@@ -588,7 +590,7 @@ export default function ImageCompressor() {
             {/* Quick Next Steps */}
             <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
-                Continue Working with DocForge
+                Continue Working with DocScalar
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <Link

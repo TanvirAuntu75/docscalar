@@ -5,7 +5,6 @@ import threading
 from pathlib import Path
 
 import fitz  # PyMuPDF
-from reportlab.pdfgen import canvas
 
 from backend import config
 from backend.services.libreoffice import ConversionResult
@@ -28,19 +27,44 @@ def get_ocr_engine() -> RobustOCREngine:
     return _ocr_engine_instance
 
 
+def teardown_ocr_engine():
+    """
+    Auto-force stops and tears down the OCR engine singleton and all associated
+    PaddleOCR neural readers, releasing memory immediately back to the OS.
+    """
+    global _ocr_engine_instance
+    with engine_lock:
+        if _ocr_engine_instance is not None:
+            try:
+                del _ocr_engine_instance
+            except Exception:
+                pass
+            _ocr_engine_instance = None
+
+        try:
+            from backend.services.ocr_engine import clear_paddleocr_readers
+            clear_paddleocr_readers()
+        except Exception as e:
+            logger.warning("Error calling clear_paddleocr_readers: %s", e)
+
+        import gc
+        gc.collect()
+        logger.info("OCR Engine and all background readers successfully torn down.")
+
+
 def run_ocr_on_pdf(input_path: str, language: str = "eng") -> ConversionResult:
     """
-    Applies page-by-page OCR to a PDF document using RobustOCREngine (PaddleOCR/Tesseract)
-    and reconstructs a searchable PDF by drawing invisible text over the rendered page images.
+    Applies non-destructive page-by-page OCR to a PDF document using RobustOCREngine (PaddleOCR/Tesseract).
+    Injects invisible searchable text layers (render_mode=3) directly into the original PDF pages,
+    preserving 100% of original vector graphics, embedded TrueType fonts, form fields, and hyperlinks.
     """
     temp_img_paths = []
-    temp_pdf_paths = []
     doc = None
 
     try:
         from backend.jobs.queue import update_job_progress
 
-        update_job_progress(5)
+        update_job_progress(5, "Initializing neural OCR engine...")
 
         input_file = Path(input_path)
         if not input_file.exists():
@@ -56,7 +80,7 @@ def run_ocr_on_pdf(input_path: str, language: str = "eng") -> ConversionResult:
         config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         output_pdf_path = config.OUTPUT_DIR / f"{input_file.stem}_ocr.pdf"
 
-        # Load PDF
+        # Load PDF to check page count
         doc = fitz.open(str(input_file))
         total_pages = len(doc)
 
@@ -65,11 +89,25 @@ def run_ocr_on_pdf(input_path: str, language: str = "eng") -> ConversionResult:
                 success=False, error_message="PDF contains no pages"
             )
 
-        # Map 3-letter language code to 2-letter code if needed
+        # Map language code
         lang = "en"
         if language:
             lang_clean = language.lower().strip()
-            if lang_clean in ("eng", "en"):
+            if lang_clean in ("all", "auto", "multilingual"):
+                lang = "all"
+            elif lang_clean in ("rus", "ru", "russian"):
+                lang = "ru"
+            elif lang_clean in ("ara", "ar", "arabic"):
+                lang = "ar"
+            elif lang_clean in ("kor", "ko", "korean"):
+                lang = "korean"
+            elif lang_clean in ("hin", "hi", "hindi"):
+                lang = "hi"
+            elif lang_clean in ("jpn", "ja", "japan"):
+                lang = "japan"
+            elif lang_clean in ("chi_sim", "ch", "zh", "chinese"):
+                lang = "ch"
+            elif lang_clean in ("eng", "en", "english"):
                 lang = "en"
             else:
                 lang = lang_clean[:2]
@@ -83,8 +121,10 @@ def run_ocr_on_pdf(input_path: str, language: str = "eng") -> ConversionResult:
         page_results = [None] * total_pages
         completed_count = 0
 
+        update_job_progress(8, f"Starting OCR scanning on {total_pages} page(s)...")
+
         def process_page_task(page_idx):
-            # Open separate document instance for thread safety
+            # Open separate document instance for thread safety during extraction
             t_doc = None
             try:
                 t_doc = fitz.open(str(input_file))
@@ -92,10 +132,15 @@ def run_ocr_on_pdf(input_path: str, language: str = "eng") -> ConversionResult:
                 p_w = page.rect.width
                 p_h = page.rect.height
 
-                # Render page at 200 DPI for high-accuracy, high-speed neural OCR
+                # Extract existing digital word bounding boxes to prevent duplicate text injection
+                existing_words = page.get_text("words")
+                digital_rects = [
+                    (w[0], w[1], w[2], w[3]) for w in existing_words
+                ]
+
+                # Render page at 200 DPI — sufficient for PaddleOCR handwriting detection
                 pix = page.get_pixmap(dpi=200)
 
-                # Save the pixmap to a temporary image file
                 with tempfile.NamedTemporaryFile(
                     suffix=".png", delete=False
                 ) as tmp_img:
@@ -116,83 +161,33 @@ def run_ocr_on_pdf(input_path: str, language: str = "eng") -> ConversionResult:
                             e,
                         )
 
-                    if not ocr_res or ocr_res.get("status") not in (
-                        "ok",
-                        "ok_with_warnings",
-                    ):
+                    words = []
+                    if ocr_res and ocr_res.get("words"):
+                        words = ocr_res["words"]
+                    else:
+                        logger.warning(
+                            "PaddleOCR returned 0 words on page %d. Attempting emergency Tesseract fallback...",
+                            page_idx,
+                        )
                         try:
-                            ocr_res = engine.process(
+                            tess_res = engine.process(
                                 temp_img_path, engine_name="tesseract", lang=lang
                             )
+                            if tess_res and tess_res.get("words"):
+                                words = tess_res["words"]
                         except Exception as e:
                             logger.error(
                                 "Tesseract also failed on page %d: %s", page_idx, e
                             )
 
-                words = []
-                if ocr_res and "words" in ocr_res:
-                    words = ocr_res["words"]
-
-                # Create single-page PDF with hidden text layer using ReportLab
-                with tempfile.NamedTemporaryFile(
-                    suffix=".pdf", delete=False
-                ) as tmp_pdf:
-                    temp_pdf_path = tmp_pdf.name
-
-                # Initialize ReportLab canvas
-                c = canvas.Canvas(temp_pdf_path, pagesize=(p_w, p_h))
-
-                # Draw original page image as background
-                c.drawImage(temp_img_path, 0, 0, width=p_w, height=p_h)
-
-                # Calculate coordinates scaling: pixels to points
-                scale_x = p_w / float(pix.width) if pix.width > 0 else 1.0
-                scale_y = p_h / float(pix.height) if pix.height > 0 else 1.0
-
-                # Draw invisible text words over the image
-                for word in words:
-                    text_val = word.get("text", "").strip()
-                    if not text_val:
-                        continue
-
-                    rect = word.get("rect")  # (x0, y0, x1, y1) in image pixels
-                    if not rect or len(rect) < 4:
-                        continue
-
-                    x0, y0, x1, y1 = rect
-
-                    # Scale coordinates to PDF points
-                    px0 = x0 * scale_x
-                    py0 = y0 * scale_y
-                    py1 = y1 * scale_y
-
-                    ph = max(1.0, py1 - py0)
-
-                    # ReportLab Y-origin is at the bottom of the page
-                    rx = px0
-                    ry = p_h - py1
-
-                    # Draw text using invisible text render mode (mode 3)
-                    to = c.beginText()
-                    to.setTextRenderMode(
-                        3
-                    )  # Neither fill nor stroke (invisible selectable text)
-
-                    # Scale font size slightly smaller than the line height to fit inside bounding box
-                    font_size = max(1.0, ph * 0.85)
-                    to.setFont("Helvetica", font_size)
-                    to.setTextOrigin(rx, ry)
-                    to.textOut(text_val)
-                    c.drawText(to)
-
-                c.save()
-                return page_idx, temp_img_path, temp_pdf_path
+                return page_idx, temp_img_path, words, pix.width, pix.height, digital_rects
             finally:
                 if t_doc:
                     t_doc.close()
 
-        # Run page processing tasks in a thread pool (max 4 concurrent pages)
-        max_workers = min(4, os.cpu_count() or 2)
+        # OCR inference is serialized by engine_lock — extra threads only pre-render pages.
+        # 2 threads = 1 doing OCR + 1 pre-rendering next page. More threads waste memory.
+        max_workers = min(2, os.cpu_count() or 1)
         logger.info("OCR: Spawning %d parallel backend OCR threads...", max_workers)
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -201,12 +196,11 @@ def run_ocr_on_pdf(input_path: str, language: str = "eng") -> ConversionResult:
             ]
             for future in as_completed(futures):
                 try:
-                    idx, img_path, pdf_path = future.result()
-                    page_results[idx] = (img_path, pdf_path)
+                    idx, img_path, words, pix_w, pix_h, dig_rects = future.result()
+                    page_results[idx] = (img_path, words, pix_w, pix_h, dig_rects)
                     temp_img_paths.append(img_path)
-                    temp_pdf_paths.append(pdf_path)
                     completed_count += 1
-                    pct = 10 + int((completed_count / total_pages) * 80)
+                    pct = 10 + int((completed_count / total_pages) * 78)
                     update_job_progress(
                         pct, f"OCR scanning page {completed_count}/{total_pages}..."
                     )
@@ -214,27 +208,127 @@ def run_ocr_on_pdf(input_path: str, language: str = "eng") -> ConversionResult:
                     logger.exception("Failed processing page in OCR thread pool")
                     raise ex
 
-        # Filter and extract sorted PDF paths
-        sorted_pdf_paths = [
-            page_results[i][1]
-            for i in range(total_pages)
-            if page_results[i] is not None
-        ]
+        # Close read-only doc before reopening for writing/text injection
+        if doc:
+            try:
+                doc.close()
+                doc = None
+            except Exception:
+                pass
 
-        # Stitch all temporary page PDFs into the final document using PyMuPDF
-        update_job_progress(95, "Compiling OCR pages into searchable PDF...")
-        logger.info("OCR: Stitching %d pages together...", len(temp_pdf_paths))
+        # Non-destructive vector sandwich OCR:
+        # Inject invisible text layers (render_mode=3) directly into the original PDF
+        update_job_progress(90, "Injecting searchable text layer into original vector PDF...")
+        logger.info("OCR: Injecting non-destructive text layers into %d pages...", total_pages)
 
-        out_pdf = fitz.open()
-        for temp_pdf in sorted_pdf_paths:
-            with fitz.open(temp_pdf) as page_doc:
-                out_pdf.insert_pdf(page_doc)
+        import re
 
-        out_pdf.save(str(output_pdf_path))
-        out_pdf.close()
+        out_doc = fitz.open(str(input_file))
+        for page_idx in range(total_pages):
+            res_entry = page_results[page_idx]
+            if not res_entry:
+                continue
+            _, words, pix_w, pix_h, dig_rects = res_entry
+            if not words:
+                continue
 
-        update_job_progress(100)
-        logger.info("OCR: PDF successfully compiled to %s", output_pdf_path)
+            page = out_doc.load_page(page_idx)
+            p_w = page.rect.width
+            p_h = page.rect.height
+
+            scale_x = p_w / float(pix_w) if pix_w > 0 else 1.0
+            scale_y = p_h / float(pix_h) if pix_h > 0 else 1.0
+
+            # Check if this page is a scanned image or has an invisible OCR layer (3 Tr)
+            has_scan_image = len(page.get_images()) > 0
+            page_contents = ""
+            try:
+                page_contents = page.read_contents().decode("latin1", errors="ignore")
+            except Exception:
+                pass
+            has_invisible_layer = "3 Tr" in page_contents
+
+            # Convert digital rects to fitz.Rect objects for spatial overlap checks
+            fitz_dig_rects = [fitz.Rect(*dr) for dr in dig_rects]
+
+            # If page is a scanned document or has a stale invisible layer,
+            # purge the old text stream cleanly while preserving 100% of images and drawings.
+            if has_invisible_layer or has_scan_image:
+                page.add_redact_annot(page.rect)
+                page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE)
+                fitz_dig_rects = []
+
+            tw = fitz.TextWriter(page.rect)
+            font = fitz.Font("helv")
+
+            # Sort words in natural reading order (top-to-bottom, left-to-right) by y0 then x0
+            words.sort(key=lambda w: (w.get("rect", [0, 0, 0, 0])[1] // 10, w.get("rect", [0, 0, 0, 0])[0]))
+
+            for word in words:
+                text_val = word.get("text", "").strip()
+                if not text_val:
+                    continue
+
+                # Filter out low-confidence OCR noise
+                conf = word.get("conf", 100.0)
+                if conf is not None and conf < 5.0:
+                    continue
+
+                # Filter out pure punctuation/symbol noise
+                if len(text_val) > 1 and re.fullmatch(r"[\W_]+", text_val) and text_val not in ("...", "—", "–", "©", "®"):
+                    continue
+
+                rect = word.get("rect")
+                if not rect or len(rect) < 4:
+                    continue
+
+                x0, y0, x1, y1 = rect
+                px0 = x0 * scale_x
+                py0 = y0 * scale_y
+                px1 = x1 * scale_x
+                py1 = y1 * scale_y
+
+                word_rect = fitz.Rect(px0, py0, px1, py1)
+                word_area = word_rect.get_area()
+
+                # Digital exclusion: skip if this coordinate box already has digital vector text
+                if fitz_dig_rects and word_area > 0 and any(
+                    (not (word_rect & dr).is_empty) and (
+                        (word_rect & dr).get_area() > 0.35 * dr.get_area() or
+                        (word_rect & dr).get_area() > 0.35 * word_area
+                    )
+                    for dr in fitz_dig_rects
+                    if dr.get_area() > 0
+                ):
+                    continue
+
+                ph = max(1.0, py1 - py0)
+                font_size = min(24.0, max(5.0, ph * 0.75))
+                baseline_y = py1 - (font_size * 0.25)
+                box_w = max(1.0, px1 - px0)
+
+                t_len = font.text_length(text_val, fontsize=font_size)
+                actual_fs = font_size
+                if t_len > box_w and t_len > 0:
+                    actual_fs = max(1.0, font_size * (box_w / t_len))
+
+                try:
+                    tw.append(
+                        fitz.Point(px0, baseline_y),
+                        text_val,
+                        font=font,
+                        fontsize=actual_fs,
+                    )
+                except Exception as insert_err:
+                    logger.debug("Text insertion error on '%s': %s", text_val, insert_err)
+
+            tw.write_text(page, render_mode=3)
+
+        out_doc.save(str(output_pdf_path), garbage=3, deflate=True)
+        out_doc.close()
+
+        update_job_progress(100, "Searchable PDF compiled successfully.")
+        logger.info("OCR: PDF successfully compiled to %s (non-destructive vector)", output_pdf_path)
 
         return ConversionResult(
             success=True,
@@ -249,17 +343,20 @@ def run_ocr_on_pdf(input_path: str, language: str = "eng") -> ConversionResult:
         )
 
     finally:
-        # Close input document
+        # Close input document if still open
         if doc:
             try:
                 doc.close()
             except Exception:
                 pass
 
-        # Clean up temporary files
-        for p in temp_img_paths + temp_pdf_paths:
+        # Clean up temporary images
+        for p in temp_img_paths:
             try:
                 if os.path.exists(p):
                     os.unlink(p)
             except Exception as e:
-                logger.warning("Failed to clean up temporary file %s: %s", p, e)
+                logger.warning("Failed to clean up temporary image %s: %s", p, e)
+
+        # Auto-force stop: immediately clear readers, tear down OCR engine, and release RAM
+        teardown_ocr_engine()

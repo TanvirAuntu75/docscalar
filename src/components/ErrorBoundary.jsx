@@ -79,7 +79,7 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div className="bg-background min-h-[75vh] flex flex-col justify-center items-center px-margin-mobile py-xl relative overflow-hidden">
-          <SEOHead title="Error — DocForge" description="Something went wrong." />
+          <SEOHead title="Error — DocScalar" description="Something went wrong." />
 
           <div className="absolute inset-0 bg-pattern opacity-10 pointer-events-none"></div>
           <div className="absolute inset-0 app-bg-mesh pointer-events-none"></div>

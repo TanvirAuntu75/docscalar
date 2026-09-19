@@ -239,7 +239,35 @@ export default function Header() {
     navigate('/');
   };
 
-  const isStudio = false;
+  const [isStudioActive, setIsStudioActive] = useState(false);
+
+  useEffect(() => {
+    const checkStudio = () => {
+      // Dedicated routes that are 100% full-page studio workspaces with zero upload step
+      const isDedicatedStudioRoute = [
+        '/canvas', '/qr-generator'
+      ].some(route => location.pathname === route || location.pathname.startsWith(route + '/'));
+
+      // For all tools with upload pages (PDF Forms, Edit PDF, Merge, Split, etc.),
+      // studio navbar mode is active strictly when files are loaded into the studio canvas
+      // (signaled via document.body class 'studio-mode-active' or 'studio-editor-active')
+      const isStudioClass = typeof document !== 'undefined' && (
+        document.body.classList.contains('studio-mode-active') ||
+        document.body.classList.contains('studio-editor-active')
+      );
+
+      setIsStudioActive(isDedicatedStudioRoute || isStudioClass);
+    };
+
+    checkStudio();
+    if (typeof document !== 'undefined') {
+      const observer = new MutationObserver(checkStudio);
+      observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+      return () => observer.disconnect();
+    }
+  }, [location.pathname]);
+
+  const isStudio = isStudioActive;
 
   return (
     <div className={`site-header-wrapper fixed left-0 w-full z-50 flex justify-center pointer-events-none transition-all duration-300 ${isStudio ? 'top-0 px-0' : 'top-5 px-6'}`}>
@@ -294,7 +322,7 @@ export default function Header() {
             onKeyDown={(e) => e.key === 'Enter' && handleLogoClick()}
           >
             <span className="material-symbols-outlined text-primary text-[26px] fill">description</span>
-            <span className="text-on-background">Doc<span className="text-primary">Forge</span></span>
+            <span className="text-on-background">Doc<span className="text-primary">Scalar</span></span>
           </div>
           
           {/* Vertical Divider */}

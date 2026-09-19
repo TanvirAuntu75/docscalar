@@ -8,11 +8,34 @@ import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '..
 import { saveAs } from 'file-saver';
 import { useJobPoller } from '../../hooks/useJobPoller';
 import {
+  Eye,
+  FileText,
+  X,
+  FolderOpen,
+  ChevronLeft,
+  ChevronRight,
+  ZoomOut,
+  ZoomIn,
+  RotateCw,
+  Minimize,
+  Maximize,
+  Wrench,
+  AlertCircle,
+  Pause,
+  Play,
+  Volume2,
+  FileAudio,
+  ExternalLink,
+  Download
+} from 'lucide-react';
+import {
   SUPPORTED_VIEWER_FORMATS,
   SMART_ACTIONS,
   detectFileType,
   parseDocumentMeta
 } from '../../engines/utility/documentViewer';
+import { useDpiQuality } from '../../hooks/useDpiQuality';
+import { DpiQualitySelector } from '../../components/DpiQualitySelector';
 
 const formatSize = (bytes) => {
   if (bytes === 0) return '0 B';
@@ -63,6 +86,7 @@ export default function DocumentViewer({ file = null }) {
   // Viewport Control States
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
+  const { dpi, setDpi } = useDpiQuality();
   
   // PDF states
   const [pdfDoc, setPdfDoc] = useState(null);
@@ -538,16 +562,16 @@ export default function DocumentViewer({ file = null }) {
         const page = await pdfDoc.getPage(pdfPage);
         if (!isCurrent) return;
 
-        const pixelRatio = Math.min(window.devicePixelRatio || 1, 3);
-        const viewport = page.getViewport({ scale: zoom * pixelRatio });
+        const dpiScale = (dpi || 150) / 72;
+        const viewport = page.getViewport({ scale: zoom * dpiScale });
         const canvas = canvasRef.current;
         if (!canvas) return;
 
         const context = canvas.getContext('2d');
         canvas.width = viewport.width;
         canvas.height = viewport.height;
-        canvas.style.width = `${viewport.width / pixelRatio}px`;
-        canvas.style.height = `${viewport.height / pixelRatio}px`;
+        canvas.style.width = `${viewport.width / dpiScale}px`;
+        canvas.style.height = `${viewport.height / dpiScale}px`;
 
         // Render visual canvas
         const renderContext = {
@@ -562,8 +586,8 @@ export default function DocumentViewer({ file = null }) {
         const textLayerDiv = textLayerRef.current;
         if (textLayerDiv) {
           textLayerDiv.innerHTML = '';
-          textLayerDiv.style.width = `${viewport.width / pixelRatio}px`;
-          textLayerDiv.style.height = `${viewport.height / pixelRatio}px`;
+          textLayerDiv.style.width = `${viewport.width / dpiScale}px`;
+          textLayerDiv.style.height = `${viewport.height / dpiScale}px`;
 
           const textContent = await page.getTextContent();
           if (!isCurrent) return;
@@ -587,7 +611,7 @@ export default function DocumentViewer({ file = null }) {
     return () => {
       isCurrent = false;
     };
-  }, [pdfDoc, pdfPage, zoom, activeFile]);
+  }, [pdfDoc, pdfPage, zoom, dpi, activeFile]);
 
   // Render Word document to layout elements
   useEffect(() => {
@@ -753,8 +777,8 @@ export default function DocumentViewer({ file = null }) {
         : 'h-screen fixed inset-0 z-50 overflow-hidden'
     }`}>
       <SEOHead 
-        title="Document Viewer | DocForge" 
-        description="Preview any document type fully Client Side and Client Side on DocForge."
+        title="Document Viewer | DocScalar" 
+        description="Preview any document type fully Client Side and Client Side on DocScalar."
       />
 
       {files.length === 0 ? (
@@ -1056,6 +1080,8 @@ export default function DocumentViewer({ file = null }) {
                     </div>
                   </div>
                 )}
+
+                <DpiQualitySelector dpi={dpi} onChange={setDpi} align="right" compact={true} dropDirection="down" />
 
                 {/* Fullscreen & details toggles */}
                 <button 
@@ -1527,7 +1553,7 @@ export default function DocumentViewer({ file = null }) {
                         <Wrench className="w-12 h-12 text-white/10" />
                         <h3 className="text-sm font-semibold text-on-background">No interactive visual preview</h3>
                         <p className="text-[11px] leading-relaxed text-text-tertiary max-w-xs">
-                          DocForge doesn't support interactive previews for this file format yet. Check metadata details in the right actions panel.
+                          DocScalar doesn't support interactive previews for this file format yet. Check metadata details in the right actions panel.
                         </p>
                       </div>
                   )}

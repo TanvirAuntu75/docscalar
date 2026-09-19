@@ -13,7 +13,7 @@ const NEXT_ACTION_MAP = {
     { title: 'Sign Document', icon: FilePenLine, path: '/sign-pdf', desc: 'Add your signature' }
   ],
   'pdf-to-word': [
-    { title: 'Translate Document', icon: FileText, path: '/translate-pdf', desc: 'Translate to 30+ languages' },
+    { title: 'Translate Document', icon: FileText, path: '/ai-translator', desc: 'Translate to 30+ languages' },
     { title: 'Compress PDF', icon: FileArchive, path: '/compress-pdf', desc: 'Optimize storage size' }
   ],
   'docx-to-pdf': [

@@ -41,7 +41,7 @@ const MOCK_RESUME_DATA = {
   location: 'New York, USA',
   website: 'reallygreatsite.com',
   linkedin: 'linkedin.com/in/mariana',
-  summary: 'Passionate and results-driven branding manager with over 6 years of experience driving cross-functional digital advertising campaigns. Skilled in UI layouts, market trends, SEO strategy, and high-impact copywriting.',
+  summary: 'Brand Marketing Manager with over 6 years of experience directing digital advertising campaigns. Skilled in visual design, market research, SEO strategy, and clear copywriting.',
   experience: [
     {
       id: 'exp1',
@@ -50,7 +50,7 @@ const MOCK_RESUME_DATA = {
       start: '2022',
       end: 'Present',
       highlights: [
-        'Spearheaded global digital brand revamps generating up to 140% increase in social traffic.',
+        'Led global digital brand revamps generating up to 140% increase in social traffic.',
         'Supervised 6 creative staff including designers, copywriters, and visual content producers.',
       ]
     },
@@ -61,7 +61,7 @@ const MOCK_RESUME_DATA = {
       start: '2019',
       end: '2022',
       highlights: [
-        'Optimized ad-words expenditures cutting operational client acquisition costs by 18%.',
+        'Optimized search advertising expenditures, cutting operational client acquisition costs by 18%.',
       ]
     }
   ],
@@ -640,7 +640,7 @@ const BENTO_FEATURES = [
     id: 'pdf',
     title: 'Everything for Documents',
     subtitle: 'Convert · Edit · Secure · Organize · Analyze',
-    desc: 'Whatever you need to do with a document, DocForge does it — all locally, instantly, without queues or waiting for a cloud server to wake up.',
+    desc: 'Whatever you need to do with a document, DocScalar does it — all locally, instantly, without queues or waiting for a cloud server to wake up.',
     icon: 'auto_awesome',
     span: 'md:col-span-2',
     accent: 'var(--color-primary)',
@@ -668,9 +668,9 @@ const BENTO_FEATURES = [
   },
   {
     id: 'resume',
-    title: 'Career-Ready Builder',
+    title: 'Resume and CV Studio',
     subtitle: 'Design · Preview · Export',
-    desc: 'Go from blank page to boardroom ready in minutes. Stunning layouts, live preview, custom photo — completely Local Compute.',
+    desc: 'Create clean professional resumes with live preview, custom photo support, and private local generation.',
     icon: 'workspace_premium',
     span: 'md:col-span-1',
     accent: 'var(--color-accent)',
@@ -714,28 +714,28 @@ const PRIVACY_CARDS = [
 
 const FAQ_ITEMS = [
   {
-    q: 'Does DocForge upload my files to a server?',
+    q: 'Does DocScalar upload my files to a server?',
     a: 'No. All standard operations run entirely inside your browser using locally compiled conversion engines. Files never leave your device. For certain heavy-pipeline operations a local server bridge handles processing — never an external cloud.',
   },
   {
     q: 'What is the Studio Canvas workspace?',
-    a: 'The Studio Canvas is a Miro style visual node editor at the /canvas route. You drag document nodes onto a dot-grid workspace, draw cable connections to operation nodes, and the built-in recursive solver executes your entire pipeline in sequence — all Client Side.',
+    a: 'The Studio Canvas is a Miro style visual node editor at the /canvas route. You drag document nodes onto a dot grid workspace, draw cable connections to operation nodes, and the built in recursive solver executes your entire pipeline in sequence — all Client Side.',
   },
   {
     q: 'What are the file size limits per plan?',
-    a: 'Guest users can process files up to 10MB. Free account holders get 100MB per file with 5 queue slots. Pro subscribers unlock 1GB per file with 50 slots, chunked uploading for 10GB+ files, and On Device AI translation.',
+    a: 'Guest users can process files up to 10MB. Free account holders get 100MB per file with 5 queue slots. Pro subscribers get 1GB per file with 50 slots, chunked uploading for 10GB+ files, and On Device AI translation.',
   },
   {
     q: 'How does On Device AI translation work?',
-    a: 'Our AI translator runs a local neural machine translation model downloaded once to your browser cache. It runs on your CPU or GPU with no calls to OpenAI, Anthropic, or any third-party API — completely air-gapped after the first visit.',
+    a: 'Our AI translator runs a local neural machine translation model downloaded once to your browser cache. It runs on your CPU or GPU with no calls to OpenAI, Anthropic, or any third party API — completely private after the first visit.',
   },
   {
-    q: 'Can I use DocForge fully Client Side?',
+    q: 'Can I use DocScalar fully Client Side?',
     a: 'Yes — after the initial page load. All Client Side tools work with no internet connection. The AI translation model is cached locally after first use, enabling On Device translation on return visits.',
   },
   {
     q: 'Is my content used to train AI models?',
-    a: 'Absolutely not. DocForge processes everything locally and has no telemetry pipeline attached to document content. Your files and their contents are never seen by our systems.',
+    a: 'Absolutely not. DocScalar processes everything locally and has no telemetry pipeline attached to document content. Your files and their contents are never seen by our systems.',
   },
 ];
 
@@ -747,16 +747,16 @@ const RESUME_TEMPLATES = [
   { name: 'Charles', displayName: 'Steel Executive', desc: 'Corporate steel template tailored for executive positions.', shade1: '#475569', shade2: '#334155' },
   { name: 'Kathleen', displayName: 'Lavender Academic', desc: 'Soft lavender academic layout designed for CVs and researchers.', shade1: '#581c87', shade2: '#3b0764' },
   { name: 'Richard', displayName: 'Classic Business Indigo', desc: 'Indigo classic layout for general business professions.', shade1: '#312e81', shade2: '#1e1b4b' },
-  { name: 'Sanchez Dark', displayName: 'Charcoal Grid Compact', desc: 'Charcoal-themed layout with high density content grids.', shade1: '#1c1917', shade2: '#0c0a09' },
+  { name: 'Sanchez Dark', displayName: 'Charcoal Grid Compact', desc: 'Charcoal theme layout with high density content grids.', shade1: '#1c1917', shade2: '#0c0a09' },
   { name: 'Wilson Light', displayName: 'Classical Editorial Light', desc: 'Elegant light layout with crisp, clean classical typography.', shade1: '#d8dee9', shade2: '#e5e9f0' },
   { name: 'Sanchez Mono', displayName: 'Developer Monospace Timeline', desc: 'Clean monospace coding developer layout for technical cvs.', shade1: '#0f172a', shade2: '#020617' },
-  { name: 'Sanchez Wave', displayName: 'Pacific Wave Blue', desc: 'Pacific blue template featuring a wave-pattern header.', shade1: '#075985', shade2: '#0c4a6e' },
+  { name: 'Sanchez Wave', displayName: 'Pacific Wave Blue', desc: 'Pacific blue template featuring a wave style header.', shade1: '#075985', shade2: '#0c4a6e' },
   { name: 'Ong Burgundy', displayName: 'Plum Burgundy Premium', desc: 'Rich plum luxury header layout for premium presentation.', shade1: '#701a75', shade2: '#4a044e' },
   { name: 'Schumacher Charcoal', displayName: 'Minimalist Charcoal Stone', desc: 'Charcoal minimal builder with clean, structured margins.', shade1: '#292524', shade2: '#1c1917' },
   { name: 'Ziv Olive', displayName: 'Forest Olive Organic', desc: 'Organic forest olive layout for design and branding specialists.', shade1: '#3f6212', shade2: '#365314' },
   { name: 'Adora Diagonal', displayName: 'Teal Creative Diagonal', desc: 'Teal creative layout featuring dynamic diagonal accents.', shade1: '#155e75', shade2: '#164e63' },
-  { name: 'Wilson Minimal', displayName: 'Ultra-Clean Minimalist', desc: 'Ultra-clean layout stripped of heavy lines or visual clutter.', shade1: '#e2e8f0', shade2: '#cbd5e1' },
-  { name: 'Alvarado Slate', displayName: 'Split Column Slate', desc: 'Geometric slate-gray layout with split block columns.', shade1: '#334155', shade2: '#1e293b' },
+  { name: 'Wilson Minimal', displayName: 'Pure Minimalist Light', desc: 'Minimal layout stripped of heavy lines or visual clutter.', shade1: '#e2e8f0', shade2: '#cbd5e1' },
+  { name: 'Alvarado Slate', displayName: 'Split Column Slate', desc: 'Geometric slate gray layout with split block columns.', shade1: '#334155', shade2: '#1e293b' },
 ];
 
 // 13. Resume3DCarousel — Framer Motion Coverflow Carousel
@@ -942,7 +942,7 @@ function StudioCanvasSection() {
       title: 'Type-Safe Cable Guard',
       input1: { name: 'annual_report.pdf', size: '4.2 MB', tag: 'PDF', bg: 'bg-rose-500' },
       input2: { name: 'receipt.png', size: '610 KB', tag: 'PNG', bg: 'bg-emerald-500' },
-      op1: { title: 'MIME Validator', icon: 'verified_user', param: 'Port Type Validation ✓', border: 'border-indigo-500', text: 'text-indigo-600 dark:text-indigo-400' },
+      op1: { title: 'MIME Validator', icon: 'verified_user', param: 'Port Type Validation', border: 'border-indigo-500', text: 'text-indigo-600 dark:text-indigo-400' },
       op2: { title: 'Cycle Guard', icon: 'block', param: 'Loop & Cycle Prevented', border: 'border-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' },
       outputNode: { name: 'validated_output.pdf', size: '1.1 MB', suffix: 'Type Safe', tag: 'OUTPUT', bg: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' }
     },
@@ -1084,7 +1084,7 @@ function StudioCanvasSection() {
                 <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
                 <span className="ml-2 text-[10px] font-mono tracking-wider opacity-70 hidden sm:inline-block" style={{ color: 'var(--text-primary)' }}>
-                  DocForge Studio Canvas
+                  DocScalar Studio Canvas
                 </span>
               </div>
 
@@ -1348,7 +1348,7 @@ function StudioCanvasSection() {
                     <div className="w-full flex items-center justify-between px-1 text-[7px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
                       <span>Status</span>
                       <span className={stage === 2 ? "text-indigo-500 animate-pulse font-bold" : stage > 2 ? "text-emerald-500 font-bold" : ""}>
-                        {stage === 2 ? "RUNNING" : stage > 2 ? "DONE ✓" : "-"}
+                        {stage === 2 ? "RUNNING" : stage > 2 ? "DONE" : "-"}
                       </span>
                     </div>
                   </motion.div>
@@ -1378,7 +1378,7 @@ function StudioCanvasSection() {
                     <div className="w-full flex items-center justify-between px-1 text-[7px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
                       <span>Status</span>
                       <span className={stage === 3 ? "text-emerald-500 animate-pulse font-bold" : stage > 3 ? "text-emerald-500 font-bold" : ""}>
-                        {stage === 3 ? "RUNNING" : stage > 3 ? "DONE ✓" : "READY"}
+                        {stage === 3 ? "RUNNING" : stage > 3 ? "DONE" : "READY"}
                       </span>
                     </div>
                   </motion.div>
@@ -1409,7 +1409,7 @@ function StudioCanvasSection() {
                       <div className="w-full flex items-center justify-between px-1 text-[7px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
                         <span>Status</span>
                         <span className={stage === 3 ? "text-emerald-500 animate-pulse font-bold" : stage > 3 ? "text-emerald-500 font-bold" : "READY"}>
-                          {stage === 3 ? "RUNNING" : stage > 3 ? "DONE ✓" : "READY"}
+                          {stage === 3 ? "RUNNING" : stage > 3 ? "DONE" : "READY"}
                         </span>
                       </div>
                     </motion.div>
@@ -1580,7 +1580,7 @@ export default function LandingPage({
             style={{ color: 'var(--text-secondary)' }}
           >
             <TypewriterEffect
-              text="DocForge runs 38+ document tools, a visual Studio Canvas, and an On Device AI translator — all inside your browser. Files never leave your machine."
+              text="DocScalar runs 38+ document tools, a visual Studio Canvas, and an On Device AI translator — all inside your browser. Files never leave your machine."
               speed={18}
               delay={700}
             />
@@ -1865,7 +1865,7 @@ export default function LandingPage({
           <p className="text-[11px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--color-primary)' }}>How it works</p>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Built for Privacy by Design</h2>
           <p className="text-sm mt-3 max-w-lg mx-auto" style={{ color: 'var(--text-secondary)' }}>
-            Every layer of DocForge is engineered to process data locally, leaving no trace behind.
+            Every layer of DocScalar is engineered to process data locally, leaving no trace behind.
           </p>
         </ScrollReveal>
 
@@ -2099,7 +2099,7 @@ export default function LandingPage({
           <p className="text-[11px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--color-primary)' }}>FAQ</p>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Frequently Asked</h2>
           <p className="text-sm mt-3" style={{ color: 'var(--text-secondary)' }}>
-            Everything you want to know about how DocForge works.
+            Everything you want to know about how DocScalar works.
           </p>
         </ScrollReveal>
 

@@ -52,7 +52,7 @@ export default function Login() {
 
   return (
     <div className="bg-background min-h-[80vh] flex flex-col justify-center items-center px-margin-mobile py-xl relative">
-      <SEOHead title="Login — DocForge" description="Log in to your DocForge account to manage your documents and track conversion history." />
+      <SEOHead title="Login — DocScalar" description="Log in to your DocScalar account to manage your documents and track conversion history." />
       <div className="absolute inset-0 bg-pattern opacity-10 pointer-events-none"></div>
 
       {/* Back to Home link */}
@@ -67,7 +67,7 @@ export default function Login() {
         <div className="text-center mb-6">
           <Link to="/" className="inline-flex items-center gap-2 mb-4 font-h3 text-h3 font-semibold text-primary">
             <span className="material-symbols-outlined text-[28px] fill">description</span>
-            <span>DocForge</span>
+            <span>DocScalar</span>
           </Link>
           <h2 className="font-h2 text-h2 text-on-background">Welcome Back</h2>
           <p className="font-body-md text-body-md text-on-surface-variant mt-1">Enter your details to log in to your account</p>

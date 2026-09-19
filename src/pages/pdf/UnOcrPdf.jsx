@@ -8,6 +8,7 @@ import { unOcrPdf } from '../../engines/pdf/unOcrPdf';
 import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
+import useCanvasPinchZoom from '../../hooks/useCanvasPinchZoom';
 import {
   Layers,
   Sparkles,
@@ -34,7 +35,26 @@ export default function UnOcrPdf() {
   const [pageFilter, setPageFilter] = useState('');
   const [gridDensity, setGridDensity] = useState('standard'); // 'compact' | 'standard' | 'large'
   const [zoomScale, setZoomScale] = useState(1.0);
+  const [debouncedRenderZoom, setDebouncedRenderZoom] = useState(zoomScale);
   const [canvasLoading, setCanvasLoading] = useState(false);
+  const viewportContainerRef = useRef(null);
+
+  // Debounce high-DPI PDF rasterization to decouple smooth 120 FPS GPU scaling from heavy canvas redraws
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedRenderZoom(zoomScale);
+    }, 200);
+    return () => clearTimeout(handler);
+  }, [zoomScale]);
+
+  // Universal 2-finger touchpad/touchscreen canvas pinch-to-zoom
+  useCanvasPinchZoom({
+    containerRef: viewportContainerRef,
+    zoomScale,
+    setZoomScale,
+    minZoom: 0.3,
+    maxZoom: 3.0
+  });
 
   // Flatten & Security Options
   const [flattenMode, setFlattenMode] = useState('strip'); // 'strip' | 'rasterize'
@@ -51,6 +71,7 @@ export default function UnOcrPdf() {
   const [error, setError] = useState(null);
 
   const previewCanvasRef = useRef(null);
+  const currentRenderTaskRef = useRef(null);
 
   // 1. Restore Draft Session on Mount
   useEffect(() => {
@@ -185,16 +206,30 @@ export default function UnOcrPdf() {
         const canvas = previewCanvasRef.current;
         if (!canvas) return;
 
-        const viewport = page.getViewport({ scale: 1.5 * zoomScale });
+        const viewport = page.getViewport({ scale: 1.5 * debouncedRenderZoom });
         canvas.width = viewport.width;
         canvas.height = viewport.height;
 
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, viewport.width, viewport.height);
-        await page.render({ canvasContext: ctx, viewport }).promise;
+        // Cancel previous in-flight render task if user zooms or changes page quickly
+        if (currentRenderTaskRef.current) {
+          try {
+            currentRenderTaskRef.current.cancel();
+          } catch (e) {}
+          currentRenderTaskRef.current = null;
+        }
+
+        const renderTask = page.render({ canvasContext: ctx, viewport });
+        currentRenderTaskRef.current = renderTask;
+        await renderTask.promise;
       } catch (err) {
-        console.error('Error rendering page inspect view:', err);
+        if (err?.name !== 'RenderingCancelledException') {
+          console.error('Error rendering page inspect view:', err);
+        }
+      } finally {
+        currentRenderTaskRef.current = null;
       }
     };
 
@@ -202,8 +237,14 @@ export default function UnOcrPdf() {
 
     return () => {
       isMounted = false;
+      if (currentRenderTaskRef.current) {
+        try {
+          currentRenderTaskRef.current.cancel();
+        } catch (e) {}
+        currentRenderTaskRef.current = null;
+      }
     };
-  }, [pdfDocument, activePageIndex, viewMode, zoomScale]);
+  }, [pdfDocument, activePageIndex, viewMode, debouncedRenderZoom]);
 
   // 5. Execute Un-OCR / Flatten PDF
   const handleFlattenPdf = async () => {
@@ -281,7 +322,7 @@ export default function UnOcrPdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Un-OCR PDF Online Free — Flatten PDF Pages | DocForge"
+        title="Un-OCR PDF Online Free — Flatten PDF Pages | DocScalar"
         description="Flatten searchable PDFs into purely rasterized, image-only documents. Strips text layers, font dictionaries, and interactive fields Client Side."
       />
 
@@ -300,13 +341,13 @@ export default function UnOcrPdf() {
             {/* ========================================================================= */}
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
               {/* Sticky Canvas Toolbar */}
-              <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2 flex-wrap">
+              <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)] shrink-0">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2.5">
+                  <div className="flex items-center gap-2.5 flex-wrap">
                     {/* Active File Switcher */}
                     {files.length > 1 ? (
-                      <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
-                        <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">description</span>
+                      <div className="h-8 flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-medium)] shrink-0">
+                        <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
                         <select
                           value={activeFileIndex}
                           onChange={(e) => {
@@ -323,7 +364,7 @@ export default function UnOcrPdf() {
                         </select>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
+                      <div className="h-8 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)] shrink-0">
                         <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
                         <span className="truncate max-w-[200px]">{files[0]?.name}</span>
                         <span className="text-[var(--text-secondary)] font-normal">({formatFileSize(files[0]?.size || 0)})</span>
@@ -331,11 +372,11 @@ export default function UnOcrPdf() {
                     )}
 
                     {/* View Switcher Capsule (Gallery vs Inspect) */}
-                    <div className="flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
+                    <div className="h-8 flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)] shrink-0">
                       <button
                         type="button"
                         onClick={() => setViewMode('gallery')}
-                        className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${
+                        className={`h-7 px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                           viewMode === 'gallery'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -347,7 +388,7 @@ export default function UnOcrPdf() {
                       <button
                         type="button"
                         onClick={() => setViewMode('preview')}
-                        className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${
+                        className={`h-7 px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                           viewMode === 'preview'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -360,12 +401,12 @@ export default function UnOcrPdf() {
 
                     {/* Page Navigation Capsule (When in Inspect View) */}
                     {viewMode === 'preview' && totalPages > 0 && (
-                      <div className="flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] px-1 py-0.5">
+                      <div className="h-8 flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] px-2.5 py-1 shrink-0">
                         <button
                           type="button"
                           onClick={() => setActivePageIndex((p) => Math.max(0, p - 1))}
                           disabled={activePageIndex === 0}
-                          className="p-1 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                          className="p-0.5 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
                           title="Previous Page"
                         >
                           <span className="material-symbols-outlined text-[16px]">chevron_left</span>
@@ -377,7 +418,7 @@ export default function UnOcrPdf() {
                           type="button"
                           onClick={() => setActivePageIndex((p) => Math.min(totalPages - 1, p + 1))}
                           disabled={activePageIndex >= totalPages - 1}
-                          className="p-1 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                          className="p-0.5 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
                           title="Next Page"
                         >
                           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
@@ -390,8 +431,8 @@ export default function UnOcrPdf() {
                   <div className="flex items-center gap-2">
                     {viewMode === 'gallery' ? (
                       <>
-                        <div className="flex items-center bg-[var(--bg-secondary)] rounded-lg px-2 py-0.5 border border-[var(--border-subtle)] text-xs text-[var(--text-primary)]">
-                          <span className="material-symbols-outlined text-[14px] text-[var(--text-secondary)] mr-1">search</span>
+                        <div className="h-8 flex items-center bg-[var(--bg-secondary)] rounded-lg px-2.5 py-1 border border-[var(--border-subtle)] text-xs text-[var(--text-primary)]">
+                          <span className="material-symbols-outlined text-[14px] text-[var(--text-secondary)] mr-1.5">search</span>
                           <input
                             type="text"
                             placeholder="Find page..."
@@ -401,11 +442,11 @@ export default function UnOcrPdf() {
                           />
                         </div>
 
-                        <div className="flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
+                        <div className="h-8 flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)] shrink-0">
                           <button
                             type="button"
                             onClick={() => setGridDensity('compact')}
-                            className={`p-1 rounded cursor-pointer ${gridDensity === 'compact' ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--text-secondary)]'}`}
+                            className={`h-7 w-7 flex items-center justify-center rounded cursor-pointer transition-colors ${gridDensity === 'compact' ? 'bg-[var(--color-primary)] text-white shadow-xs' : 'text-[var(--text-secondary)]'}`}
                             title="Compact View"
                           >
                             <span className="material-symbols-outlined text-[14px]">density_small</span>
@@ -413,7 +454,7 @@ export default function UnOcrPdf() {
                           <button
                             type="button"
                             onClick={() => setGridDensity('standard')}
-                            className={`p-1 rounded cursor-pointer ${gridDensity === 'standard' ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--text-secondary)]'}`}
+                            className={`h-7 w-7 flex items-center justify-center rounded cursor-pointer transition-colors ${gridDensity === 'standard' ? 'bg-[var(--color-primary)] text-white shadow-xs' : 'text-[var(--text-secondary)]'}`}
                             title="Standard View"
                           >
                             <span className="material-symbols-outlined text-[14px]">density_medium</span>
@@ -421,7 +462,7 @@ export default function UnOcrPdf() {
                           <button
                             type="button"
                             onClick={() => setGridDensity('large')}
-                            className={`p-1 rounded cursor-pointer ${gridDensity === 'large' ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--text-secondary)]'}`}
+                            className={`h-7 w-7 flex items-center justify-center rounded cursor-pointer transition-colors ${gridDensity === 'large' ? 'bg-[var(--color-primary)] text-white shadow-xs' : 'text-[var(--text-secondary)]'}`}
                             title="Large View"
                           >
                             <span className="material-symbols-outlined text-[14px]">density_large</span>
@@ -429,13 +470,13 @@ export default function UnOcrPdf() {
                         </div>
                       </>
                     ) : (
-                      <div className="flex items-center gap-1 bg-[var(--bg-secondary)] px-2 py-1 rounded-lg border border-[var(--border-subtle)]">
+                      <div className="h-8 flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
                         <span className="material-symbols-outlined text-[15px] text-[var(--text-secondary)]">zoom_in</span>
                         <input
                           type="range"
-                          min="0.5"
-                          max="1.5"
-                          step="0.1"
+                          min="0.3"
+                          max="3.0"
+                          step="0.05"
                           value={zoomScale}
                           onChange={(e) => setZoomScale(parseFloat(e.target.value))}
                           className="w-16 h-1 bg-[var(--border-subtle)] accent-[var(--color-primary)] rounded-lg cursor-pointer"
@@ -449,7 +490,7 @@ export default function UnOcrPdf() {
                     <button
                       type="button"
                       onClick={resetWorkspace}
-                      className="p-1 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer"
+                      className="h-8 w-8 flex items-center justify-center hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-red-500/20"
                       title="Reset workspace"
                     >
                       <span className="material-symbols-outlined text-[18px]">restart_alt</span>
@@ -459,9 +500,9 @@ export default function UnOcrPdf() {
               </div>
 
               {/* Viewport Canvas Stage */}
-              <div className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center relative bg-pattern select-none">
+              <div ref={viewportContainerRef} className="flex-1 overflow-auto p-4 sm:p-8 pb-24 sm:pb-32 flex items-start justify-center relative bg-pattern select-none">
                 {canvasLoading ? (
-                  <div className="flex flex-col items-center gap-3 text-[var(--text-secondary)]">
+                  <div className="flex flex-col items-center gap-3 text-[var(--text-secondary)] my-auto">
                     <span className="material-symbols-outlined text-[32px] animate-spin text-[var(--color-primary)]">
                       progress_activity
                     </span>
@@ -494,7 +535,7 @@ export default function UnOcrPdf() {
                               : 'border-[var(--border-subtle)] hover:border-[var(--color-primary)]/50'
                           }`}
                         >
-                          <div className="w-full aspect-3/4 rounded-xl overflow-hidden bg-white shadow-xs flex items-center justify-center relative">
+                          <div className="w-full aspect-[1/1.414] rounded-xl overflow-hidden bg-white shadow-xs flex items-center justify-center relative">
                             {thumb ? (
                               <img src={thumb} alt={`Page ${pageNum}`} className="w-full h-full object-contain pointer-events-none" />
                             ) : (
@@ -504,9 +545,9 @@ export default function UnOcrPdf() {
                               </div>
                             )}
 
-                            {/* Flatten Badge Indicator */}
-                            <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-[9px] font-bold text-white uppercase tracking-wider">
-                              Flatten
+                            {/* Un-OCR Badge Indicator */}
+                            <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-amber-500/80 backdrop-blur-xs text-[9px] font-bold text-white uppercase tracking-wider">
+                              Un-OCR
                             </div>
                           </div>
 
@@ -523,7 +564,7 @@ export default function UnOcrPdf() {
                 ) : (
                   /* 2. Single-Page Inspect Preview */
                   <div
-                    className="relative bg-white shadow-2xl rounded-sm border border-slate-300 dark:border-slate-700 overflow-hidden transition-transform duration-150"
+                    className="relative bg-white shadow-2xl rounded-sm border border-slate-300 dark:border-slate-700 overflow-hidden transition-transform duration-150 m-auto shrink-0"
                     style={{
                       width: pageDimensions.width * zoomScale,
                       height: pageDimensions.height * zoomScale
@@ -673,14 +714,16 @@ export default function UnOcrPdf() {
                 {/* Progress Bar (While Processing) */}
                 {processing && (
                   <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                    <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                           progress_activity
                         </span>
-                        {statusMessage || 'Flattening layers...'}
-                      </span>
-                      <span>{progress}%</span>
+                        <span className="truncate" title={statusMessage || 'Flattening layers...'}>
+                          {statusMessage || 'Flattening layers...'}
+                        </span>
+                      </div>
+                      <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div

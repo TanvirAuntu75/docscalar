@@ -22,7 +22,7 @@ def test_auth_and_billing():
 
     import time
 
-    test_email = f"testuser_{int(time.time())}@docforge.com"
+    test_email = f"testuser_{int(time.time())}@docscalar.com"
 
     # Test Signup
     signup_data = {"email": test_email, "password": "securepassword123"}

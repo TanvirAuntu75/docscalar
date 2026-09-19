@@ -65,11 +65,11 @@ class TestBackendAuditFixes(unittest.TestCase):
         self.assertGreater(len(secret), 10)
 
         # Encode and decode token
-        payload = {"user_id": "test-user-123", "email": "test@docforge.internal"}
+        payload = {"user_id": "test-user-123", "email": "test@docscalar.internal"}
         token = create_access_token(payload)
         decoded = decode_access_token(token)
         self.assertEqual(decoded["user_id"], "test-user-123")
-        self.assertEqual(decoded["email"], "test@docforge.internal")
+        self.assertEqual(decoded["email"], "test@docscalar.internal")
 
     def test_database_cascades_and_account_deletion(self):
         init_db()

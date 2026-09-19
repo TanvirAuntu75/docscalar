@@ -1,0 +1,5078 @@
+{
+  "summary": {
+    "totalTemplateFiles": 85,
+    "totalExportedInIndex": 85,
+    "totalInTemplateMap": 85,
+    "missingInMap": [],
+    "missingInIndex": [],
+    "paginationCount": 5,
+    "templatesWithMockFallbacksCount": 85,
+    "templatesWithMediaPrintCount": 85,
+    "templatesWithPrintColorAdjustCount": 85,
+    "templatesWithDfFieldCount": 85,
+    "templatesWithAvatarCount": 84
+  },
+  "templates": [
+    {
+      "file": "adam_fletcher.js",
+      "slug": "adam_fletcher",
+      "exportName": "generateAdamFletcherHtml",
+      "mapEntry": {
+        "slug": "adam_fletcher",
+        "label": "👑 Adam Fletcher",
+        "fn": "generateAdamFletcherHtml",
+        "badge": "Exact Charcoal Bar Header",
+        "photoUrl": "/images/candidates/adam_fletcher.jpg",
+        "candidateName": "Adam Fletcher"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 16,
+      "uniqueDfFields": [
+        "name",
+        "title",
+        "summary",
+        "phone",
+        "email",
+        "location",
+        "skill:${idx}",
+        "custom:custom_languages:${idx}:title",
+        "edu:${idx}:date",
+        "edu:${idx}:school",
+        "edu:${idx}:degree",
+        "exp:${idx}:date",
+        "exp:${idx}:role",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${bIdx}"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 19,
+          "code": "const nameParts = (data.name || 'Adam Fletcher').trim().split(' ');"
+        },
+        {
+          "line": 344,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Adam Fletcher'}\">"
+        },
+        {
+          "line": 414,
+          "code": "${languageList.map((l, idx) => `<li data-df-field=\"custom:custom_languages:${idx}:title\">${typeof l === 'string' ? l : l.name || 'Language'}</li>`).join('')}"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": false
+      },
+      "fileSize": 16093,
+      "lineCount": 482
+    },
+    {
+      "file": "adeline_palmerston.js",
+      "slug": "adeline_palmerston",
+      "exportName": "generateAdelinePalmerstonHtml",
+      "mapEntry": {
+        "slug": "adeline_palmerston",
+        "label": "👑 Adeline Palmerston",
+        "fn": "generateAdelinePalmerstonHtml",
+        "badge": "Exact Slate & Bronze",
+        "photoUrl": "/images/candidates/adeline_palmerston.jpg",
+        "candidateName": "Adeline Palmerston"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": true,
+      "dfFieldCount": 28,
+      "uniqueDfFields": [
+        "exp:${actualIdx}:date",
+        "exp:${actualIdx}:company",
+        "exp:${actualIdx}:role",
+        "exp:${actualIdx}:highlight:${hIdx}",
+        "proj:${actualIdx}:name",
+        "proj:${actualIdx}:url",
+        "proj:${actualIdx}:description",
+        "cert:${actualIdx}",
+        "ref:${actualIdx}:name",
+        "ref:${actualIdx}:relation",
+        "ref:${actualIdx}:contact",
+        "custom:${cs.id}:${idx}:title",
+        "custom:${cs.id}:${idx}:value",
+        "phone",
+        "email",
+        "location",
+        "website",
+        "linkedin",
+        "skill:${idx}",
+        "custom:custom_languages:${idx}:title",
+        "name",
+        "title",
+        "summary",
+        "edu:${idx}:date",
+        "edu:${idx}:school",
+        "edu:${idx}:degree"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 22,
+          "code": "const nameParts = (data.name || 'Adeline Palmerston').trim().split(' ');"
+        },
+        {
+          "line": 140,
+          "code": "<h2>${cs.title || 'Additional Information'}</h2>"
+        },
+        {
+          "line": 228,
+          "code": "<title>${data.name || 'Adeline Palmerston'} - Resume</title>"
+        },
+        {
+          "line": 619,
+          "code": "${photoSrc ? `<div class=\"profile-photo-mask\"><img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Adeline Palmerston'}\" /></div>` : ''}"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": false
+      },
+      "fileSize": 26474,
+      "lineCount": 741
+    },
+    {
+      "file": "adora_diagonal.js",
+      "slug": "adora_diagonal",
+      "exportName": "generateAdoraDiagonalHtml",
+      "mapEntry": {
+        "slug": "adora_diagonal",
+        "label": "✨ Adora Diagonal",
+        "fn": "generateAdoraDiagonalHtml",
+        "badge": "Diagonal Waves",
+        "photoUrl": "/images/candidates/adora_diagonal.jpg",
+        "candidateName": "Adora Sharma"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 15,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 138,
+          "code": "<h3>${langSection.title || 'Languages'}</h3>"
+        },
+        {
+          "line": 390,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 13747,
+      "lineCount": 421
+    },
+    {
+      "file": "adora_montminy.js",
+      "slug": "adora_montminy",
+      "exportName": "generateAdoraMontminyHtml",
+      "mapEntry": {
+        "slug": "adora_montminy",
+        "label": "👑 Adora Montminy",
+        "fn": "generateAdoraMontminyHtml",
+        "badge": "Exact Gradient Blue & Slate",
+        "photoUrl": "/images/candidates/adora_montminy.jpg",
+        "candidateName": "Adora Montminy"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "summary",
+        "phone",
+        "email",
+        "location",
+        "skill:${idx}",
+        "custom:custom_languages:${idx}:title",
+        "edu:${idx}:date",
+        "edu:${idx}:school",
+        "edu:${idx}:degree",
+        "exp:${idx}:date",
+        "exp:${idx}:role",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${bIdx}",
+        "name",
+        "title"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 83,
+          "code": "${langList.map((l, idx) => `<li data-df-field=\"custom:custom_languages:${idx}:title\">${typeof l === 'string' ? l : l.name || 'Language'}</li>`).join('')}"
+        }
+      ],
+      "hasClipPath": true,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 16467,
+      "lineCount": 492
+    },
+    {
+      "file": "alfredo_torres.js",
+      "slug": "alfredo_torres",
+      "exportName": "generateAlfredoTorresHtml",
+      "mapEntry": {
+        "slug": "alfredo_torres",
+        "label": "👑 Alfredo Torres",
+        "fn": "generateAlfredoTorresHtml",
+        "badge": "Exact Geometric Vector Header",
+        "photoUrl": "/images/candidates/alfredo_torres.jpg",
+        "candidateName": "Alfredo Torres"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "name",
+        "title",
+        "phone",
+        "email",
+        "location",
+        "website",
+        "edu:${idx}:date",
+        "edu:${idx}:school",
+        "edu:${idx}:degree",
+        "skill:${idx}",
+        "summary",
+        "exp:${idx}:company",
+        "exp:${idx}:date",
+        "exp:${idx}:role",
+        "exp:${idx}:highlight:${bIdx}",
+        "ref:${idx}:name",
+        "ref:${idx}:relation",
+        "ref:${idx}:contact"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 69,
+          "code": "<title>${data.name || 'Alfredo Torres'} - Resume</title>"
+        },
+        {
+          "line": 465,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Alfredo Torres'}\">"
+        },
+        {
+          "line": 469,
+          "code": "<h1 class=\"candidate-name\" data-df-field=\"name\">${data.name || 'Alfredo Torres'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": false
+      },
+      "fileSize": 17611,
+      "lineCount": 607
+    },
+    {
+      "file": "alvarado_slate.js",
+      "slug": "alvarado_slate",
+      "exportName": "generateAlvaradoSlateHtml",
+      "mapEntry": {
+        "slug": "alvarado_slate",
+        "label": "✨ Lorna Slate",
+        "fn": "generateAlvaradoSlateHtml",
+        "badge": "Slate Ribbon",
+        "photoUrl": "/images/candidates/alvarado_slate.jpg",
+        "candidateName": "Lorna Slate"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 22,
+      "uniqueDfFields": [
+        "exp:${idx}:company",
+        "exp:${idx}:date",
+        "exp:${idx}:role",
+        "exp:${idx}:highlight:${bIdx}",
+        "exp:${idx}:highlight:0",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 393,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": false
+      },
+      "fileSize": 13577,
+      "lineCount": 422
+    },
+    {
+      "file": "amsterdam_orange.js",
+      "slug": "amsterdam_orange",
+      "exportName": "generateAmsterdamOrangeHtml",
+      "mapEntry": {
+        "slug": "amsterdam_orange",
+        "label": "✨ Amsterdam Orange",
+        "fn": "generateAmsterdamOrangeHtml",
+        "badge": "Indigo Orange Dutch",
+        "photoUrl": "/images/candidates/amsterdam_orange.jpg",
+        "candidateName": "Lars van der Meer"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 19,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 413,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15185,
+      "lineCount": 444
+    },
+    {
+      "file": "arthur_pendelton.js",
+      "slug": "arthur_pendelton",
+      "exportName": "generateArthurPendeltonHtml",
+      "mapEntry": {
+        "slug": "arthur_pendelton",
+        "label": "👑 Arthur Pendelton",
+        "fn": "generateArthurPendeltonHtml",
+        "badge": "Exact Editorial Swiss & Newsreader",
+        "photoUrl": "/images/candidates/arthur_pendelton.jpg",
+        "candidateName": "Arthur Pendelton"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "name",
+        "title",
+        "phone",
+        "email",
+        "location",
+        "website",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "summary",
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${bIdx}",
+        "ref:${idx}:name",
+        "ref:${idx}:relation",
+        "ref:${idx}:contact"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 73,
+          "code": "<title>${data.name || 'Arthur Pendelton'} - Resume</title>"
+        },
+        {
+          "line": 421,
+          "code": "<h1 class=\"candidate-name\" data-df-field=\"name\">${data.name || 'Arthur Pendelton'}</h1>"
+        },
+        {
+          "line": 426,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Arthur Pendelton'}\">"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": false
+      },
+      "fileSize": 16526,
+      "lineCount": 566
+    },
+    {
+      "file": "austin_amber.js",
+      "slug": "austin_amber",
+      "exportName": "generateAustinAmberHtml",
+      "mapEntry": {
+        "slug": "austin_amber",
+        "label": "✨ Austin Amber",
+        "fn": "generateAustinAmberHtml",
+        "badge": "Teal Amber Startup",
+        "photoUrl": "/images/candidates/austin_amber.jpg",
+        "candidateName": "Wyatt Sterling"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 19,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 413,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15179,
+      "lineCount": 444
+    },
+    {
+      "file": "barcelona_cyan.js",
+      "slug": "barcelona_cyan",
+      "exportName": "generateBarcelonaCyanHtml",
+      "mapEntry": {
+        "slug": "barcelona_cyan",
+        "label": "✨ Barcelona Cyan",
+        "fn": "generateBarcelonaCyanHtml",
+        "badge": "Cyan Tech Modern",
+        "photoUrl": "/images/candidates/barcelona_cyan.jpg",
+        "candidateName": "Javier Gomez"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 393,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14583,
+      "lineCount": 424
+    },
+    {
+      "file": "berlin_two_tone.js",
+      "slug": "berlin_two_tone",
+      "exportName": "generateBerlinTwoToneHtml",
+      "mapEntry": {
+        "slug": "berlin_two_tone",
+        "label": "✨ Berlin Two-Tone",
+        "fn": "generateBerlinTwoToneHtml",
+        "badge": "Warm Tan Card",
+        "photoUrl": "/images/candidates/berlin_two_tone.jpg",
+        "candidateName": "David Berlin"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 356,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": false,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 11762,
+      "lineCount": 375
+    },
+    {
+      "file": "bordeaux_wine.js",
+      "slug": "bordeaux_wine",
+      "exportName": "generateBordeauxWineHtml",
+      "mapEntry": {
+        "slug": "bordeaux_wine",
+        "label": "✨ Bordeaux Wine",
+        "fn": "generateBordeauxWineHtml",
+        "badge": "Wine Executive Split",
+        "photoUrl": "/images/candidates/bordeaux_wine.jpg",
+        "candidateName": "Genevieve Bordeaux"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 399,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14915,
+      "lineCount": 430
+    },
+    {
+      "file": "boston_crimson.js",
+      "slug": "boston_crimson",
+      "exportName": "generateBostonCrimsonHtml",
+      "mapEntry": {
+        "slug": "boston_crimson",
+        "label": "✨ Boston Crimson",
+        "fn": "generateBostonCrimsonHtml",
+        "badge": "Ivy League Crimson",
+        "photoUrl": "/images/candidates/boston_crimson.jpg",
+        "candidateName": "Harrison Ford"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 407,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14709,
+      "lineCount": 419
+    },
+    {
+      "file": "buenos_aires_tango.js",
+      "slug": "buenos_aires_tango",
+      "exportName": "generateBuenosAiresTangoHtml",
+      "mapEntry": {
+        "slug": "buenos_aires_tango",
+        "label": "✨ Buenos Aires Tango",
+        "fn": "generateBuenosAiresTangoHtml",
+        "badge": "Plum Champagne Arts",
+        "photoUrl": "/images/candidates/buenos_aires_tango.jpg",
+        "candidateName": "Valentina Soler"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 421,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15552,
+      "lineCount": 452
+    },
+    {
+      "file": "cairo_gold.js",
+      "slug": "cairo_gold",
+      "exportName": "generateCairoGoldHtml",
+      "mapEntry": {
+        "slug": "cairo_gold",
+        "label": "✨ Cairo Gold",
+        "fn": "generateCairoGoldHtml",
+        "badge": "Obsidian Gold Luxury",
+        "photoUrl": "/images/candidates/cairo_gold.jpg",
+        "candidateName": "Tarek Mansour"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 420,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15469,
+      "lineCount": 451
+    },
+    {
+      "file": "cambridge_rose.js",
+      "slug": "cambridge_rose",
+      "exportName": "generateCambridgeRoseHtml",
+      "mapEntry": {
+        "slug": "cambridge_rose",
+        "label": "✨ Cambridge Rose",
+        "fn": "generateCambridgeRoseHtml",
+        "badge": "Rose Duo-Tone",
+        "photoUrl": "/images/candidates/cambridge_rose.jpg",
+        "candidateName": "Clara Cambridge"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 419,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15276,
+      "lineCount": 440
+    },
+    {
+      "file": "cape_town_sunset.js",
+      "slug": "cape_town_sunset",
+      "exportName": "generateCapeTownSunsetHtml",
+      "mapEntry": {
+        "slug": "cape_town_sunset",
+        "label": "✨ Cape Town Sunset",
+        "fn": "generateCapeTownSunsetHtml",
+        "badge": "Terracotta Gold Coastal",
+        "photoUrl": "/images/candidates/cape_town_sunset.jpg",
+        "candidateName": "Thabo Ndlovu"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 408,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15046,
+      "lineCount": 439
+    },
+    {
+      "file": "card_matrix.js",
+      "slug": "card_matrix",
+      "exportName": "generateCardMatrixHtml",
+      "mapEntry": {
+        "slug": "card_matrix",
+        "label": "✨ Card Matrix",
+        "fn": "generateCardMatrixHtml",
+        "badge": "Boxed Tech Cards",
+        "photoUrl": "/images/candidates/card_matrix.jpg",
+        "candidateName": "Alex Mercer"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 16,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 342,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": false,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 13173,
+      "lineCount": 368
+    },
+    {
+      "file": "charles.js",
+      "slug": "charles",
+      "exportName": "generateCharlesHtml",
+      "mapEntry": {
+        "slug": "charles",
+        "label": "✨ Charles",
+        "fn": "generateCharlesHtml",
+        "badge": "Ocean Teal",
+        "photoUrl": "/images/candidates/charles.jpg",
+        "candidateName": "Charles Rodriguez"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 19,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:date",
+        "edu:${idx}:school",
+        "proj:${idx}:name",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "location",
+        "phone",
+        "email",
+        "linkedin",
+        "website",
+        "skill:${idx}",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 144,
+          "code": "<h3>${langSection.title || 'Languages'}</h3>"
+        },
+        {
+          "line": 443,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15103,
+      "lineCount": 456
+    },
+    {
+      "file": "copenhagen_sand.js",
+      "slug": "copenhagen_sand",
+      "exportName": "generateCopenhagenSandHtml",
+      "mapEntry": {
+        "slug": "copenhagen_sand",
+        "label": "✨ Copenhagen Sand",
+        "fn": "generateCopenhagenSandHtml",
+        "badge": "Nordic Sand Minimal",
+        "photoUrl": "/images/candidates/copenhagen_sand.jpg",
+        "candidateName": "Signe Møller"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 19,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 396,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14646,
+      "lineCount": 427
+    },
+    {
+      "file": "date_capsule.js",
+      "slug": "date_capsule",
+      "exportName": "generateDateCapsuleHtml",
+      "mapEntry": {
+        "slug": "date_capsule",
+        "label": "✨ Date Capsule",
+        "fn": "generateDateCapsuleHtml",
+        "badge": "Capsule Timeline",
+        "photoUrl": "/images/candidates/date_capsule.jpg",
+        "candidateName": "Jason Vance"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 11,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "email",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 318,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": false,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 11266,
+      "lineCount": 342
+    },
+    {
+      "file": "diagonal_wedge.js",
+      "slug": "diagonal_wedge",
+      "exportName": "generateDiagonalWedgeHtml",
+      "mapEntry": {
+        "slug": "diagonal_wedge",
+        "label": "✨ Diagonal Wedge",
+        "fn": "generateDiagonalWedgeHtml",
+        "badge": "Polygon Cut & 5-Dots",
+        "photoUrl": "/images/candidates/diagonal_wedge.jpg",
+        "candidateName": "Marcus Sterling"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": true,
+      "dfFieldCount": 24,
+      "uniqueDfFields": [
+        "exp:${actualIdx}:role",
+        "exp:${actualIdx}:date",
+        "exp:${actualIdx}:company",
+        "exp:${actualIdx}:highlight:${hIdx}",
+        "proj:${actualIdx}:name",
+        "proj:${actualIdx}:url",
+        "proj:${actualIdx}:description",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "skill:${sIdx}",
+        "edu:${eIdx}:degree",
+        "edu:${eIdx}:school",
+        "edu:${eIdx}:date",
+        "cert:${cIdx}",
+        "summary",
+        "name",
+        "title"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 561,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": true,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 19650,
+      "lineCount": 593
+    },
+    {
+      "file": "donna_stroupe.js",
+      "slug": "donna_stroupe",
+      "exportName": "generateDonnaStroupeHtml",
+      "mapEntry": {
+        "slug": "donna_stroupe",
+        "label": "👑 Donna Stroupe",
+        "fn": "generateDonnaStroupeHtml",
+        "badge": "Exact Espresso Banner & Taupe",
+        "photoUrl": "/images/candidates/donna_stroupe.jpg",
+        "candidateName": "Donna Stroupe"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "name",
+        "title",
+        "email",
+        "phone",
+        "location",
+        "website",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "summary",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:role",
+        "exp:${idx}:highlight:${bIdx}",
+        "ref:${idx}:name",
+        "ref:${idx}:relation",
+        "ref:${idx}:contact"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 391,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Donna Stroupe'}\">"
+        },
+        {
+          "line": 457,
+          "code": "${languageList.map(l => `<div class=\"language-item\">${typeof l === 'string' ? l : l.name || 'Language'}</div>`).join('')}"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": false
+      },
+      "fileSize": 15737,
+      "lineCount": 518
+    },
+    {
+      "file": "dublin_forest.js",
+      "slug": "dublin_forest",
+      "exportName": "generateDublinForestHtml",
+      "mapEntry": {
+        "slug": "dublin_forest",
+        "label": "✨ Dublin Forest",
+        "fn": "generateDublinForestHtml",
+        "badge": "Forest Ochre Botanical",
+        "photoUrl": "/images/candidates/dublin_forest.jpg",
+        "candidateName": "Ciara O’Connor"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 412,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14826,
+      "lineCount": 424
+    },
+    {
+      "file": "edinburgh_navy.js",
+      "slug": "edinburgh_navy",
+      "exportName": "generateEdinburghNavyHtml",
+      "mapEntry": {
+        "slug": "edinburgh_navy",
+        "label": "✨ Edinburgh Navy",
+        "fn": "generateEdinburghNavyHtml",
+        "badge": "Royal Navy Classic",
+        "photoUrl": "/images/candidates/edinburgh_navy.jpg",
+        "candidateName": "Alistair MacLeod"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 15,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 330,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": false,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 11901,
+      "lineCount": 352
+    },
+    {
+      "file": "emerald_prestige.js",
+      "slug": "emerald_prestige",
+      "exportName": "generateEmeraldPrestigeHtml",
+      "mapEntry": {
+        "slug": "emerald_prestige",
+        "label": "✨ Emerald Prestige",
+        "fn": "generateEmeraldPrestigeHtml",
+        "badge": "Forest Badge Matrix",
+        "photoUrl": "/images/candidates/emerald_prestige.jpg",
+        "candidateName": "Arthur Vance"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 416,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14939,
+      "lineCount": 428
+    },
+    {
+      "file": "emma.js",
+      "slug": "emma",
+      "exportName": "generateEmmaHtml",
+      "mapEntry": {
+        "slug": "emma",
+        "label": "✨ Emma",
+        "fn": "generateEmmaHtml",
+        "badge": "Balanced Split",
+        "photoUrl": "/images/candidates/emma.jpg",
+        "candidateName": "Emma Sinclair"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 16,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "proj:${idx}:description",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "name",
+        "title",
+        "summary",
+        "email",
+        "website",
+        "linkedin"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 99,
+          "code": "<h3>${langSection.title || 'Languages'}</h3>"
+        },
+        {
+          "line": 384,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 13028,
+      "lineCount": 429
+    },
+    {
+      "file": "floating_card_matrix.js",
+      "slug": "floating_card_matrix",
+      "exportName": "generateFloatingCardMatrixHtml",
+      "mapEntry": {
+        "slug": "floating_card_matrix",
+        "label": "✨ Floating Cards",
+        "fn": "generateFloatingCardMatrixHtml",
+        "badge": "Modular Cards & Bars",
+        "photoUrl": "/images/candidates/floating_card_matrix.jpg",
+        "candidateName": "Clara Oswald"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 452,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 17794,
+      "lineCount": 485
+    },
+    {
+      "file": "florence_terracotta.js",
+      "slug": "florence_terracotta",
+      "exportName": "generateFlorenceTerracottaHtml",
+      "mapEntry": {
+        "slug": "florence_terracotta",
+        "label": "✨ Florence Terracotta",
+        "fn": "generateFlorenceTerracottaHtml",
+        "badge": "Terracotta Linen",
+        "photoUrl": "/images/candidates/florence_terracotta.jpg",
+        "candidateName": "Matteo Moretti"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 412,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14916,
+      "lineCount": 424
+    },
+    {
+      "file": "geneva_charcoal.js",
+      "slug": "geneva_charcoal",
+      "exportName": "generateGenevaCharcoalHtml",
+      "mapEntry": {
+        "slug": "geneva_charcoal",
+        "label": "✨ Geneva Charcoal",
+        "fn": "generateGenevaCharcoalHtml",
+        "badge": "Charcoal Gold Exec",
+        "photoUrl": "/images/candidates/geneva_charcoal.jpg",
+        "candidateName": "Henri Laurent"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 412,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14822,
+      "lineCount": 424
+    },
+    {
+      "file": "helsinki_frost.js",
+      "slug": "helsinki_frost",
+      "exportName": "generateHelsinkiFrostHtml",
+      "mapEntry": {
+        "slug": "helsinki_frost",
+        "label": "✨ Helsinki Frost",
+        "fn": "generateHelsinkiFrostHtml",
+        "badge": "Frosted Ice Exec Classic",
+        "photoUrl": "/images/candidates/helsinki_frost.jpg",
+        "candidateName": "Matti Virtanen"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 15,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 333,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": false,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 12019,
+      "lineCount": 355
+    },
+    {
+      "file": "helsinki_navy.js",
+      "slug": "helsinki_navy",
+      "exportName": "generateHelsinkiNavyHtml",
+      "mapEntry": {
+        "slug": "helsinki_navy",
+        "label": "✨ Helsinki Navy",
+        "fn": "generateHelsinkiNavyHtml",
+        "badge": "Navy Mint Tech",
+        "photoUrl": "/images/candidates/helsinki_navy.jpg",
+        "candidateName": "Elias Lindqvist"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 19,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 413,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15131,
+      "lineCount": 444
+    },
+    {
+      "file": "howard_ong.js",
+      "slug": "howard_ong",
+      "exportName": "generateHowardOngHtml",
+      "mapEntry": {
+        "slug": "howard_ong",
+        "label": "👑 Howard Ong",
+        "fn": "generateHowardOngHtml",
+        "badge": "Exact Burgundy Banner & Headroom",
+        "photoUrl": "/images/candidates/howard_ong.jpg",
+        "candidateName": "Howard Ong"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 16,
+      "uniqueDfFields": [
+        "name",
+        "title",
+        "email",
+        "phone",
+        "location",
+        "website",
+        "skill:${idx}",
+        "skill:${hardSkills.length + idx}",
+        "edu:${idx}:school",
+        "edu:${idx}:degree",
+        "edu:${idx}:date",
+        "summary",
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:highlight:${bIdx}",
+        "cert:${idx}"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 366,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Howard Ong'}\">"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": false
+      },
+      "fileSize": 15597,
+      "lineCount": 505
+    },
+    {
+      "file": "isabel_mercado.js",
+      "slug": "isabel_mercado",
+      "exportName": "generateIsabelMercadoHtml",
+      "mapEntry": {
+        "slug": "isabel_mercado",
+        "label": "👑 Isabel Mercado",
+        "fn": "generateIsabelMercadoHtml",
+        "badge": "Exact Framed Portrait & Pills",
+        "photoUrl": "/images/candidates/isabel_mercado.jpg",
+        "candidateName": "Isabel Mercado"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 16,
+      "uniqueDfFields": [
+        "name",
+        "title",
+        "location",
+        "phone",
+        "website",
+        "email",
+        "skill:${idx}",
+        "summary",
+        "edu:${idx}:degree",
+        "edu:${idx}:date",
+        "edu:${idx}:school",
+        "exp:${idx}:company",
+        "exp:${idx}:date",
+        "exp:${idx}:role",
+        "exp:${idx}:highlight:${bIdx}"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 19,
+          "code": "const nameParts = (data.name || 'ISABEL MERCADO').trim().split(' ');"
+        },
+        {
+          "line": 448,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Isabel Mercado'}\">"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 18087,
+      "lineCount": 588
+    },
+    {
+      "file": "isabel_schumacher.js",
+      "slug": "isabel_schumacher",
+      "exportName": "generateIsabelSchumacherHtml",
+      "mapEntry": {
+        "slug": "isabel_schumacher",
+        "label": "👑 Isabel Schumacher",
+        "fn": "generateIsabelSchumacherHtml",
+        "badge": "Exact Charcoal Halo & Nodes",
+        "photoUrl": "/images/candidates/isabel_schumacher.jpg",
+        "candidateName": "Isabel Schumacher"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 15,
+      "uniqueDfFields": [
+        "summary",
+        "phone",
+        "email",
+        "location",
+        "skill:${idx}",
+        "custom:custom_languages:${idx}:title",
+        "name",
+        "title",
+        "edu:${idx}:date",
+        "edu:${idx}:school",
+        "edu:${idx}:degree",
+        "exp:${idx}:date",
+        "exp:${idx}:role",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${bIdx}"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 19,
+          "code": "const nameParts = (data.name || 'Isabel Schumacher').trim().split(' ');"
+        },
+        {
+          "line": 373,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Isabel Schumacher'}\">"
+        },
+        {
+          "line": 443,
+          "code": "${languageList.map((l, idx) => `<li data-df-field=\"custom:custom_languages:${idx}:title\">${typeof l === 'string' ? l : l.name || 'Language'}</li>`).join('')}"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": false
+      },
+      "fileSize": 16711,
+      "lineCount": 510
+    },
+    {
+      "file": "jonathan.js",
+      "slug": "jonathan",
+      "exportName": "generateJonathanHtml",
+      "mapEntry": {
+        "slug": "jonathan",
+        "label": "✨ Jonathan",
+        "fn": "generateJonathanHtml",
+        "badge": "Classic Serif",
+        "photoUrl": "/images/candidates/jonathan.jpg",
+        "candidateName": "Jonathan Brewer"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": true,
+      "dfFieldCount": 29,
+      "uniqueDfFields": [
+        "email",
+        "phone",
+        "location",
+        "linkedin",
+        "website",
+        "summary",
+        "exp:${actualIdx}:company",
+        "exp:${actualIdx}:location",
+        "exp:${actualIdx}:date",
+        "exp:${actualIdx}:role",
+        "exp:${actualIdx}:highlight:${hIdx}",
+        "edu:${actualIdx}:school",
+        "edu:${actualIdx}:date",
+        "edu:${actualIdx}:degree",
+        "skill:${sIdx}",
+        "proj:${actualIdx}:name",
+        "proj:${actualIdx}:url",
+        "proj:${actualIdx}:description",
+        "cert:${idx}",
+        "ref:${idx}:name",
+        "ref:${idx}:relation",
+        "ref:${idx}:contact",
+        "custom:${cs.id}:title",
+        "custom:${cs.id}:${idx}:title",
+        "custom:${cs.id}:${idx}:value",
+        "name",
+        "title"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 192,
+          "code": "<h2 class=\"section-title\" data-df-field=\"custom:${cs.id}:title\">${cs.title || 'Additional Information'}</h2>"
+        },
+        {
+          "line": 456,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": false,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": false,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": false
+      },
+      "fileSize": 17173,
+      "lineCount": 473
+    },
+    {
+      "file": "jonathan_patterson.js",
+      "slug": "jonathan_patterson",
+      "exportName": "generateJonathanPattersonHtml",
+      "mapEntry": {
+        "slug": "jonathan_patterson",
+        "label": "👑 Jonathan Patterson",
+        "fn": "generateJonathanPattersonHtml",
+        "badge": "Exact Navy Arch Dome & Donut",
+        "photoUrl": "/images/candidates/jonathan_patterson.jpg",
+        "candidateName": "Jonathan Patterson"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 19,
+      "uniqueDfFields": [
+        "name",
+        "title",
+        "summary",
+        "phone",
+        "email",
+        "website",
+        "location",
+        "skill:${idx}",
+        "custom:custom_languages:${idx}:title",
+        "exp:${idx}:role",
+        "exp:${idx}:company",
+        "exp:${idx}:date",
+        "exp:${idx}:highlight:${bIdx}",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "edu:${idx}:degree",
+        "ref:${idx}:name",
+        "ref:${idx}:relation",
+        "ref:${idx}:contact"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 35,
+          "code": "let name = typeof l === 'string' ? l : (l.title || l.name || 'Language');"
+        },
+        {
+          "line": 58,
+          "code": "<title>${data.name || 'Jonathan Patterson'} - Resume</title>"
+        },
+        {
+          "line": 463,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Jonathan Patterson'}\">"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 18454,
+      "lineCount": 617
+    },
+    {
+      "file": "kathleen.js",
+      "slug": "kathleen",
+      "exportName": "generateKathleenHtml",
+      "mapEntry": {
+        "slug": "kathleen",
+        "label": "✨ Kathleen",
+        "fn": "generateKathleenHtml",
+        "badge": "Modern Accent",
+        "photoUrl": "/images/candidates/kathleen.jpg",
+        "candidateName": "Kathleen Jenkins"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 16,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "email",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 105,
+          "code": "<h3>${langSection.title || 'Languages'}</h3>"
+        },
+        {
+          "line": 445,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14200,
+      "lineCount": 457
+    },
+    {
+      "file": "kelly_mint.js",
+      "slug": "kelly_mint",
+      "exportName": "generateKellyMintHtml",
+      "mapEntry": {
+        "slug": "kelly_mint",
+        "label": "✨ Kelly Mint",
+        "fn": "generateKellyMintHtml",
+        "badge": "Mint Highlight",
+        "photoUrl": "/images/candidates/kelly_mint.jpg",
+        "candidateName": "Kelly Blackwell"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 396,
+          "code": "<div class=\"name-badge\" data-df-field=\"name\">${data.name || 'Kelly Blackwell'}</div>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14623,
+      "lineCount": 427
+    },
+    {
+      "file": "korina_villanueva.js",
+      "slug": "korina_villanueva",
+      "exportName": "generateKorinaVillanuevaHtml",
+      "mapEntry": {
+        "slug": "korina_villanueva",
+        "label": "👑 Korina Villanueva",
+        "fn": "generateKorinaVillanuevaHtml",
+        "badge": "Exact Chevron Pennant & Dots",
+        "photoUrl": "/images/candidates/korina_villanueva.jpg",
+        "candidateName": "Korina Villanueva"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 19,
+      "uniqueDfFields": [
+        "name",
+        "title",
+        "summary",
+        "phone",
+        "email",
+        "website",
+        "location",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${bIdx}",
+        "custom:custom_languages:${idx}:title",
+        "ref:${idx}:name",
+        "ref:${idx}:relation",
+        "ref:${idx}:contact"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 50,
+          "code": "const name = typeof l === 'string' ? l : (l.title || l.name || 'Language');"
+        },
+        {
+          "line": 444,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Korina Villanueva'}\">"
+        }
+      ],
+      "hasClipPath": true,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 18385,
+      "lineCount": 608
+    },
+    {
+      "file": "kyiv_golden.js",
+      "slug": "kyiv_golden",
+      "exportName": "generateKyivGoldenHtml",
+      "mapEntry": {
+        "slug": "kyiv_golden",
+        "label": "✨ Kyiv Golden",
+        "fn": "generateKyivGoldenHtml",
+        "badge": "Golden Wheat Split",
+        "photoUrl": "/images/candidates/kyiv_golden.jpg",
+        "candidateName": "Oksana Kovalenko"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 413,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14692,
+      "lineCount": 425
+    },
+    {
+      "file": "kyoto_coral.js",
+      "slug": "kyoto_coral",
+      "exportName": "generateKyotoCoralHtml",
+      "mapEntry": {
+        "slug": "kyoto_coral",
+        "label": "✨ Kyoto Coral",
+        "fn": "generateKyotoCoralHtml",
+        "badge": "Coral Minimalist Grid",
+        "photoUrl": "/images/candidates/kyoto_coral.jpg",
+        "candidateName": "Hana Tanaka"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 19,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 401,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14756,
+      "lineCount": 432
+    },
+    {
+      "file": "lilac_sidebar.js",
+      "slug": "lilac_sidebar",
+      "exportName": "generateLilacSidebarHtml",
+      "mapEntry": {
+        "slug": "lilac_sidebar",
+        "label": "✨ Lilac Harmony",
+        "fn": "generateLilacSidebarHtml",
+        "badge": "Lavender Sidebar",
+        "photoUrl": "/images/candidates/lilac_sidebar.jpg",
+        "candidateName": "Chloe Bennett"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 385,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 12705,
+      "lineCount": 397
+    },
+    {
+      "file": "lorna_alvarado.js",
+      "slug": "lorna_alvarado",
+      "exportName": "generateLornaAlvaradoHtml",
+      "mapEntry": {
+        "slug": "lorna_alvarado",
+        "label": "👑 Lorna Alvarado",
+        "fn": "generateLornaAlvaradoHtml",
+        "badge": "Exact 3D Folded Ribbon",
+        "photoUrl": "/images/candidates/lorna_alvarado.jpg",
+        "candidateName": "Lorna Alvarado"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "phone",
+        "email",
+        "location",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "custom:custom_languages:${idx}:title",
+        "name",
+        "title",
+        "exp:${idx}:date",
+        "exp:${idx}:role",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${bIdx}",
+        "ref:${idx}:name",
+        "ref:${idx}:relation",
+        "ref:${idx}:contact"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 19,
+          "code": "const nameParts = (data.name || 'Lorna Alvarado').trim().split(' ');"
+        },
+        {
+          "line": 359,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Lorna Alvarado'}\">"
+        },
+        {
+          "line": 438,
+          "code": "${languageList.map((l, idx) => `<li data-df-field=\"custom:custom_languages:${idx}:title\">${typeof l === 'string' ? l : l.name || 'Language'}</li>`).join('')}"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14979,
+      "lineCount": 502
+    },
+    {
+      "file": "lyon_lavender.js",
+      "slug": "lyon_lavender",
+      "exportName": "generateLyonLavenderHtml",
+      "mapEntry": {
+        "slug": "lyon_lavender",
+        "label": "✨ Lyon Lavender",
+        "fn": "generateLyonLavenderHtml",
+        "badge": "Lavender Creative Studio",
+        "photoUrl": "/images/candidates/lyon_lavender.jpg",
+        "candidateName": "Amélie Laurent"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 409,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15101,
+      "lineCount": 440
+    },
+    {
+      "file": "madrid_sun.js",
+      "slug": "madrid_sun",
+      "exportName": "generateMadridSunHtml",
+      "mapEntry": {
+        "slug": "madrid_sun",
+        "label": "✨ Madrid Sun",
+        "fn": "generateMadridSunHtml",
+        "badge": "Solar Gold High-Contrast",
+        "photoUrl": "/images/candidates/madrid_sun.jpg",
+        "candidateName": "Carlos Vega"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 19,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 413,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15114,
+      "lineCount": 444
+    },
+    {
+      "file": "manhattan_noir.js",
+      "slug": "manhattan_noir",
+      "exportName": "generateManhattanNoirHtml",
+      "mapEntry": {
+        "slug": "manhattan_noir",
+        "label": "✨ Manhattan Noir",
+        "fn": "generateManhattanNoirHtml",
+        "badge": "Monochrome Wall St",
+        "photoUrl": "/images/candidates/manhattan_noir.jpg",
+        "candidateName": "Alexander Vance"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 396,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14894,
+      "lineCount": 427
+    },
+    {
+      "file": "marcus_vance.js",
+      "slug": "marcus_vance",
+      "exportName": "generateMarcusVanceHtml",
+      "mapEntry": {
+        "slug": "marcus_vance",
+        "label": "👑 Marcus Vance",
+        "fn": "generateMarcusVanceHtml",
+        "badge": "Exact Monolithic Slate & Teal",
+        "photoUrl": "/images/candidates/marcus_vance.jpg",
+        "candidateName": "Marcus Vance"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "name",
+        "title",
+        "phone",
+        "email",
+        "location",
+        "skill:${idx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "summary",
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${bIdx}",
+        "proj:${idx}:name",
+        "proj:${idx}:description"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 79,
+          "code": "<title>${data.name || 'Marcus Vance'} - Resume</title>"
+        },
+        {
+          "line": 496,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Marcus Vance'}\">"
+        },
+        {
+          "line": 500,
+          "code": "<h1 class=\"candidate-name\" data-df-field=\"name\">${data.name || 'Marcus Vance'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 19202,
+      "lineCount": 673
+    },
+    {
+      "file": "mariana.js",
+      "slug": "mariana",
+      "exportName": "generateMarianaHtml",
+      "mapEntry": {
+        "slug": "mariana",
+        "label": "✨ Mariana",
+        "fn": "generateMarianaHtml",
+        "badge": "Premium Headshot",
+        "photoUrl": "/images/candidates/mariana.jpg",
+        "candidateName": "Mariana Anderson"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": true,
+      "dfFieldCount": 30,
+      "uniqueDfFields": [
+        "phone",
+        "email",
+        "location",
+        "website",
+        "linkedin",
+        "edu:${idx}:date",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "skill:${idx}",
+        "custom:${langSection.id}:${idx}:title",
+        "exp:${actualIdx}:role",
+        "exp:${actualIdx}:date",
+        "exp:${actualIdx}:company",
+        "exp:${actualIdx}:highlight:${hIdx}",
+        "proj:${actualIdx}:name",
+        "proj:${actualIdx}:url",
+        "proj:${actualIdx}:description",
+        "cert:${actualIdx}",
+        "ref:${actualIdx}:name",
+        "ref:${actualIdx}:relation",
+        "ref:${actualIdx}:contact",
+        "custom:${cs.id}:${idx}:title",
+        "custom:${cs.id}:${idx}:value",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 72,
+          "code": "<h3>${langSection.title || 'Languages'}</h3>"
+        },
+        {
+          "line": 175,
+          "code": "<h2>${cs.title || 'Additional Information'}</h2>"
+        },
+        {
+          "line": 652,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 22599,
+      "lineCount": 671
+    },
+    {
+      "file": "milan_blush.js",
+      "slug": "milan_blush",
+      "exportName": "generateMilanBlushHtml",
+      "mapEntry": {
+        "slug": "milan_blush",
+        "label": "✨ Milan Blush",
+        "fn": "generateMilanBlushHtml",
+        "badge": "Blush Peach Editorial",
+        "photoUrl": "/images/candidates/milan_blush.jpg",
+        "candidateName": "Alessandra Rossi"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 411,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14725,
+      "lineCount": 423
+    },
+    {
+      "file": "montreal_frost.js",
+      "slug": "montreal_frost",
+      "exportName": "generateMontrealFrostHtml",
+      "mapEntry": {
+        "slug": "montreal_frost",
+        "label": "✨ Montreal Frost",
+        "fn": "generateMontrealFrostHtml",
+        "badge": "Azure Frost Cards",
+        "photoUrl": "/images/candidates/montreal_frost.jpg",
+        "candidateName": "Camille Beaulieu"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 427,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15010,
+      "lineCount": 439
+    },
+    {
+      "file": "ocean_block.js",
+      "slug": "ocean_block",
+      "exportName": "generateOceanBlockHtml",
+      "mapEntry": {
+        "slug": "ocean_block",
+        "label": "✨ Ocean Block",
+        "fn": "generateOceanBlockHtml",
+        "badge": "Navy Block Header",
+        "photoUrl": "/images/candidates/ocean_block.jpg",
+        "candidateName": "Julian Hayes"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 372,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 12836,
+      "lineCount": 403
+    },
+    {
+      "file": "olivia.js",
+      "slug": "olivia",
+      "exportName": "generateOliviaHtml",
+      "mapEntry": {
+        "slug": "olivia",
+        "label": "✨ Olivia",
+        "fn": "generateOliviaHtml",
+        "badge": "Premium Bronze",
+        "photoUrl": "/images/candidates/olivia.jpg",
+        "candidateName": "Olivia Sterling"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": true,
+      "dfFieldCount": 33,
+      "uniqueDfFields": [
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "custom:${langSection.id}:${idx}:title",
+        "custom:${langSection.id}:${idx}:value",
+        "exp:${actualIdx}:role",
+        "exp:${actualIdx}:date",
+        "exp:${actualIdx}:company",
+        "exp:${actualIdx}:location",
+        "exp:${actualIdx}:highlight:${hIdx}",
+        "proj:${actualIdx}:name",
+        "proj:${actualIdx}:url",
+        "proj:${actualIdx}:description",
+        "cert:${idx}",
+        "ref:${idx}:name",
+        "ref:${idx}:relation",
+        "ref:${idx}:contact",
+        "custom:${cs.id}:title",
+        "custom:${cs.id}:${idx}:title",
+        "custom:${cs.id}:${idx}:value",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 77,
+          "code": "<h3>${langSection.title || 'Languages'}</h3>"
+        },
+        {
+          "line": 189,
+          "code": "<h2 data-df-field=\"custom:${cs.id}:title\">${cs.title || 'Additional Information'}</h2>"
+        },
+        {
+          "line": 611,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 22495,
+      "lineCount": 633
+    },
+    {
+      "file": "ong_burgundy.js",
+      "slug": "ong_burgundy",
+      "exportName": "generateOngBurgundyHtml",
+      "mapEntry": {
+        "slug": "ong_burgundy",
+        "label": "✨ Howard Burgundy",
+        "fn": "generateOngBurgundyHtml",
+        "badge": "Burgundy Classic",
+        "photoUrl": "/images/candidates/ong_burgundy.jpg",
+        "candidateName": "David Howard"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 388,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 13178,
+      "lineCount": 417
+    },
+    {
+      "file": "osaka_minimal.js",
+      "slug": "osaka_minimal",
+      "exportName": "generateOsakaMinimalHtml",
+      "mapEntry": {
+        "slug": "osaka_minimal",
+        "label": "✨ Osaka Minimal",
+        "fn": "generateOsakaMinimalHtml",
+        "badge": "Technical Monospace",
+        "photoUrl": "/images/candidates/osaka_minimal.jpg",
+        "candidateName": "Ren Sato"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 19,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 401,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14998,
+      "lineCount": 432
+    },
+    {
+      "file": "oslo_taupe.js",
+      "slug": "oslo_taupe",
+      "exportName": "generateOsloTaupeHtml",
+      "mapEntry": {
+        "slug": "oslo_taupe",
+        "label": "✨ Oslo Taupe",
+        "fn": "generateOsloTaupeHtml",
+        "badge": "Warm Espresso Minimal",
+        "photoUrl": "/images/candidates/oslo_taupe.jpg",
+        "candidateName": "Freja Lind"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 396,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14234,
+      "lineCount": 408
+    },
+    {
+      "file": "overlapping_badge.js",
+      "slug": "overlapping_badge",
+      "exportName": "generateOverlappingBadgeHtml",
+      "mapEntry": {
+        "slug": "overlapping_badge",
+        "label": "✨ Overlap Badge",
+        "fn": "generateOverlappingBadgeHtml",
+        "badge": "Navy Banner Halo Badge",
+        "photoUrl": "/images/candidates/overlapping_badge.jpg",
+        "candidateName": "Alexander Hayes"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 409,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15011,
+      "lineCount": 446
+    },
+    {
+      "file": "oxford_burgundy.js",
+      "slug": "oxford_burgundy",
+      "exportName": "generateOxfordBurgundyHtml",
+      "mapEntry": {
+        "slug": "oxford_burgundy",
+        "label": "✨ Oxford Burgundy",
+        "fn": "generateOxfordBurgundyHtml",
+        "badge": "British Academic",
+        "photoUrl": "/images/candidates/oxford_burgundy.jpg",
+        "candidateName": "Prof. Lawrence Sterling"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 15,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 371,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": false,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 12864,
+      "lineCount": 394
+    },
+    {
+      "file": "prague_brass.js",
+      "slug": "prague_brass",
+      "exportName": "generatePragueBrassHtml",
+      "mapEntry": {
+        "slug": "prague_brass",
+        "label": "✨ Prague Brass",
+        "fn": "generatePragueBrassHtml",
+        "badge": "Olive Brass Academic",
+        "photoUrl": "/images/candidates/prague_brass.jpg",
+        "candidateName": "Václav Dvořák"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 412,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14911,
+      "lineCount": 424
+    },
+    {
+      "file": "reykjavik_slate.js",
+      "slug": "reykjavik_slate",
+      "exportName": "generateReykjavikSlateHtml",
+      "mapEntry": {
+        "slug": "reykjavik_slate",
+        "label": "✨ Reykjavik Slate",
+        "fn": "generateReykjavikSlateHtml",
+        "badge": "Glacial Ice Nordic",
+        "photoUrl": "/images/candidates/reykjavik_slate.jpg",
+        "candidateName": "Astrid Jónsdóttir"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 402,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14401,
+      "lineCount": 414
+    },
+    {
+      "file": "richard.js",
+      "slug": "richard",
+      "exportName": "generateRichardHtml",
+      "mapEntry": {
+        "slug": "richard",
+        "label": "✨ Richard",
+        "fn": "generateRichardHtml",
+        "badge": "Split Band",
+        "photoUrl": "/images/candidates/richard.jpg",
+        "candidateName": "Richard Fowler"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 15,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:date",
+        "edu:${idx}:school",
+        "cert:${idx}",
+        "email",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 134,
+          "code": "<div class=\"sidebar-section-title-pill\">${langSection.title || 'Language'}</div>"
+        },
+        {
+          "line": 380,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14239,
+      "lineCount": 393
+    },
+    {
+      "file": "richard_sanchez.js",
+      "slug": "richard_sanchez",
+      "exportName": "generateRichardSanchezHtml",
+      "mapEntry": {
+        "slug": "richard_sanchez",
+        "label": "👑 Richard Sanchez",
+        "fn": "generateRichardSanchezHtml",
+        "badge": "Exact Royal Blue Banner",
+        "photoUrl": "/images/candidates/richard_sanchez.jpg",
+        "candidateName": "Richard Sanchez"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 16,
+      "uniqueDfFields": [
+        "name",
+        "title",
+        "summary",
+        "phone",
+        "email",
+        "location",
+        "custom:custom_languages:${idx}:title",
+        "skill:${idx}",
+        "exp:${idx}:role",
+        "exp:${idx}:company",
+        "exp:${idx}:date",
+        "exp:${idx}:highlight:0",
+        "edu:${idx}:school",
+        "edu:${idx}:degree",
+        "edu:${idx}:date"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 19,
+          "code": "const nameParts = (data.name || 'Richard Sanchez').trim().split(' ');"
+        },
+        {
+          "line": 408,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Richard Sanchez'}\">"
+        },
+        {
+          "line": 454,
+          "code": "${languageList.map((l, idx) => `<li data-df-field=\"custom:custom_languages:${idx}:title\">${typeof l === 'string' ? l : l.name || 'Language'}</li>`).join('')}"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": false
+      },
+      "fileSize": 15822,
+      "lineCount": 531
+    },
+    {
+      "file": "sage_pastel.js",
+      "slug": "sage_pastel",
+      "exportName": "generateSagePastelHtml",
+      "mapEntry": {
+        "slug": "sage_pastel",
+        "label": "✨ Sage Mist",
+        "fn": "generateSagePastelHtml",
+        "badge": "Pastel Sage",
+        "photoUrl": "/images/candidates/sage_pastel.jpg",
+        "candidateName": "Claire Laurent"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 385,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 12693,
+      "lineCount": 397
+    },
+    {
+      "file": "sanchez_dark.js",
+      "slug": "sanchez_dark",
+      "exportName": "generateSanchezDarkHtml",
+      "mapEntry": {
+        "slug": "sanchez_dark",
+        "label": "✨ Sanchez Dark",
+        "fn": "generateSanchezDarkHtml",
+        "badge": "Timeline Sidebar",
+        "photoUrl": "/images/candidates/sanchez_dark.jpg",
+        "candidateName": "Mateo Sanchez"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 15,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 158,
+          "code": "<h3>${langSection.title || 'Languages'}</h3>"
+        },
+        {
+          "line": 424,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 16659,
+      "lineCount": 438
+    },
+    {
+      "file": "sanchez_mono.js",
+      "slug": "sanchez_mono",
+      "exportName": "generateSanchezMonoHtml",
+      "mapEntry": {
+        "slug": "sanchez_mono",
+        "label": "✨ Sanchez Mono",
+        "fn": "generateSanchezMonoHtml",
+        "badge": "Minimalist Timeline",
+        "photoUrl": "/images/candidates/sanchez_mono.jpg",
+        "candidateName": "Yuki Sanchez"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 15,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 130,
+          "code": "<h3>${langSection.title || 'Languages'}</h3>"
+        },
+        {
+          "line": 387,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 13286,
+      "lineCount": 400
+    },
+    {
+      "file": "sanchez_wave.js",
+      "slug": "sanchez_wave",
+      "exportName": "generateSanchezWaveHtml",
+      "mapEntry": {
+        "slug": "sanchez_wave",
+        "label": "✨ Sanchez Wave",
+        "fn": "generateSanchezWaveHtml",
+        "badge": "Elegant Waves",
+        "photoUrl": "/images/candidates/sanchez_wave.jpg",
+        "candidateName": "Mei Sanchez"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 14,
+      "uniqueDfFields": [
+        "exp:${idx}:company",
+        "exp:${idx}:date",
+        "exp:${idx}:role",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "name",
+        "title",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 324,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": false
+      },
+      "fileSize": 11343,
+      "lineCount": 357
+    },
+    {
+      "file": "san_francisco_skyline.js",
+      "slug": "san_francisco_skyline",
+      "exportName": "generateSanFranciscoSkylineHtml",
+      "mapEntry": {
+        "slug": "san_francisco_skyline",
+        "label": "✨ SF Skyline",
+        "fn": "generateSanFranciscoSkylineHtml",
+        "badge": "Sky Blue Tech",
+        "photoUrl": "/images/candidates/san_francisco_skyline.jpg",
+        "candidateName": "Jordan Hayes"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 19,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 413,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15098,
+      "lineCount": 444
+    },
+    {
+      "file": "schumacher_charcoal.js",
+      "slug": "schumacher_charcoal",
+      "exportName": "generateSchumacherCharcoalHtml",
+      "mapEntry": {
+        "slug": "schumacher_charcoal",
+        "label": "✨ Schumacher Charcoal",
+        "fn": "generateSchumacherCharcoalHtml",
+        "badge": "Curved Headshot",
+        "photoUrl": "/images/candidates/schumacher_charcoal.jpg",
+        "candidateName": "Layla Schumacher"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 15,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 137,
+          "code": "<h3>${langSection.title || 'Languages'}</h3>"
+        },
+        {
+          "line": 398,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 13529,
+      "lineCount": 410
+    },
+    {
+      "file": "seattle_emerald.js",
+      "slug": "seattle_emerald",
+      "exportName": "generateSeattleEmeraldHtml",
+      "mapEntry": {
+        "slug": "seattle_emerald",
+        "label": "✨ Seattle Emerald",
+        "fn": "generateSeattleEmeraldHtml",
+        "badge": "Emerald Teal Cloud",
+        "photoUrl": "/images/candidates/seattle_emerald.jpg",
+        "candidateName": "Noah Vance"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 411,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14715,
+      "lineCount": 423
+    },
+    {
+      "file": "sebastian_bennett.js",
+      "slug": "sebastian_bennett",
+      "exportName": "generateSebastianBennettHtml",
+      "mapEntry": {
+        "slug": "sebastian_bennett",
+        "label": "👑 Sebastian Bennett",
+        "fn": "generateSebastianBennettHtml",
+        "badge": "Exact Executive Rounded Card",
+        "photoUrl": "/images/candidates/sebastian_bennett.jpg",
+        "candidateName": "Sebastian Bennett"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 16,
+      "uniqueDfFields": [
+        "name",
+        "title",
+        "phone",
+        "email",
+        "location",
+        "summary",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "edu:${idx}:degree",
+        "exp:${idx}:company",
+        "exp:${idx}:date",
+        "exp:${idx}:role",
+        "exp:${idx}:highlight:${bIdx}",
+        "skill:${idx}",
+        "skill:${col1.length + idx}",
+        "skill:${col1.length + col2.length + idx}"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 19,
+          "code": "const nameParts = (data.name || 'Sebastian Bennett').trim().split(' ');"
+        },
+        {
+          "line": 354,
+          "code": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Sebastian Bennett'}\">"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": false,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14129,
+      "lineCount": 492
+    },
+    {
+      "file": "seoul_neon.js",
+      "slug": "seoul_neon",
+      "exportName": "generateSeoulNeonHtml",
+      "mapEntry": {
+        "slug": "seoul_neon",
+        "label": "✨ Seoul Neon",
+        "fn": "generateSeoulNeonHtml",
+        "badge": "Midnight Violet Matrix",
+        "photoUrl": "/images/candidates/seoul_neon.jpg",
+        "candidateName": "Ji-hoon Park"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 394,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14645,
+      "lineCount": 425
+    },
+    {
+      "file": "singapore_ruby.js",
+      "slug": "singapore_ruby",
+      "exportName": "generateSingaporeRubyHtml",
+      "mapEntry": {
+        "slug": "singapore_ruby",
+        "label": "✨ Singapore Ruby",
+        "fn": "generateSingaporeRubyHtml",
+        "badge": "Ruby Crimson Fintech",
+        "photoUrl": "/images/candidates/singapore_ruby.jpg",
+        "candidateName": "Derrick Chen"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 393,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14567,
+      "lineCount": 424
+    },
+    {
+      "file": "split_dual_block.js",
+      "slug": "split_dual_block",
+      "exportName": "generateSplitDualBlockHtml",
+      "mapEntry": {
+        "slug": "split_dual_block",
+        "label": "✨ Split Dual Block",
+        "fn": "generateSplitDualBlockHtml",
+        "badge": "Forest & Peach Box",
+        "photoUrl": "/images/candidates/split_dual_block.jpg",
+        "candidateName": "Evelyn St. Claire"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 457,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 16504,
+      "lineCount": 476
+    },
+    {
+      "file": "stockholm_monochrome.js",
+      "slug": "stockholm_monochrome",
+      "exportName": "generateStockholmMonochromeHtml",
+      "mapEntry": {
+        "slug": "stockholm_monochrome",
+        "label": "✨ Stockholm Mono",
+        "fn": "generateStockholmMonochromeHtml",
+        "badge": "Nordic Pure Mono Grid",
+        "photoUrl": "/images/candidates/stockholm_monochrome.jpg",
+        "candidateName": "Frederik Lind"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 373,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 13901,
+      "lineCount": 403
+    },
+    {
+      "file": "stockholm_yellow.js",
+      "slug": "stockholm_yellow",
+      "exportName": "generateStockholmYellowHtml",
+      "mapEntry": {
+        "slug": "stockholm_yellow",
+        "label": "✨ Stockholm Gold",
+        "fn": "generateStockholmYellowHtml",
+        "badge": "Gold Asymmetric",
+        "photoUrl": "/images/candidates/stockholm_yellow.jpg",
+        "candidateName": "Astrid Lindqvist"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 402,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14974,
+      "lineCount": 433
+    },
+    {
+      "file": "terracotta_arch.js",
+      "slug": "terracotta_arch",
+      "exportName": "generateTerracottaArchHtml",
+      "mapEntry": {
+        "slug": "terracotta_arch",
+        "label": "👑 Terracotta Arch",
+        "fn": "generateTerracottaArchHtml",
+        "badge": "Exact Terracotta & Sage Overview",
+        "photoUrl": "/images/candidates/terracotta_arch.jpg",
+        "candidateName": "Harper Montgomery"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 12,
+      "uniqueDfFields": [
+        "name",
+        "title",
+        "phone",
+        "location",
+        "email",
+        "summary",
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:highlight:${bIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "skill:${idx}"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 19,
+          "code": "const nameParts = (data.name || 'Adeline Palmerston').trim().split(' ');"
+        },
+        {
+          "line": 399,
+          "code": "<img src=\"${photoSrc}\" alt=\"${data.name || 'Candidate'}\" class=\"profile-photo\" />"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": false,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 13672,
+      "lineCount": 479
+    },
+    {
+      "file": "tokyo_ice_blue.js",
+      "slug": "tokyo_ice_blue",
+      "exportName": "generateTokyoIceBlueHtml",
+      "mapEntry": {
+        "slug": "tokyo_ice_blue",
+        "label": "✨ Tokyo Ice Blue",
+        "fn": "generateTokyoIceBlueHtml",
+        "badge": "Steel Studio Cards",
+        "photoUrl": "/images/candidates/tokyo_ice_blue.jpg",
+        "candidateName": "Kenji Takahashi"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 419,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14802,
+      "lineCount": 431
+    },
+    {
+      "file": "vancouver_pine.js",
+      "slug": "vancouver_pine",
+      "exportName": "generateVancouverPineHtml",
+      "mapEntry": {
+        "slug": "vancouver_pine",
+        "label": "✨ Vancouver Pine",
+        "fn": "generateVancouverPineHtml",
+        "badge": "Pine Timber CleanTech",
+        "photoUrl": "/images/candidates/vancouver_pine.jpg",
+        "candidateName": "Liam MacIntyre"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "skill:${idx}",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 421,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 15020,
+      "lineCount": 433
+    },
+    {
+      "file": "venice_sand_split.js",
+      "slug": "venice_sand_split",
+      "exportName": "generateVeniceSandSplitHtml",
+      "mapEntry": {
+        "slug": "venice_sand_split",
+        "label": "✨ Venice Sand",
+        "fn": "generateVeniceSandSplitHtml",
+        "badge": "Sand Espresso Luxury",
+        "photoUrl": "/images/candidates/venice_sand_split.jpg",
+        "candidateName": "Gianna Bellini"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 18,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 399,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14953,
+      "lineCount": 430
+    },
+    {
+      "file": "vienna_crest.js",
+      "slug": "vienna_crest",
+      "exportName": "generateViennaCrestHtml",
+      "mapEntry": {
+        "slug": "vienna_crest",
+        "label": "✨ Vienna Crest",
+        "fn": "generateViennaCrestHtml",
+        "badge": "European Academic",
+        "photoUrl": "/images/candidates/vienna_crest.jpg",
+        "candidateName": "Dr. Stefan Weber"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 15,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 358,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": true,
+      "hasFlex": true,
+      "hasSidebar": false,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 12726,
+      "lineCount": 380
+    },
+    {
+      "file": "violet_modern.js",
+      "slug": "violet_modern",
+      "exportName": "generateVioletModernHtml",
+      "mapEntry": {
+        "slug": "violet_modern",
+        "label": "✨ Violet Modern",
+        "fn": "generateVioletModernHtml",
+        "badge": "Electric Violet",
+        "photoUrl": "/images/candidates/violet_modern.jpg",
+        "candidateName": "Elena Rostova"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 372,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 12773,
+      "lineCount": 402
+    },
+    {
+      "file": "wilson_light.js",
+      "slug": "wilson_light",
+      "exportName": "generateWilsonLightHtml",
+      "mapEntry": {
+        "slug": "wilson_light",
+        "label": "✨ Wilson Light",
+        "fn": "generateWilsonLightHtml",
+        "badge": "Modern Navy",
+        "photoUrl": "/images/candidates/wilson_light.jpg",
+        "candidateName": "Marcus Wilson"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 16,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "email",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 120,
+          "code": "<h3>${langSection.title || 'Language'}</h3>"
+        },
+        {
+          "line": 420,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14086,
+      "lineCount": 432
+    },
+    {
+      "file": "wilson_minimal.js",
+      "slug": "wilson_minimal",
+      "exportName": "generateWilsonMinimalHtml",
+      "mapEntry": {
+        "slug": "wilson_minimal",
+        "label": "✨ Wilson Minimal",
+        "fn": "generateWilsonMinimalHtml",
+        "badge": "Elegant Border",
+        "photoUrl": "/images/candidates/wilson_minimal.jpg",
+        "candidateName": "Mariana Wilson"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 359,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 12512,
+      "lineCount": 389
+    },
+    {
+      "file": "ziv_olive.js",
+      "slug": "ziv_olive",
+      "exportName": "generateZivOliveHtml",
+      "mapEntry": {
+        "slug": "ziv_olive",
+        "label": "✨ Catrine Olive",
+        "fn": "generateZivOliveHtml",
+        "badge": "Sage Split",
+        "photoUrl": "/images/candidates/ziv_olive.jpg",
+        "candidateName": "Catrine Olive"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 16,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:date",
+        "proj:${idx}:description",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 127,
+          "code": "<h3>${langSection.title || 'Languages'}</h3>"
+        },
+        {
+          "line": 389,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": false,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 13628,
+      "lineCount": 419
+    },
+    {
+      "file": "zurich_slate_block.js",
+      "slug": "zurich_slate_block",
+      "exportName": "generateZurichSlateBlockHtml",
+      "mapEntry": {
+        "slug": "zurich_slate_block",
+        "label": "✨ Zurich Slate",
+        "fn": "generateZurichSlateBlockHtml",
+        "badge": "Slate Indigo Block",
+        "photoUrl": "/images/candidates/zurich_slate_block.jpg",
+        "candidateName": "Dominik Weber"
+      },
+      "isExportedInIndex": true,
+      "usesPagination": false,
+      "dfFieldCount": 17,
+      "uniqueDfFields": [
+        "exp:${idx}:role",
+        "exp:${idx}:date",
+        "exp:${idx}:company",
+        "exp:${idx}:highlight:${hIdx}",
+        "edu:${idx}:degree",
+        "edu:${idx}:school",
+        "edu:${idx}:date",
+        "cert:${idx}",
+        "phone",
+        "email",
+        "location",
+        "linkedin",
+        "website",
+        "name",
+        "title",
+        "summary"
+      ],
+      "mockFallbacks": [
+        {
+          "line": 400,
+          "code": "<h1 data-df-field=\"name\">${data.name || 'Candidate Name'}</h1>"
+        }
+      ],
+      "hasClipPath": false,
+      "hasSvg": true,
+      "hasBorderRadius": true,
+      "hasGrid": false,
+      "hasFlex": true,
+      "hasSidebar": true,
+      "hasTwoPages": true,
+      "hasMediaPrint": true,
+      "hasPrintColorAdjust": true,
+      "avatarDetails": {
+        "hasAvatar": true,
+        "hasOverflowHidden": true,
+        "hasBorderRadius": true,
+        "hasAvatarWrapper": true
+      },
+      "fileSize": 14893,
+      "lineCount": 431
+    }
+  ]
+}

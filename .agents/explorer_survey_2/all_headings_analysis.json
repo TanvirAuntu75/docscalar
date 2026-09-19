@@ -1,0 +1,4972 @@
+[
+  {
+    "file": "adam_fletcher.js",
+    "templateKey": "adam_fletcher",
+    "headingCount": 9,
+    "headings": [
+      {
+        "lineNum": 387,
+        "sectionKey": "summary",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'About Me'}</h2>"
+      },
+      {
+        "lineNum": 400,
+        "sectionKey": "contact",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h2>"
+      },
+      {
+        "lineNum": 442,
+        "sectionKey": "skills",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h2>"
+      },
+      {
+        "lineNum": 458,
+        "sectionKey": "certifications",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h2>"
+      },
+      {
+        "lineNum": 471,
+        "sectionKey": "custom_languages",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:custom_languages\">${data.sectionTitles?.custom_languages || 'Language'}</h2>"
+      },
+      {
+        "lineNum": 487,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h2>"
+      },
+      {
+        "lineNum": 516,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h2>"
+      },
+      {
+        "lineNum": 540,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h2>"
+      },
+      {
+        "lineNum": 563,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h2>"
+      }
+    ]
+  },
+  {
+    "file": "adeline_palmerston.js",
+    "templateKey": "adeline_palmerston",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 62,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:experience\">${isContinuation ? (safeData.sectionTitles?.experience ? `${safeData.sectionTitles.experience} (Continued)` : 'Experience (Continued)') : (safeData.sectionTitles?.experience || 'Experience')}</h2>"
+      },
+      {
+        "lineNum": 92,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:projects\">${isContinuation ? (safeData.sectionTitles?.projects ? `${safeData.sectionTitles.projects} (Continued)` : 'Projects (Continued)') : (safeData.sectionTitles?.projects || 'Projects')}</h2>"
+      },
+      {
+        "lineNum": 117,
+        "sectionKey": "certifications",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:certifications\">${isContinuation ? (safeData.sectionTitles?.certifications ? `${safeData.sectionTitles.certifications} (Continued)` : 'Certifications (Continued)') : (safeData.sectionTitles?.certifications || 'Certifications')}</h2>"
+      },
+      {
+        "lineNum": 135,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:references\">${isContinuation ? (safeData.sectionTitles?.references ? `${safeData.sectionTitles.references} (Continued)` : 'References (Continued)') : (safeData.sectionTitles?.references || 'References')}</h2>"
+      },
+      {
+        "lineNum": 179,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:education\">${safeData.sectionTitles?.education || 'Education'}</h2>"
+      },
+      {
+        "lineNum": 202,
+        "sectionKey": "summary",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:summary\">${safeData.sectionTitles?.summary || 'About Me'}</h2>"
+      },
+      {
+        "lineNum": 216,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${safeData.sectionTitles?.skills || 'Skills'}</h3>"
+      },
+      {
+        "lineNum": 231,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${safeData.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "adora_diagonal.js",
+    "templateKey": "adora_diagonal",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 45,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h2>"
+      },
+      {
+        "lineNum": 68,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h2>"
+      },
+      {
+        "lineNum": 88,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h2>"
+      },
+      {
+        "lineNum": 108,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h2>"
+      },
+      {
+        "lineNum": 125,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 136,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 151,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "adora_montminy.js",
+    "templateKey": "adora_montminy",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 50,
+        "sectionKey": "summary",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'About Me'}</span>"
+      },
+      {
+        "lineNum": 60,
+        "sectionKey": "contact",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</span>"
+      },
+      {
+        "lineNum": 101,
+        "sectionKey": "skills",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</span>"
+      },
+      {
+        "lineNum": 128,
+        "sectionKey": "certifications",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</span>"
+      },
+      {
+        "lineNum": 140,
+        "sectionKey": "education",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</span>"
+      },
+      {
+        "lineNum": 161,
+        "sectionKey": "experience",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</span>"
+      },
+      {
+        "lineNum": 188,
+        "sectionKey": "projects",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</span>"
+      },
+      {
+        "lineNum": 208,
+        "sectionKey": "references",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</span>"
+      }
+    ]
+  },
+  {
+    "file": "alfredo_torres.js",
+    "templateKey": "alfredo_torres",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 382,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 393,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 407,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      },
+      {
+        "lineNum": 419,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 431,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Profile'}</h2>"
+      },
+      {
+        "lineNum": 438,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h2>"
+      },
+      {
+        "lineNum": 461,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h2>"
+      },
+      {
+        "lineNum": 476,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h2>"
+      }
+    ]
+  },
+  {
+    "file": "alvarado_slate.js",
+    "templateKey": "alvarado_slate",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 44,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 68,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 85,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      },
+      {
+        "lineNum": 109,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 127,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 143,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 185,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 503,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Professional Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "amsterdam_orange.js",
+    "templateKey": "amsterdam_orange",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 45,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 69,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 86,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Skills'}</h3>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 130,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 146,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 189,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 533,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "arthur_pendelton.js",
+    "templateKey": "arthur_pendelton",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 468,
+        "sectionKey": "education",
+        "tag": "div",
+        "className": "section-label",
+        "line": "<div class=\"section-label\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</div>"
+      },
+      {
+        "lineNum": 485,
+        "sectionKey": "skills",
+        "tag": "div",
+        "className": "section-label",
+        "line": "<div class=\"section-label\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</div>"
+      },
+      {
+        "lineNum": 498,
+        "sectionKey": "certifications",
+        "tag": "div",
+        "className": "section-label",
+        "line": "<div class=\"section-label\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</div>"
+      },
+      {
+        "lineNum": 533,
+        "sectionKey": "experience",
+        "tag": "div",
+        "className": "section-label",
+        "line": "<div class=\"section-label\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</div>"
+      },
+      {
+        "lineNum": 559,
+        "sectionKey": "projects",
+        "tag": "div",
+        "className": "section-label",
+        "line": "<div class=\"section-label\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</div>"
+      },
+      {
+        "lineNum": 577,
+        "sectionKey": "references",
+        "tag": "div",
+        "className": "section-label",
+        "line": "<div class=\"section-label\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</div>"
+      }
+    ]
+  },
+  {
+    "file": "austin_amber.js",
+    "templateKey": "austin_amber",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 45,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 69,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 86,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Skills'}</h3>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 130,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 146,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 189,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 533,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "barcelona_cyan.js",
+    "templateKey": "barcelona_cyan",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 45,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 68,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 85,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Skills'}</h3>"
+      },
+      {
+        "lineNum": 109,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 127,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 143,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 185,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 506,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "berlin_two_tone.js",
+    "templateKey": "berlin_two_tone",
+    "headingCount": 9,
+    "headings": [
+      {
+        "lineNum": 42,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-heading",
+        "line": "<h3 class=\"section-heading\" data-df-field=\"heading:experience\">${safeData.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 69,
+        "sectionKey": "education",
+        "tag": "h4",
+        "className": "card-heading",
+        "line": "<h4 class=\"card-heading\" data-df-field=\"heading:education\">${safeData.sectionTitles?.education || 'Education'}</h4>"
+      },
+      {
+        "lineNum": 90,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "section-heading",
+        "line": "<h3 class=\"section-heading\" data-df-field=\"heading:education\">${safeData.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 112,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "section-heading",
+        "line": "<h3 class=\"section-heading\" data-df-field=\"heading:skills\">${safeData.sectionTitles?.skills || 'Skills & Competencies'}</h3>"
+      },
+      {
+        "lineNum": 140,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-heading",
+        "line": "<h3 class=\"section-heading\" data-df-field=\"heading:projects\">${safeData.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 162,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-heading",
+        "line": "<h3 class=\"section-heading\" data-df-field=\"heading:references\">${safeData.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 182,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "section-heading",
+        "line": "<h3 class=\"section-heading\" data-df-field=\"heading:certifications\">${safeData.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 232,
+        "sectionKey": "contact",
+        "tag": "h4",
+        "className": "card-heading",
+        "line": "<h4 class=\"card-heading\" data-df-field=\"heading:contact\">${safeData.sectionTitles?.contact || 'Contact'}</h4>"
+      },
+      {
+        "lineNum": 262,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-heading",
+        "line": "<h3 class=\"section-heading\" data-df-field=\"heading:summary\">${safeData.sectionTitles?.summary || 'About Me'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "bordeaux_wine.js",
+    "templateKey": "bordeaux_wine",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 45,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 68,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 85,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Competencies'}</h3>"
+      },
+      {
+        "lineNum": 109,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 127,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 143,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 185,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 514,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Executive Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "boston_crimson.js",
+    "templateKey": "boston_crimson",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 44,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 67,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 84,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Competencies'}</h3>"
+      },
+      {
+        "lineNum": 108,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Selected Initiatives'}</h3>"
+      },
+      {
+        "lineNum": 126,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 142,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 184,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 506,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Executive Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "buenos_aires_tango.js",
+    "templateKey": "buenos_aires_tango",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 46,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 70,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 87,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise'}</h3>"
+      },
+      {
+        "lineNum": 112,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Creative Works & Projects'}</h3>"
+      },
+      {
+        "lineNum": 131,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 147,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 190,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 534,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Professional Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "cairo_gold.js",
+    "templateKey": "cairo_gold",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 45,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 69,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 86,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise'}</h3>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Key Engagements & Projects'}</h3>"
+      },
+      {
+        "lineNum": 130,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 146,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 189,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 533,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Professional Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "cambridge_rose.js",
+    "templateKey": "cambridge_rose",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 45,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 68,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 85,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills & Expertise'}</h3>"
+      },
+      {
+        "lineNum": 109,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 127,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 143,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 185,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 515,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Professional Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "cape_town_sunset.js",
+    "templateKey": "cape_town_sunset",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 46,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 70,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 87,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise'}</h3>"
+      },
+      {
+        "lineNum": 112,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 131,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 147,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 190,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 528,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "card_matrix.js",
+    "templateKey": "card_matrix",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 45,
+        "sectionKey": "experience",
+        "tag": "div",
+        "className": "card-tag",
+        "line": "<div class=\"card-tag\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</div>"
+      },
+      {
+        "lineNum": 69,
+        "sectionKey": "education",
+        "tag": "div",
+        "className": "card-tag",
+        "line": "<div class=\"card-tag\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</div>"
+      },
+      {
+        "lineNum": 88,
+        "sectionKey": "skills",
+        "tag": "div",
+        "className": "card-tag",
+        "line": "<div class=\"card-tag\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills & Tooling'}</div>"
+      },
+      {
+        "lineNum": 115,
+        "sectionKey": "projects",
+        "tag": "div",
+        "className": "card-tag",
+        "line": "<div class=\"card-tag\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Key Projects'}</div>"
+      },
+      {
+        "lineNum": 134,
+        "sectionKey": "references",
+        "tag": "div",
+        "className": "card-tag",
+        "line": "<div class=\"card-tag\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</div>"
+      },
+      {
+        "lineNum": 153,
+        "sectionKey": "certifications",
+        "tag": "div",
+        "className": "card-tag",
+        "line": "<div class=\"card-tag\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</div>"
+      },
+      {
+        "lineNum": 464,
+        "sectionKey": "summary",
+        "tag": "div",
+        "className": "card-tag",
+        "line": "<div class=\"card-tag\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Profile'}</div>"
+      }
+    ]
+  },
+  {
+    "file": "charles.js",
+    "templateKey": "charles",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 44,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 66,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 82,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Accomplishments & Projects'}</h3>"
+      },
+      {
+        "lineNum": 100,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 116,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 126,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      },
+      {
+        "lineNum": 182,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "copenhagen_sand.js",
+    "templateKey": "copenhagen_sand",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 45,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 68,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 85,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Skills'}</h3>"
+      },
+      {
+        "lineNum": 110,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 128,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 144,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 187,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 511,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "date_capsule.js",
+    "templateKey": "date_capsule",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 44,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 67,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 85,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Technical Skills'}</h3>"
+      },
+      {
+        "lineNum": 109,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 127,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 143,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 441,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "diagonal_wedge.js",
+    "templateKey": "diagonal_wedge",
+    "headingCount": 11,
+    "headings": [
+      {
+        "lineNum": 67,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${isContinuation ? (safeData.sectionTitles?.experience ? `${safeData.sectionTitles.experience} (Continued)` : 'Work Experience (Continued)') : (safeData.sectionTitles?.experience || 'Work Experience')}</h3>"
+      },
+      {
+        "lineNum": 103,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${isContinuation ? (safeData.sectionTitles?.projects ? `${safeData.sectionTitles.projects} (Continued)` : 'Key Projects (Continued)') : (safeData.sectionTitles?.projects || 'Key Projects')}</h3>"
+      },
+      {
+        "lineNum": 131,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${safeData.sectionTitles?.summary || 'Professional Summary'}</h3>"
+      },
+      {
+        "lineNum": 145,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${safeData.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 171,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:education\">${safeData.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 199,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${safeData.sectionTitles?.skills || 'Skills & Expertise'}</h3>"
+      },
+      {
+        "lineNum": 229,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:skills\">${safeData.sectionTitles?.skills || 'Skills & Expertise'}</h3>"
+      },
+      {
+        "lineNum": 259,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${safeData.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 281,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${safeData.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 297,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:certifications\">${safeData.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 336,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${safeData.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "donna_stroupe.js",
+    "templateKey": "donna_stroupe",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 444,
+        "sectionKey": "education",
+        "tag": "div",
+        "className": "sidebar-title",
+        "line": "<div class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</div>"
+      },
+      {
+        "lineNum": 457,
+        "sectionKey": "skills",
+        "tag": "div",
+        "className": "sidebar-title",
+        "line": "<div class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</div>"
+      },
+      {
+        "lineNum": 468,
+        "sectionKey": "certifications",
+        "tag": "div",
+        "className": "sidebar-title",
+        "line": "<div class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</div>"
+      },
+      {
+        "lineNum": 493,
+        "sectionKey": "summary",
+        "tag": "div",
+        "className": "about-title",
+        "line": "<div class=\"about-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'About Me'}</div>"
+      },
+      {
+        "lineNum": 502,
+        "sectionKey": "experience",
+        "tag": "div",
+        "className": "section-title-underlined",
+        "line": "<div class=\"section-title-underlined\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</div>"
+      },
+      {
+        "lineNum": 523,
+        "sectionKey": "projects",
+        "tag": "div",
+        "className": "section-title-underlined",
+        "line": "<div class=\"section-title-underlined\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</div>"
+      },
+      {
+        "lineNum": 536,
+        "sectionKey": "references",
+        "tag": "div",
+        "className": "section-title-underlined",
+        "line": "<div class=\"section-title-underlined\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</div>"
+      }
+    ]
+  },
+  {
+    "file": "dublin_forest.js",
+    "templateKey": "dublin_forest",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 45,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 69,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 86,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Skills'}</h3>"
+      },
+      {
+        "lineNum": 110,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Initiatives & Projects'}</h3>"
+      },
+      {
+        "lineNum": 129,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 145,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 187,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 512,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "edinburgh_navy.js",
+    "templateKey": "edinburgh_navy",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 44,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 67,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education & Qualifications'}</h3>"
+      },
+      {
+        "lineNum": 85,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Areas of Expertise'}</h3>"
+      },
+      {
+        "lineNum": 110,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Key Cases & Projects'}</h3>"
+      },
+      {
+        "lineNum": 128,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 144,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 442,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Professional Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "emerald_prestige.js",
+    "templateKey": "emerald_prestige",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 19,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 41,
+        "sectionKey": "education",
+        "tag": "h4",
+        "className": "card-title",
+        "line": "<h4 class=\"card-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h4>"
+      },
+      {
+        "lineNum": 58,
+        "sectionKey": "skills",
+        "tag": "h4",
+        "className": "card-title",
+        "line": "<h4 class=\"card-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h4>"
+      },
+      {
+        "lineNum": 82,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 101,
+        "sectionKey": "certifications",
+        "tag": "h4",
+        "className": "card-title",
+        "line": "<h4 class=\"card-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h4>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "contact",
+        "tag": "h4",
+        "className": "card-title",
+        "line": "<h4 class=\"card-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h4>"
+      }
+    ]
+  },
+  {
+    "file": "emma.js",
+    "templateKey": "emma",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 31,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 48,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 64,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Key Skills'}</h3>"
+      },
+      {
+        "lineNum": 87,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 393,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Professional Summary'}</h3>"
+      },
+      {
+        "lineNum": 400,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 410,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact Information'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "floating_card_matrix.js",
+    "templateKey": "floating_card_matrix",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 41,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "card-title",
+        "line": "<h3 class=\"card-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 64,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "card-title",
+        "line": "<h3 class=\"card-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 83,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "card-title",
+        "line": "<h3 class=\"card-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Skills'}</h3>"
+      },
+      {
+        "lineNum": 112,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "card-title",
+        "line": "<h3 class=\"card-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Selected Projects'}</h3>"
+      },
+      {
+        "lineNum": 132,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "card-title",
+        "line": "<h3 class=\"card-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 144,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "card-title",
+        "line": "<h3 class=\"card-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 464,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "card-title",
+        "line": "<h3 class=\"card-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Professional Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "florence_terracotta.js",
+    "templateKey": "florence_terracotta",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 21,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Competencies'}</h3>"
+      },
+      {
+        "lineNum": 83,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Notable Projects'}</h3>"
+      },
+      {
+        "lineNum": 101,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "geneva_charcoal.js",
+    "templateKey": "geneva_charcoal",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Competencies'}</h3>"
+      },
+      {
+        "lineNum": 83,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 102,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 112,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "harvard_classic.js",
+    "templateKey": "harvard_classic",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 41,
+        "sectionKey": "summary",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:summary\">${summaryTitle}</h2>"
+      },
+      {
+        "lineNum": 50,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:experience\">${expTitle}</h2>"
+      },
+      {
+        "lineNum": 75,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:education\">${eduTitle}</h2>"
+      },
+      {
+        "lineNum": 94,
+        "sectionKey": "skills",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:skills\">${skillsTitle}</h2>"
+      },
+      {
+        "lineNum": 108,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:projects\">${projTitle}</h2>"
+      },
+      {
+        "lineNum": 126,
+        "sectionKey": "certifications",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:certifications\">${certTitle}</h2>"
+      },
+      {
+        "lineNum": 140,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:references\">${refTitle}</h2>"
+      }
+    ]
+  },
+  {
+    "file": "helsinki_frost.js",
+    "templateKey": "helsinki_frost",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 41,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Competencies'}</h3>"
+      },
+      {
+        "lineNum": 84,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Strategic Projects'}</h3>"
+      },
+      {
+        "lineNum": 102,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications & Honors'}</h3>"
+      },
+      {
+        "lineNum": 340,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Executive Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "helsinki_navy.js",
+    "templateKey": "helsinki_navy",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills & Stack'}</h3>"
+      },
+      {
+        "lineNum": 84,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 103,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 113,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 423,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Executive Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "howard_ong.js",
+    "templateKey": "howard_ong",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 474,
+        "sectionKey": "contact",
+        "tag": "div",
+        "className": "section-title",
+        "line": "<div class=\"section-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'CONTACT'}</div>"
+      },
+      {
+        "lineNum": 513,
+        "sectionKey": "skills",
+        "tag": "div",
+        "className": "section-title",
+        "line": "<div class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'SKILLS'}</div>"
+      },
+      {
+        "lineNum": 523,
+        "sectionKey": "skills",
+        "tag": "div",
+        "className": "section-title",
+        "line": "<div class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'EXPERTISE'}</div>"
+      },
+      {
+        "lineNum": 533,
+        "sectionKey": "education",
+        "tag": "div",
+        "className": "section-title",
+        "line": "<div class=\"section-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'EDUCATION'}</div>"
+      },
+      {
+        "lineNum": 552,
+        "sectionKey": "summary",
+        "tag": "div",
+        "className": "section-title",
+        "line": "<div class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'PROFILE'}</div>"
+      },
+      {
+        "lineNum": 562,
+        "sectionKey": "experience",
+        "tag": "div",
+        "className": "section-title",
+        "line": "<div class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'WORK EXPERIENCE'}</div>"
+      },
+      {
+        "lineNum": 586,
+        "sectionKey": "projects",
+        "tag": "div",
+        "className": "section-title",
+        "line": "<div class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'PROJECTS'}</div>"
+      },
+      {
+        "lineNum": 619,
+        "sectionKey": "references",
+        "tag": "div",
+        "className": "section-title",
+        "line": "<div class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'REFERENCES'}</div>"
+      }
+    ]
+  },
+  {
+    "file": "isabel_mercado.js",
+    "templateKey": "isabel_mercado",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 486,
+        "sectionKey": "contact",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</span>"
+      },
+      {
+        "lineNum": 528,
+        "sectionKey": "skills",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</span>"
+      },
+      {
+        "lineNum": 554,
+        "sectionKey": "summary",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'About Me'}</span>"
+      },
+      {
+        "lineNum": 567,
+        "sectionKey": "education",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</span>"
+      },
+      {
+        "lineNum": 587,
+        "sectionKey": "experience",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'WORK EXPERIENCE'}</span>"
+      },
+      {
+        "lineNum": 615,
+        "sectionKey": "projects",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</span>"
+      },
+      {
+        "lineNum": 635,
+        "sectionKey": "references",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</span>"
+      }
+    ]
+  },
+  {
+    "file": "isabel_schumacher.js",
+    "templateKey": "isabel_schumacher",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 410,
+        "sectionKey": "summary",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'About Me'}</h2>"
+      },
+      {
+        "lineNum": 423,
+        "sectionKey": "contact",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h2>"
+      },
+      {
+        "lineNum": 465,
+        "sectionKey": "skills",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h2>"
+      },
+      {
+        "lineNum": 481,
+        "sectionKey": "custom_languages",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:custom_languages\">${data.sectionTitles?.custom_languages || 'Language'}</h2>"
+      },
+      {
+        "lineNum": 500,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h2>"
+      },
+      {
+        "lineNum": 522,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h2>"
+      },
+      {
+        "lineNum": 550,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h2>"
+      },
+      {
+        "lineNum": 570,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h2>"
+      }
+    ]
+  },
+  {
+    "file": "jonathan.js",
+    "templateKey": "jonathan",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 47,
+        "sectionKey": "summary",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Professional Summary'}</h2>"
+      },
+      {
+        "lineNum": 58,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:experience\">${isContinuation ? (data.sectionTitles?.experience ? `${data.sectionTitles.experience} (Continued)` : 'Experience (Continued)') : (data.sectionTitles?.experience || 'Experience')}</h2>"
+      },
+      {
+        "lineNum": 88,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:education\">${isContinuation ? (data.sectionTitles?.education ? `${data.sectionTitles.education} (Continued)` : 'Education (Continued)') : (data.sectionTitles?.education || 'Education')}</h2>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "skills",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills & Proficiencies'}</h2>"
+      },
+      {
+        "lineNum": 138,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:projects\">${isContinuation ? (data.sectionTitles?.projects ? `${data.sectionTitles.projects} (Continued)` : 'Projects (Continued)') : (data.sectionTitles?.projects || 'Projects')}</h2>"
+      },
+      {
+        "lineNum": 160,
+        "sectionKey": "certifications",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h2>"
+      },
+      {
+        "lineNum": 173,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h2>"
+      }
+    ]
+  },
+  {
+    "file": "jonathan_patterson.js",
+    "templateKey": "jonathan_patterson",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 503,
+        "sectionKey": "summary",
+        "tag": "div",
+        "className": "sidebar-section-title",
+        "line": "<div class=\"sidebar-section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'About Me'}</div>"
+      },
+      {
+        "lineNum": 513,
+        "sectionKey": "contact",
+        "tag": "div",
+        "className": "sidebar-section-title",
+        "line": "<div class=\"sidebar-section-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</div>"
+      },
+      {
+        "lineNum": 552,
+        "sectionKey": "skills",
+        "tag": "div",
+        "className": "sidebar-section-title",
+        "line": "<div class=\"sidebar-section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</div>"
+      },
+      {
+        "lineNum": 562,
+        "sectionKey": "custom_languages",
+        "tag": "div",
+        "className": "sidebar-section-title",
+        "line": "<div class=\"sidebar-section-title\" data-df-field=\"heading:custom_languages\">${data.sectionTitles?.custom_languages || 'Language'}</div>"
+      },
+      {
+        "lineNum": 586,
+        "sectionKey": "experience",
+        "tag": "div",
+        "className": "section-pill-header",
+        "line": "<div><span class=\"section-pill-header\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</span></div>"
+      },
+      {
+        "lineNum": 612,
+        "sectionKey": "education",
+        "tag": "div",
+        "className": "section-pill-header",
+        "line": "<div><span class=\"section-pill-header\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</span></div>"
+      },
+      {
+        "lineNum": 630,
+        "sectionKey": "projects",
+        "tag": "div",
+        "className": "section-pill-header",
+        "line": "<div><span class=\"section-pill-header\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</span></div>"
+      },
+      {
+        "lineNum": 648,
+        "sectionKey": "references",
+        "tag": "div",
+        "className": "section-pill-header",
+        "line": "<div><span class=\"section-pill-header\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</span></div>"
+      }
+    ]
+  },
+  {
+    "file": "kathleen.js",
+    "templateKey": "kathleen",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 19,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "main-section-title",
+        "line": "<h2 class=\"main-section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h2>"
+      },
+      {
+        "lineNum": 38,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 52,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      },
+      {
+        "lineNum": 76,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "main-section-title",
+        "line": "<h2 class=\"main-section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h2>"
+      },
+      {
+        "lineNum": 92,
+        "sectionKey": "certifications",
+        "tag": "h2",
+        "className": "main-section-title",
+        "line": "<h2 class=\"main-section-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h2>"
+      },
+      {
+        "lineNum": 119,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "kelly_mint.js",
+    "templateKey": "kelly_mint",
+    "headingCount": 8,
+    "headings": [
+      {
+        "lineNum": 19,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 40,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 57,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Key Skills'}</h3>"
+      },
+      {
+        "lineNum": 81,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 99,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 109,
+        "sectionKey": "references",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h3>"
+      },
+      {
+        "lineNum": 127,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 461,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Professional Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "korina_villanueva.js",
+    "templateKey": "korina_villanueva",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 491,
+        "sectionKey": "contact",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h2>"
+      },
+      {
+        "lineNum": 530,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h2>"
+      },
+      {
+        "lineNum": 549,
+        "sectionKey": "skills",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h2>"
+      },
+      {
+        "lineNum": 569,
+        "sectionKey": "custom_languages",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:custom_languages\">${data.sectionTitles?.custom_languages || 'Language'}</h2>"
+      },
+      {
+        "lineNum": 589,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h2>"
+      },
+      {
+        "lineNum": 619,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h2>"
+      },
+      {
+        "lineNum": 638,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h2>"
+      }
+    ]
+  },
+  {
+    "file": "kyiv_golden.js",
+    "templateKey": "kyiv_golden",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 21,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 43,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 60,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise'}</h3>"
+      },
+      {
+        "lineNum": 84,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 103,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 114,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "kyoto_coral.js",
+    "templateKey": "kyoto_coral",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 19,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 40,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 57,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Skills'}</h3>"
+      },
+      {
+        "lineNum": 82,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 100,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 434,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "lilac_sidebar.js",
+    "templateKey": "lilac_sidebar",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 19,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 40,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 57,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      },
+      {
+        "lineNum": 81,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 99,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 110,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "lorna_alvarado.js",
+    "templateKey": "lorna_alvarado",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 440,
+        "sectionKey": "contact",
+        "tag": "div",
+        "className": "ribbon-header",
+        "line": "<div class=\"ribbon-header\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'CONTACT'}</div>"
+      },
+      {
+        "lineNum": 488,
+        "sectionKey": "education",
+        "tag": "div",
+        "className": "ribbon-header",
+        "line": "<div class=\"ribbon-header\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'EDUCATION'}</div>"
+      },
+      {
+        "lineNum": 507,
+        "sectionKey": "skills",
+        "tag": "div",
+        "className": "ribbon-header",
+        "line": "<div class=\"ribbon-header\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'SKILLS'}</div>"
+      },
+      {
+        "lineNum": 550,
+        "sectionKey": "summary",
+        "tag": "h2",
+        "className": "section-title-underline",
+        "line": "<h2 class=\"section-title-underline\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Profile'}</h2>"
+      },
+      {
+        "lineNum": 560,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "section-title-underline",
+        "line": "<h2 class=\"section-title-underline\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'WORK EXPERIENCE'}</h2>"
+      },
+      {
+        "lineNum": 586,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "section-title-underline",
+        "line": "<h2 class=\"section-title-underline\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'PROJECTS'}</h2>"
+      },
+      {
+        "lineNum": 604,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "section-title-underline",
+        "line": "<h2 class=\"section-title-underline\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'REFERENCES'}</h2>"
+      }
+    ]
+  },
+  {
+    "file": "lyon_lavender.js",
+    "templateKey": "lyon_lavender",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 21,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 43,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 60,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Creative Skills'}</h3>"
+      },
+      {
+        "lineNum": 85,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 104,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 115,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 442,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Profile Overview'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "madrid_sun.js",
+    "templateKey": "madrid_sun",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise'}</h3>"
+      },
+      {
+        "lineNum": 84,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 103,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 114,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 446,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "manhattan_noir.js",
+    "templateKey": "manhattan_noir",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 19,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 40,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 57,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Technical Expertise'}</h3>"
+      },
+      {
+        "lineNum": 82,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Transactions & Projects'}</h3>"
+      },
+      {
+        "lineNum": 100,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Licenses & Certifications'}</h3>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Information'}</h3>"
+      },
+      {
+        "lineNum": 429,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Executive Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "marcus_vance.js",
+    "templateKey": "marcus_vance",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 591,
+        "sectionKey": "skills",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Focus'}</span>"
+      },
+      {
+        "lineNum": 615,
+        "sectionKey": "education",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</span>"
+      },
+      {
+        "lineNum": 635,
+        "sectionKey": "certifications",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Accreditation'}</span>"
+      },
+      {
+        "lineNum": 660,
+        "sectionKey": "summary",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Executive Summary'}</span>"
+      },
+      {
+        "lineNum": 676,
+        "sectionKey": "experience",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Track Record'}</span>"
+      },
+      {
+        "lineNum": 704,
+        "sectionKey": "projects",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Key Initiatives'}</span>"
+      },
+      {
+        "lineNum": 722,
+        "sectionKey": "references",
+        "tag": "span",
+        "className": "NONE",
+        "line": "<span data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</span>"
+      }
+    ]
+  },
+  {
+    "file": "mariana.js",
+    "templateKey": "mariana",
+    "headingCount": 10,
+    "headings": [
+      {
+        "lineNum": 39,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:experience\">${isContinuation ? (safeData.sectionTitles?.experience ? `${safeData.sectionTitles.experience} (Continued)` : 'Experience (Continued)') : (safeData.sectionTitles?.experience || 'Experience')}</h2>"
+      },
+      {
+        "lineNum": 69,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:education\">${safeData.sectionTitles?.education || 'Education'}</h2>"
+      },
+      {
+        "lineNum": 91,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:education\">${safeData.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 109,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${safeData.sectionTitles?.skills || 'Expertise'}</h3>"
+      },
+      {
+        "lineNum": 136,
+        "sectionKey": "skills",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:skills\">${safeData.sectionTitles?.skills || 'Expertise & Skills'}</h2>"
+      },
+      {
+        "lineNum": 163,
+        "sectionKey": "summary",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:summary\">${safeData.sectionTitles?.summary || 'About Me'}</h2>"
+      },
+      {
+        "lineNum": 174,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:projects\">${isContinuation ? (safeData.sectionTitles?.projects ? `${safeData.sectionTitles.projects} (Continued)` : 'Projects (Continued)') : (safeData.sectionTitles?.projects || 'Projects')}</h2>"
+      },
+      {
+        "lineNum": 196,
+        "sectionKey": "certifications",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:certifications\">${isContinuation ? (safeData.sectionTitles?.certifications ? `${safeData.sectionTitles.certifications} (Continued)` : 'Certifications (Continued)') : (safeData.sectionTitles?.certifications || 'Certifications')}</h2>"
+      },
+      {
+        "lineNum": 212,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:references\">${isContinuation ? (safeData.sectionTitles?.references ? `${safeData.sectionTitles.references} (Continued)` : 'References (Continued)') : (safeData.sectionTitles?.references || 'References')}</h2>"
+      },
+      {
+        "lineNum": 258,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${safeData.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "milan_blush.js",
+    "templateKey": "milan_blush",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 41,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 58,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Key Competencies'}</h3>"
+      },
+      {
+        "lineNum": 82,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 100,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "montreal_frost.js",
+    "templateKey": "montreal_frost",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "h4",
+        "className": "card-title",
+        "line": "<h4 class=\"card-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h4>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h4",
+        "className": "card-title",
+        "line": "<h4 class=\"card-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Technical Capabilities'}</h4>"
+      },
+      {
+        "lineNum": 84,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Key Projects'}</h3>"
+      },
+      {
+        "lineNum": 103,
+        "sectionKey": "certifications",
+        "tag": "h4",
+        "className": "card-title",
+        "line": "<h4 class=\"card-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h4>"
+      },
+      {
+        "lineNum": 114,
+        "sectionKey": "contact",
+        "tag": "h4",
+        "className": "card-title",
+        "line": "<h4 class=\"card-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h4>"
+      }
+    ]
+  },
+  {
+    "file": "ocean_block.js",
+    "templateKey": "ocean_block",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 19,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 40,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 57,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise'}</h3>"
+      },
+      {
+        "lineNum": 81,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 99,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 110,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 405,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Profile Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "olivia.js",
+    "templateKey": "olivia",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 22,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 36,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 53,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      },
+      {
+        "lineNum": 104,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:experience\">${isContinuation ? (data.sectionTitles?.experience ? `${data.sectionTitles.experience} (Continued)` : 'Experience (Continued)') : (data.sectionTitles?.experience || 'Experience')}</h2>"
+      },
+      {
+        "lineNum": 136,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:projects\">${isContinuation ? (data.sectionTitles?.projects ? `${data.sectionTitles.projects} (Continued)` : 'Projects (Continued)') : (data.sectionTitles?.projects || 'Projects')}</h2>"
+      },
+      {
+        "lineNum": 158,
+        "sectionKey": "certifications",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h2>"
+      },
+      {
+        "lineNum": 171,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h2>"
+      }
+    ]
+  },
+  {
+    "file": "ong_burgundy.js",
+    "templateKey": "ong_burgundy",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 19,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 40,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 57,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise'}</h3>"
+      },
+      {
+        "lineNum": 81,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects & Achievements'}</h3>"
+      },
+      {
+        "lineNum": 99,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 110,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 445,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'About Me'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "osaka_minimal.js",
+    "templateKey": "osaka_minimal",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 19,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || '01 / Experience'}</h3>"
+      },
+      {
+        "lineNum": 40,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || '02 / Education'}</h3>"
+      },
+      {
+        "lineNum": 57,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || '03 / Tooling'}</h3>"
+      },
+      {
+        "lineNum": 82,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || '04 / Systems'}</h3>"
+      },
+      {
+        "lineNum": 100,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || '05 / Certs'}</h3>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 434,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || '00 / Overview'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "oslo_taupe.js",
+    "templateKey": "oslo_taupe",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 41,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 58,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills & Tools'}</h3>"
+      },
+      {
+        "lineNum": 82,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Selected Projects'}</h3>"
+      },
+      {
+        "lineNum": 100,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "overlapping_badge.js",
+    "templateKey": "overlapping_badge",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 38,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 63,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 82,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Competencies'}</h3>"
+      },
+      {
+        "lineNum": 94,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Key Projects'}</h3>"
+      },
+      {
+        "lineNum": 114,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 377,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'About Me'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "oxford_burgundy.js",
+    "templateKey": "oxford_burgundy",
+    "headingCount": 3,
+    "headings": [
+      {
+        "lineNum": 28,
+        "sectionKey": "experience",
+        "tag": "span",
+        "className": "pill-title",
+        "line": "<span class=\"pill-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Academic & Professional Appointments'}</span>"
+      },
+      {
+        "lineNum": 50,
+        "sectionKey": "education",
+        "tag": "span",
+        "className": "pill-title",
+        "line": "<span class=\"pill-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education & Qualifications'}</span>"
+      },
+      {
+        "lineNum": 69,
+        "sectionKey": "skills",
+        "tag": "span",
+        "className": "pill-title",
+        "line": "<span class=\"pill-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Areas of Expertise'}</span>"
+      }
+    ]
+  },
+  {
+    "file": "oxford_minimalist.js",
+    "templateKey": "oxford_minimalist",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 43,
+        "sectionKey": "summary",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:summary\">${summaryTitle}</h2>"
+      },
+      {
+        "lineNum": 51,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:experience\">${expTitle}</h2>"
+      },
+      {
+        "lineNum": 75,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:education\">${eduTitle}</h2>"
+      },
+      {
+        "lineNum": 93,
+        "sectionKey": "skills",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:skills\">${skillsTitle}</h2>"
+      },
+      {
+        "lineNum": 103,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:projects\">${projTitle}</h2>"
+      },
+      {
+        "lineNum": 118,
+        "sectionKey": "certifications",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:certifications\">${certTitle}</h2>"
+      },
+      {
+        "lineNum": 131,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:references\">${refTitle}</h2>"
+      }
+    ]
+  },
+  {
+    "file": "prague_brass.js",
+    "templateKey": "prague_brass",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 21,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Disciplines & Skills'}</h3>"
+      },
+      {
+        "lineNum": 83,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Key Exhibitions & Projects'}</h3>"
+      },
+      {
+        "lineNum": 101,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Fellowships & Honors'}</h3>"
+      },
+      {
+        "lineNum": 112,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "reykjavik_slate.js",
+    "templateKey": "reykjavik_slate",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 21,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise'}</h3>"
+      },
+      {
+        "lineNum": 83,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Research & Projects'}</h3>"
+      },
+      {
+        "lineNum": 101,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 112,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "richard.js",
+    "templateKey": "richard",
+    "headingCount": 5,
+    "headings": [
+      {
+        "lineNum": 19,
+        "sectionKey": "experience",
+        "tag": "div",
+        "className": "main-section-title-pill",
+        "line": "<div class=\"main-section-title-pill\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</div>"
+      },
+      {
+        "lineNum": 37,
+        "sectionKey": "education",
+        "tag": "div",
+        "className": "main-section-title-pill",
+        "line": "<div class=\"main-section-title-pill\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</div>"
+      },
+      {
+        "lineNum": 52,
+        "sectionKey": "projects",
+        "tag": "div",
+        "className": "main-section-title-pill",
+        "line": "<div class=\"main-section-title-pill\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</div>"
+      },
+      {
+        "lineNum": 64,
+        "sectionKey": "certifications",
+        "tag": "div",
+        "className": "main-section-title-pill",
+        "line": "<div class=\"main-section-title-pill\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</div>"
+      },
+      {
+        "lineNum": 109,
+        "sectionKey": "skills",
+        "tag": "div",
+        "className": "sidebar-section-title-pill",
+        "line": "<div class=\"sidebar-section-title-pill\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise'}</div>"
+      }
+    ]
+  },
+  {
+    "file": "richard_sanchez.js",
+    "templateKey": "richard_sanchez",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 453,
+        "sectionKey": "summary",
+        "tag": "div",
+        "className": "sidebar-title",
+        "line": "<div class=\"sidebar-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'ABOUT ME'}</div>"
+      },
+      {
+        "lineNum": 507,
+        "sectionKey": "skills",
+        "tag": "div",
+        "className": "sidebar-badge",
+        "line": "<div class=\"sidebar-badge\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'EXPERTISE'}</div>"
+      },
+      {
+        "lineNum": 530,
+        "sectionKey": "experience",
+        "tag": "div",
+        "className": "main-badge",
+        "line": "<div><span class=\"main-badge\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'EXPERIENCE'}</span></div>"
+      },
+      {
+        "lineNum": 554,
+        "sectionKey": "education",
+        "tag": "div",
+        "className": "main-badge",
+        "line": "<div><span class=\"main-badge\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'EDUCATION'}</span></div>"
+      },
+      {
+        "lineNum": 570,
+        "sectionKey": "skills",
+        "tag": "div",
+        "className": "main-badge",
+        "line": "<div><span class=\"main-badge\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'SKILLS'}</span></div>"
+      },
+      {
+        "lineNum": 590,
+        "sectionKey": "projects",
+        "tag": "div",
+        "className": "main-badge",
+        "line": "<div><span class=\"main-badge\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'PROJECTS'}</span></div>"
+      },
+      {
+        "lineNum": 606,
+        "sectionKey": "references",
+        "tag": "div",
+        "className": "main-badge",
+        "line": "<div><span class=\"main-badge\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'REFERENCES'}</span></div>"
+      }
+    ]
+  },
+  {
+    "file": "sage_pastel.js",
+    "templateKey": "sage_pastel",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 19,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 40,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 57,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      },
+      {
+        "lineNum": 81,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 99,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 110,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "san_francisco_skyline.js",
+    "templateKey": "san_francisco_skyline",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Skills'}</h3>"
+      },
+      {
+        "lineNum": 84,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 103,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 114,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 446,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Professional Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "sanchez_dark.js",
+    "templateKey": "sanchez_dark",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 21,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h2>"
+      },
+      {
+        "lineNum": 44,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h2>"
+      },
+      {
+        "lineNum": 64,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h2>"
+      },
+      {
+        "lineNum": 84,
+        "sectionKey": "certifications",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h2>"
+      },
+      {
+        "lineNum": 98,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:references\">${data.sectionTitles?.references || 'References'}</h2>"
+      },
+      {
+        "lineNum": 118,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 157,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "sanchez_mono.js",
+    "templateKey": "sanchez_mono",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 19,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h2>"
+      },
+      {
+        "lineNum": 41,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h2>"
+      },
+      {
+        "lineNum": 60,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h2>"
+      },
+      {
+        "lineNum": 79,
+        "sectionKey": "certifications",
+        "tag": "h2",
+        "className": "section-title",
+        "line": "<h2 class=\"section-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h2>"
+      },
+      {
+        "lineNum": 90,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 129,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "sanchez_wave.js",
+    "templateKey": "sanchez_wave",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "div",
+        "className": "pill-title-outline",
+        "line": "<div class=\"pill-title-outline\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'EXPERIENCE'}</div>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "div",
+        "className": "pill-title-outline",
+        "line": "<div class=\"pill-title-outline\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'EDUCATION'}</div>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "div",
+        "className": "pill-title-outline",
+        "line": "<div class=\"pill-title-outline\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'SKILLS'}</div>"
+      },
+      {
+        "lineNum": 82,
+        "sectionKey": "projects",
+        "tag": "div",
+        "className": "pill-title-outline",
+        "line": "<div class=\"pill-title-outline\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'PROJECTS'}</div>"
+      },
+      {
+        "lineNum": 99,
+        "sectionKey": "certifications",
+        "tag": "div",
+        "className": "pill-title-outline",
+        "line": "<div class=\"pill-title-outline\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'CERTIFICATIONS'}</div>"
+      },
+      {
+        "lineNum": 363,
+        "sectionKey": "summary",
+        "tag": "div",
+        "className": "pill-title-outline",
+        "line": "<div class=\"pill-title-outline\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'ABOUT ME'}</div>"
+      }
+    ]
+  },
+  {
+    "file": "schumacher_charcoal.js",
+    "templateKey": "schumacher_charcoal",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h2>"
+      },
+      {
+        "lineNum": 43,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h2>"
+      },
+      {
+        "lineNum": 63,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "NONE",
+        "line": "<h2 data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h2>"
+      },
+      {
+        "lineNum": 83,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 95,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 110,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "seattle_emerald.js",
+    "templateKey": "seattle_emerald",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Skills'}</h3>"
+      },
+      {
+        "lineNum": 83,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 102,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 113,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "sebastian_bennett.js",
+    "templateKey": "sebastian_bennett",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 391,
+        "sectionKey": "summary",
+        "tag": "span",
+        "className": "section-title",
+        "line": "<span class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'PROFILE'}</span>"
+      },
+      {
+        "lineNum": 403,
+        "sectionKey": "education",
+        "tag": "span",
+        "className": "section-title",
+        "line": "<span class=\"section-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'EDUCATION'}</span>"
+      },
+      {
+        "lineNum": 431,
+        "sectionKey": "experience",
+        "tag": "span",
+        "className": "section-title",
+        "line": "<span class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'WORK EXPERIENCE'}</span>"
+      },
+      {
+        "lineNum": 462,
+        "sectionKey": "projects",
+        "tag": "span",
+        "className": "section-title",
+        "line": "<span class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'PROJECTS'}</span>"
+      },
+      {
+        "lineNum": 487,
+        "sectionKey": "skills",
+        "tag": "span",
+        "className": "section-title",
+        "line": "<span class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'SKILLS'}</span>"
+      },
+      {
+        "lineNum": 534,
+        "sectionKey": "references",
+        "tag": "span",
+        "className": "section-title",
+        "line": "<span class=\"section-title\" data-df-field=\"heading:references\">${data.sectionTitles?.references || 'REFERENCES'}</span>"
+      }
+    ]
+  },
+  {
+    "file": "seoul_neon.js",
+    "templateKey": "seoul_neon",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 21,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Tech Matrix'}</h3>"
+      },
+      {
+        "lineNum": 83,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 101,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 112,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 420,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "silicon_valley_ats.js",
+    "templateKey": "silicon_valley_ats",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 40,
+        "sectionKey": "summary",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:summary\">${summaryTitle}</h2>"
+      },
+      {
+        "lineNum": 49,
+        "sectionKey": "skills",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:skills\">${skillsTitle}</h2>"
+      },
+      {
+        "lineNum": 60,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:experience\">${expTitle}</h2>"
+      },
+      {
+        "lineNum": 85,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:projects\">${projTitle}</h2>"
+      },
+      {
+        "lineNum": 102,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:education\">${eduTitle}</h2>"
+      },
+      {
+        "lineNum": 121,
+        "sectionKey": "certifications",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:certifications\">${certTitle}</h2>"
+      },
+      {
+        "lineNum": 135,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:references\">${refTitle}</h2>"
+      }
+    ]
+  },
+  {
+    "file": "singapore_ruby.js",
+    "templateKey": "singapore_ruby",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 21,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Competencies'}</h3>"
+      },
+      {
+        "lineNum": 83,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 101,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 112,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 420,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "split_dual_block.js",
+    "templateKey": "split_dual_block",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 41,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 63,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 80,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise'}</h3>"
+      },
+      {
+        "lineNum": 104,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 123,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 134,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 479,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "stockholm_monochrome.js",
+    "templateKey": "stockholm_monochrome",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "box-title",
+        "line": "<h3 class=\"box-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 40,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "box-title",
+        "line": "<h3 class=\"box-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 56,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "box-title",
+        "line": "<h3 class=\"box-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Core Skills'}</h3>"
+      },
+      {
+        "lineNum": 80,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "box-title",
+        "line": "<h3 class=\"box-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Selected Projects'}</h3>"
+      },
+      {
+        "lineNum": 97,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "box-title",
+        "line": "<h3 class=\"box-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 107,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "box-title",
+        "line": "<h3 class=\"box-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Information'}</h3>"
+      },
+      {
+        "lineNum": 400,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "box-title",
+        "line": "<h3 class=\"box-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "stockholm_yellow.js",
+    "templateKey": "stockholm_yellow",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 21,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 43,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 60,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Key Skills'}</h3>"
+      },
+      {
+        "lineNum": 84,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Key Projects'}</h3>"
+      },
+      {
+        "lineNum": 103,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 114,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 426,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "terracotta_arch.js",
+    "templateKey": "terracotta_arch",
+    "headingCount": 5,
+    "headings": [
+      {
+        "lineNum": 422,
+        "sectionKey": "summary",
+        "tag": "div",
+        "className": "overview-title",
+        "line": "<div class=\"overview-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'About Me'}</div>"
+      },
+      {
+        "lineNum": 434,
+        "sectionKey": "experience",
+        "tag": "div",
+        "className": "section-title",
+        "line": "<div class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</div>"
+      },
+      {
+        "lineNum": 459,
+        "sectionKey": "projects",
+        "tag": "div",
+        "className": "section-title",
+        "line": "<div class=\"section-title\" style=\"margin-top: 16px;\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</div>"
+      },
+      {
+        "lineNum": 476,
+        "sectionKey": "education",
+        "tag": "div",
+        "className": "section-title",
+        "line": "<div class=\"section-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education History'}</div>"
+      },
+      {
+        "lineNum": 494,
+        "sectionKey": "skills",
+        "tag": "div",
+        "className": "section-title",
+        "line": "<div class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills & Expertise'}</div>"
+      }
+    ]
+  },
+  {
+    "file": "tokyo_ice_blue.js",
+    "templateKey": "tokyo_ice_blue",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 21,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 43,
+        "sectionKey": "education",
+        "tag": "h4",
+        "className": "card-title",
+        "line": "<h4 class=\"card-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h4>"
+      },
+      {
+        "lineNum": 60,
+        "sectionKey": "skills",
+        "tag": "h4",
+        "className": "card-title",
+        "line": "<h4 class=\"card-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Key Skills'}</h4>"
+      },
+      {
+        "lineNum": 84,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 103,
+        "sectionKey": "certifications",
+        "tag": "h4",
+        "className": "card-title",
+        "line": "<h4 class=\"card-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h4>"
+      },
+      {
+        "lineNum": 114,
+        "sectionKey": "contact",
+        "tag": "h4",
+        "className": "card-title",
+        "line": "<h4 class=\"card-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h4>"
+      }
+    ]
+  },
+  {
+    "file": "vancouver_pine.js",
+    "templateKey": "vancouver_pine",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 22,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 44,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 61,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Technical Domains'}</h3>"
+      },
+      {
+        "lineNum": 86,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Key Projects & Ventures'}</h3>"
+      },
+      {
+        "lineNum": 105,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications & Impact'}</h3>"
+      },
+      {
+        "lineNum": 116,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "venice_sand_split.js",
+    "templateKey": "venice_sand_split",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 21,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 42,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise'}</h3>"
+      },
+      {
+        "lineNum": 83,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Notable Projects'}</h3>"
+      },
+      {
+        "lineNum": 101,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 112,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 423,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Executive Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "vienna_crest.js",
+    "templateKey": "vienna_crest",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 27,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Professional Experience'}</h3>"
+      },
+      {
+        "lineNum": 48,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education & Credentials'}</h3>"
+      },
+      {
+        "lineNum": 66,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise & Competencies'}</h3>"
+      },
+      {
+        "lineNum": 91,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Notable Publications & Projects'}</h3>"
+      },
+      {
+        "lineNum": 109,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications & Honors'}</h3>"
+      },
+      {
+        "lineNum": 377,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Academic & Professional Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "violet_modern.js",
+    "templateKey": "violet_modern",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 41,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 58,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      },
+      {
+        "lineNum": 82,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 100,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 403,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Summary'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "wall_street_executive.js",
+    "templateKey": "wall_street_executive",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 43,
+        "sectionKey": "summary",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:summary\">${summaryTitle}</h2>"
+      },
+      {
+        "lineNum": 51,
+        "sectionKey": "experience",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:experience\">${expTitle}</h2>"
+      },
+      {
+        "lineNum": 75,
+        "sectionKey": "education",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:education\">${eduTitle}</h2>"
+      },
+      {
+        "lineNum": 93,
+        "sectionKey": "skills",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:skills\">${skillsTitle}</h2>"
+      },
+      {
+        "lineNum": 103,
+        "sectionKey": "projects",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:projects\">${projTitle}</h2>"
+      },
+      {
+        "lineNum": 118,
+        "sectionKey": "certifications",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:certifications\">${certTitle}</h2>"
+      },
+      {
+        "lineNum": 131,
+        "sectionKey": "references",
+        "tag": "h2",
+        "className": "section-heading",
+        "line": "<h2 class=\"section-heading\" data-df-field=\"heading:references\">${refTitle}</h2>"
+      }
+    ]
+  },
+  {
+    "file": "wilson_light.js",
+    "templateKey": "wilson_light",
+    "headingCount": 6,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "main-section-title",
+        "line": "<h3 class=\"main-section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 39,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 54,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      },
+      {
+        "lineNum": 78,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "main-section-title",
+        "line": "<h3 class=\"main-section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 94,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "main-section-title",
+        "line": "<h3 class=\"main-section-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 105,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "wilson_minimal.js",
+    "templateKey": "wilson_minimal",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Experience'}</h3>"
+      },
+      {
+        "lineNum": 41,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 58,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Expertise'}</h3>"
+      },
+      {
+        "lineNum": 82,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 100,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 111,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 387,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Profile'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "ziv_olive.js",
+    "templateKey": "ziv_olive",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 20,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 41,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 59,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 77,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 88,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 102,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "NONE",
+        "line": "<h3 data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      },
+      {
+        "lineNum": 418,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'About Me'}</h3>"
+      }
+    ]
+  },
+  {
+    "file": "zurich_slate_block.js",
+    "templateKey": "zurich_slate_block",
+    "headingCount": 7,
+    "headings": [
+      {
+        "lineNum": 21,
+        "sectionKey": "experience",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:experience\">${data.sectionTitles?.experience || 'Work Experience'}</h3>"
+      },
+      {
+        "lineNum": 43,
+        "sectionKey": "education",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:education\">${data.sectionTitles?.education || 'Education'}</h3>"
+      },
+      {
+        "lineNum": 60,
+        "sectionKey": "skills",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:skills\">${data.sectionTitles?.skills || 'Skills'}</h3>"
+      },
+      {
+        "lineNum": 84,
+        "sectionKey": "projects",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:projects\">${data.sectionTitles?.projects || 'Projects'}</h3>"
+      },
+      {
+        "lineNum": 103,
+        "sectionKey": "certifications",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:certifications\">${data.sectionTitles?.certifications || 'Certifications'}</h3>"
+      },
+      {
+        "lineNum": 114,
+        "sectionKey": "contact",
+        "tag": "h3",
+        "className": "sidebar-title",
+        "line": "<h3 class=\"sidebar-title\" data-df-field=\"heading:contact\">${data.sectionTitles?.contact || 'Contact'}</h3>"
+      },
+      {
+        "lineNum": 428,
+        "sectionKey": "summary",
+        "tag": "h3",
+        "className": "section-title",
+        "line": "<h3 class=\"section-title\" data-df-field=\"heading:summary\">${data.sectionTitles?.summary || 'Professional Summary'}</h3>"
+      }
+    ]
+  }
+]

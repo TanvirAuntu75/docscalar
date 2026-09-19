@@ -1,0 +1,2637 @@
+[
+  {
+    "file": "adam_fletcher.js",
+    "fnName": "generateAdamFletcherHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Adam Fletcher'}\">"
+    },
+    "fallbacks": {
+      "name": "Adam Fletcher",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "adeline_palmerston.js",
+    "fnName": "generateAdelinePalmerstonHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Adeline Palmerston'}\" />"
+    },
+    "fallbacks": {
+      "name": "Adeline Palmerston",
+      "title": "Additional Information",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "adora_diagonal.js",
+    "fnName": "generateAdoraDiagonalHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Languages",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "adora_montminy.js",
+    "fnName": "generateAdoraMontminyHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": true,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Language",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": false,
+      "contact": true
+    }
+  },
+  {
+    "file": "alfredo_torres.js",
+    "fnName": "generateAlfredoTorresHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Alfredo Torres'}\">"
+    },
+    "fallbacks": {
+      "name": "Alfredo Torres",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "alvarado_slate.js",
+    "fnName": "generateAlvaradoSlateHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": true
+    }
+  },
+  {
+    "file": "amsterdam_orange.js",
+    "fnName": "generateAmsterdamOrangeHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "arthur_pendelton.js",
+    "fnName": "generateArthurPendeltonHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Arthur Pendelton'}\">"
+    },
+    "fallbacks": {
+      "name": "Arthur Pendelton",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "austin_amber.js",
+    "fnName": "generateAustinAmberHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "barcelona_cyan.js",
+    "fnName": "generateBarcelonaCyanHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "berlin_two_tone.js",
+    "fnName": "generateBerlinTwoToneHtml",
+    "layoutType": "Single-Column Full-Width",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": null
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "bordeaux_wine.js",
+    "fnName": "generateBordeauxWineHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "boston_crimson.js",
+    "fnName": "generateBostonCrimsonHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "buenos_aires_tango.js",
+    "fnName": "generateBuenosAiresTangoHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "cairo_gold.js",
+    "fnName": "generateCairoGoldHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "cambridge_rose.js",
+    "fnName": "generateCambridgeRoseHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "cape_town_sunset.js",
+    "fnName": "generateCapeTownSunsetHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "card_matrix.js",
+    "fnName": "generateCardMatrixHtml",
+    "layoutType": "Single-Column Full-Width",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "charles.js",
+    "fnName": "generateCharlesHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Languages",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "copenhagen_sand.js",
+    "fnName": "generateCopenhagenSandHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "date_capsule.js",
+    "fnName": "generateDateCapsuleHtml",
+    "layoutType": "Single-Column Full-Width",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": true
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "diagonal_wedge.js",
+    "fnName": "generateDiagonalWedgeHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": true,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": false,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "donna_stroupe.js",
+    "fnName": "generateDonnaStroupeHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Donna Stroupe'}\">"
+    },
+    "fallbacks": {
+      "name": "Donna Stroupe",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "dublin_forest.js",
+    "fnName": "generateDublinForestHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "edinburgh_navy.js",
+    "fnName": "generateEdinburghNavyHtml",
+    "layoutType": "Single-Column Full-Width",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "emerald_prestige.js",
+    "fnName": "generateEmeraldPrestigeHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "emma.js",
+    "fnName": "generateEmmaHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": null
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Languages",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "floating_card_matrix.js",
+    "fnName": "generateFloatingCardMatrixHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": true
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "florence_terracotta.js",
+    "fnName": "generateFlorenceTerracottaHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "geneva_charcoal.js",
+    "fnName": "generateGenevaCharcoalHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "helsinki_frost.js",
+    "fnName": "generateHelsinkiFrostHtml",
+    "layoutType": "Single-Column Full-Width",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "helsinki_navy.js",
+    "fnName": "generateHelsinkiNavyHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "howard_ong.js",
+    "fnName": "generateHowardOngHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Howard Ong'}\">"
+    },
+    "fallbacks": {
+      "name": "Howard Ong",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "isabel_mercado.js",
+    "fnName": "generateIsabelMercadoHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": true,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Isabel Mercado'}\">"
+    },
+    "fallbacks": {
+      "name": "ISABEL MERCADO",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "isabel_schumacher.js",
+    "fnName": "generateIsabelSchumacherHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Isabel Schumacher'}\">"
+    },
+    "fallbacks": {
+      "name": "Isabel Schumacher",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "jonathan.js",
+    "fnName": "generateJonathanHtml",
+    "layoutType": "Single-Column Full-Width",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": null
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Additional Information",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "jonathan_patterson.js",
+    "fnName": "generateJonathanPattersonHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": true
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Jonathan Patterson'}\">"
+    },
+    "fallbacks": {
+      "name": "Language",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "kathleen.js",
+    "fnName": "generateKathleenHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Languages",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "kelly_mint.js",
+    "fnName": "generateKellyMintHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Kelly Blackwell",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "korina_villanueva.js",
+    "fnName": "generateKorinaVillanuevaHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": true,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Korina Villanueva'}\">"
+    },
+    "fallbacks": {
+      "name": "Language",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "kyiv_golden.js",
+    "fnName": "generateKyivGoldenHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "kyoto_coral.js",
+    "fnName": "generateKyotoCoralHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "lilac_sidebar.js",
+    "fnName": "generateLilacSidebarHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "lorna_alvarado.js",
+    "fnName": "generateLornaAlvaradoHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Lorna Alvarado'}\">"
+    },
+    "fallbacks": {
+      "name": "Lorna Alvarado",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "lyon_lavender.js",
+    "fnName": "generateLyonLavenderHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "madrid_sun.js",
+    "fnName": "generateMadridSunHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "manhattan_noir.js",
+    "fnName": "generateManhattanNoirHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "marcus_vance.js",
+    "fnName": "generateMarcusVanceHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Marcus Vance'}\">"
+    },
+    "fallbacks": {
+      "name": "Marcus Vance",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "mariana.js",
+    "fnName": "generateMarianaHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": true,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Languages",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "milan_blush.js",
+    "fnName": "generateMilanBlushHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "montreal_frost.js",
+    "fnName": "generateMontrealFrostHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "ocean_block.js",
+    "fnName": "generateOceanBlockHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "olivia.js",
+    "fnName": "generateOliviaHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": true,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Languages",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "ong_burgundy.js",
+    "fnName": "generateOngBurgundyHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "osaka_minimal.js",
+    "fnName": "generateOsakaMinimalHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "oslo_taupe.js",
+    "fnName": "generateOsloTaupeHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "overlapping_badge.js",
+    "fnName": "generateOverlappingBadgeHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "oxford_burgundy.js",
+    "fnName": "generateOxfordBurgundyHtml",
+    "layoutType": "Single-Column Full-Width",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": true
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "prague_brass.js",
+    "fnName": "generatePragueBrassHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "reykjavik_slate.js",
+    "fnName": "generateReykjavikSlateHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": true
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "richard.js",
+    "fnName": "generateRichardHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Language",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "richard_sanchez.js",
+    "fnName": "generateRichardSanchezHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Richard Sanchez'}\">"
+    },
+    "fallbacks": {
+      "name": "Richard Sanchez",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "sage_pastel.js",
+    "fnName": "generateSagePastelHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "sanchez_dark.js",
+    "fnName": "generateSanchezDarkHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Languages",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "sanchez_mono.js",
+    "fnName": "generateSanchezMonoHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Languages",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "sanchez_wave.js",
+    "fnName": "generateSanchezWaveHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "san_francisco_skyline.js",
+    "fnName": "generateSanFranciscoSkylineHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "schumacher_charcoal.js",
+    "fnName": "generateSchumacherCharcoalHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Languages",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "seattle_emerald.js",
+    "fnName": "generateSeattleEmeraldHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "sebastian_bennett.js",
+    "fnName": "generateSebastianBennettHtml",
+    "layoutType": "Single-Column Full-Width",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Sebastian Bennett'}\">"
+    },
+    "fallbacks": {
+      "name": "Sebastian Bennett",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": true
+    }
+  },
+  {
+    "file": "seoul_neon.js",
+    "fnName": "generateSeoulNeonHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "singapore_ruby.js",
+    "fnName": "generateSingaporeRubyHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "split_dual_block.js",
+    "fnName": "generateSplitDualBlockHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "stockholm_monochrome.js",
+    "fnName": "generateStockholmMonochromeHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "stockholm_yellow.js",
+    "fnName": "generateStockholmYellowHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "terracotta_arch.js",
+    "fnName": "generateTerracottaArchHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": true
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": null
+    },
+    "fallbacks": {
+      "name": "Adeline Palmerston",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": false,
+      "certifications": false,
+      "references": true,
+      "contact": false
+    }
+  },
+  {
+    "file": "tokyo_ice_blue.js",
+    "fnName": "generateTokyoIceBlueHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "vancouver_pine.js",
+    "fnName": "generateVancouverPineHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "venice_sand_split.js",
+    "fnName": "generateVeniceSandSplitHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "vienna_crest.js",
+    "fnName": "generateViennaCrestHtml",
+    "layoutType": "Single-Column Full-Width",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "violet_modern.js",
+    "fnName": "generateVioletModernHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "wilson_light.js",
+    "fnName": "generateWilsonLightHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Language",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "wilson_minimal.js",
+    "fnName": "generateWilsonMinimalHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "ziv_olive.js",
+    "fnName": "generateZivOliveHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": false,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": "Languages",
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  },
+  {
+    "file": "zurich_slate_block.js",
+    "fnName": "generateZurichSlateBlockHtml",
+    "layoutType": "Two-Column / Sidebar",
+    "geometry": {
+      "hasSvgPolygon": true,
+      "hasDiagonalWedge": false,
+      "hasArchFrame": false
+    },
+    "avatar": {
+      "hasMaskDiv": false,
+      "hasPhotoContainer": false,
+      "imgTag": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />"
+    },
+    "fallbacks": {
+      "name": "Candidate Name",
+      "title": null,
+      "email": null,
+      "phone": null,
+      "summary": null
+    },
+    "guards": {
+      "experience": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "certifications": true,
+      "references": false,
+      "contact": false
+    }
+  }
+]

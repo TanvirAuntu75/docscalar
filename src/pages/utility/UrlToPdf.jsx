@@ -10,10 +10,9 @@ import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '..
 import { saveAs } from 'file-saver';
 import {
   Globe,
-  Sparkles,
   Download,
-  Cpu,
-  Server,
+  Sparkles,
+  Zap,
   FileCheck,
   RotateCw,
   Maximize2,
@@ -153,7 +152,7 @@ export default function UrlToPdf() {
         });
     } else if (poller.status === 'failed') {
       setProcessing(false);
-      setError(poller.error || 'Server webpage capture failed.');
+      setError(poller.error || 'Full Precision capture could not be completed.');
     } else if (poller.status === 'started' || poller.status === 'queued') {
       setProgress(poller.progress || 25);
       setStatusMessage('Capturing webpage DOM and rendering PDF...');
@@ -180,8 +179,8 @@ export default function UrlToPdf() {
 
     try {
       if (engineMode === 'server') {
-        if (!backendActive) throw new Error('Conversion server is unreachable. Please switch to Fast Client Mode.');
-        setStatusMessage('Submitting headless Chromium capture job...');
+        if (!backendActive) throw new Error('Cloud capture engine is currently offline. Please switch to Fast Mode.');
+        setStatusMessage('Capturing web page with high precision...');
 
         const formData = new FormData();
         formData.append('url', url.trim());
@@ -265,7 +264,7 @@ export default function UrlToPdf() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="URL to PDF Converter Online Free — Save Webpages as PDF | DocForge"
+        title="URL to PDF Converter Online Free — Save Webpages as PDF | DocScalar"
         description="Convert any website URL or online article into a print-ready PDF document. High-resolution rendering, background color preservation, and 100% private processing."
       />
 
@@ -545,8 +544,9 @@ export default function UrlToPdf() {
                         : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                     }`}
                   >
-                    <Cpu size={14} />
-                    <span>Fast Client</span>
+                    <Zap size={14} />
+                    <span>Fast Mode</span>
+                    <span className={`text-[10px] ${engineMode === 'client' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>Instant · Private</span>
                   </button>
 
                   <button
@@ -558,8 +558,9 @@ export default function UrlToPdf() {
                         : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                     }`}
                   >
-                    <Server size={14} />
-                    <span>Chromium Cloud</span>
+                    <Sparkles size={14} />
+                    <span>Full Precision</span>
+                    <span className={`text-[10px] ${engineMode === 'server' ? 'text-white/80' : 'text-[var(--text-tertiary)]'}`}>High Fidelity</span>
                   </button>
                 </div>
               </div>
@@ -581,14 +582,16 @@ export default function UrlToPdf() {
               {/* Progress Bar (While Processing) */}
               {processing && (
                 <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                  <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                    <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                      <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                  <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                         progress_activity
                       </span>
-                      {statusMessage || 'Capturing webpage...'}
-                    </span>
-                    <span>{progress}%</span>
+                      <span className="truncate" title={statusMessage || 'Capturing webpage...'}>
+                        {statusMessage || 'Capturing webpage...'}
+                      </span>
+                    </div>
+                    <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                   </div>
                   <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div
@@ -669,7 +672,7 @@ export default function UrlToPdf() {
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
                 <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Engine</span>
                 <span className="text-xs font-bold text-[var(--text-primary)] mt-1 capitalize">
-                  {result.engineMode === 'server' ? 'Chromium' : 'Vector NMT'}
+                  {result.engineMode === 'server' ? 'Full Precision' : 'Fast Mode'}
                 </span>
               </div>
               <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
@@ -702,11 +705,11 @@ export default function UrlToPdf() {
             {/* Quick Next Steps */}
             <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
-                Continue Working with DocForge
+                Continue Working with DocScalar
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <Link
-                  to="/summarize-pdf"
+                  to="/ai-summarizer"
                   className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[20px] text-purple-500">auto_awesome</span>

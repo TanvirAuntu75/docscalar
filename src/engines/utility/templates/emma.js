@@ -7,38 +7,36 @@ export function generateEmmaHtml(
   themeColor = '#3c3530',
   themeFont = 'Playfair Display',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
   const accentColor = themeColor === 'default' || !themeColor ? '#3c3530' : themeColor;
   const fontFam = themeFont === 'Inter' ? "'Inter', sans-serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : themeFont === 'Merriweather' ? "'Merriweather', Georgia, serif" : "'Playfair Display', Georgia, serif";
 
-  const expHtml = data.experience && data.experience.length ? data.experience.map(e => `
+  const expHtml = data.experience && data.experience.length ? data.experience.map((e, idx) => `
     <div class="exp-item">
       <div class="exp-header">
-        <span class="exp-role">${e.role}</span>
-        <span class="exp-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
-      </div>
-      <div class="exp-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+        <span class="exp-role" data-df-field="exp:${idx}:role">${e.role}</span>
+        <span class="exp-date" ><span data-df-field="exp:${idx}:company">${e.company || ''}</span>${(e.company && (e.start || e.end)) ? ' | ' : ''}<span data-df-field="exp:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span></div>
       ${e.highlights && e.highlights.filter(Boolean).length ? `
         <ul class="exp-desc">
-          ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+          ${e.highlights.filter(Boolean).map((h, hIdx) => `<li data-df-field="exp:${idx}:highlight:${hIdx}">${h}</li>`).join('')}
         </ul>
       ` : ''}
     </div>`).join('') : '';
 
   const projHtml = data.projects && data.projects.length ? `
     <div class="section-block">
-      <h3>Projects</h3>
+      <h3 class="section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'Projects'}</h3>
       <div class="proj-list">
-        ${data.projects.map(p => `
+        ${data.projects.map((p, idx) => `
           <div class="proj-item">
             <div class="proj-header">
-              <span class="proj-title">${p.name}</span>
-              ${p.url ? `<span class="proj-url"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: ${accentColor}; text-decoration: none;">${p.url}</a></span>` : ''}
+              <span class="proj-title" data-df-field="proj:${idx}:name">${p.name || ''}</span>
+              ${p.url ? `<span class="proj-url"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="proj:${idx}:url" style="color: ${accentColor}; text-decoration: none;">${p.url}</a></span>` : ''}
             </div>
-            ${p.description ? `<div class="proj-desc">${p.description}</div>` : ''}
+            ${p.description ? `<div class="proj-desc" data-df-field="proj:${idx}:description">${p.description}</div>` : ''}
           </div>
         `).join('')}
       </div>
@@ -47,13 +45,13 @@ export function generateEmmaHtml(
 
   const eduHtml = data.education && data.education.length ? `
     <div class="section-block">
-      <h3>Education</h3>
+      <h3 class="section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'Education'}</h3>
       <div class="edu-list">
-        ${data.education.map(e => `
+        ${data.education.map((e, idx) => `
           <div class="edu-item">
-            <div class="edu-degree">${e.degree}</div>
-            <div class="edu-school">${e.school}</div>
-            <div class="edu-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
+            <div class="edu-degree" data-df-field="edu:${idx}:degree">${e.degree}</div>
+            <div class="edu-school" data-df-field="edu:${idx}:school">${e.school}</div>
+            <div class="edu-date" data-df-field="edu:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
             ${e.note ? `<div class="edu-note">${e.note}</div>` : ''}
           </div>
         `).join('')}
@@ -63,9 +61,9 @@ export function generateEmmaHtml(
 
   const skillsHtml = data.skills && data.skills.length ? `
     <div class="section-block">
-      <h3>Key Skills</h3>
+      <h3 class="section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Key Skills'}</h3>
       <div class="skills-grid">
-        ${data.skills.map((s) => {
+        ${data.skills.map((s, idx) => {
           let name = s;
           let levelText = '';
           if (s.includes(' - ')) {
@@ -75,7 +73,7 @@ export function generateEmmaHtml(
           }
           return `
             <div class="skill-row">
-              <span class="skill-name">• ${name}</span>
+              <span class="skill-name" data-df-field="skill:${idx}">• ${name}</span>
               ${levelText ? `<span class="skill-level">${levelText}</span>` : ''}
             </div>
           `;
@@ -86,9 +84,9 @@ export function generateEmmaHtml(
 
   const certHtml = data.certifications && data.certifications.length ? `
     <div class="section-block">
-      <h3>Certifications</h3>
+      <h3 class="section-heading" data-df-field="heading:certifications">${data.sectionTitles?.certifications || 'Certifications'}</h3>
       <ul class="cert-list">
-        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+        ${data.certifications.map((c, idx) => `<li data-df-field="cert:${idx}">${c}</li>`).join('')}
       </ul>
     </div>
   ` : '';
@@ -96,12 +94,12 @@ export function generateEmmaHtml(
   const langSection = (data.customSections || []).find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');
   const langHtml = langSection && langSection.items?.length ? `
     <div class="section-block">
-      <h3>${langSection.title || 'Languages'}</h3>
+      <h3 data-df-field="custom:${langSection.id}:title">${langSection.title || 'Languages'}</h3>
       <div class="skills-grid">
-        ${langSection.items.map(i => `
+        ${langSection.items.map((i, idx) => `
           <div class="skill-row">
-            <span class="skill-name">• ${i.title}</span>
-            ${i.value ? `<span class="skill-level">${i.value}</span>` : ''}
+            <span class="skill-name" data-df-field="custom:${langSection.id}:${idx}:title">• ${typeof i === 'string' ? i : (i.title || i.name || '')}</span>
+            ${typeof i === 'object' && i !== null && i.value ? `<span class="skill-level" data-df-field="custom:${langSection.id}:${idx}:value">${i.value}</span>` : ''}
           </div>
         `).join('')}
       </div>
@@ -128,7 +126,7 @@ export function generateEmmaHtml(
     }
     
     #main-container {
-      width: 210mm;
+      width: 794px;
       min-height: 297mm;
       margin: 0 auto;
       background: #ffffff;
@@ -350,13 +348,41 @@ export function generateEmmaHtml(
       color: #475569;
       margin-top: 1px;
     }
+  
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      
+    .cv-page:last-child { break-after: avoid !important; page-break-after: avoid !important; }
+  }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      #main-container, .page-container, .cv-page, .container, .page {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+    }
+  
+    .avatar, .profile-photo, .photo, .headshot, .profile-img, .photo-wrapper, .avatar-wrapper {
+      border-radius: 50%;
+      overflow: hidden;
+    }
   </style>
 </head>
 <body>
-<div id="main-container">
+<div id="main-container" class="cv-page">
   <div class="top-band">
-    <h1>${data.name || 'Candidate Name'}</h1>
-    ${data.title ? `<div class="title-sub">${data.title}</div>` : ''}
+    <h1 data-df-field="name">${data.name || ''}</h1>
+    <div class="candidate-title title-sub" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${data.title || ''}</div>
     <div class="line-accent"></div>
   </div>
   
@@ -364,14 +390,14 @@ export function generateEmmaHtml(
     <div class="left-col">
       ${data.summary ? `
         <div class="section-block">
-          <h3>Professional Summary</h3>
-          <div class="summary-text">${data.summary}</div>
+          <h3 class="section-heading" data-df-field="heading:summary">${data.sectionTitles?.summary || 'Professional Summary'}</h3>
+          <div class="summary-text" data-df-field="summary">${data.summary}</div>
         </div>
       ` : ''}
       
       ${expHtml ? `
         <div class="section-block">
-          <h3>Work Experience</h3>
+          <h3 class="section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'Work Experience'}</h3>
           <div>${expHtml}</div>
         </div>
       ` : ''}
@@ -381,13 +407,13 @@ export function generateEmmaHtml(
     
     <div class="right-col">
       <div class="section-block">
-        <h3>Contact Information</h3>
+        <h3 class="section-heading" data-df-field="heading:contact">${data.sectionTitles?.contact || 'Contact Information'}</h3>
         <div class="contact-list">
-          ${data.email ? `<div class="contact-item"><span class="label">Email</span><span class="val"><a href="mailto:${data.email}" style="color: inherit; text-decoration: none;">${data.email}</a></span></div>` : ''}
-          ${data.phone ? `<div class="contact-item"><span class="label">Phone</span><span class="val">${data.phone}</span></div>` : ''}
-          ${data.location ? `<div class="contact-item"><span class="label">Address</span><span class="val">${data.location}</span></div>` : ''}
-          ${data.website ? `<div class="contact-item"><span class="label">Website</span><span class="val"><a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></span></div>` : ''}
-          ${data.linkedin ? `<div class="contact-item"><span class="label">LinkedIn</span><span class="val"><a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></span></div>` : ''}
+          ${data.email ? `<div class="contact-item"><span class="label">Email</span><span class="val"><a href="mailto:${data.email}" style="color: inherit; text-decoration: none;" data-df-field="email" >${data.email}</a></span></div>` : ''}
+          <span data-df-field="phone">${data.phone ? `<div class="contact-item"><span class="label">Phone</span><span class="val">${data.phone}</span></span></div>` : ''}
+          <span data-df-field="location">${data.location ? `<div class="contact-item"><span class="label">Address</span><span class="val">${data.location}</span></span></div>` : ''}
+          ${data.website ? `<div class="contact-item"><span class="label">Website</span><span class="val"><a data-df-field="website" href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a></span></div>` : ''}
+          ${data.linkedin ? `<div class="contact-item"><span class="label">LinkedIn</span><span class="val"><a data-df-field="linkedin" href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a></span></div>` : ''}
         </div>
       </div>
       

@@ -1,7 +1,7 @@
 {
-  "productName": "DocForge",
+  "productName": "DocScalar",
   "version": "1.0.0",
-  "identifier": "com.docforge.app",
+  "identifier": "com.docscalar.app",
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
@@ -12,7 +12,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "DocForge Studio",
+        "title": "DocScalar Studio",
         "width": 1280,
         "height": 800,
         "resizable": true,
@@ -36,7 +36,7 @@
       "icons/icon.ico"
     ],
     "externalBin": [
-      "docforge-backend"
+      "docscalar-backend"
     ]
   },
   "plugins": {

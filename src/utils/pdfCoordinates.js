@@ -1,5 +1,5 @@
 /**
- * DocForge PDF Coordinate & Rotation Normalization Engine
+ * DocScalar PDF Coordinate & Rotation Normalization Engine
  * 
  * Translates between visual screen coordinates (top-left origin [0..1] ratio)
  * and physical PDF coordinate space (bottom-left origin in points), correctly
@@ -26,11 +26,13 @@ export function getPageGeometry(page) {
     height = page.getHeight();
     rotationAngle = page.getRotation?.()?.angle || 0;
     
-    const mediaBox = page.getMediaBox ? page.getMediaBox() : { x: 0, y: 0, width, height };
-    minX = mediaBox.x || 0;
-    minY = mediaBox.y || 0;
-    mbWidth = mediaBox.width || width;
-    mbHeight = mediaBox.height || height;
+    const cropBox = typeof page.getCropBox === 'function' ? page.getCropBox() : null;
+    const mediaBox = typeof page.getMediaBox === 'function' ? page.getMediaBox() : { x: 0, y: 0, width, height };
+    const activeBox = (cropBox && cropBox.width > 0 && cropBox.height > 0) ? cropBox : mediaBox;
+    minX = activeBox.x || 0;
+    minY = activeBox.y || 0;
+    mbWidth = activeBox.width || width;
+    mbHeight = activeBox.height || height;
   } 
   // Handle raw dimensions object or PDF.js viewport
   else if (page) {
@@ -112,33 +114,33 @@ export function screenRatioToPdfPoints({
       break;
 
     case 90:
-      // Page rotated 90 deg clockwise in viewer:
-      // When drawn in pdf-lib on a page with /Rotate 90, pdf-lib's coordinate system is
-      // unrotated. To appear at visual (screenLeft, screenTop), we rotate the drawn element
-      // by 270 deg (counter-clockwise) and position its lower-left anchor.
-      pdfX = minX + screenTop;
+      // Page rotated 90 deg clockwise in viewer.
+      // In pdf-lib, draw rotated by 90 deg counter-clockwise to appear upright.
+      pdfX = minX + screenTop + visualH;
       pdfY = minY + screenLeft;
       drawW = visualW;
       drawH = visualH;
-      rotateDegrees = 270;
+      rotateDegrees = 90;
       break;
 
     case 180:
-      // Page rotated 180 deg (upside down):
-      pdfX = minX + mbWidth - screenLeft - visualW;
-      pdfY = minY + screenTop;
+      // Page rotated 180 deg (upside down).
+      // In pdf-lib, draw rotated by 180 deg to appear upright.
+      pdfX = minX + mbWidth - screenLeft;
+      pdfY = minY + screenTop + visualH;
       drawW = visualW;
       drawH = visualH;
       rotateDegrees = 180;
       break;
 
     case 270:
-      // Page rotated 270 deg clockwise (90 deg counter-clockwise):
+      // Page rotated 270 deg clockwise (90 deg counter-clockwise).
+      // In pdf-lib, draw rotated by 270 deg to appear upright.
       pdfX = minX + mbWidth - screenTop - visualH;
       pdfY = minY + mbHeight - screenLeft;
       drawW = visualW;
       drawH = visualH;
-      rotateDegrees = 90;
+      rotateDegrees = 270;
       break;
 
     default:

@@ -8,6 +8,12 @@ import { addWatermark } from '../../engines/pdf/addWatermark';
 import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
+import useSmartCropper from '../../hooks/useSmartCropper';
+import useCanvasPinchZoom from '../../hooks/useCanvasPinchZoom';
+import SmartCropperPanel from '../../components/SmartCropperPanel';
+import SmartCropperToolbarButton from '../../components/SmartCropperToolbarButton';
+import { useDpiQuality } from '../../hooks/useDpiQuality';
+import { DpiQualitySelector } from '../../components/DpiQualitySelector';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -56,9 +62,19 @@ export default function AddWatermark() {
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
 
   // Canvas Viewport State
+  const { dpi, setDpi, getScaleMultiplier } = useDpiQuality();
   const [zoomScale, setZoomScale] = useState(1.0);
+  const [debouncedRenderZoom, setDebouncedRenderZoom] = useState(zoomScale);
   const [pageDimensions, setPageDimensions] = useState({ width: 595, height: 842 });
   const [canvasLoading, setCanvasLoading] = useState(false);
+
+  // Debounce high-DPI PDF rasterization to decouple smooth 120 FPS GPU scaling from heavy canvas redraws
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedRenderZoom(zoomScale);
+    }, 200);
+    return () => clearTimeout(handler);
+  }, [zoomScale]);
 
   // Processing & Result State
   const [processing, setProcessing] = useState(false);
@@ -67,7 +83,18 @@ export default function AddWatermark() {
   const [error, setError] = useState(null);
 
   const canvasRef = useRef(null);
+  const viewportContainerRef = useRef(null);
   const imageInputRef = useRef(null);
+  const cropper = useSmartCropper({ canvasRef, totalPages });
+
+  // Universal 2-finger touchpad/touchscreen canvas pinch-to-zoom
+  useCanvasPinchZoom({
+    containerRef: viewportContainerRef,
+    zoomScale,
+    setZoomScale,
+    minZoom: 0.3,
+    maxZoom: 3.0
+  });
 
   // 1. Restore Draft Session on Mount
   useEffect(() => {
@@ -166,13 +193,22 @@ export default function AddWatermark() {
         const baseViewport = page.getViewport({ scale: 1.0 });
         setPageDimensions({ width: baseViewport.width, height: baseViewport.height });
 
-        const viewport = page.getViewport({ scale: 1.5 * zoomScale });
+        const scaleMultiplier = getScaleMultiplier(debouncedRenderZoom);
+        const viewport = page.getViewport({ scale: scaleMultiplier });
         const canvas = canvasRef.current;
         if (canvas) {
           canvas.width = viewport.width;
           canvas.height = viewport.height;
-          const ctx = canvas.getContext('2d');
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
           await page.render({ canvasContext: ctx, viewport }).promise;
+
+          // Universal Smart Cropper: Content-aware border detection (3-pass pipeline)
+          const detection = cropper.runDetection(safePage, baseViewport);
+
+          // If Smart Cropper is active, clean and refit the preview canvas
+          if (cropper.isActive && (detection?.hasBlackBorders || cropper.hasDetectedBorders)) {
+            cropper.applyCanvasPreview(canvas, scaleMultiplier, detection, baseViewport);
+          }
         }
 
         if (!isCancelled) {
@@ -195,7 +231,7 @@ export default function AddWatermark() {
     return () => {
       isCancelled = true;
     };
-  }, [files, activeFileIndex, currentPage, zoomScale]);
+  }, [files, activeFileIndex, currentPage, debouncedRenderZoom, dpi, cropper.isActive, cropper.cleanMargin, cropper.enabledEdges, getScaleMultiplier]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -238,7 +274,12 @@ export default function AddWatermark() {
       let targetPages = null;
       if (targetScope === 'current') {
         targetPages = [currentPage - 1];
-      } else if (targetScope === 'range' && pageRange.trim()) {
+      } else if (targetScope === 'range') {
+        if (!pageRange.trim()) {
+          setError('Please specify a valid page range (e.g. 1-3, 5).');
+          setProcessing(false);
+          return;
+        }
         const indices = new Set();
         pageRange.split(',').forEach((part) => {
           const r = part.trim().split('-');
@@ -254,7 +295,16 @@ export default function AddWatermark() {
           }
         });
         targetPages = Array.from(indices);
+        if (targetPages.length === 0) {
+          setError('No valid pages found in the specified range.');
+          setProcessing(false);
+          return;
+        }
       }
+
+      const cropperOptions = await (cropper.getEngineOptionsAsync
+        ? cropper.getEngineOptionsAsync(files[activeFileIndex], pdfjsLib, (p) => setProgress(Math.round(p * 0.25)))
+        : cropper.getEngineOptions());
 
       const options = {
         type,
@@ -267,7 +317,8 @@ export default function AddWatermark() {
         position,
         repeatTile,
         targetPages,
-        imageFile: type === 'image' ? imageFile : null
+        imageFile: type === 'image' ? imageFile : null,
+        ...cropperOptions
       };
 
       const outputBlob = await addWatermark(files[activeFileIndex], options, setProgress);
@@ -350,7 +401,7 @@ export default function AddWatermark() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Add Watermark to PDF Online Free (100% Local Studio) | DocForge"
+        title="Add Watermark to PDF Online Free (100% Local Studio) | DocScalar"
         description="Add text or image watermarks to PDF files locally in your browser. Stamp confidential markers or logos with total privacy."
       />
 
@@ -370,12 +421,12 @@ export default function AddWatermark() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
               {/* Sticky Canvas Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2 flex-wrap">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between gap-3 overflow-visible">
+                  <div className="flex items-center gap-2.5 shrink-0">
                     {/* Active File Switcher */}
                     {files.length > 1 ? (
-                      <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
-                        <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">description</span>
+                      <div className="h-8 flex items-center gap-1.5 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-subtle)]">
+                        <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
                         <select
                           value={activeFileIndex}
                           onChange={(e) => {
@@ -392,67 +443,55 @@ export default function AddWatermark() {
                         </select>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
+                      <div className="h-8 flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-subtle)]">
                         <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">description</span>
-                        <span className="truncate max-w-[180px]">{files[0]?.name}</span>
+                        <span className="text-xs font-bold text-[var(--text-primary)] truncate max-w-[180px]" title={files[0]?.name}>
+                          {files[0]?.name}
+                        </span>
+                        <span className="text-[11px] text-[var(--text-secondary)] font-medium">
+                          ({formatFileSize(files[0]?.size || 0)})
+                        </span>
                       </div>
                     )}
 
                     {/* Page Navigation Capsule */}
-                    <div className="flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] px-1 py-0.5">
+                    <div className="h-8 flex items-center bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)] px-2 py-1 shrink-0">
                       <button
                         type="button"
                         onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                         disabled={currentPage <= 1}
-                        className="p-1 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                        className="p-0.5 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
                         title="Previous Page"
                       >
                         <span className="material-symbols-outlined text-[16px]">chevron_left</span>
                       </button>
-                      <span className="text-xs font-bold px-2 text-[var(--text-primary)] select-none">
+                      <span className="text-xs font-bold px-2.5 text-[var(--text-primary)] select-none">
                         Page {currentPage} / {totalPages || 1}
                       </span>
                       <button
                         type="button"
                         onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                         disabled={currentPage >= totalPages}
-                        className="p-1 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                        className="p-0.5 hover:bg-[var(--bg-primary)] rounded disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
                         title="Next Page"
                       >
                         <span className="material-symbols-outlined text-[16px]">chevron_right</span>
                       </button>
                     </div>
-
-                    {/* Quick Text Watermark Presets */}
-                    {type === 'text' && (
-                      <div className="hidden lg:flex items-center gap-1">
-                        {WATERMARK_PRESETS.slice(0, 4).map((p) => (
-                          <button
-                            key={p}
-                            type="button"
-                            onClick={() => setText(p)}
-                            className={`px-2 py-0.5 text-[10px] font-bold rounded-lg border transition-colors cursor-pointer ${
-                              text === p
-                                ? 'bg-red-500/15 border-red-500/30 text-red-600 dark:text-red-400'
-                                : 'bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                            }`}
-                          >
-                            {p}
-                          </button>
-                        ))}
-                      </div>
-                    )}
                   </div>
 
-                  {/* Zoom Controls & Workspace Reset */}
-                  <div className="flex items-center gap-2">
+                  {/* Document Actions, Zoom Controls & Workspace Reset */}
+                  <div className="flex items-center gap-2 shrink-0">
+                    {/* Top Toolbar Universal Smart Cropper Button */}
+                    <SmartCropperToolbarButton cropper={cropper} />
+
                     <div className="flex items-center gap-1 bg-[var(--bg-secondary)] px-2 py-1 rounded-lg border border-[var(--border-subtle)]">
                       <span className="material-symbols-outlined text-[15px] text-[var(--text-secondary)]">zoom_in</span>
                       <input
                         type="range"
-                        min="0.5"
-                        max="1.5"
-                        step="0.1"
+                        min="0.3"
+                        max="3.0"
+                        step="0.05"
                         value={zoomScale}
                         onChange={(e) => setZoomScale(parseFloat(e.target.value))}
                         className="w-16 h-1 bg-[var(--border-subtle)] accent-[var(--color-primary)] rounded-lg cursor-pointer"
@@ -461,6 +500,15 @@ export default function AddWatermark() {
                         {Math.round(zoomScale * 100)}%
                       </span>
                     </div>
+
+                    {/* Enhanced Quality / DPI Selector */}
+                    <DpiQualitySelector
+                      dpi={dpi}
+                      onChange={setDpi}
+                      align="right"
+                      compact={true}
+                      dropDirection="down"
+                    />
 
                     <button
                       type="button"
@@ -472,17 +520,77 @@ export default function AddWatermark() {
                     </button>
                   </div>
                 </div>
+
+                {/* Universal Smart Cropper Banners */}
+                {cropper.hasDetectedBorders && !cropper.isActive && (
+                  <div className="px-4 py-2.5 bg-emerald-500/10 border-t border-emerald-500/25 text-xs flex items-center justify-between flex-wrap gap-2 text-emerald-900 dark:text-emerald-200 animate-[fadeIn_0.15s_ease-out]">
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-[18px] text-emerald-600 dark:text-emerald-400">crop</span>
+                      <span>
+                        <strong>Scan border artifacts detected</strong> — {cropper.detectionReason}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => cropper.activate()}
+                      className="px-3 py-1 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 transition-all cursor-pointer shadow-xs text-[11px] flex items-center gap-1.5"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">auto_fix_high</span>
+                      Clean Borders
+                    </button>
+                  </div>
+                )}
+
+                {cropper.isActive && (
+                  <div className="px-4 py-1.5 bg-emerald-500/10 border-t border-emerald-500/20 text-xs flex items-center justify-between flex-wrap gap-2 text-emerald-800 dark:text-emerald-300 animate-[fadeIn_0.15s_ease-out]">
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+                      <span>
+                        Smart Cropper Active: Scan borders removed and content refitted with clean {cropper.cleanMargin}pt margins.
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => cropper.revert()}
+                      className="text-xs text-emerald-700 dark:text-emerald-400 hover:underline cursor-pointer"
+                    >
+                      Revert to Original
+                    </button>
+                  </div>
+                )}
+
+                {cropper.isInvertedDocument && (
+                  <div className="px-4 py-1.5 bg-amber-500/8 border-t border-amber-500/20 text-xs flex items-center gap-2 text-amber-800 dark:text-amber-300 animate-[fadeIn_0.15s_ease-out]">
+                    <span className="material-symbols-outlined text-[16px] text-amber-500">info</span>
+                    <span>Dark/inverted background detected — auto-crop disabled to protect document design.</span>
+                  </div>
+                )}
               </div>
 
               {/* Viewport Canvas Frame with Live WYSIWYG Watermark Overlay */}
-              <div className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center relative bg-pattern select-none">
+              <div ref={viewportContainerRef} className="flex-1 overflow-auto p-4 sm:p-8 flex items-start justify-center relative bg-pattern select-none">
                 <div
-                  className="relative bg-white shadow-2xl rounded-sm border border-slate-300 dark:border-slate-700 overflow-hidden transition-transform duration-150"
+                  className="relative my-auto bg-white shadow-2xl rounded-sm border border-slate-300 dark:border-slate-700 overflow-hidden transition-transform duration-150"
                   style={{
                     width: (pageDimensions.width || 595) * zoomScale,
                     height: (pageDimensions.height || 842) * zoomScale
                   }}
                 >
+                  {/* Smart Cropper Clean Margins Refit Outline */}
+                  {cropper.isActive && (
+                    <div
+                      className="absolute border border-dashed border-emerald-500/60 pointer-events-none z-10"
+                      style={{
+                        inset: `${(cropper.cleanMargin ?? 0) * zoomScale}px`
+                      }}
+                    >
+                      <span className="absolute top-1 right-2 text-[9px] font-bold text-emerald-700 bg-emerald-100/90 dark:bg-emerald-950/90 dark:text-emerald-300 px-1.5 py-0.5 rounded shadow-xs uppercase tracking-wider flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Smart Cropper Active{cropper.cleanMargin ? ` (${cropper.cleanMargin}pt)` : ''}
+                      </span>
+                    </div>
+                  )}
+
                   {/* Underlying PDF Page Canvas */}
                   <canvas
                     ref={canvasRef}
@@ -645,6 +753,22 @@ export default function AddWatermark() {
                         placeholder="e.g. CONFIDENTIAL"
                         className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none font-bold"
                       />
+                      <div className="flex flex-wrap gap-1 pt-1">
+                        {WATERMARK_PRESETS.map((p) => (
+                          <button
+                            key={p}
+                            type="button"
+                            onClick={() => setText(p)}
+                            className={`px-2 py-0.5 text-[10px] font-bold rounded-lg border transition-colors cursor-pointer ${
+                              text === p
+                                ? 'bg-[var(--color-primary)]/15 border-[var(--color-primary)]/30 text-[var(--color-primary)]'
+                                : 'bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        ))}
+                      </div>
                     </div>
 
                     {/* Font Family Selector */}
@@ -724,6 +848,8 @@ export default function AddWatermark() {
                         accept="image/png,image/jpeg,image/svg+xml"
                         className="hidden"
                         onChange={handleImageUpload}
+                        title=""
+                        tabIndex={-1}
                       />
                     </label>
                   </div>
@@ -903,6 +1029,16 @@ export default function AddWatermark() {
                       className="w-full px-3 py-1.5 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none"
                     />
                   )}
+                </div>
+
+                {/* Universal Smart Cropper Panel */}
+                <div className="pt-2 border-t border-[var(--border-subtle)]">
+                  <SmartCropperPanel
+                    cropper={cropper}
+                    totalPages={totalPages}
+                    onActivate={() => {}}
+                    onRevert={() => {}}
+                  />
                 </div>
 
                 {/* 6. Output Filename */}

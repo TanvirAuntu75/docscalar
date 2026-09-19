@@ -259,7 +259,7 @@ export default function ImageResizer() {
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Image Resizer Online Free — Resize JPG, PNG, WEBP in Bulk | DocForge"
+        title="Image Resizer Online Free — Resize JPG, PNG, WEBP in Bulk | DocScalar"
         description="Resize images online for free by exact pixels, percentage scale, or social media presets (Instagram, YouTube, Twitter). 100% private in-browser resizing."
       />
 
@@ -279,12 +279,12 @@ export default function ImageResizer() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
               {/* Sticky Top Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2 flex-wrap">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2.5">
+                  <div className="flex items-center gap-2.5 flex-wrap">
                     {/* Active File Switcher */}
                     {files.length > 1 ? (
-                      <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
-                        <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">image</span>
+                      <div className="h-8 flex items-center gap-2 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-medium)] shrink-0">
+                        <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">image</span>
                         <select
                           value={activeFileIndex}
                           onChange={(e) => setActiveFileIndex(parseInt(e.target.value))}
@@ -298,69 +298,69 @@ export default function ImageResizer() {
                         </select>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-primary)]">
+                      <div className="h-8 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)] shrink-0">
                         <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">image</span>
                         <span className="truncate max-w-[200px]">{currentFile?.name}</span>
                         <span className="text-[var(--text-secondary)] font-normal">({formatFileSize(currentFile?.size || 0)})</span>
                       </div>
                     )}
 
-                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-1" />
+                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-0.5" />
 
                     {/* Mode Switcher Pill */}
-                    <div className="flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
+                    <div className="h-8 flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)] shrink-0">
                       <button
                         type="button"
                         onClick={() => setMode('exact')}
-                        className={`px-2.5 py-1 text-xs font-semibold rounded-md flex items-center gap-1 transition-all cursor-pointer ${
+                        className={`h-7 px-3 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
                           mode === 'exact'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                         }`}
                       >
-                        <Ratio size={12} />
+                        <Ratio size={13} />
                         <span>Exact</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => setMode('percentage')}
-                        className={`px-2.5 py-1 text-xs font-semibold rounded-md flex items-center gap-1 transition-all cursor-pointer ${
+                        className={`h-7 px-3 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
                           mode === 'percentage'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                         }`}
                       >
-                        <Percent size={12} />
+                        <Percent size={13} />
                         <span>Scale %</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => setMode('preset')}
-                        className={`px-2.5 py-1 text-xs font-semibold rounded-md flex items-center gap-1 transition-all cursor-pointer ${
+                        className={`h-7 px-3 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
                           mode === 'preset'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                         }`}
                       >
-                        <Compass size={12} />
+                        <Compass size={13} />
                         <span>Presets</span>
                       </button>
                     </div>
 
-                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-1" />
+                    <div className="h-5 w-px bg-[var(--border-subtle)] mx-0.5" />
 
                     {/* Target Dimension Capsule */}
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[var(--bg-secondary)] rounded-lg text-xs font-bold text-[var(--text-primary)] border border-[var(--border-subtle)]">
+                    <div className="h-8 flex items-center gap-2 px-3 py-1.5 bg-[var(--bg-secondary)] rounded-lg text-xs font-bold text-[var(--text-primary)] border border-[var(--border-subtle)] shrink-0">
                       <span className="text-[var(--text-secondary)] font-medium">Target:</span>
-                      <span className="text-[var(--color-primary)]">{previewTargetDims.w} x {previewTargetDims.h} px</span>
+                      <span className="text-[var(--color-primary)] font-semibold">{previewTargetDims.w} x {previewTargetDims.h} px</span>
                     </div>
 
                     {/* View Mode Toggle */}
-                    <div className="flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
+                    <div className="h-8 flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)] shrink-0">
                       <button
                         type="button"
                         onClick={() => setViewMode('inspect')}
-                        className={`px-2.5 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
+                        className={`h-7 px-3 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
                           viewMode === 'inspect'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -372,7 +372,7 @@ export default function ImageResizer() {
                       <button
                         type="button"
                         onClick={() => setViewMode('gallery')}
-                        className={`px-2.5 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
+                        className={`h-7 px-3 py-1 text-xs font-semibold rounded-md flex items-center gap-1.5 transition-all cursor-pointer ${
                           viewMode === 'gallery'
                             ? 'bg-[var(--color-primary)] text-white shadow-xs'
                             : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -382,11 +382,38 @@ export default function ImageResizer() {
                         <span>Gallery ({files.length})</span>
                       </button>
                     </div>
+
+                    {/* Image Navigation */}
+                    {files.length > 1 && (
+                      <div className="h-8 flex items-center gap-1 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)] text-xs shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => setActiveFileIndex((p) => Math.max(0, p - 1))}
+                          disabled={activeFileIndex <= 0}
+                          className="p-0.5 hover:text-[var(--color-primary)] disabled:opacity-30 cursor-pointer transition-colors"
+                          title="Previous image"
+                        >
+                          <ChevronLeft size={14} />
+                        </button>
+                        <span className="font-semibold text-[var(--text-primary)] px-1.5 select-none">
+                          {activeFileIndex + 1} / {files.length}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setActiveFileIndex((p) => Math.min(files.length - 1, p + 1))}
+                          disabled={activeFileIndex >= files.length - 1}
+                          className="p-0.5 hover:text-[var(--color-primary)] disabled:opacity-30 cursor-pointer transition-colors"
+                          title="Next image"
+                        >
+                          <ChevronRight size={14} />
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Right Canvas Controls */}
                   <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1 bg-[var(--bg-secondary)] px-2 py-1 rounded-lg border border-[var(--border-subtle)]">
+                    <div className="h-8 flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">
                       <span className="material-symbols-outlined text-[15px] text-[var(--text-secondary)]">zoom_in</span>
                       <input
                         type="range"
@@ -405,7 +432,7 @@ export default function ImageResizer() {
                     <button
                       type="button"
                       onClick={resetWorkspace}
-                      className="p-1 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer"
+                      className="h-8 w-8 flex items-center justify-center hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-red-500/20"
                       title="Reset workspace"
                     >
                       <span className="material-symbols-outlined text-[18px]">restart_alt</span>
@@ -629,14 +656,16 @@ export default function ImageResizer() {
                 {/* Progress Bar (While Processing) */}
                 {processing && (
                   <div className="flex flex-col gap-1.5 p-3 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] animate-[fadeIn_0.15s_ease-out]">
-                    <div className="flex justify-between text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5 truncate max-w-[200px]">
-                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)]">
+                    <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="material-symbols-outlined text-[14px] animate-spin text-[var(--color-primary)] shrink-0">
                           progress_activity
                         </span>
-                        Resizing {files.length} {files.length === 1 ? 'image' : 'images'}...
-                      </span>
-                      <span>{progress}%</span>
+                        <span className="truncate" title={`Resizing ${files.length} ${files.length === 1 ? 'image' : 'images'}...`}>
+                          Resizing {files.length} {files.length === 1 ? 'image' : 'images'}...
+                        </span>
+                      </div>
+                      <span className="shrink-0 font-mono text-[11px] text-[var(--text-secondary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div
@@ -753,7 +782,7 @@ export default function ImageResizer() {
             {/* Quick Next Steps */}
             <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
-                Continue Working with DocForge
+                Continue Working with DocScalar
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <Link

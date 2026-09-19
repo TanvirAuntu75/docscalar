@@ -1,0 +1,772 @@
+[
+  {
+    "file": "adam_fletcher.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Adam Fletcher'}\">",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "adeline_palmerston.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Adeline Palmerston'}\" />",
+    "avatarContainers": [
+      "<div class=\"profile-photo-mask\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "adora_diagonal.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "adora_montminy.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrapper\" style=\"overflow: hidden; border-radius: 50%;\">",
+      "<div class=\"avatar\" style=\"background:#cbd5e1;\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "alfredo_torres.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Alfredo Torres'}\">",
+    "avatarContainers": [
+      "<div class=\"photo-frame\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "alvarado_slate.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "amsterdam_orange.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "arthur_pendelton.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Arthur Pendelton'}\">",
+    "avatarContainers": [
+      "<div class=\"photo-frame\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "austin_amber.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "barcelona_cyan.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "berlin_two_tone.js",
+    "imgCount": 0,
+    "sampleImg": null,
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": false
+  },
+  {
+    "file": "bordeaux_wine.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "boston_crimson.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "buenos_aires_tango.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "cairo_gold.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "cambridge_rose.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "cape_town_sunset.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "card_matrix.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "charles.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-container\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "copenhagen_sand.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "date_capsule.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "diagonal_wedge.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrapper\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "donna_stroupe.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Donna Stroupe'}\">",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "dublin_forest.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "edinburgh_navy.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "emerald_prestige.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "emma.js",
+    "imgCount": 0,
+    "sampleImg": null,
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": false
+  },
+  {
+    "file": "floating_card_matrix.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "florence_terracotta.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "geneva_charcoal.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "helsinki_frost.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "helsinki_navy.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "howard_ong.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Howard Ong'}\">",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "isabel_mercado.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Isabel Mercado'}\">",
+    "avatarContainers": [
+      "<div class=\"photo-container\" style=\"overflow: hidden;\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "isabel_schumacher.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Isabel Schumacher'}\">",
+    "avatarContainers": [
+      "<div class=\"photo-dark-ring\">",
+      "<div class=\"photo-dark-ring\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "jonathan.js",
+    "imgCount": 0,
+    "sampleImg": null,
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": false
+  },
+  {
+    "file": "jonathan_patterson.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Jonathan Patterson'}\">",
+    "avatarContainers": [
+      "<div class=\"photo-wrapper\" style=\"overflow: hidden;\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "kathleen.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-container\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "kelly_mint.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "korina_villanueva.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Korina Villanueva'}\">",
+    "avatarContainers": [
+      "<div class=\"photo-wrapper\" style=\"overflow: hidden;\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "kyiv_golden.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "kyoto_coral.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "lilac_sidebar.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-container\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "lorna_alvarado.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Lorna Alvarado'}\">",
+    "avatarContainers": [
+      "<div class=\"photo-wrapper\">",
+      "<div class=\"profile-photo-ring\" style=\"overflow: hidden; border-radius: 50%;\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "lyon_lavender.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "madrid_sun.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "manhattan_noir.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "marcus_vance.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Marcus Vance'}\">",
+    "avatarContainers": [
+      "<div class=\"photo-wrapper\" style=\"overflow: hidden; border-radius: 20px;\">",
+      "<div class=\"photo-accent-ring\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "mariana.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-container\">",
+      "<div class=\"avatar-mask\">"
+    ],
+    "hasAvatarMask": true,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "milan_blush.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "montreal_frost.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "ocean_block.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "olivia.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-container\">",
+      "<div class=\"avatar-mask\">"
+    ],
+    "hasAvatarMask": true,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "ong_burgundy.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "osaka_minimal.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "oslo_taupe.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "overlapping_badge.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-halo-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "oxford_burgundy.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "prague_brass.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "reykjavik_slate.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "richard.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-container\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "richard_sanchez.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Richard Sanchez'}\">",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "sage_pastel.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-container\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "sanchez_dark.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-container\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "sanchez_mono.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-container\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "sanchez_wave.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "san_francisco_skyline.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "schumacher_charcoal.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-container\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "seattle_emerald.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "sebastian_bennett.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"profile-photo avatar\" src=\"${photoSrc}\" alt=\"${data.name || 'Sebastian Bennett'}\">",
+    "avatarContainers": [
+      "<div class=\"photo-wrapper\" style=\"overflow: hidden; border-radius: 50%;\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "seoul_neon.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "singapore_ruby.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "split_dual_block.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "stockholm_monochrome.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "stockholm_yellow.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "terracotta_arch.js",
+    "imgCount": 1,
+    "sampleImg": "<img src=\"${photoSrc}\" alt=\"${data.name || 'Candidate'}\" class=\"profile-photo\" />",
+    "avatarContainers": [
+      "<div class=\"photo-wrapper\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "tokyo_ice_blue.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "vancouver_pine.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-wrap\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "venice_sand_split.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "vienna_crest.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "violet_modern.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "wilson_light.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"avatar-container\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "wilson_minimal.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "ziv_olive.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [
+      "<div class=\"header-photo-box\">"
+    ],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  },
+  {
+    "file": "zurich_slate_block.js",
+    "imgCount": 1,
+    "sampleImg": "<img class=\"avatar\" src=\"${data.photoUrl}\" alt=\"Profile Photo\" />",
+    "avatarContainers": [],
+    "hasAvatarMask": false,
+    "hasPhotoCondition": true
+  }
+]

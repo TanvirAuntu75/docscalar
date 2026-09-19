@@ -180,8 +180,8 @@ export default function ComingSoon({ toolId: propToolId }) {
   if (!tool) return null;
 
   const stackInfo = TECHNICAL_STACKS[tool.id] || {
-    library: 'DocForge Core Engine',
-    desc: 'Currently in active research and planning by the core DocForge team.',
+    library: 'DocScalar Core Engine',
+    desc: 'Currently in active research and planning by the core DocScalar team.',
     difficulty: 'Medium',
     progress: 10
   };
@@ -189,8 +189,8 @@ export default function ComingSoon({ toolId: propToolId }) {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 text-left relative z-10 animate-[fadeIn_0.22s_ease-out]">
       <SEOHead
-        title={`${tool.title} (Coming Soon) | DocForge`}
-        description={`Roadmap details and technical architecture plan for the ${tool.title} tool in DocForge.`}
+        title={`${tool.title} (Coming Soon) | DocScalar`}
+        description={`Roadmap details and technical architecture plan for the ${tool.title} tool in DocScalar.`}
       />
 
       {/* Back to Home Link */}
@@ -233,8 +233,9 @@ export default function ComingSoon({ toolId: propToolId }) {
               <span className="material-symbols-outlined text-[16px] fill">thumb_up</span>
               {hasVoted ? 'Voted' : 'Vote for this Tool'}
             </button>
-            <p className="text-[11px] text-on-surface-variant mt-2 font-medium">
-              🔥 Currently supported by <span className="font-semibold text-on-background">{voteCount}</span> developers
+            <p className="text-[11px] text-on-surface-variant mt-2 font-medium flex items-center justify-center gap-1">
+              <span className="material-symbols-outlined text-[14px] text-primary">trending_up</span>
+              <span>Currently supported by <span className="font-semibold text-on-background">{voteCount}</span> developers</span>
             </p>
           </div>
         </div>
@@ -299,8 +300,9 @@ export default function ComingSoon({ toolId: propToolId }) {
               </div>
               
               {notified ? (
-                <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 text-center text-xs text-primary font-semibold">
-                  ✓ Success! We'll notify you.
+                <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 text-center text-xs text-primary font-semibold flex items-center justify-center gap-1.5">
+                  <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                  <span>Success! We'll notify you.</span>
                 </div>
               ) : (
                 <form onSubmit={handleNotifySubmit} className="flex flex-col gap-2">

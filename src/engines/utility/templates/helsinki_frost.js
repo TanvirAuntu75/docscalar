@@ -7,7 +7,7 @@ export function generateHelsinkiFrostHtml(
   themeColor = '#0284c7',
   themeFont = 'Playfair Display',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
@@ -17,19 +17,17 @@ export function generateHelsinkiFrostHtml(
 
   const expHtml = data.experience && data.experience.length ? `
     <section class="cv-section">
-      <h3 class="section-title">Professional Experience</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'Professional Experience'}</h3>
       <div class="frost-rule"></div>
       <div class="entries-list">
-        ${data.experience.map(e => `
+        ${data.experience.map((e, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${e.role}</span>
-              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
-            </div>
-            <div class="entry-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+              <span class="entry-role" data-df-field="exp:${idx}:role">${e.role}</span>
+              <span class="entry-date" ><span data-df-field="exp:${idx}:company">${e.company || ''}</span>${(e.company && (e.start || e.end)) ? ' | ' : ''}<span data-df-field="exp:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span></div>
             ${e.highlights && e.highlights.filter(Boolean).length ? `
               <ul class="entry-desc">
-                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+                ${e.highlights.filter(Boolean).map((h, hIdx) => `<li data-df-field="exp:${idx}:highlight:${hIdx}">${h}</li>`).join('')}
               </ul>
             ` : ''}
           </div>
@@ -40,14 +38,14 @@ export function generateHelsinkiFrostHtml(
 
   const eduHtml = data.education && data.education.length ? `
     <section class="cv-section">
-      <h3 class="section-title">Education</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'Education'}</h3>
       <div class="frost-rule"></div>
       <div class="entries-list">
-        ${data.education.map(e => `
+        ${data.education.map((e, idx) => `
           <div class="entry-item">
             <div class="entry-header">
               <span class="entry-role">${e.degree}</span>
-              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+              <span class="entry-date" data-df-field="edu:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
             </div>
             <div class="entry-company">${e.school}${e.note ? ` · ${e.note}` : ''}</div>
           </div>
@@ -58,10 +56,10 @@ export function generateHelsinkiFrostHtml(
 
   const skillsHtml = data.skills && data.skills.length ? `
     <section class="cv-section">
-      <h3 class="section-title">Core Competencies</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Core Competencies'}</h3>
       <div class="frost-rule"></div>
       <div class="skills-grid">
-        ${data.skills.map((s) => {
+        ${data.skills.map((s, idx) => {
           let name = s;
           let levelText = '';
           if (s.includes(' - ')) {
@@ -70,8 +68,8 @@ export function generateHelsinkiFrostHtml(
             levelText = parts[1];
           }
           return `
-            <div class="skill-item">
-              <span class="frost-bullet">❄</span>
+            <div class="skill-item" data-df-field="skill:${idx}">
+              <span class="frost-bullet"></span>
               <span class="s-name">${name}</span>
               ${levelText ? `<span class="s-level">(${levelText})</span>` : ''}
             </div>
@@ -83,10 +81,10 @@ export function generateHelsinkiFrostHtml(
 
   const projHtml = data.projects && data.projects.length ? `
     <section class="cv-section">
-      <h3 class="section-title">Strategic Projects</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'Strategic Projects'}</h3>
       <div class="frost-rule"></div>
       <div class="entries-list">
-        ${data.projects.map(p => `
+        ${data.projects.map((p, idx) => `
           <div class="entry-item">
             <div class="entry-header">
               <span class="entry-role">${p.name}</span>
@@ -101,27 +99,27 @@ export function generateHelsinkiFrostHtml(
 
   const certHtml = data.certifications && data.certifications.length ? `
     <section class="cv-section">
-      <h3 class="section-title">Certifications & Honors</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:certifications">${data.sectionTitles?.certifications || 'Certifications & Honors'}</h3>
       <div class="frost-rule"></div>
       <ul class="entry-desc" style="padding-left: 18px;">
-        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+        ${data.certifications.map((c, idx) => `<li data-df-field="cert:${idx}">${c}</li>`).join('')}
       </ul>
     </section>
   ` : '';
 
-  const contactHtml = `
+  const contactHtml = (data.phone || data.email || data.location || data.linkedin || data.website) ? `
     <div class="contact-line">
-      ${data.phone ? `<span>${data.phone}</span>` : ''}
+      ${data.phone ? `<span data-df-field="phone">${data.phone}</span>` : ''}
       ${data.phone && data.email ? `<span class="c-sep">·</span>` : ''}
-      ${data.email ? `<a href="mailto:${data.email}" style="color: inherit; text-decoration: none;">${data.email}</a>` : ''}
+      ${data.email ? `<a href="mailto:${data.email}" style="color: inherit; text-decoration: none;" data-df-field="email" >${data.email}</a>` : ''}
       ${data.email && data.location ? `<span class="c-sep">·</span>` : ''}
-      ${data.location ? `<span>${data.location}</span>` : ''}
+      ${data.location ? `<span data-df-field="location">${data.location}</span>` : ''}
       ${data.location && data.linkedin ? `<span class="c-sep">·</span>` : ''}
-      ${data.linkedin ? `<a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a>` : ''}
+      ${data.linkedin ? `<a data-df-field="linkedin" href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a>` : ''}
       ${data.linkedin && data.website ? `<span class="c-sep">·</span>` : ''}
-      ${data.website ? `<a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a>` : ''}
+      ${data.website ? `<a data-df-field="website" href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a>` : ''}
     </div>
-  `;
+  ` : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -143,7 +141,7 @@ export function generateHelsinkiFrostHtml(
     }
     
     #main-container {
-      width: 210mm;
+      width: 794px;
       min-height: 297mm;
       margin: 0 auto;
       background: #ffffff;
@@ -163,10 +161,11 @@ export function generateHelsinkiFrostHtml(
       border-bottom: 2px solid ${accent};
     }
     .avatar {
-      width: 80px;
-      height: 80px;
+      width: 135px;
+      height: 135px;
       border-radius: 50%;
       border: 2.5px solid ${accent};
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
       object-fit: cover;
       margin-bottom: 8px;
     }
@@ -297,22 +296,50 @@ export function generateHelsinkiFrostHtml(
       color: #64748b;
       font-size: 7.8pt;
     }
+  
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      
+    .cv-page:last-child { break-after: avoid !important; page-break-after: avoid !important; }
+  }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      #main-container, .page-container, .cv-page, .container, .page {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+    }
+  
+    .avatar, .profile-photo, .photo, .headshot, .profile-img, .photo-wrapper, .avatar-wrapper {
+      border-radius: 50%;
+      overflow: hidden;
+    }
   </style>
 </head>
 <body>
-<div id="main-container">
+<div id="main-container" class="cv-page">
   <div class="frost-header">
-    ${data.photoUrl ? `<img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />` : ''}
-    <h1>${data.name || 'Candidate Name'}</h1>
-    ${data.title ? `<div class="title">${data.title}</div>` : ''}
+    ${data.photoUrl ? `<img class="avatar avatar-mask" style="overflow: hidden; border-radius: 50%;" src="${data.photoUrl}" alt="Profile Photo" />` : ''}
+    <h1 data-df-field="name">${data.name || ''}</h1>
+    <div class="candidate-title title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${data.title || ''}</div>
     ${contactHtml}
   </div>
   
   ${data.summary ? `
     <section class="cv-section">
-      <h3 class="section-title">Executive Summary</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:summary">${data.sectionTitles?.summary || 'Executive Summary'}</h3>
       <div class="frost-rule"></div>
-      <div class="summary-text">${data.summary}</div>
+      <div class="summary-text" data-df-field="summary">${data.summary}</div>
     </section>
   ` : ''}
   

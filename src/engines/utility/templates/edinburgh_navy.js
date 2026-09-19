@@ -3,75 +3,100 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export function generateEdinburghNavyHtml(
-  data,
+  data = {},
   themeColor = '#1e3a8a',
   themeFont = 'Merriweather',
   sectionOrder = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'custom_languages'],
-  themeLayout = 'single',
+  themeLayout = 'auto',
   pageMargin = 0,
   lineSpacing = 1.45
 ) {
   const accent = themeColor === 'default' || !themeColor ? '#1e3a8a' : themeColor;
   const fontFam = themeFont === 'Inter' ? "'Inter', sans-serif" : themeFont === 'Roboto' ? "'Roboto', sans-serif" : themeFont === 'Playfair Display' ? "'Playfair Display', Georgia, serif" : "'Merriweather', Georgia, serif";
 
-  const expHtml = data.experience && data.experience.length ? `
+  const safeData = data && typeof data === 'object' ? data : {};
+  const name = safeData.name !== undefined && safeData.name !== null ? String(safeData.name).trim() : '';
+  const title = safeData.title !== undefined && safeData.title !== null ? String(safeData.title).trim() : '';
+  const summaryText = (safeData.summary || safeData.profile || safeData.about || '').trim();
+  const phoneText = (safeData.phone || '').trim();
+  const emailText = (safeData.email || '').trim();
+  const locationText = (safeData.location || safeData.address || '').trim();
+  const linkedinText = (safeData.linkedin || '').trim();
+  const websiteText = (safeData.website || '').trim();
+  const photoSrc = (safeData.photoUrl || '').trim();
+
+  const experienceList = Array.isArray(safeData.experience) ? safeData.experience : [];
+  const educationList = Array.isArray(safeData.education) ? safeData.education : [];
+  const skillsList = Array.isArray(safeData.skills) ? safeData.skills : [];
+  const projectList = Array.isArray(safeData.projects) ? safeData.projects : [];
+  const certList = Array.isArray(safeData.certifications) ? safeData.certifications : [];
+  const referenceList = Array.isArray(safeData.references) ? safeData.references : [];
+  const customSections = Array.isArray(safeData.customSections) ? safeData.customSections : [];
+
+  const langSection = customSections.find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');
+  const otherCustomSections = customSections.filter(cs => cs !== langSection);
+  const langList = langSection?.items || (Array.isArray(safeData.custom_languages) ? safeData.custom_languages.map(l => ({ title: typeof l === 'string' ? l : l.name || '', value: '' })) : []);
+
+  const hasContact = Boolean(phoneText || emailText || locationText || linkedinText || websiteText);
+
+  const expHtml = experienceList.length ? `
     <section class="cv-section">
-      <h3 class="section-title">Professional Experience</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:experience">${data.sectionTitles?.experience || 'Professional Experience'}</h3>
       <div class="double-rule"></div>
       <div class="entries-list">
-        ${data.experience.map(e => `
+        ${experienceList.map((e, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${e.role}</span>
-              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
-            </div>
-            <div class="entry-company">${e.company}${data.location ? ` · ${data.location}` : ''}</div>
+              <span class="entry-role" data-df-field="exp:${idx}:role">${e.role || ''}</span>
+              <span class="entry-date" ><span data-df-field="exp:${idx}:company">${e.company || ''}</span>${(e.company && (e.start || e.end)) ? ' | ' : ''}<span data-df-field="exp:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span></span>${locationText ? ` · ${locationText}` : ''}</div>
             ${e.highlights && e.highlights.filter(Boolean).length ? `
               <ul class="entry-desc">
-                ${e.highlights.filter(Boolean).map(h => `<li>${h}</li>`).join('')}
+                ${e.highlights.filter(Boolean).map((h, hIdx) => `<li data-df-field="exp:${idx}:highlight:${hIdx}">${h}</li>`).join('')}
               </ul>
-            ` : ''}
+            ` : (e.description ? `
+              <div class="entry-desc" data-df-field="exp:${idx}:highlight:0" style="font-size: 8.8pt; color: #475569; margin-top: 4px;">${e.description}</div>
+            ` : '')}
           </div>
         `).join('')}
       </div>
     </section>
   ` : '';
 
-  const eduHtml = data.education && data.education.length ? `
+  const eduHtml = educationList.length ? `
     <section class="cv-section">
-      <h3 class="section-title">Education & Qualifications</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:education">${data.sectionTitles?.education || 'Education & Qualifications'}</h3>
       <div class="double-rule"></div>
       <div class="entries-list">
-        ${data.education.map(e => `
+        ${educationList.map((e, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${e.degree}</span>
-              <span class="entry-date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</span>
+              <span class="entry-role" data-df-field="edu:${idx}:degree">${e.degree || ''}</span>
+              <span class="entry-date" data-df-field="edu:${idx}:date">${e.date || (e.start ? `${e.start}${e.end ? ` – ${e.end}` : ''}` : '')}</span>
             </div>
-            <div class="entry-company">${e.school}${e.note ? ` · ${e.note}` : ''}</div>
+            <div class="entry-company"><span data-df-field="edu:${idx}:school">${e.school || ''}</span>${e.note ? ` · ${e.note}` : ''}</div>
           </div>
         `).join('')}
       </div>
     </section>
   ` : '';
 
-  const skillsHtml = data.skills && data.skills.length ? `
+  const skillsHtml = skillsList.length ? `
     <section class="cv-section">
-      <h3 class="section-title">Areas of Expertise</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:skills">${data.sectionTitles?.skills || 'Areas of Expertise'}</h3>
       <div class="double-rule"></div>
       <div class="skills-grid">
-        ${data.skills.map((s) => {
-          let name = s;
+        ${skillsList.map((s, idx) => {
+          let sName = typeof s === 'string' ? s : s.name || '';
           let levelText = '';
-          if (s.includes(' - ')) {
+          if (typeof s === 'string' && s.includes(' - ')) {
             const parts = s.split(' - ');
-            name = parts[0];
+            sName = parts[0];
             levelText = parts[1];
           }
           return `
             <div class="skill-item">
               <span class="s-bullet">▪</span>
-              <span class="s-name">${name}</span>
+              <span class="s-name" data-df-field="skill:${idx}">${sName}</span>
               ${levelText ? `<span class="s-level">(${levelText})</span>` : ''}
             </div>
           `;
@@ -80,150 +105,227 @@ export function generateEdinburghNavyHtml(
     </section>
   ` : '';
 
-  const projHtml = data.projects && data.projects.length ? `
+  const projHtml = projectList.length ? `
     <section class="cv-section">
-      <h3 class="section-title">Key Cases & Projects</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:projects">${data.sectionTitles?.projects || 'Key Cases & Projects'}</h3>
       <div class="double-rule"></div>
       <div class="entries-list">
-        ${data.projects.map(p => `
+        ${projectList.map((p, idx) => `
           <div class="entry-item">
             <div class="entry-header">
-              <span class="entry-role">${p.name}</span>
-              ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
+              <span class="entry-role" data-df-field="proj:${idx}:name">${p.name || ''}</span>
+              ${p.url ? `<span class="entry-date"><a href="https://${p.url.replace(/^https?:\/\//, '')}" target="_blank" data-df-field="proj:${idx}:url" style="color: ${accent}; text-decoration: none;">${p.url}</a></span>` : ''}
             </div>
-            ${p.description ? `<div style="font-size: 8.5pt; color: #475569; margin-top: 2px;">${p.description}</div>` : ''}
+            ${p.description ? `<div style="font-size: 8.5pt; color: #475569; margin-top: 2px;" data-df-field="proj:${idx}:description">${p.description}</div>` : ''}
           </div>
         `).join('')}
       </div>
     </section>
   ` : '';
 
-  const certHtml = data.certifications && data.certifications.length ? `
+  const refHtml = referenceList.length ? `
     <section class="cv-section">
-      <h3 class="section-title">Professional Admissions & Honors</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:references">${data.sectionTitles?.references || 'References'}</h3>
       <div class="double-rule"></div>
-      <ul class="entry-desc" style="padding-left: 18px;">
-        ${data.certifications.map(c => `<li>${c}</li>`).join('')}
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
+        ${referenceList.map((r, idx) => `
+          <div style="font-size: 8.8pt; color: #475569;">
+            <div data-df-field="ref:${idx}:name" style="font-weight: 700; color: #0f172a;">${r.name || ''}</div>
+            <div data-df-field="ref:${idx}:relation" style="font-style: italic;">${r.relation || ''}</div>
+            <div data-df-field="ref:${idx}:contact">${r.phone ? `Phone: ${r.phone} · ` : ''}${r.email ? `Email: ${r.email}` : ''}</div>
+          </div>
+        `).join('')}
+      </div>
+    </section>
+  ` : '';
+
+  const certHtml = certList.length ? `
+    <section class="cv-section">
+      <h3 class="section-title section-heading" data-df-field="heading:certifications">${data.sectionTitles?.certifications || 'Certifications'}</h3>
+      <div class="double-rule"></div>
+      <ul class="entry-desc" style="padding-left: 16px;">
+        ${certList.map((c, idx) => `<li data-df-field="cert:${idx}">${typeof c === 'string' ? c : c.name || ''}</li>`).join('')}
       </ul>
     </section>
   ` : '';
 
-  const contactHtml = `
-    <div class="contact-line">
-      ${data.phone ? `<span>${data.phone}</span>` : ''}
-      ${data.phone && data.email ? `<span class="c-sep">·</span>` : ''}
-      ${data.email ? `<a href="mailto:${data.email}" style="color: inherit; text-decoration: none;">${data.email}</a>` : ''}
-      ${data.email && data.location ? `<span class="c-sep">·</span>` : ''}
-      ${data.location ? `<span>${data.location}</span>` : ''}
-      ${data.location && data.linkedin ? `<span class="c-sep">·</span>` : ''}
-      ${data.linkedin ? `<a href="https://${data.linkedin.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.linkedin.replace(/^https?:\/\//, '')}</a>` : ''}
-      ${data.linkedin && data.website ? `<span class="c-sep">·</span>` : ''}
-      ${data.website ? `<a href="https://${data.website.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${data.website.replace(/^https?:\/\//, '')}</a>` : ''}
+  const langHtml = langList.length ? `
+    <section class="cv-section">
+      <h3 class="section-title" data-df-field="custom:${langSection.id}:title">${langSection.title || 'Languages'}</h3>
+      <div class="double-rule"></div>
+      <div class="skills-grid">
+        ${langList.map((l, idx) => `
+          <div class="skill-item">
+            <span class="s-bullet">▪</span>
+            <span class="s-name" data-df-field="custom:${langSection ? langSection.id : 'custom_languages'}:${idx}:title">${typeof l === 'string' ? l : (l.title || l.name || '')}</span>
+            ${l.value ? `<span class="s-level" data-df-field="custom:${langSection ? langSection.id : 'custom_languages'}:${idx}:value">(${l.value})</span>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    </section>
+  ` : '';
+
+  const customHtml = otherCustomSections.map(cs => {
+    if (!cs || !cs.items || !cs.items.length) return '';
+    return `
+      <section class="cv-section">
+        <h3 class="section-title" data-df-field="custom:${cs.id}:title">${cs.title || 'Additional Information'}</h3>
+        <div class="double-rule"></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          ${cs.items.map((i, idx) => `
+            <div style="font-size: 8.8pt;">
+              <strong data-df-field="custom:${cs.id}:${idx}:title">${typeof i === 'string' ? i : (i.title || i.name || '')}</strong>${typeof i === 'object' && i !== null && i.value ? `: <span data-df-field="custom:${cs.id}:${idx}:value">${i.value}</span>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </section>
+    `;
+  }).join('');
+
+  const contactHtml = hasContact ? `
+    <div class="contact-bar">
+      ${phoneText ? `<div class="c-item"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span data-df-field="phone">${phoneText}</span></div>` : ''}
+      ${emailText ? `<div class="c-item"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:${emailText}" data-df-field="email" style="color: inherit; text-decoration: none;">${emailText}</a></div>` : ''}
+      ${locationText ? `<div class="c-item"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span data-df-field="location">${locationText}</span></div>` : ''}
+      ${linkedinText ? `<div class="c-item"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><a data-df-field="linkedin" href="https://${linkedinText.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${linkedinText.replace(/^https?:\/\//, '')}</a></div>` : ''}
+      ${websiteText ? `<div class="c-item"><svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><a data-df-field="website" href="https://${websiteText.replace(/^https?:\/\//, '')}" target="_blank" style="color: inherit; text-decoration: none;">${websiteText.replace(/^https?:\/\//, '')}</a></div>` : ''}
     </div>
-  `;
+  ` : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${name ? `${name} - Resume` : 'Resume'}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Inter:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
   <style>
     @page { margin: 0; size: A4; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       font-family: ${fontFam};
       background: #ffffff;
+      margin: 0;
+      padding: 0;
       color: #1e293b;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
     
-    #main-container {
-      width: 210mm;
-      min-height: 297mm;
+    .cv-page, #main-container {
+      width: 794px;
+      height: 1123px;
+      min-height: 1123px;
+      max-height: 1123px;
       margin: 0 auto;
       background: #ffffff;
       padding: ${35 + pageMargin}px 45px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+      box-sizing: border-box;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .cv-page:last-child, #main-container:last-child {
+      page-break-after: avoid !important;
+      break-after: avoid !important;
     }
     
-    /* Centered Edinburgh Header */
-    .edinburgh-header {
+    /* Header Structure */
+    .header-block {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      text-align: center;
-      padding-bottom: 12px;
-      border-bottom: 2.5px solid ${accent};
+      gap: 24px;
+      border-bottom: 3px double ${accent};
+      padding-bottom: 16px;
+    }
+    .avatar-mask {
+      width: 115px;
+      height: 115px;
+      border-radius: 4px;
+      border: 2px solid ${accent};
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: #ffffff;
+      flex-shrink: 0;
     }
     .avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 2.5px solid ${accent};
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      margin-bottom: 8px;
+      display: block;
     }
-    .edinburgh-header h1 {
-      font-size: 24pt;
+    .header-main {
+      flex: 1;
+    }
+    .header-main h1 {
+      font-size: 26pt;
       font-weight: 700;
       color: ${accent};
-      letter-spacing: 0.5px;
+      letter-spacing: -0.5px;
       line-height: 1.1;
-      text-transform: uppercase;
+      font-family: 'Merriweather', Georgia, serif;
     }
-    .edinburgh-header .title {
-      font-family: 'Inter', sans-serif;
-      font-size: 9.5pt;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #475569;
-      margin-top: 4px;
+    .header-main .title {
+      font-size: 10.5pt;
+      font-weight: 400;
+      font-style: italic;
+      color: #64748b;
+      margin-top: 3px;
       margin-bottom: 8px;
     }
-    .contact-line {
+    .contact-bar {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      gap: 6px;
-      font-family: 'Inter', sans-serif;
-      font-size: 8.2pt;
+      gap: 6px 14px;
+      font-size: 8.3pt;
       color: #475569;
+      font-family: 'Inter', sans-serif;
     }
-    .c-sep {
-      color: #94a3b8;
+    .c-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .c-icon {
+      width: 12px;
+      height: 12px;
+      color: ${accent};
     }
     
-    /* Academic Section Layouts */
-    .cv-section {
-      break-inside: auto;
-    }
-    .section-title {
-      font-size: 10pt;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: ${accent};
-      margin-bottom: 4px;
-    }
-    .double-rule {
-      border-top: 1.5px solid ${accent};
-      border-bottom: 0.5px solid #cbd5e1;
-      height: 2px;
-      margin-bottom: 10px;
-    }
+    /* Summary */
     .summary-text {
       font-size: 9pt;
       color: #334155;
       line-height: ${lineSpacing};
       text-align: justify;
+    }
+    
+    /* Section Structure */
+    .cv-section {
+      break-inside: auto;
+    }
+    .section-title {
+      font-size: 11pt;
+      font-weight: 700;
+      color: ${accent};
+      font-family: 'Merriweather', Georgia, serif;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .double-rule {
+      border-bottom: 3px double #cbd5e1;
+      margin-bottom: 10px;
     }
     
     .entries-list {
@@ -242,12 +344,11 @@ export function generateEdinburghNavyHtml(
     }
     .entry-role {
       font-weight: 700;
-      font-size: 9.2pt;
+      font-size: 9.5pt;
       color: #0f172a;
     }
     .entry-date {
-      font-family: 'Inter', sans-serif;
-      font-size: 8.2pt;
+      font-size: 8.3pt;
       color: #64748b;
       font-style: italic;
       font-variant-numeric: tabular-nums;
@@ -255,14 +356,14 @@ export function generateEdinburghNavyHtml(
     .entry-company {
       font-size: 8.8pt;
       color: #475569;
-      font-style: italic;
+      font-weight: 600;
       margin-top: 1px;
       margin-bottom: 3px;
     }
     .entry-desc {
-      padding-left: 18px;
+      padding-left: 16px;
       font-size: 8.8pt;
-      color: #334155;
+      color: #475569;
       line-height: ${lineSpacing};
     }
     .entry-desc li {
@@ -274,50 +375,85 @@ export function generateEdinburghNavyHtml(
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 6px 12px;
-      font-family: 'Inter', sans-serif;
+      font-size: 8.3pt;
+      color: #334155;
     }
     .skill-item {
       display: flex;
       align-items: baseline;
-      gap: 6px;
-      font-size: 8.2pt;
-      color: #334155;
+      gap: 5px;
     }
     .s-bullet {
       color: ${accent};
-      font-size: 6pt;
+      font-size: 7pt;
     }
     .s-name {
-      font-weight: 600;
+      font-weight: 500;
     }
     .s-level {
       color: #64748b;
       font-size: 7.8pt;
     }
+
+    @media print {
+      *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      html, body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page, #main-container {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .cv-page:last-child, #main-container:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+    }
   </style>
 </head>
 <body>
-<div id="main-container">
-  <div class="edinburgh-header">
-    ${data.photoUrl ? `<img class="avatar" src="${data.photoUrl}" alt="Profile Photo" />` : ''}
-    <h1>${data.name || 'Candidate Name'}</h1>
-    ${data.title ? `<div class="title">${data.title}</div>` : ''}
-    ${contactHtml}
-  </div>
+<div class="cv-page" id="main-container">
   
-  ${data.summary ? `
+  <div class="header-block">
+    ${photoSrc ? `
+      <div class="avatar-mask">
+        <img class="avatar" src="${photoSrc}" alt="${name || 'Profile Photo'}" />
+      </div>
+    ` : ''}
+    <div class="header-main">
+      <h1 data-df-field="name">${name}</h1>
+      <div class="candidate-title title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${title || ''}</div>
+      ${contactHtml}
+    </div>
+  </div>
+
+  ${summaryText ? `
     <section class="cv-section">
-      <h3 class="section-title">Executive Summary</h3>
+      <h3 class="section-title section-heading" data-df-field="heading:summary">${data.sectionTitles?.summary || 'Professional Summary'}</h3>
       <div class="double-rule"></div>
-      <div class="summary-text">${data.summary}</div>
+      <div class="summary-text" data-df-field="summary">${summaryText}</div>
     </section>
   ` : ''}
-  
+
   ${expHtml}
   ${eduHtml}
   ${skillsHtml}
   ${projHtml}
+  ${refHtml}
   ${certHtml}
+  ${langHtml}
+  ${customHtml}
+
 </div>
 </body>
 </html>`;

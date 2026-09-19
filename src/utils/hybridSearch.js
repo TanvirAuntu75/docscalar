@@ -1,5 +1,5 @@
 /**
- * DocForge Client-Side Hybrid Search Engine
+ * DocScalar Client-Side Hybrid Search Engine
  * 
  * Combines:
  * 1. Okapi BM25 Keyword Search with Inverted Index & Stemming.

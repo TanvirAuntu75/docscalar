@@ -30,13 +30,13 @@ export default function AdPlaceholder({ format = 'rectangle' }) {
           <div>
             <p className="font-semibold text-sm text-white/95">
               {isAuthenticated 
-                ? 'Upgrade to DocForge Pro' 
+                ? 'Upgrade to DocScalar Pro' 
                 : 'Create a free account'}
             </p>
             <p className="text-white/60 text-xs mt-0.5 leading-relaxed">
               {isAuthenticated 
-                ? 'Unlock batch processing, history logs & zero interruptions.' 
-                : 'Track your conversions and unlock Pro features.'}
+                ? 'Access batch processing, history logs and zero interruptions.' 
+                : 'Track your conversions and access Pro features.'}
             </p>
           </div>
         </div>

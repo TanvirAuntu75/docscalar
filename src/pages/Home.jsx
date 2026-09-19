@@ -1,8 +1,7 @@
-import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { useNavigate, Link, useSearchParams, useLocation } from 'react-router-dom';
 import { motion, useAnimation } from 'framer-motion';
 import ToolCard from '../components/ToolCard';
-import StitchCanvas from '../components/StitchCanvas';
 import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts';
 import ToolIcon from '../components/ToolIcon';
 import SEOHead from '../components/SEOHead';
@@ -10,27 +9,22 @@ import AdPlaceholder from '../components/AdPlaceholder';
 import { CATEGORIES, TOOLS } from '../utils/constants';
 import LandingPage from '../components/LandingPage';
 import { saveFile, getFiles, deleteFile, clearFiles } from '../utils/db';
-
-import { saveAs } from 'file-saver';
 import { useAuth } from '../context/AuthContext';
-import * as pdfjsLib from 'pdfjs-dist';
-const pdfjsWorkerUrl = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl;
+import { prefetchIdleRoutes } from '../utils/prefetchRoute';
 
-// Import actual conversion engines
-import { docxToPdf } from '../engines/document/docxToPdf';
-import { textToPdf } from '../engines/document/textToPdf';
-import { compressPdf } from '../engines/pdf/compressPdf';
-import { rotatePdf } from '../engines/pdf/rotatePdf';
-import { pdfToImages, pdfToImagesStream } from '../engines/pdf/pdfToImage';
-import { mergePdfs } from '../engines/pdf/mergePdf';
-import { splitPdf } from '../engines/pdf/splitPdf';
-import { compressImage } from '../engines/image/compressImage';
-import { convertImageFormat } from '../engines/image/convertFormat';
-import { resizeImage } from '../engines/image/resizeImage';
-import { imagesToPdf } from '../engines/pdf/imageToPdf';
-import JSZip from 'jszip';
-import { jsPDF } from 'jspdf';
+const StitchCanvas = lazy(() => import('../components/StitchCanvas'));
+
+// Lightweight client-side download helper replacing file-saver
+const saveAs = (blob, filename) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
 
 // Self-contained file size formatter
 const formatSize = (bytes) => {
@@ -101,8 +95,8 @@ export default function Home() {
   const [hasCanvasOperations, setHasCanvasOperations] = useState(false);
   const [gpuBoostEnabled, setGpuBoostEnabled] = useState(() => localStorage.getItem('gpuBoostEnabled') !== 'false');
   const [autoEnhanceEnabled, setAutoEnhanceEnabled] = useState(() => localStorage.getItem('autoEnhanceEnabled') !== 'false');
-  const [activeSidebarTab, setActiveSidebarTab] = useState(() => localStorage.getItem('docforge_sidebar_tab') || 'workspace');
-  const setSidebarTab = (tab) => { setActiveSidebarTab(tab); localStorage.setItem('docforge_sidebar_tab', tab); };
+  const [activeSidebarTab, setActiveSidebarTab] = useState(() => localStorage.getItem('docscalar_sidebar_tab') || localStorage.getItem('docforge_sidebar_tab') || 'workspace');
+  const setSidebarTab = (tab) => { setActiveSidebarTab(tab); localStorage.setItem('docscalar_sidebar_tab', tab); };
   const [activeTemplate, setActiveTemplate] = useState(null);
   const [templateEditContent, setTemplateEditContent] = useState('');
   const [openDropdownId, setOpenDropdownId] = useState(null);
@@ -118,6 +112,14 @@ export default function Home() {
       setActiveSidebarTab('workspace');
     }
   }, [location.pathname]);
+
+  // Predictive Idle Route Prefetching: warm up top conversion tools after 2s idle delay
+  useEffect(() => {
+    const idleTimer = setTimeout(() => {
+      prefetchIdleRoutes();
+    }, 2000);
+    return () => clearTimeout(idleTimer);
+  }, []);
 
   // Tool Picker overlay — shown when user clicks a pending queue item
   const [toolPickerItem, setToolPickerItem] = useState(null);
@@ -491,7 +493,7 @@ export default function Home() {
     const validFiles = newFiles.filter(file => {
       const actions = getActionsForFile(file.name);
       if (!actions) {
-        showToast(`⚠️ Unsupported file type: ${file.name}. Only PDF, DOCX, TXT, and images are supported.`);
+        showToast(`Unsupported file type: ${file.name}. Only PDF, DOCX, TXT, and images are supported.`);
         return false;
       }
       return true;
@@ -547,7 +549,7 @@ export default function Home() {
 
     let allowedFiles = validFiles;
     if (validFiles.length > remainingSlots) {
-      showToast('⚠️ Workspace is limited to 50 active files. Please clear completed items.');
+      showToast('Workspace is limited to 50 active files. Please clear completed items.');
       allowedFiles = validFiles.slice(0, remainingSlots);
     }
 
@@ -595,12 +597,14 @@ export default function Home() {
 
     try {
       if (action === 'docx-to-pdf' || action === 'DOCX to PDF' || action === 'DOCX to PDF (GPU Cloud)') {
+        const { docxToPdf } = await import('../engines/document/docxToPdf');
         outputBlob = await docxToPdf(file, (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
         outputName = file.name.replace(/\.[^.]+$/, '') + '.pdf';
         outputType = 'application/pdf';
       } else if (action === 'text-to-pdf' || action === 'Text to PDF' || action === 'Text to PDF (GPU Cloud)') {
+        const { textToPdf } = await import('../engines/document/textToPdf');
         const text = await file.text();
         outputBlob = await textToPdf(text, { title: file.name }, (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
@@ -608,12 +612,14 @@ export default function Home() {
         outputName = file.name.replace(/\.[^.]+$/, '') + '.pdf';
         outputType = 'application/pdf';
       } else if (action === 'compress-pdf' || action === 'Compress PDF' || action === 'Compress PDF (GPU Cloud)') {
+        const { compressPdf } = await import('../engines/pdf/compressPdf');
         outputBlob = await compressPdf(file, { quality: 0.6 }, (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
         outputName = file.name.replace(/\.[^.]+$/, '') + '_compressed.pdf';
         outputType = 'application/pdf';
       } else if (action === 'rotate-pdf' || action === 'Rotate PDF' || action === 'Rotate PDF (GPU Cloud)') {
+        const { rotatePdf } = await import('../engines/pdf/rotatePdf');
         outputBlob = await rotatePdf(file, 90, (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
@@ -621,6 +627,8 @@ export default function Home() {
         outputType = 'application/pdf';
       } else if (action === 'pdf-to-image' || action === 'PDF to Images' || action === 'PDF to Images (GPU Cloud)') {
         // Stream pages into ZIP — worker enforces 200-page cap for batch queue
+        const { default: JSZip } = await import('jszip');
+        const { pdfToImagesStream } = await import('../engines/pdf/pdfToImage');
         const zip = new JSZip();
         await pdfToImagesStream(
           file,
@@ -634,12 +642,15 @@ export default function Home() {
         outputName = file.name.replace(/\.[^.]+$/, '') + '-images.zip';
         outputType = 'application/zip';
       } else if (action === 'merge-pdf' || action === 'Merge PDFs' || action === 'Merge PDFs (GPU Cloud)') {
+        const { mergePdfs } = await import('../engines/pdf/mergePdf');
         outputBlob = await mergePdfs([file], (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
         outputName = file.name.replace(/\.[^.]+$/, '') + '_merged.pdf';
         outputType = 'application/pdf';
       } else if (action === 'split-pdf' || action === 'Split PDF' || action === 'Split PDF (GPU Cloud)') {
+        const { splitPdf } = await import('../engines/pdf/splitPdf');
+        const { default: JSZip } = await import('jszip');
         const { blobs, names } = await splitPdf(file, 'all', '', (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
@@ -655,6 +666,7 @@ export default function Home() {
           outputType = 'application/zip';
         }
       } else if (action === 'image-compressor' || action === 'Image Compressor') {
+        const { compressImage } = await import('../engines/image/compressImage');
         setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: 50 } : i));
         const result = await compressImage(file, 0.7);
         outputBlob = result.blob;
@@ -662,6 +674,7 @@ export default function Home() {
         outputType = result.blob.type;
         setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: 100 } : i));
       } else if (action === 'image-converter' || action === 'Image Converter') {
+        const { convertImageFormat } = await import('../engines/image/convertFormat');
         setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: 50 } : i));
         const result = await convertImageFormat(file, 'png', 0.92);
         outputBlob = result.blob;
@@ -669,6 +682,7 @@ export default function Home() {
         outputType = result.blob.type;
         setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: 100 } : i));
       } else if (action === 'image-resizer' || action === 'Image Resizer') {
+        const { resizeImage } = await import('../engines/image/resizeImage');
         setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: 50 } : i));
         const result = await resizeImage(file, { mode: 'percentage', percentage: 50 });
         outputBlob = result.blob;
@@ -676,6 +690,7 @@ export default function Home() {
         outputType = result.blob.type;
         setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: 100 } : i));
       } else if (action === 'image-to-pdf' || action === 'Images to PDF') {
+        const { imagesToPdf } = await import('../engines/pdf/imageToPdf');
         outputBlob = await imagesToPdf([file], (pct) => {
           setWorkspaceQueue(prev => prev.map(i => i.id === itemId ? { ...i, progress: pct } : i));
         });
@@ -851,7 +866,7 @@ export default function Home() {
       const tierName = userTier === 'pro' ? 'Pro' : (isAuthenticated ? 'Free Account' : 'Guest Mode');
 
       if (file.size > maxFileSize) {
-        showToast(`⚠️ File too large: ${file.name} (${formatSize(file.size)}). Max allowed is ${maxFileSizeStr} in ${tierName}.`);
+        showToast(`File too large: ${file.name} (${formatSize(file.size)}). Max allowed is ${maxFileSizeStr} in ${tierName}.`);
         return;
       }
 
@@ -914,7 +929,7 @@ export default function Home() {
     const validFiles = newFiles.filter(file => {
       const actions = getActionsForFile(file.name);
       if (!actions) {
-        showToast(`⚠️ Unsupported file type: ${file.name}. Only PDF, DOCX, TXT, and images are supported.`);
+        showToast(`Unsupported file type: ${file.name}. Only PDF, DOCX, TXT, and images are supported.`);
         return false;
       }
       return true;
@@ -931,7 +946,7 @@ export default function Home() {
 
     const sizeFilteredFiles = validFiles.filter(file => {
       if (file.size > maxFileSize) {
-        showToast(`⚠️ File too large: ${file.name} (${formatSize(file.size)}). Max allowed is ${maxFileSizeStr} in ${tierName}.`);
+        showToast(`File too large: ${file.name} (${formatSize(file.size)}). Max allowed is ${maxFileSizeStr} in ${tierName}.`);
         return false;
       }
       return true;
@@ -947,11 +962,11 @@ export default function Home() {
     let allowedFiles = sizeFilteredFiles;
     if (sizeFilteredFiles.length > remainingSlots) {
       if (userTier === 'pro') {
-        showToast('⚠️ Pro accounts are limited to 50 files per batch queue.');
+        showToast('Pro accounts are limited to 50 files per batch queue.');
       } else if (isAuthenticated) {
-        showToast('⚠️ Free accounts are limited to 5 files per batch queue. Upgrade to PRO for up to 50 files!');
+        showToast('Free accounts are limited to 5 files per batch queue. Upgrade to PRO for up to 50 files!');
       } else {
-        showToast('⚠️ Guest mode is limited to 1 file in the batch queue. Create a free account to queue up to 5 files!');
+        showToast('Guest mode is limited to 1 file in the batch queue. Create a free account to queue up to 5 files!');
       }
       allowedFiles = sizeFilteredFiles.slice(0, remainingSlots);
     }
@@ -1003,6 +1018,7 @@ export default function Home() {
 
       try {
         if (action === 'DOCX to PDF') {
+          const { docxToPdf } = await import('../engines/document/docxToPdf');
           outputBlob = await docxToPdf(file, (pct) => {
             setBatchProgress(pct);
             setBatchQueue(prev => prev.map((item, idx) => idx === i ? { ...item, progress: pct } : item));
@@ -1010,6 +1026,7 @@ export default function Home() {
           outputName = file.name.replace(/\.[^.]+$/, '') + '.pdf';
           outputType = 'application/pdf';
         } else if (action === 'Text to PDF') {
+          const { textToPdf } = await import('../engines/document/textToPdf');
           const text = await file.text();
           outputBlob = await textToPdf(text, { title: file.name }, (pct) => {
             setBatchProgress(pct);
@@ -1018,6 +1035,7 @@ export default function Home() {
           outputName = file.name.replace(/\.[^.]+$/, '') + '.pdf';
           outputType = 'application/pdf';
         } else if (action === 'Compress PDF') {
+          const { compressPdf } = await import('../engines/pdf/compressPdf');
           outputBlob = await compressPdf(file, { quality: 0.6 }, (pct) => {
             setBatchProgress(pct);
             setBatchQueue(prev => prev.map((item, idx) => idx === i ? { ...item, progress: pct } : item));
@@ -1025,6 +1043,7 @@ export default function Home() {
           outputName = file.name.replace(/\.[^.]+$/, '') + '_compressed.pdf';
           outputType = 'application/pdf';
         } else if (action === 'Rotate PDF') {
+          const { rotatePdf } = await import('../engines/pdf/rotatePdf');
           outputBlob = await rotatePdf(file, 90, (pct) => {
             setBatchProgress(pct);
             setBatchQueue(prev => prev.map((item, idx) => idx === i ? { ...item, progress: pct } : item));
@@ -1033,6 +1052,8 @@ export default function Home() {
           outputType = 'application/pdf';
         } else if (action === 'PDF to Images') {
           // Stream pages into ZIP — worker enforces 200-page cap for batch queue
+          const { default: JSZip } = await import('jszip');
+          const { pdfToImagesStream } = await import('../engines/pdf/pdfToImage');
           const zip = new JSZip();
           await pdfToImagesStream(
             file,
@@ -1047,6 +1068,7 @@ export default function Home() {
           outputName = file.name.replace(/\.[^.]+$/, '') + '-images.zip';
           outputType = 'application/zip';
         } else if (action === 'Merge PDFs') {
+          const { mergePdfs } = await import('../engines/pdf/mergePdf');
           outputBlob = await mergePdfs([file], (pct) => {
             setBatchProgress(pct);
             setBatchQueue(prev => prev.map((item, idx) => idx === i ? { ...item, progress: pct } : item));
@@ -1054,6 +1076,8 @@ export default function Home() {
           outputName = file.name.replace(/\.[^.]+$/, '') + '_merged.pdf';
           outputType = 'application/pdf';
         } else if (action === 'Split PDF') {
+          const { splitPdf } = await import('../engines/pdf/splitPdf');
+          const { default: JSZip } = await import('jszip');
           const { blobs, names } = await splitPdf(file, 'all', '', (pct) => {
             setBatchProgress(pct);
             setBatchQueue(prev => prev.map((item, idx) => idx === i ? { ...item, progress: pct } : item));
@@ -1070,6 +1094,7 @@ export default function Home() {
             outputType = 'application/zip';
           }
         } else if (action === 'Image Compressor') {
+          const { compressImage } = await import('../engines/image/compressImage');
           setBatchProgress(50);
           setBatchQueue(prev => prev.map((item, idx) => idx === i ? { ...item, progress: 50 } : item));
           const result = await compressImage(file, 0.7);
@@ -1078,6 +1103,7 @@ export default function Home() {
           outputType = result.blob.type;
           setBatchProgress(100);
         } else if (action === 'Image Converter') {
+          const { convertImageFormat } = await import('../engines/image/convertFormat');
           setBatchProgress(50);
           setBatchQueue(prev => prev.map((item, idx) => idx === i ? { ...item, progress: 50 } : item));
           const result = await convertImageFormat(file, 'png', 0.92);
@@ -1086,6 +1112,7 @@ export default function Home() {
           outputType = result.blob.type;
           setBatchProgress(100);
         } else if (action === 'Image Resizer') {
+          const { resizeImage } = await import('../engines/image/resizeImage');
           setBatchProgress(50);
           setBatchQueue(prev => prev.map((item, idx) => idx === i ? { ...item, progress: 50 } : item));
           const result = await resizeImage(file, { mode: 'percentage', percentage: 50 });
@@ -1094,6 +1121,7 @@ export default function Home() {
           outputType = result.blob.type;
           setBatchProgress(100);
         } else if (action === 'Images to PDF') {
+          const { imagesToPdf } = await import('../engines/pdf/imageToPdf');
           outputBlob = await imagesToPdf([file], (pct) => {
             setBatchProgress(pct);
             setBatchQueue(prev => prev.map((item, idx) => idx === i ? { ...item, progress: pct } : item));
@@ -1188,7 +1216,7 @@ export default function Home() {
     { title: 'View All 13 Tools', icon: 'apps', desc: 'Explore our complete collection of document utilities.', path: 'scroll', implemented: true },
   ];
 
-  // ⚡ Bolt: Wrapped filteredTools in useMemo to prevent recalculating the filter on every re-render.
+  // Bolt: Wrapped filteredTools in useMemo to prevent recalculating the filter on every re-render.
   const filteredTools = useMemo(() => {
     return TOOLS.filter((tool) => {
       const categoryToMatch = isAuthenticated ? toolsCategoryFilter : activeTab;
@@ -1220,7 +1248,7 @@ export default function Home() {
       style={isWorkspaceView ? { height: workspaceHeight } : {}}
     >
       <SEOHead
-        title="DocForge (Dynamic Workspace)"
+        title="DocScalar (Dynamic Workspace)"
         description="Access free local PDF, image, and document tools. 100% private conversion, compression, and editing. No file uploads required."
       />
 
@@ -1339,7 +1367,7 @@ export default function Home() {
                           onClick={() => {
                             setWorkspaceQueue(prev => prev.filter(i => !selectedQueueItemIds.includes(i.id)));
                             setSelectedQueueItemIds([]);
-                            showToast(`🗑️ Cleared ${selectedQueueItemIds.length} items`);
+                            showToast(`Cleared ${selectedQueueItemIds.length} items`);
                           }}
                           className="px-3.5 py-1.5 rounded-xl border border-outline-variant/60 hover:border-error text-outline hover:text-error font-bold text-xs shadow-sm transition-all flex items-center gap-1.5 cursor-pointer hover:bg-error-container/5 bg-transparent"
                         >
@@ -1432,7 +1460,7 @@ export default function Home() {
                       addFilesToQueueDirect([toolPickerItem.file]);
                     }
                     setToolPickerItem(null);
-                    showToast(toolPickerItem.isBatch ? `📁 Added ${toolPickerItem.files.length} files to batch queue` : "📁 File added to your batch queue");
+                    showToast(toolPickerItem.isBatch ? `Added ${toolPickerItem.files.length} files to batch queue` : "File added to your batch queue");
                   }}
                   className="px-5 py-2.5 rounded-xl border border-outline-variant hover:border-primary text-on-surface hover:text-primary font-semibold text-[13px] flex items-center gap-2 cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all"
                 >
@@ -1460,26 +1488,28 @@ export default function Home() {
                 <div className="flex p-3 bg-[#e8e4dc] dark:bg-[#0c0c0c] gap-0 flex-1 min-h-0 overflow-hidden relative transition-colors duration-300">
                   {/* LEFT COLUMN */}
                   <div className="flex-1 flex flex-col gap-0 min-w-0 h-full overflow-hidden relative">
-                    <StitchCanvas
-                      workspaceQueue={workspaceQueue}
-                      setWorkspaceQueue={setWorkspaceQueue}
-                      isPro={isPro}
-                      userEmail={userEmail}
-                      isAuthenticated={isAuthenticated}
-                      showToast={showToast}
-                      addFilesToQueueDirect={addFilesToQueueDirect}
-                      clearCanvasSignal={clearCanvasSignal}
-                      onOperationsChange={setHasCanvasOperations}
-                      sidebarOpen={sidebarOpen}
-                      setSidebarOpen={setSidebarOpen}
-                      theme={theme}
-                      handleThemeToggle={handleThemeToggle}
-                      profileDropdownOpen={profileDropdownOpen}
-                      setProfileDropdownOpen={setProfileDropdownOpen}
-                      handleLogout={handleLogout}
-                      hasCanvasOperations={hasCanvasOperations}
-                      setClearCanvasSignal={setClearCanvasSignal}
-                    />
+                    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-text-muted">Loading workspace...</div>}>
+                      <StitchCanvas
+                        workspaceQueue={workspaceQueue}
+                        setWorkspaceQueue={setWorkspaceQueue}
+                        isPro={isPro}
+                        userEmail={userEmail}
+                        isAuthenticated={isAuthenticated}
+                        showToast={showToast}
+                        addFilesToQueueDirect={addFilesToQueueDirect}
+                        clearCanvasSignal={clearCanvasSignal}
+                        onOperationsChange={setHasCanvasOperations}
+                        sidebarOpen={sidebarOpen}
+                        setSidebarOpen={setSidebarOpen}
+                        theme={theme}
+                        handleThemeToggle={handleThemeToggle}
+                        profileDropdownOpen={profileDropdownOpen}
+                        setProfileDropdownOpen={setProfileDropdownOpen}
+                        handleLogout={handleLogout}
+                        hasCanvasOperations={hasCanvasOperations}
+                        setClearCanvasSignal={setClearCanvasSignal}
+                      />
+                    </Suspense>
                   </div>
                 </div>
               )}
@@ -1492,7 +1522,7 @@ export default function Home() {
                   <div className="flex flex-col items-center text-center gap-4 mt-4 mb-2">
                     <div className="max-w-xl">
                       <h2 className="font-h2 text-3xl font-extrabold text-on-background tracking-tight">
-                        Welcome, <span className="text-primary">{userName}</span> 👋
+                        Welcome, <span className="text-primary">{userName}</span>
                       </h2>
                       <p className="font-body-md text-xs text-on-surface-variant mt-1.5 leading-relaxed">
                         Launch any local conversion tool directly from your workspace studio to start working
@@ -1610,7 +1640,7 @@ export default function Home() {
                     <div className="flex justify-between items-center gap-4 pb-5 border-b border-outline-variant/60">
                       <div>
                         <h4 className="font-body-md text-sm font-bold text-on-background mb-1">Hardware Graphics Acceleration</h4>
-                        <p className="font-body-sm text-xs text-on-surface-variant font-medium">Utilize device hardware acceleration for faster rendering</p>
+                        <p className="font-body-sm text-xs text-on-surface-variant font-medium">Use device hardware acceleration for faster rendering</p>
                       </div>
                       <button 
                         onClick={() => {
@@ -1685,7 +1715,7 @@ export default function Home() {
                     
                     {/* Version Details */}
                     <div className="flex justify-between items-center text-xs font-semibold text-on-surface-variant">
-                      <span>DocForge Local Version</span>
+                      <span>DocScalar Local Version</span>
                       <span className="font-label-mono text-[10px] bg-surface-container border border-outline-variant px-2.5 py-0.5 rounded-full">v3.4.2-PRO</span>
                     </div>
                   </div>
@@ -1705,7 +1735,7 @@ export default function Home() {
               <div className="flex flex-col items-center text-center gap-4 mt-4 mb-2">
                 <div className="max-w-xl">
                   <h2 className="font-h2 text-3xl font-extrabold text-on-background tracking-tight">
-                    Welcome, <span className="text-primary">{userName}</span> 👋
+                    Welcome, <span className="text-primary">{userName}</span>
                   </h2>
                   <p className="font-body-md text-xs text-on-surface-variant mt-1.5 leading-relaxed">
                     Launch any local conversion tool directly from your workspace studio to start working
@@ -1865,13 +1895,13 @@ export default function Home() {
                 {upgradeModalTarget.minTier === 'pro' ? 'workspace_premium' : 'account_circle'}
               </span>
               <span className="font-h3 text-base font-bold text-on-background">
-                {upgradeModalTarget.minTier === 'pro' ? 'Unlock DocForge Pro' : 'Free Account Required'}
+                {upgradeModalTarget.minTier === 'pro' ? 'DocScalar Pro Required' : 'Free Account Required'}
               </span>
             </div>
 
             <p className="font-body-md text-xs text-on-surface-variant leading-relaxed">
               {upgradeModalTarget.minTier === 'pro' 
-                ? `The "${upgradeModalTarget.title}" tool requires a DocForge Pro subscription. Upgrade to access all 38 local/AI utilities, unlimited file queue limits, and larger sizes.`
+                ? `The "${upgradeModalTarget.title}" tool requires a DocScalar Pro subscription. Upgrade to access all 38 local/AI utilities, unlimited file queue limits, and larger sizes.`
                 : `The "${upgradeModalTarget.title}" tool is free to use but requires a registered account to manage local files and preferences.`
               }
             </p>
