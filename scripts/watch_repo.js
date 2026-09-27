@@ -305,6 +305,10 @@ function writeRepoMap() {
     md += `### Recent 10 Commits\n\`\`\`\n${safeLog}\n\`\`\`\n`;
   }
 
+  const repoDir = path.dirname(REPO_MAP_PATH);
+  if (!fs.existsSync(repoDir)) {
+    fs.mkdirSync(repoDir, { recursive: true });
+  }
   fs.writeFileSync(REPO_MAP_PATH, md, 'utf8');
   console.log(`[repo-watcher] Updated ${REPO_MAP_PATH} (${sortedFiles.length} files indexed, size: ${(fs.statSync(REPO_MAP_PATH).size / 1024).toFixed(1)} KB)`);
 }
