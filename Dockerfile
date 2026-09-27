@@ -1,16 +1,5 @@
 # ==========================================
-# Stage 1: Build the React Vite Frontend
-# ==========================================
-FROM node:20-alpine AS frontend-builder
-WORKDIR /app
-ENV NODE_OPTIONS="--max-old-space-size=2048"
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npx vite build
-
-# ==========================================
-# Stage 2: Build the FastAPI Backend & Package
+# DocScalar Production Dockerfile
 # ==========================================
 FROM python:3.11-slim AS backend-runner
 WORKDIR /app
@@ -32,8 +21,8 @@ RUN pip install --no-cache-dir -r backend/requirements.txt
 RUN playwright install chromium
 RUN playwright install-deps chromium
 
-# Copy React built frontend from Stage 1
-COPY --from=frontend-builder /app/dist ./dist
+# Copy pre-built React frontend
+COPY dist/ ./dist
 
 # Copy the rest of the backend files
 COPY backend/ ./backend

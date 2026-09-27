@@ -6,7 +6,6 @@
 
 # --- Dependencies & Build Artifacts ---
 node_modules/
-dist/
 build/
 .venv/
 venv/
