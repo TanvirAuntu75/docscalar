@@ -10,6 +10,7 @@ services:
     build:
       context: .
       target: backend-runner
+    image: docscalar-app:latest
     ports:
       - "80:8000"
       - "8000:8000"
@@ -26,17 +27,15 @@ services:
       - ./backend/output:/app/backend/output
 
   worker:
-    build:
-      context: .
-      target: backend-runner
+    image: docscalar-app:latest
     command: ["python", "-m", "backend.worker"]
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - PYTHONPATH=/app
-
     depends_on:
       - redis
+      - backend
     volumes:
       - ./backend/uploads:/app/backend/uploads
       - ./backend/output:/app/backend/output
