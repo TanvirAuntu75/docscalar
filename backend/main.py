@@ -1670,6 +1670,35 @@ async def trigger_bootstrap_install():
     return {"started": started}
 
 
+# --- Production Static Files & SPA Routing ---
+dist_dir = Path(__file__).resolve().parent.parent / "dist"
+if dist_dir.exists():
+    from fastapi.staticfiles import StaticFiles
+
+    assets_dir = dist_dir / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
+
+    @app.get("/")
+    async def serve_root():
+        index_file = dist_dir / "index.html"
+        if index_file.is_file():
+            return FileResponse(index_file)
+        return {"status": "DocScalar API is running"}
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        if full_path.startswith("api") or full_path in ("docs", "openapi.json", "redoc"):
+            raise HTTPException(status_code=404, detail="Not Found")
+        target = dist_dir / full_path
+        if target.is_file():
+            return FileResponse(target)
+        index_file = dist_dir / "index.html"
+        if index_file.is_file():
+            return FileResponse(index_file)
+        raise HTTPException(status_code=404, detail="Frontend build missing")
+
+
 if __name__ == "__main__":
     # Pass the app object directly to uvicorn to avoid import resolution issues in packaged PyInstaller envs
     uvicorn.run(app, host=config.HOST, port=config.PORT, reload=False)
