@@ -25,6 +25,8 @@ services:
     volumes:
       - ./backend/uploads:/app/backend/uploads
       - ./backend/output:/app/backend/output
+      - ./dist:/app/dist
+      - ./backend:/app/backend
 
   worker:
     image: docscalar-app:latest
@@ -39,3 +41,4 @@ services:
     volumes:
       - ./backend/uploads:/app/backend/uploads
       - ./backend/output:/app/backend/output
+      - ./backend:/app/backend

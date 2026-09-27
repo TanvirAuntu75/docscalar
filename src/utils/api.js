@@ -1,24 +1,45 @@
 // In desktop (Tauri) mode, the backend runs locally on a fixed port.
 // window.__TAURI__ is injected automatically by the Tauri runtime when inside a WebView.
-const IS_TAURI = typeof window !== 'undefined' && typeof window.__TAURI__ !== 'undefined';
+const IS_TAURI = typeof window !== 'undefined' && (typeof window.__TAURI__ !== 'undefined' || typeof window.__TAURI_INTERNALS__ !== 'undefined');
 const DESKTOP_BACKEND = 'http://127.0.0.1:8765';
 
-export const BACKEND_URL =
-  IS_TAURI
-    ? DESKTOP_BACKEND
-    : (import.meta.env?.VITE_BACKEND_URL || 'http://127.0.0.1:8000');
+export function getBackendUrl() {
+  if (IS_TAURI) {
+    return DESKTOP_BACKEND;
+  }
+  // Explicitly configured via build/env variable takes highest precedence
+  if (import.meta.env?.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL;
+  }
+  if (typeof window !== 'undefined') {
+    const { hostname, port, origin } = window.location;
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+    // If running on local dev/preview ports (e.g. Vite dev :5173 or preview :4173), target local FastAPI server
+    if (isLocalhost && port !== '8000' && port !== '80' && port !== '') {
+      return 'http://127.0.0.1:8000';
+    }
+    // In all web production environments (e.g. http://138.2.81.40 or custom domain), use the active server origin
+    if (origin && origin !== 'null') {
+      return origin;
+    }
+  }
+  return import.meta.env?.DEV ? 'http://127.0.0.1:8000' : '';
+}
+
+export const BACKEND_URL = getBackendUrl();
 
 /**
  * Resolves any relative API path against the configured BACKEND_URL.
  * Leaves absolute URLs (http://, https://, blob:, data:) untouched.
  */
 export function resolveApiUrl(url) {
-  if (!url) return BACKEND_URL;
+  const base = getBackendUrl();
+  if (!url) return base;
   if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) {
     return url;
   }
   const cleanPath = url.startsWith('/') ? url : `/${url}`;
-  return `${BACKEND_URL}${cleanPath}`;
+  return `${base}${cleanPath}`;
 }
 
 /**
