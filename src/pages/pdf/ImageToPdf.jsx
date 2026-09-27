@@ -296,12 +296,13 @@ export default function ImageToPdf() {
       title="Images to PDF"
       description="Convert images (JPG, PNG, WebP) into a clean, professional PDF document."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Images to PDF Converter (100% Local & Free) | DocScalar"
-        description="Convert JPG, PNG, WebP, and SVG images to PDF with custom orientation, margins, and page sizes. 100% private in-browser conversion."
+        title="Images to PDF Converter — Convert JPG & PNG to PDF | DocScalar"
+        description="Convert JPG, PNG, WebP, and SVG images to PDF with custom orientation, margins, and page sizes. High-fidelity, private conversion."
       />
 
       {!result ? (
@@ -320,8 +321,8 @@ export default function ImageToPdf() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-y-auto relative bg-[var(--bg-tertiary)]">
               {/* Sticky Workspace Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2.5 flex items-center justify-between flex-wrap gap-2.5">
-                  <div className="flex items-center gap-2.5 flex-wrap">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
+                  <div className="flex items-center gap-2 shrink-0">
                     <label className="h-8 px-3.5 py-1.5 rounded-lg border border-[var(--color-primary)] bg-[var(--color-primary)] text-white hover:opacity-90 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs text-xs font-semibold select-none shrink-0">
                       <span className="material-symbols-outlined text-[16px]">add_photo_alternate</span>
                       <span>Add Images</span>

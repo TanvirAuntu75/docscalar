@@ -41,7 +41,7 @@ export default function PdfToPowerpoint() {
   const [zoomScale, setZoomScale] = useState(1.0);
 
   // Conversion Configuration State
-  const [engineMode, setEngineMode] = useState('client'); // 'client' | 'server'
+  const [engineMode, setEngineMode] = useState('server'); // 'client' | 'server'
   const [aspectRatio, setAspectRatio] = useState('16:9'); // '16:9' | '4:3'
   const [outputFileName, setOutputFileName] = useState('');
 
@@ -65,9 +65,13 @@ export default function PdfToPowerpoint() {
         if (res.ok) {
           setBackendActive(true);
           setEngineMode('server');
+        } else {
+          setBackendActive(false);
+          setEngineMode('client');
         }
       } catch (e) {
         setBackendActive(false);
+        setEngineMode('client');
       }
     };
     checkServer();
@@ -374,12 +378,13 @@ export default function PdfToPowerpoint() {
       title="PDF to PowerPoint Studio"
       description="Convert PDF documents into editable Microsoft PowerPoint presentations (.pptx) with structured titles and body text."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="PDF to PowerPoint Online Free — Convert PDF to PPTX | DocScalar"
-        description="Convert PDF files to editable PowerPoint PPTX slides online. Free, fast, and 100% private in-browser presentation extraction."
+        description="Convert PDF files to editable PowerPoint PPTX slides online. Fast, secure, and encrypted presentation extraction with zero data retention."
       />
 
       {!result ? (

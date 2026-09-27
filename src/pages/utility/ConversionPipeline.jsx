@@ -188,6 +188,7 @@ export default function ConversionPipeline() {
       title="Conversion Pipeline Studio"
       description="Chain multiple document and image operations into automated, repeatable conversion workflows."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >

@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { apiFetch } from '../utils/api';
+import { apiFetch, BACKEND_URL } from '../utils/api';
 
 /**
  * Custom hook for polling backend task conversion jobs.
- * @param {string} apiBaseUrl - Base backend URL (e.g. http://localhost:8000)
+ * @param {string} apiBaseUrl - Base backend URL
  */
-export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
+export function useJobPoller(apiBaseUrl = BACKEND_URL) {
   const [jobId, setJobId] = useState(null);
   const [status, setStatus] = useState('idle'); // 'idle' | 'queued' | 'started' | 'finished' | 'failed'
   const [progress, setProgress] = useState(0);
@@ -146,7 +146,10 @@ export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
     };
   }, [jobId, apiBaseUrl]);
 
-  const resetPoller = useCallback(() => {
+  const resetPoller = useCallback((cancelServer = false) => {
+    const activeId = jobId;
+    const isActive = status === 'started' || status === 'queued';
+
     if (pollWorkerRef.current) {
       try {
         pollWorkerRef.current.postMessage('stop');
@@ -161,7 +164,18 @@ export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
     setResult(null);
     setError(null);
     consecutiveFailuresRef.current = 0;
-  }, []);
+
+    // If cancelServer was requested or an active task was running, notify backend
+    if ((cancelServer || isActive) && activeId) {
+      apiFetch(`${apiBaseUrl}/api/job/${activeId}/cancel`, { method: 'POST' }).catch((err) => {
+        console.warn('Failed to cancel job on server:', err);
+      });
+    }
+  }, [jobId, status, apiBaseUrl]);
+
+  const cancelJob = useCallback(async () => {
+    resetPoller(true);
+  }, [resetPoller]);
 
   return {
     jobId,
@@ -171,6 +185,7 @@ export function useJobPoller(apiBaseUrl = 'http://localhost:8000') {
     result,
     error,
     startPolling,
-    resetPoller
+    resetPoller,
+    cancelJob
   };
 }

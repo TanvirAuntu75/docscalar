@@ -6,6 +6,8 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import { Link, useNavigate } from 'react-router-dom';
 import DocumentViewer from '../pages/utility/DocumentViewer';
+import GuestLimitModal from './GuestLimitModal';
+import { getCanvasQuota, consumeCanvasQuota, openCanvasLimitModal } from '../utils/guestQuota';
 
 // Import local WASM/JS conversion engines
 import { convertPdfToWord } from '../engines/document/pdfToWord';
@@ -39,17 +41,18 @@ import { ocrPdf, terminateOcrPool } from '../engines/pdf/ocrPdf';
 import { unOcrPdf } from '../engines/pdf/unOcrPdf';
 import { applyBatesNumbering } from '../engines/pdf/batesNumbering';
 import { saveCanvasState, loadCanvasState, clearCanvasState } from '../utils/db';
-import { parseLocalNLPCommand, extractCommandParameters, optimizeCanvasLayout, validateCanvasConnections, executeAutoHeal, hasDependencyCycle, TOOL_REGISTRY, resolveDocumentTargets, detectFanOutTools, needsStudioParams, computeStructuralTopologyHash, planCanvasWorkflow, materializeCanvasOperations, reactCanvasToIntent, normalizeUserPrompt } from '../utils/canvasBrain';
+import { parseLocalNLPCommand, extractCommandParameters, optimizeCanvasLayout, validateCanvasConnections, executeAutoHeal, hasDependencyCycle, TOOL_REGISTRY, resolveDocumentTargets, detectFanOutTools, needsStudioParams, computeStructuralTopologyHash, planCanvasWorkflow, materializeCanvasOperations, reactCanvasToIntent, normalizeUserPrompt, MAX_INDIVIDUAL_CANVAS_CARDS, shouldUnpackCanvasCards, checkHasDownstreamConsumers } from '../utils/canvasBrain';
 import { getToolValidation, findConversionPath, TOOLS_MANIFEST, normalizeExtension } from '../utils/toolsManifest';
 import { WORKFLOW_PRESETS, encodeFlowToUrl, decodeFlowFromUrl, saveFlowToStorage, loadSavedFlows } from '../utils/flowPresets';
 import { AnimatePresence } from 'framer-motion';
 import FocusStudioPortal from './FocusStudio/FocusStudioPortal';
-
-// Bug fix: use env variable so deployed builds point to the real backend
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+import { BACKEND_URL, apiFetch } from '../utils/api';
 
 // Canonical Tool Validation derived from TOOLS_MANIFEST
 const TOOL_VALIDATION = getToolValidation();
+
+// Re-export canvas card thresholds and optimization helpers
+export { MAX_INDIVIDUAL_CANVAS_CARDS, shouldUnpackCanvasCards, checkHasDownstreamConsumers };
 
 /**
  * Disconnects a cable connection in the operations state cleanly.
@@ -201,7 +204,7 @@ export const computeNodeTelemetry = ({ startTime, durationMs, inputSize = 0, out
 
 /**
  * Formats glassmorphic telemetry pill text matching specification:
- * ⚡ ${telemetry.durationSec}s · ${telemetry.throughputMbSec ? telemetry.throughputMbSec + ' MB/s · ' : ''}${telemetry.sizeDeltaPct ? (telemetry.sizeDeltaPct > 0 ? '+' : '') + telemetry.sizeDeltaPct + '%' : ''}
+ * ${telemetry.durationSec}s · ${telemetry.throughputMbSec ? telemetry.throughputMbSec + ' MB/s · ' : ''}${telemetry.sizeDeltaPct ? (telemetry.sizeDeltaPct > 0 ? '+' : '') + telemetry.sizeDeltaPct + '%' : ''}
  */
 export const formatTelemetryPill = (telemetry) => {
   if (!telemetry) return '';
@@ -210,7 +213,7 @@ export const formatTelemetryPill = (telemetry) => {
   const deltaPart = (sizeDeltaPct !== null && sizeDeltaPct !== undefined) 
     ? `${sizeDeltaPct > 0 ? '+' : ''}${sizeDeltaPct}%` 
     : '';
-  const raw = `⚡ ${durationSec}s · ${throughputPart}${deltaPart}`;
+  const raw = `${durationSec}s · ${throughputPart}${deltaPart}`;
   return raw.replace(/ · $/, '');
 };
 
@@ -249,6 +252,16 @@ export default function StitchCanvas({
   setClearCanvasSignal,
 }) {
   const navigate = useNavigate();
+
+  // Stitch Canvas Preview Quota Tracking (10 actions/day for Free Accounts, Unlimited for Pro)
+  const [canvasQuota, setCanvasQuota] = useState(() => getCanvasQuota(userEmail, isPro));
+
+  useEffect(() => {
+    const handleQuotaChanged = () => setCanvasQuota(getCanvasQuota(userEmail, isPro));
+    window.addEventListener('docscalar:canvas-quota-changed', handleQuotaChanged);
+    return () => window.removeEventListener('docscalar:canvas-quota-changed', handleQuotaChanged);
+  }, [userEmail, isPro]);
+
   // Floating Overlays UI states
   const [isRightDockExpanded, setIsRightDockExpanded] = useState(false);
   const [isActivityLogOpen, setIsActivityLogOpen] = useState(false);
@@ -1101,7 +1114,7 @@ export default function StitchCanvas({
       if (e.ctrlKey) {
         // Pinch-to-zoom gesture (or Ctrl + mouse wheel)
         const zoomFactor = 0.03;
-        const newZoom = Math.min(2.0, Math.max(0.4, zoom + (e.deltaY < 0 ? zoomFactor : -zoomFactor)));
+        const newZoom = Math.min(2.0, Math.max(0.05, zoom + (e.deltaY < 0 ? zoomFactor : -zoomFactor)));
         
         // Zoom relative to current cursor coordinate
         const rect = canvasEl.getBoundingClientRect();
@@ -1442,19 +1455,24 @@ export default function StitchCanvas({
       selectionStartRef.current = null;
       e.target.releasePointerCapture(e.pointerId);
     }
-    setDraggingNodeId(null);
+    if (draggingNodeId) {
+      if (autoFitViewport) {
+        handleFitToView();
+      }
+      setDraggingNodeId(null);
+    }
   };
 
   // Zoom controls
-  const handleZoomIn = () => setZoom(z => Math.min(2.0, z + 0.1));
-  const handleZoomOut = () => setZoom(z => Math.max(0.4, z - 0.1));
+  const handleZoomIn = () => setZoom(z => Math.min(2.0, parseFloat((z + 0.1).toFixed(2))));
+  const handleZoomOut = () => setZoom(z => Math.max(0.05, parseFloat((z - 0.1).toFixed(2))));
   const handleZoomReset = () => {
     setZoom(1.0);
     setPanOffset({ x: 0, y: 0 });
   };
 
-  // Calculate box enclosing all nodes and fit viewport
-  const handleFitToView = (customQueue, customOps) => {
+  // Calculate box enclosing all nodes and fit viewport within safe (non-overlayed) canvas area
+  const handleFitToView = (customQueue, customOps, instant = false) => {
     const q = Array.isArray(customQueue) ? customQueue : workspaceQueue;
     const ops = Array.isArray(customOps) ? customOps : operations;
     if (!Array.isArray(q) || !Array.isArray(ops)) return;
@@ -1466,50 +1484,112 @@ export default function StitchCanvas({
     let maxY = -Infinity;
 
     q.forEach(item => {
-      const x = item.x || 100;
-      const y = item.y || 100;
-      if (x < minX) minX = x;
-      if (x > maxX) maxX = x;
-      if (y < minY) minY = y;
-      if (y > maxY) maxY = y;
+      const x = typeof item.x === 'number' ? item.x : 100;
+      const y = typeof item.y === 'number' ? item.y : 100;
+      // Query physical DOM dimensions if mounted or fallback to default card width (220px) and height (150px)
+      const el = typeof document !== 'undefined' ? document.getElementById(`node-${item.id}`) : null;
+      const w = el ? el.offsetWidth : 220;
+      const h = el ? el.offsetHeight : 150;
+      
+      const left = x - 8;
+      const right = x + w + 8;
+      const top = y - 8;
+      const bottom = y + h + 8;
+
+      if (left < minX) minX = left;
+      if (right > maxX) maxX = right;
+      if (top < minY) minY = top;
+      if (bottom > maxY) maxY = bottom;
     });
 
     ops.forEach(op => {
-      const x = op.x || 100;
-      const y = op.y || 100;
-      if (x < minX) minX = x;
-      if (x > maxX) maxX = x;
-      if (y < minY) minY = y;
-      if (y > maxY) maxY = y;
+      const x = typeof op.x === 'number' ? op.x : 100;
+      const y = typeof op.y === 'number' ? op.y : 100;
+      // Query physical DOM dimensions if mounted or fallback to default operator card width (260px) and height (240px)
+      const el = typeof document !== 'undefined' ? document.getElementById(`op-node-${op.id}`) : null;
+      const w = el ? el.offsetWidth : 260;
+      const h = el ? el.offsetHeight : 240;
+      const topExtra = op.status === 'processing' ? 36 : 8;
+
+      const left = x - 8;
+      const right = x + w + 8;
+      const top = y - topExtra;
+      const bottom = y + h + 8;
+
+      if (left < minX) minX = left;
+      if (right > maxX) maxX = right;
+      if (top < minY) minY = top;
+      if (bottom > maxY) maxY = bottom;
     });
 
     if (!isFinite(minX) || !isFinite(maxX) || !isFinite(minY) || !isFinite(maxY)) return;
 
-    const padding = 100;
-    const nodesWidth = (maxX - minX) + 300;
-    const nodesHeight = (maxY - minY) + 200;
+    const clusterWidth = maxX - minX;
+    const clusterHeight = maxY - minY;
+    const clusterCenterX = minX + clusterWidth / 2;
+    const clusterCenterY = minY + clusterHeight / 2;
 
     const rect = canvasRef.current?.getBoundingClientRect();
-    const screenW = rect?.width || window.innerWidth;
-    const screenH = rect?.height || window.innerHeight;
+    const canvasW = rect?.width || (typeof window !== 'undefined' ? window.innerWidth : 1200);
+    const canvasH = rect?.height || (typeof window !== 'undefined' ? window.innerHeight : 800);
 
+    // Overlay Safe Insets: guarantee nodes are NEVER occluded by floating UI widgets
+    // Top Studio Navbar: height ~44px + top-4 (16px) => safe top inset 80px
+    const insetTop = 80;
+    // Bottom Stitch Chat Command Input Bar + Zoom Dock + Activity Logs: safe bottom inset 112px
+    const insetBottom = 112;
+    // Left Quick Action bar: safe left inset 68px
+    const insetLeft = 68;
+    // Right Vertical Tool Palette: safe right inset 80px
+    const insetRight = 80;
+
+    const safeW = Math.max(120, canvasW - insetLeft - insetRight);
+    const safeH = Math.max(120, canvasH - insetTop - insetBottom);
+
+    const safeCenterX = insetLeft + safeW / 2;
+    const safeCenterY = insetTop + safeH / 2;
+
+    // Buffer margin around the entire cluster of cards
+    const margin = 32;
+    const totalPaddedW = clusterWidth + margin * 2;
+    const totalPaddedH = clusterHeight + margin * 2;
+
+    // Scale calculation: allow scaling down as far as needed (down to 0.05 / 5%) so cards NEVER get cropped or overlayed
     const fitZoom = Math.min(
-      (screenW - padding) / Math.max(nodesWidth, 100),
-      (screenH - padding) / Math.max(nodesHeight, 100),
-      1.1
+      safeW / Math.max(totalPaddedW, 50),
+      safeH / Math.max(totalPaddedH, 50)
     );
 
-    const targetZoom = Math.max(0.35, fitZoom);
-    
-    // Calculate pan offset to center the bounds
-    const centerX = minX + nodesWidth / 2;
-    const centerY = minY + nodesHeight / 2;
+    // Bound zoom between 0.05 (for massive spread-out canvases) and 1.0 (so small clusters are not overscaled)
+    const targetZoom = Math.max(0.05, Math.min(1.0, fitZoom));
 
-    const px = screenW / 2 - centerX * targetZoom;
-    const py = screenH / 2 - centerY * targetZoom;
+    // Target pan offsets so cluster center aligns precisely with the unobstructed safe viewport center
+    const targetPx = Math.round(safeCenterX - clusterCenterX * targetZoom);
+    const targetPy = Math.round(safeCenterY - clusterCenterY * targetZoom);
 
-    setZoom(parseFloat(targetZoom.toFixed(2)));
-    setPanOffset({ x: Math.round(px), y: Math.round(py) });
+    // Smooth animation if interactive, or immediate update if instant
+    if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function' && !instant) {
+      const startZoom = zoom;
+      const startPx = panOffset.x;
+      const startPy = panOffset.y;
+      
+      const animTarget = { z: startZoom, x: startPx, y: startPy };
+      anime({
+        targets: animTarget,
+        z: targetZoom,
+        x: targetPx,
+        y: targetPy,
+        duration: 320,
+        easing: 'easeOutQuart',
+        update: () => {
+          setZoom(parseFloat(animTarget.z.toFixed(3)));
+          setPanOffset({ x: Math.round(animTarget.x), y: Math.round(animTarget.y) });
+        }
+      });
+    } else {
+      setZoom(parseFloat(targetZoom.toFixed(3)));
+      setPanOffset({ x: targetPx, y: targetPy });
+    }
   };
 
   // Node Drag Trigger
@@ -2174,6 +2254,24 @@ export default function StitchCanvas({
     const { file_id, filename } = uploadData;
     progressCb(30, 'Queued...');
 
+    // Handle any additional files (for merge-pdf, image-to-pdf)
+    const uploadedFiles = [{ file_id, filename }];
+    if (params.additionalFiles && Array.isArray(params.additionalFiles)) {
+      for (const addFile of params.additionalFiles) {
+        if (!addFile) continue;
+        const addFormData = new FormData();
+        addFormData.append('file', addFile);
+        const addRes = await fetch(`${BACKEND_URL}/api/upload`, {
+          method: 'POST',
+          body: addFormData
+        });
+        if (addRes.ok) {
+          const addData = await addRes.json();
+          uploadedFiles.push(addData);
+        }
+      }
+    }
+
     // Step 2: Trigger specific conversion route
     let convertUrl = '/api/convert';
     const convertFormData = new FormData();
@@ -2183,6 +2281,50 @@ export default function StitchCanvas({
     if (actionId === 'ocr-pdf') {
       convertUrl = '/api/convert/ocr-pdf';
       convertFormData.append('language', params.language || 'eng');
+    } else if (actionId === 'merge-pdf') {
+      convertUrl = '/api/convert/merge-pdf';
+      convertFormData.append('files_json', JSON.stringify(uploadedFiles));
+    } else if (actionId === 'image-to-pdf') {
+      convertUrl = '/api/convert/image-to-pdf';
+      convertFormData.append('files_json', JSON.stringify(uploadedFiles));
+    } else if (actionId === 'rotate-pdf') {
+      convertUrl = '/api/convert/rotate-pdf';
+      if (params.angle !== undefined) convertFormData.append('angle', String(params.angle));
+      if (params.pages) convertFormData.append('pages', JSON.stringify(params.pages));
+    } else if (actionId === 'crop-pdf') {
+      convertUrl = '/api/convert/crop-pdf';
+      if (params.crop_boxes) convertFormData.append('crop_boxes', JSON.stringify(params.crop_boxes));
+      if (params.margin_top !== undefined) convertFormData.append('margin_top', String(params.margin_top));
+      if (params.margin_bottom !== undefined) convertFormData.append('margin_bottom', String(params.margin_bottom));
+      if (params.margin_left !== undefined) convertFormData.append('margin_left', String(params.margin_left));
+      if (params.margin_right !== undefined) convertFormData.append('margin_right', String(params.margin_right));
+    } else if (actionId === 'add-watermark') {
+      convertUrl = '/api/convert/add-watermark';
+      if (params.watermark_type) convertFormData.append('watermark_type', params.watermark_type);
+      if (params.text) convertFormData.append('text', params.text);
+      if (params.color) convertFormData.append('color', params.color);
+      if (params.opacity !== undefined) convertFormData.append('opacity', String(params.opacity));
+      if (params.font_size !== undefined) convertFormData.append('font_size', String(params.font_size));
+      if (params.rotation !== undefined) convertFormData.append('rotation', String(params.rotation));
+    } else if (actionId === 'add-page-numbers') {
+      convertUrl = '/api/convert/add-page-numbers';
+      if (params.format_str || params.format) convertFormData.append('format_str', params.format_str || params.format);
+      if (params.position) convertFormData.append('position', params.position);
+      if (params.font_size !== undefined) convertFormData.append('font_size', String(params.font_size));
+      if (params.start_page || params.startNumber) convertFormData.append('start_page', String(params.start_page || params.startNumber));
+      if (params.margin !== undefined) convertFormData.append('margin', String(params.margin));
+      if (params.color) convertFormData.append('color', params.color);
+    } else if (actionId === 'pdf-to-image') {
+      convertUrl = '/api/convert/pdf-to-image';
+      if (params.dpi) convertFormData.append('dpi', String(params.dpi));
+      if (params.format) convertFormData.append('format', params.format);
+      if (params.pages) convertFormData.append('pages', JSON.stringify(params.pages));
+    } else if (actionId === 'extract-pages') {
+      convertUrl = '/api/convert/extract-pages';
+      if (params.pages) convertFormData.append('pages', JSON.stringify(params.pages));
+    } else if (actionId === 'remove-pages') {
+      convertUrl = '/api/convert/remove-pages';
+      if (params.pages) convertFormData.append('pages', JSON.stringify(params.pages));
     } else if (actionId === 'split-pdf') {
       convertUrl = '/api/convert/split-pdf';
       let modeVal = params.mode || 'all';
@@ -2205,13 +2347,6 @@ export default function StitchCanvas({
       convertFormData.append('mode', modeVal);
       convertFormData.append('range', rangeVal);
       convertFormData.append('extra_params', JSON.stringify(extraParamsVal));
-    } else if (actionId === 'ai-summarizer' || actionId === 'smart-summarize') {
-      convertUrl = '/api/smart-convert';
-      convertFormData.append('mode', 'summarize');
-    } else if (actionId === 'ai-translator') {
-      convertUrl = '/api/smart-convert';
-      convertFormData.append('mode', 'translate');
-      convertFormData.append('target_language', params.target_language || 'Bengali');
     } else if (actionId === 'pdf-to-word') {
       convertUrl = '/api/convert/pdf-to-docx';
     } else if (actionId === 'pdf-to-excel') {
@@ -2230,12 +2365,23 @@ export default function StitchCanvas({
       convertFormData.append('password', params.password || '');
     } else if (actionId === 'redact-pdf') {
       convertUrl = '/api/security/redact';
-      convertFormData.append('text_patterns', JSON.stringify(params.textPatterns || []));
+      const redactionBoxes = params.boxes || params.redactions || params.textPatterns || [];
+      convertFormData.append('redactions_json', JSON.stringify(redactionBoxes));
+      convertFormData.append('sanitize_metadata', String(params.sanitizeMetadata !== false));
     } else if (actionId === 'pdf-to-pdfa') {
       convertUrl = '/api/convert/pdf-to-pdfa';
     } else if (actionId === 'url-to-pdf') {
       convertUrl = '/api/convert/url-to-pdf';
       convertFormData.append('url', params.url || '');
+    } else if (actionId === 'compress-pdf') {
+      convertUrl = '/api/convert/compress-pdf';
+      if (params.quality !== undefined) convertFormData.append('quality', String(params.quality));
+      if (params.target_size_bytes !== undefined) convertFormData.append('target_size_bytes', String(params.target_size_bytes));
+      if (params.rasterize_fallback !== undefined) convertFormData.append('rasterize_fallback', String(params.rasterize_fallback));
+    } else if (actionId === 'repair-pdf') {
+      convertUrl = '/api/repair-pdf';
+      if (params.mode) convertFormData.append('mode', params.mode);
+      if (params.strip_corrupt_metadata !== undefined) convertFormData.append('strip_corrupt_metadata', String(params.strip_corrupt_metadata));
     } else {
       // excel-to-pdf, powerpoint-to-pdf, compare-pdf, etc.
       convertFormData.append('target_format', 'pdf');
@@ -2400,12 +2546,24 @@ export default function StitchCanvas({
   const runToolEngine = async (actionId, params, mainFile, allItems, progressCb) => {
     if (actionId === 'merge-pdf') {
       const files = allItems.map(i => i.file || i);
-      return await mergePdfs(files, progressCb);
+      try {
+        console.log(`[runToolEngine] Running Server Side merge for ${files.length} files...`);
+        return await executeServerJob(files[0], 'merge-pdf', { additionalFiles: files.slice(1) }, progressCb);
+      } catch (serverErr) {
+        console.warn(`[runToolEngine] Server Side merge failed or offline, falling back to client:`, serverErr);
+        return await mergePdfs(files, progressCb);
+      }
     } else if (actionId === 'compress-pdf') {
       const quality = params.quality || 0.65;
       const scale = quality > 0.75 ? 1.5 : quality < 0.5 ? 0.9 : 1.2;
       const mode = params.mode || 'lossless';
-      return await compressPdf(mainFile, { quality, scale, mode }, progressCb);
+      try {
+        console.log(`[runToolEngine] Running Server Side compress for ${mainFile.name}...`);
+        return await executeServerJob(mainFile, 'compress-pdf', params, progressCb);
+      } catch (serverErr) {
+        console.warn(`[runToolEngine] Server Side compress failed or offline, falling back to client:`, serverErr);
+        return await compressPdf(mainFile, { quality, scale, mode }, progressCb);
+      }
     } else if (actionId === 'split-pdf') {
       try {
         console.log(`[runToolEngine] Running Server Side split for ${mainFile.name}...`);
@@ -2431,7 +2589,11 @@ export default function StitchCanvas({
         return await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 9 } });
       }
     } else if (actionId === 'docx-to-pdf') {
-      return await docxToPdf(mainFile, progressCb);
+      try {
+        return await executeServerJob(mainFile, actionId, params, progressCb);
+      } catch (e) {
+        return await docxToPdf(mainFile, progressCb);
+      }
     } else if (actionId === 'image-to-pdf') {
       let imageFiles = [];
       const inputItems = allItems && allItems.length > 0 ? allItems : [mainFile];
@@ -2479,18 +2641,40 @@ export default function StitchCanvas({
       progressCb(100);
       return result.blob;
     } else if (actionId === 'rotate-pdf') {
-      return await rotatePdf(mainFile, params.angle || 90, progressCb);
+      try {
+        console.log(`[runToolEngine] Running Server Side rotate for ${mainFile.name}...`);
+        return await executeServerJob(mainFile, 'rotate-pdf', { angle: params.angle || 90 }, progressCb);
+      } catch (serverErr) {
+        console.warn(`[runToolEngine] Server Side rotate failed or offline, falling back to client:`, serverErr);
+        return await rotatePdf(mainFile, params.angle || 90, progressCb);
+      }
     } else if (actionId === 'add-watermark') {
-      return await addWatermark(mainFile, { text: params.text || 'CONFIDENTIAL', opacity: params.opacity || 0.5 }, progressCb);
+      try {
+        console.log(`[runToolEngine] Running Server Side watermark for ${mainFile.name}...`);
+        return await executeServerJob(mainFile, 'add-watermark', { text: params.text || 'CONFIDENTIAL', opacity: params.opacity || 0.5 }, progressCb);
+      } catch (serverErr) {
+        console.warn(`[runToolEngine] Server Side watermark failed or offline, falling back to client:`, serverErr);
+        return await addWatermark(mainFile, { text: params.text || 'CONFIDENTIAL', opacity: params.opacity || 0.5 }, progressCb);
+      }
     } else if (actionId === 'add-page-numbers') {
-      return await addPageNumbers(mainFile, { 
-        formatStr: params.format || 'Page {n} of {total}', 
-        position: params.position || 'bottom-right', 
-        startNumber: params.startNumber || 1,
-        shrinkToFit: Boolean(params.shrinkToFit),
-        shieldMode: params.shieldMode || 'auto',
-        numberingStyle: params.numberingStyle || 'arabic'
-      }, progressCb);
+      try {
+        console.log(`[runToolEngine] Running Server Side page numbering for ${mainFile.name}...`);
+        return await executeServerJob(mainFile, 'add-page-numbers', { 
+          format: params.format || 'Page {n} of {total}', 
+          position: params.position || 'bottom-right', 
+          startNumber: params.startNumber || 1 
+        }, progressCb);
+      } catch (serverErr) {
+        console.warn(`[runToolEngine] Server Side page numbering failed or offline, falling back to client:`, serverErr);
+        return await addPageNumbers(mainFile, { 
+          formatStr: params.format || 'Page {n} of {total}', 
+          position: params.position || 'bottom-right', 
+          startNumber: params.startNumber || 1,
+          shrinkToFit: Boolean(params.shrinkToFit),
+          shieldMode: params.shieldMode || 'auto',
+          numberingStyle: params.numberingStyle || 'arabic'
+        }, progressCb);
+      }
     } else if (actionId === 'bates-numbering') {
       const { applyBatesNumbering } = await import('../engines/pdf/batesNumbering.js');
       const batesBytes = await applyBatesNumbering(mainFile, {
@@ -2507,52 +2691,72 @@ export default function StitchCanvas({
     } else if (actionId === 'ocr-pdf') {
       const language = params.language || 'eng';
       try {
-        return await ocrPdf(mainFile, { language }, progressCb);
-      } catch (e) {
-        console.warn('[runToolEngine] Client OCR failed, falling back to server:', e.message);
+        console.log(`[runToolEngine] Running Server Side OCR for ${mainFile.name}...`);
         return await executeServerJob(mainFile, 'ocr-pdf', params, progressCb);
+      } catch (serverErr) {
+        console.warn('[runToolEngine] Server OCR failed or offline, falling back to client OCR:', serverErr.message);
+        return await ocrPdf(mainFile, { language }, progressCb);
       }
     } else if (actionId === 'un-ocr-pdf') {
       const scale = params.scale || 2.0;
       return await unOcrPdf(mainFile, { scale }, progressCb);
     } else if (actionId === 'pdf-to-image') {
       const format = params.format || 'png';
-      const scale = params.dpi ? params.dpi / 72 : 2.0;
-      const blobs = [];
-      const names = [];
-      const files = (allItems || []).map(i => i.file).filter(Boolean);
-      const finalFiles = files.length > 0 ? files : [mainFile];
-      
-      for (let idx = 0; idx < finalFiles.length; idx++) {
-        const file = finalFiles[idx];
-        const fileBase = file.name.replace(/\.[^.]+$/, '');
-        const filePrefix = finalFiles.length > 1 ? `${fileBase}_` : '';
+      const dpi = params.dpi || 150;
+      try {
+        console.log(`[runToolEngine] Running Server Side PDF-to-image for ${mainFile.name}...`);
+        return await executeServerJob(mainFile, 'pdf-to-image', { dpi, format }, progressCb);
+      } catch (serverErr) {
+        console.warn(`[runToolEngine] Server Side pdf-to-image failed or offline, falling back to client stream:`, serverErr);
+        const scale = params.dpi ? params.dpi / 72 : 2.0;
+        const blobs = [];
+        const names = [];
+        const files = (allItems || []).map(i => i.file).filter(Boolean);
+        const finalFiles = files.length > 0 ? files : [mainFile];
         
-        const startPct = (idx / finalFiles.length) * 100;
-        const endPct = ((idx + 1) / finalFiles.length) * 100;
-        const subProgressCb = (pct) => {
-          if (progressCb) {
-            const totalPct = startPct + (pct / 100) * (endPct - startPct);
-            progressCb(Math.round(totalPct));
-          }
-        };
-        
-        await pdfToImagesStream(file, { format, quality: 0.9, scale }, ({ name, blob }) => {
-          blobs.push(blob);
-          names.push(`${filePrefix}${name}`);
-        }, subProgressCb);
-      }
+        for (let idx = 0; idx < finalFiles.length; idx++) {
+          const file = finalFiles[idx];
+          const fileBase = file.name.replace(/\.[^.]+$/, '');
+          const filePrefix = finalFiles.length > 1 ? `${fileBase}_` : '';
+          
+          const startPct = (idx / finalFiles.length) * 100;
+          const endPct = ((idx + 1) / finalFiles.length) * 100;
+          const subProgressCb = (pct) => {
+            if (progressCb) {
+              const totalPct = startPct + (pct / 100) * (endPct - startPct);
+              progressCb(Math.round(totalPct));
+            }
+          };
+          
+          await pdfToImagesStream(file, { format, quality: 0.9, scale }, ({ name, blob }) => {
+            blobs.push(blob);
+            names.push(`${filePrefix}${name}`);
+          }, subProgressCb);
+        }
 
-      const zip = new JSZip();
-      blobs.forEach((b, idx) => zip.file(names[idx], b));
-      return await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 9 } });
+        const zip = new JSZip();
+        blobs.forEach((b, idx) => zip.file(names[idx], b));
+        return await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 9 } });
+      }
     } else if (actionId === 'excel-to-pdf') {
-      return await excelToPdf(mainFile, progressCb);
+      try {
+        return await executeServerJob(mainFile, actionId, params, progressCb);
+      } catch (e) {
+        return await excelToPdf(mainFile, progressCb);
+      }
     } else if (actionId === 'powerpoint-to-pdf') {
-      return await powerpointToPdf(mainFile, progressCb);
+      try {
+        return await executeServerJob(mainFile, actionId, params, progressCb);
+      } catch (e) {
+        return await powerpointToPdf(mainFile, progressCb);
+      }
     } else if (actionId === 'html-to-pdf') {
-      return await htmlToPdf(mainFile, progressCb);
-    } else if (['pdf-to-word', 'pdf-to-excel', 'pdf-to-powerpoint', 'ai-translator', 'ai-summarizer', 'protect-pdf', 'unlock-pdf', 'redact-pdf', 'compare-pdf', 'pdf-to-pdfa', 'url-to-pdf'].includes(actionId)) {
+      try {
+        return await executeServerJob(mainFile, actionId, params, progressCb);
+      } catch (e) {
+        return await htmlToPdf(mainFile, progressCb);
+      }
+    } else if (['pdf-to-word', 'pdf-to-excel', 'pdf-to-powerpoint', 'protect-pdf', 'unlock-pdf', 'redact-pdf', 'compare-pdf', 'pdf-to-pdfa', 'url-to-pdf'].includes(actionId)) {
       return await executeServerJob(mainFile, actionId, params, progressCb);
     } else if (actionId === 'unzip-file') {
       const zip = new JSZip();
@@ -2573,8 +2777,14 @@ export default function StitchCanvas({
       }
       return mainFile;
     } else if (actionId === 'repair-pdf') {
-      const repairRes = await repairPdf(mainFile, { returnBlobOnly: true }, progressCb);
-      return repairRes instanceof Blob ? repairRes : (repairRes.blob || repairRes);
+      try {
+        console.log(`[runToolEngine] Running Server Side repair for ${mainFile.name}...`);
+        return await executeServerJob(mainFile, 'repair-pdf', params, progressCb);
+      } catch (serverErr) {
+        console.warn('[runToolEngine] Server Side repair failed or offline, falling back to client JS:', serverErr);
+        const repairRes = await repairPdf(mainFile, { returnBlobOnly: true }, progressCb);
+        return repairRes instanceof Blob ? repairRes : (repairRes.blob || repairRes);
+      }
     } else if (actionId === 'bates-numbering') {
       const pdfBytes = await mainFile.arrayBuffer();
       const outputBytes = await applyBatesNumbering(pdfBytes, params);
@@ -2653,33 +2863,19 @@ export default function StitchCanvas({
         throw new Error("No files found inside the ZIP archive.");
       }
       
-      const spawnedIds = [];
       const outputs = [];
       for (let idx = 0; idx < totalFiles; idx++) {
         const filename = fileKeys[idx];
         const fileEntry = zipContent.files[filename];
         const blob = await fileEntry.async('blob');
-        const fileObj = new File([blob], filename, { type: resolveMimeType(filename, blob.type) });
-        
-        // Spawn output node in a clean 4-column grid layout
-        const col = idx % 4;
-        const row = Math.floor(idx / 4);
-        const outputX = mainFile.x ? mainFile.x + 280 + col * 260 : 300 + col * 260;
-        const outputY = mainFile.y ? mainFile.y + row * 160 : 300 + row * 160;
-        
-        const outputId = createCompletedOutputNode(fileObj.name, outputX, outputY, fileObj, [], []);
-        spawnedIds.push(outputId);
-        outputs.push({ blob, name: fileObj.name });
+        outputs.push({ blob, name: filename });
         
         const pct = Math.round(30 + ((idx + 1) / totalFiles) * 70);
         progressCb(pct);
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise(resolve => setTimeout(resolve, 5));
       }
       
-      speakAnnouncement(`Successfully unzipped ${totalFiles} files.`);
-      showToast(`Successfully extracted ${totalFiles} files!`);
-      
-      return { blob: new Blob([]), name: 'unzipped', outputs, outputIds: spawnedIds };
+      return { blob: mainFile, name: mainFile.name, outputs, outputIds: [] };
     } else if (actionId === 'remove-pages') {
       const indices = (params.pages || '').split(',').flatMap(p => {
         if (p.includes('-')) { const [s,e] = p.split('-').map(Number); return Array.from({length:e-s+1},(_,i)=>s+i-1); }
@@ -2743,6 +2939,20 @@ export default function StitchCanvas({
     if (!op || op.status === 'processing') {
       console.log(`[executeOperator] Aborting early: !op=${!op}, status=${op?.status}`);
       return;
+    }
+
+    // Stitch Canvas Preview Quota Enforcement (10 actions/day for Free Accounts, Unlimited for Pro)
+    if (!isAuthenticated) {
+      openCanvasLimitModal({ isGuest: true, reason: 'account_required' });
+      return;
+    }
+    if (!isPro) {
+      const quota = getCanvasQuota(userEmail, false);
+      if (quota.remaining <= 0) {
+        openCanvasLimitModal({ isGuest: false, reason: 'quota_exhausted', used: quota.used, limit: quota.limit });
+        return;
+      }
+      consumeCanvasQuota(userEmail, false);
     }
 
     // --- Auto-Heal Format Mismatches BEFORE executing ---
@@ -3144,31 +3354,50 @@ export default function StitchCanvas({
           throw new Error("No files found inside the ZIP archive.");
         }
         
+        const hasDownstreamConsumers = operationsRef.current.some(nextOp => nextOp && Array.isArray(nextOp.inputIds) && nextOp.inputIds.includes(op.id));
+        const shouldUnpack = shouldUnpackCanvasCards(hasDownstreamConsumers, totalFiles, MAX_INDIVIDUAL_CANVAS_CARDS);
+        
         const spawnedIds = [];
-        for (let idx = 0; idx < totalFiles; idx++) {
-          const filename = fileKeys[idx];
-          const fileEntry = zipContent.files[filename];
-          
-          // Chunk-by-chunk extraction to keep memory footprint light
-          const blob = await fileEntry.async('blob');
-          const file = new File([blob], filename, { type: resolveMimeType(filename, blob.type) });
-          
-          // Spawn output node in a clean 4-column grid layout
-          const col = idx % 4;
-          const row = Math.floor(idx / 4);
-          const outputX = op.x + 280 + col * 260;
-          const outputY = op.y + row * 160;
-          
-          const outputId = createCompletedOutputNode(file.name, outputX, outputY, file, [], op.ancestry);
-          spawnedIds.push(outputId);
-          generatedOutputs.push({ blob, name: file.name });
-          
-          // Update progress sequentially
-          const pct = Math.round(30 + ((idx + 1) / totalFiles) * 70);
-          progressCb(pct);
-          
-          // Yield to browser main thread to trigger garbage collection and UI paint
-          await new Promise(resolve => setTimeout(resolve, 10));
+        if (shouldUnpack) {
+          for (let idx = 0; idx < totalFiles; idx++) {
+            const filename = fileKeys[idx];
+            const fileEntry = zipContent.files[filename];
+            
+            // Chunk-by-chunk extraction to keep memory footprint light
+            const blob = await fileEntry.async('blob');
+            const file = new File([blob], filename, { type: resolveMimeType(filename, blob.type) });
+            
+            // Spawn output node in a clean 4-column grid layout
+            const col = idx % 4;
+            const row = Math.floor(idx / 4);
+            const outputX = op.x + 280 + col * 260;
+            const outputY = op.y + row * 160;
+            
+            const outputId = createCompletedOutputNode(file.name, outputX, outputY, file, [], op.ancestry);
+            spawnedIds.push(outputId);
+            generatedOutputs.push({ blob, name: file.name });
+            
+            // Update progress sequentially
+            const pct = Math.round(30 + ((idx + 1) / totalFiles) * 70);
+            progressCb(pct);
+            
+            // Yield to browser main thread to trigger garbage collection and UI paint
+            await new Promise(resolve => setTimeout(resolve, 10));
+          }
+        } else {
+          // Large batch (> 5 files) or intermediate unzip:
+          // Keep all extracted items in generatedOutputs for memory-level passing to downstream tools
+          for (let idx = 0; idx < totalFiles; idx++) {
+            const filename = fileKeys[idx];
+            const fileEntry = zipContent.files[filename];
+            const blob = await fileEntry.async('blob');
+            generatedOutputs.push({ blob, name: filename });
+            const pct = Math.round(30 + ((idx + 1) / totalFiles) * 70);
+            progressCb(pct);
+          }
+          const bundleName = `${mainFile.name.replace(/\.[^.]+$/, '')}_bundle.zip`;
+          const bundleId = createCompletedOutputNode(bundleName, op.x + 280, op.y, mainFile, [], op.ancestry);
+          spawnedIds.push(bundleId);
         }
         
         const latestOpsAfterUnzip = operationsRef.current.map(o =>
@@ -3274,7 +3503,7 @@ export default function StitchCanvas({
           // Group 1: PDF-to-PDF Modifiers (compress-pdf, rotate-pdf, ocr-pdf, etc.)
           const isPdfToPdfModifier = [
             'compress-pdf', 'rotate-pdf', 'ocr-pdf', 'add-watermark', 'add-page-numbers',
-            'sign-pdf', 'edit-pdf', 'redact-pdf', 'ai-translator', 'repair-pdf', 'crop-pdf'
+            'sign-pdf', 'edit-pdf', 'redact-pdf', 'repair-pdf', 'crop-pdf'
           ].includes(actionId);
 
           if (isPdfToPdfModifier) {
@@ -3358,12 +3587,24 @@ export default function StitchCanvas({
         let resultBlob;
         if (actionId === 'merge-pdf') {
           const files = itemsForEngine.map(i => i.file);
-          resultBlob = await mergePdfs(files, progressCb);
+          try {
+            console.log(`[runEngine] Running Server Side merge for ${files.length} files...`);
+            resultBlob = await executeServerJob(files[0], 'merge-pdf', { additionalFiles: files.slice(1) }, progressCb);
+          } catch (serverErr) {
+            console.warn(`[runEngine] Server Side merge failed or offline, falling back to client JS:`, serverErr);
+            resultBlob = await mergePdfs(files, progressCb);
+          }
         } else if (actionId === 'compress-pdf') {
           const quality = params.quality || 0.65;
           const scale = quality > 0.75 ? 1.5 : quality < 0.5 ? 0.9 : 1.2;
           const mode = params.mode || 'lossless';
-          resultBlob = await compressPdf(mainFile, { quality, scale, mode }, progressCb);
+          try {
+            console.log(`[runEngine] Running Server Side compress for ${mainFile.name}...`);
+            resultBlob = await executeServerJob(mainFile, 'compress-pdf', params, progressCb);
+          } catch (serverErr) {
+            console.warn(`[runEngine] Server Side compress failed or offline, falling back to client JS:`, serverErr);
+            resultBlob = await compressPdf(mainFile, { quality, scale, mode }, progressCb);
+          }
         } else if (actionId === 'split-pdf') {
           try {
             console.log(`[runEngine] Running Server Side split for ${mainFile.name}...`);
@@ -3395,7 +3636,7 @@ export default function StitchCanvas({
           resultBlob = await docxToPdf(mainFile, progressCb);
         } else if (actionId === 'image-to-pdf') {
           let imageFiles = [];
-          const inputItems = itemsForEngine && itemsForEngine.length > 0 ? itemsForEngine : (files && files.length > 0 ? files : [mainFile]);
+          const inputItems = itemsForEngine && itemsForEngine.length > 0 ? itemsForEngine : [mainFile];
           for (const item of inputItems) {
             const f = item.file || item;
             if (f.name && f.name.toLowerCase().endsWith('.zip')) {
@@ -3446,38 +3687,51 @@ export default function StitchCanvas({
           progressCb(100);
         } else if (actionId === 'rotate-pdf') {
           const angle = params.angle || 90;
-          resultBlob = await rotatePdf(mainFile, angle, progressCb);
+          try {
+            console.log(`[runEngine] Running Server Side rotate for ${mainFile.name}...`);
+            resultBlob = await executeServerJob(mainFile, 'rotate-pdf', { angle }, progressCb);
+          } catch (serverErr) {
+            console.warn(`[runEngine] Server Side rotate failed or offline, falling back to client JS:`, serverErr);
+            resultBlob = await rotatePdf(mainFile, angle, progressCb);
+          }
         } else if (actionId === 'pdf-to-image') {
           const format = params.format || 'png';
-          const scale = params.dpi ? params.dpi / 72 : 2.0;
-          const blobs = [];
-          const names = [];
-          const files = (itemsForEngine || []).map(i => i.file).filter(Boolean);
-          const finalFiles = files.length > 0 ? files : [mainFile];
-          
-          for (let idx = 0; idx < finalFiles.length; idx++) {
-            const file = finalFiles[idx];
-            const fileBase = file.name.replace(/\.[^.]+$/, '');
-            const filePrefix = finalFiles.length > 1 ? `${fileBase}_` : '';
+          const dpi = params.dpi || 150;
+          try {
+            console.log(`[runEngine] Running Server Side PDF-to-image for ${mainFile.name}...`);
+            resultBlob = await executeServerJob(mainFile, 'pdf-to-image', { dpi, format }, progressCb);
+          } catch (serverErr) {
+            console.warn(`[runEngine] Server Side pdf-to-image failed or offline, falling back to client stream:`, serverErr);
+            const scale = params.dpi ? params.dpi / 72 : 2.0;
+            const blobs = [];
+            const names = [];
+            const files = (itemsForEngine || []).map(i => i.file).filter(Boolean);
+            const finalFiles = files.length > 0 ? files : [mainFile];
             
-            const startPct = (idx / finalFiles.length) * 100;
-            const endPct = ((idx + 1) / finalFiles.length) * 100;
-            const subProgressCb = (pct) => {
-              if (progressCb) {
-                const totalPct = startPct + (pct / 100) * (endPct - startPct);
-                progressCb(Math.round(totalPct));
-              }
-            };
-            
-            await pdfToImagesStream(file, { format, quality: 0.9, scale }, ({ name, blob }) => {
-              blobs.push(blob);
-              names.push(`${filePrefix}${name}`);
-            }, subProgressCb);
-          }
+            for (let idx = 0; idx < finalFiles.length; idx++) {
+              const file = finalFiles[idx];
+              const fileBase = file.name.replace(/\.[^.]+$/, '');
+              const filePrefix = finalFiles.length > 1 ? `${fileBase}_` : '';
+              
+              const startPct = (idx / finalFiles.length) * 100;
+              const endPct = ((idx + 1) / finalFiles.length) * 100;
+              const subProgressCb = (pct) => {
+                if (progressCb) {
+                  const totalPct = startPct + (pct / 100) * (endPct - startPct);
+                  progressCb(Math.round(totalPct));
+                }
+              };
+              
+              await pdfToImagesStream(file, { format, quality: 0.9, scale }, ({ name, blob }) => {
+                blobs.push(blob);
+                names.push(`${filePrefix}${name}`);
+              }, subProgressCb);
+            }
 
-          const zip = new JSZip();
-          blobs.forEach((b, idx) => zip.file(names[idx], b));
-          resultBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 9 } });
+            const zip = new JSZip();
+            blobs.forEach((b, idx) => zip.file(names[idx], b));
+            resultBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 9 } });
+          }
         } else if (actionId === 'text-to-pdf') {
           const text = await mainFile.text();
           const fontSize = params.fontSize || 12;
@@ -3486,22 +3740,38 @@ export default function StitchCanvas({
         } else if (actionId === 'add-watermark') {
           const text = params.text || 'CONFIDENTIAL';
           const opacity = params.opacity || 0.5;
-          resultBlob = await addWatermark(mainFile, { text, opacity }, progressCb);
+          try {
+            console.log(`[runEngine] Running Server Side watermark for ${mainFile.name}...`);
+            resultBlob = await executeServerJob(mainFile, 'add-watermark', { text, opacity }, progressCb);
+          } catch (serverErr) {
+            console.warn(`[runEngine] Server Side watermark failed or offline, falling back to client JS:`, serverErr);
+            resultBlob = await addWatermark(mainFile, { text, opacity }, progressCb);
+          }
         } else if (actionId === 'add-page-numbers') {
           const formatStr = params.format || 'Page {n} of {total}';
           const position = params.position || 'bottom-right';
           const startNumber = params.startNumber || 1;
-          resultBlob = await addPageNumbers(mainFile, { 
-            format: formatStr,
-            formatStr, 
-            position, 
-            startNumber,
-            ptopTotalPages: params.ptopTotalPages,
-            ptopPageIndices: params.ptopPageIndices,
-            shrinkToFit: Boolean(params.shrinkToFit),
-            shieldMode: params.shieldMode || 'auto',
-            numberingStyle: params.numberingStyle || 'arabic'
-          }, progressCb);
+          try {
+            console.log(`[runEngine] Running Server Side page numbering for ${mainFile.name}...`);
+            resultBlob = await executeServerJob(mainFile, 'add-page-numbers', { 
+              format: formatStr, 
+              position, 
+              startNumber 
+            }, progressCb);
+          } catch (serverErr) {
+            console.warn(`[runEngine] Server Side page numbering failed or offline, falling back to client JS:`, serverErr);
+            resultBlob = await addPageNumbers(mainFile, { 
+              format: formatStr,
+              formatStr, 
+              position, 
+              startNumber,
+              ptopTotalPages: params.ptopTotalPages,
+              ptopPageIndices: params.ptopPageIndices,
+              shrinkToFit: Boolean(params.shrinkToFit),
+              shieldMode: params.shieldMode || 'auto',
+              numberingStyle: params.numberingStyle || 'arabic'
+            }, progressCb);
+          }
         } else if (actionId === 'bates-numbering') {
           const { applyBatesNumbering } = await import('../engines/pdf/batesNumbering.js');
           const batesBytes = await applyBatesNumbering(mainFile, {
@@ -3538,7 +3808,13 @@ export default function StitchCanvas({
               }
             });
           }
-          resultBlob = await removePages(mainFile, indices, progressCb);
+          try {
+            console.log(`[runEngine] Running Server Side remove-pages for ${mainFile.name}...`);
+            resultBlob = await executeServerJob(mainFile, 'remove-pages', { pages: indices.map(i => i + 1).join(',') }, progressCb);
+          } catch (serverErr) {
+            console.warn(`[runEngine] Server Side remove-pages failed, falling back to client JS:`, serverErr);
+            resultBlob = await removePages(mainFile, indices, progressCb);
+          }
         } else if (actionId === 'extract-pages') {
           const pagesStr = params.pages || '';
           let indices = [];
@@ -3562,7 +3838,13 @@ export default function StitchCanvas({
               }
             });
           }
-          resultBlob = await extractPages(mainFile, indices, progressCb);
+          try {
+            console.log(`[runEngine] Running Server Side extract-pages for ${mainFile.name}...`);
+            resultBlob = await executeServerJob(mainFile, 'extract-pages', { pages: indices.map(i => i + 1).join(',') }, progressCb);
+          } catch (serverErr) {
+            console.warn(`[runEngine] Server Side extract-pages failed, falling back to client JS:`, serverErr);
+            resultBlob = await extractPages(mainFile, indices, progressCb);
+          }
         } else if (actionId === 'organize-pdf') {
           const pageConfigs = params.pageConfigs || [];
           // [FIX] Guard against empty pageConfigs producing a 0-page output PDF silently.
@@ -3579,7 +3861,13 @@ export default function StitchCanvas({
             widthPercent: params.widthPercent ?? (params.bounds?.widthPercent ?? 0.8),
             heightPercent: params.heightPercent ?? (params.bounds?.heightPercent ?? 0.8)
           };
-          resultBlob = await cropPdf(mainFile, bounds, progressCb);
+          try {
+            console.log(`[runEngine] Running Server Side crop for ${mainFile.name}...`);
+            resultBlob = await executeServerJob(mainFile, 'crop-pdf', params, progressCb);
+          } catch (serverErr) {
+            console.warn(`[runEngine] Server Side crop failed or offline, falling back to client JS:`, serverErr);
+            resultBlob = await cropPdf(mainFile, bounds, progressCb);
+          }
         } else if (actionId === 'edit-pdf') {
           const annotations = params.overlays || params.annotations || [];
           resultBlob = await editPdf(mainFile, annotations, progressCb);
@@ -3612,18 +3900,24 @@ export default function StitchCanvas({
           };
           resultBlob = await redactPdf(mainFile, redactParams, progressCb);
         } else if (actionId === 'repair-pdf') {
-          const repairRes = await repairPdf(mainFile, { returnBlobOnly: true }, progressCb);
-          resultBlob = repairRes instanceof Blob ? repairRes : (repairRes.blob || repairRes);
+          try {
+            console.log(`[runEngine] Running Server Side repair for ${mainFile.name}...`);
+            resultBlob = await executeServerJob(mainFile, 'repair-pdf', params, progressCb);
+          } catch (serverErr) {
+            console.warn('[runEngine] Server Side repair failed or offline, falling back to client JS:', serverErr);
+            const repairRes = await repairPdf(mainFile, { returnBlobOnly: true }, progressCb);
+            resultBlob = repairRes instanceof Blob ? repairRes : (repairRes.blob || repairRes);
+          }
         } else if (actionId === 'ocr-pdf') {
           const language = params.language || 'eng';
           try {
-            console.log(`[runEngine] Running Client Side OCR for ${mainFile.name}...`);
-            resultBlob = await ocrPdf(mainFile, { language }, progressCb);
-            console.log(`[runEngine] Client Side OCR completed successfully for ${mainFile.name}`);
-          } catch (clientErr) {
-            console.warn(`[runEngine] Client Side OCR failed, falling back to backend Server Side OCR:`, clientErr);
+            console.log(`[runEngine] Running Server Side OCR for ${mainFile.name}...`);
             resultBlob = await executeServerJob(mainFile, actionId, params, progressCb);
             console.log(`[runEngine] Backend Server Side OCR completed successfully for ${mainFile.name}`);
+          } catch (serverErr) {
+            console.warn(`[runEngine] Server Side OCR failed or offline, falling back to client Side OCR:`, serverErr);
+            resultBlob = await ocrPdf(mainFile, { language }, progressCb);
+            console.log(`[runEngine] Client Side OCR completed successfully for ${mainFile.name}`);
           }
         } else if (actionId === 'un-ocr-pdf') {
           const scale = params.scale || 2.0;
@@ -3674,19 +3968,6 @@ export default function StitchCanvas({
           }
           progressCb(100);
           resultBlob = mainFile;
-        } else if (actionId === 'ai-summarizer') {
-          progressCb(20);
-          try {
-            resultBlob = await executeServerJob(mainFile, 'ai-summarizer', params, progressCb);
-          } catch (serverErr) {
-            console.warn('[runEngine] Server summarization fallback to client extractive summary:', serverErr);
-            const text = mainFile.text ? await mainFile.text() : 'Document content summary';
-            const lines = text.split('\n').filter(l => l.trim().length > 20);
-            const topBullets = lines.slice(0, 5).map(l => `- ${l.trim()}`).join('\n');
-            const summaryMd = `# Executive Summary: ${mainFile.name}\n\n## Key Highlights\n${topBullets || '- Document content extracted and processed.'}\n\n---\n*Generated locally by DocScalar Zero-Cost Intelligence Engine*`;
-            resultBlob = new Blob([summaryMd], { type: 'text/markdown' });
-            progressCb(100);
-          }
         } else if (actionId === 'unzip-file') {
           progressCb(30);
           const zip = new JSZip();
@@ -3699,14 +3980,12 @@ export default function StitchCanvas({
           }
         } else if (actionId === 'pdf-to-word') {
           try {
-            console.log(`[runEngine] Running Client Side PDF to Word for ${mainFile.name}...`);
-            resultBlob = await convertPdfToWord(mainFile, params, progressCb);
-            console.log(`[runEngine] Client Side PDF to Word completed successfully for ${mainFile.name}`);
-          } catch (clientErr) {
-            console.warn(`[runEngine] Client PDF to Word failed, falling back to backend Server Side:`, clientErr);
             resultBlob = await executeServerJob(mainFile, actionId, params, progressCb);
+          } catch (serverErr) {
+            console.warn(`[runEngine] Server PDF to Word failed, falling back to local client engine:`, serverErr);
+            resultBlob = await convertPdfToWord(mainFile, params, progressCb);
           }
-        } else if (['pdf-to-excel', 'pdf-to-powerpoint', 'ai-translator', 'protect-pdf', 'unlock-pdf', 'redact-pdf', 'compare-pdf', 'pdf-to-pdfa', 'url-to-pdf'].includes(actionId)) {
+        } else if (['pdf-to-excel', 'pdf-to-powerpoint', 'protect-pdf', 'unlock-pdf', 'redact-pdf', 'compare-pdf', 'pdf-to-pdfa', 'url-to-pdf'].includes(actionId)) {
           resultBlob = await executeServerJob(mainFile, actionId, params, progressCb);
         } else {
           throw new Error(`Tool "${actionId}" is not yet wired for canvas execution.`);
@@ -3728,8 +4007,6 @@ export default function StitchCanvas({
         if (actionId === 'pdf-to-powerpoint') return `${baseName}.pptx`;
         if (actionId === 'pdf-to-image') return `${baseName}_images.zip`;
         if (actionId === 'pdf-to-pdfa') return `${baseName}_pdfa.pdf`;
-        if (actionId === 'ai-translator') return `${baseName}_translated.pdf`;
-        if (actionId === 'ai-summarizer') return `${baseName}_summary.md`;
         if (actionId === 'bates-numbering') return `${baseName}_bates.pdf`;
         if (actionId === 'add-watermark') return `${baseName}_watermarked.pdf`;
         if (actionId === 'add-page-numbers') return `${baseName}_numbered.pdf`;
@@ -4063,39 +4340,6 @@ export default function StitchCanvas({
         const resultBlob = await runEngineWithPtop(mainFile, finalItems, progressCb);
         console.log(`[executeOperator] runEngine completed for ${actionId}. Output blob size:`, resultBlob?.size);
 
-        let isSplitUnpack = false;
-        let splitOutputIds = [];
-        let splitOutputsList = [];
-
-        if (actionId === 'split-pdf') {
-          try {
-            const zip = new JSZip();
-            const zipContent = await zip.loadAsync(resultBlob);
-            const fileKeys = Object.keys(zipContent.files).filter(name => !zipContent.files[name].dir);
-            const totalFiles = fileKeys.length;
-            if (totalFiles > 0 && totalFiles <= 5) {
-              isSplitUnpack = true;
-              for (let idx = 0; idx < totalFiles; idx++) {
-                const filename = fileKeys[idx];
-                const fileEntry = zipContent.files[filename];
-                const blob = await fileEntry.async('blob');
-                const file = new File([blob], filename, { type: 'application/pdf' });
-                
-                const outputX = op.x + 280;
-                const offset = (idx - (totalFiles - 1) / 2) * 150;
-                const outputY = op.y + offset;
-                
-                const outId = createCompletedOutputNode(file.name, outputX, outputY, file, [], op.ancestry);
-                splitOutputIds.push(outId);
-                splitOutputsList.push({ blob, name: file.name });
-                generatedOutputs.push({ blob, name: file.name });
-              }
-            }
-          } catch (zipErr) {
-            console.warn('[executeOperator] Failed to load/unpack split PDF zip:', zipErr);
-          }
-        }
-
         const baseName = mainFile ? mainFile.name.replace(/\.[^.]+$/, '') : (actionId === 'url-to-pdf' ? 'webpage' : 'qr_code');
         const ext = mainFile ? mainFile.name.split('.').pop() : (actionId === 'url-to-pdf' ? 'pdf' : 'png');
         let outputName = `${baseName}_output.pdf`;
@@ -4111,9 +4355,58 @@ export default function StitchCanvas({
         else if (actionId === 'pdf-to-word') outputName = `${baseName}.docx`;
         else if (actionId === 'pdf-to-excel') outputName = `${baseName}.xlsx`;
         else if (actionId === 'pdf-to-powerpoint') outputName = `${baseName}.pptx`;
-        else if (actionId === 'ai-translator') outputName = `${baseName}_translated.pdf`;
         else if (actionId === 'qr-generator') outputName = 'qrcode.png';
         else if (actionId === 'url-to-pdf') outputName = 'webpage.pdf';
+
+        let isSplitUnpack = false;
+        let splitOutputIds = [];
+        let splitOutputsList = [];
+
+        const hasDownstreamConsumers = operations.some(nextOp => nextOp && Array.isArray(nextOp.inputIds) && nextOp.inputIds.includes(op.id));
+
+        if (actionId === 'split-pdf' || actionId === 'pdf-to-image' || actionId === 'unzip-file') {
+          try {
+            if (resultBlob && (resultBlob.type === 'application/zip' || (outputName && outputName.endsWith('.zip')))) {
+              const zip = new JSZip();
+              const zipContent = await zip.loadAsync(resultBlob);
+              const fileKeys = Object.keys(zipContent.files).filter(name => !zipContent.files[name].dir);
+              const totalFiles = fileKeys.length;
+              
+              const shouldUnpack = shouldUnpackCanvasCards(hasDownstreamConsumers, totalFiles, MAX_INDIVIDUAL_CANVAS_CARDS);
+
+              if (shouldUnpack) {
+                isSplitUnpack = true;
+                for (let idx = 0; idx < totalFiles; idx++) {
+                  const filename = fileKeys[idx];
+                  const fileEntry = zipContent.files[filename];
+                  const blob = await fileEntry.async('blob');
+                  const mime = resolveMimeType(filename, blob.type);
+                  const file = new File([blob], filename, { type: mime });
+                  
+                  const outputX = op.x + 280;
+                  const offset = (idx - (totalFiles - 1) / 2) * 150;
+                  const outputY = op.y + offset;
+                  
+                  const outId = createCompletedOutputNode(file.name, outputX, outputY, file, [], op.ancestry);
+                  splitOutputIds.push(outId);
+                  splitOutputsList.push({ blob, name: file.name });
+                  generatedOutputs.push({ blob, name: file.name });
+                }
+              } else {
+                // Large batch (> 5 files) or intermediate operator: retain all sub-files in generatedOutputs
+                for (let idx = 0; idx < totalFiles; idx++) {
+                  const filename = fileKeys[idx];
+                  const fileEntry = zipContent.files[filename];
+                  const blob = await fileEntry.async('blob');
+                  splitOutputsList.push({ blob, name: filename });
+                  generatedOutputs.push({ blob, name: filename });
+                }
+              }
+            }
+          } catch (zipErr) {
+            console.warn('[executeOperator] Failed to load/unpack zip:', zipErr);
+          }
+        }
 
         let outputId;
         let outputIdsToTrack = [];
@@ -4502,6 +4795,20 @@ export default function StitchCanvas({
     const rawCmd = typeof e === 'string' ? e : (customCmd || commandInput);
     if (!rawCmd || !rawCmd.trim() || isThinking) return;
 
+    // Stitch Canvas Preview Quota Enforcement (10 actions/day for Free Accounts, Unlimited for Pro)
+    if (!isAuthenticated) {
+      openCanvasLimitModal({ isGuest: true, reason: 'account_required' });
+      return;
+    }
+    if (!isPro) {
+      const quota = getCanvasQuota(userEmail, false);
+      if (quota.remaining <= 0) {
+        openCanvasLimitModal({ isGuest: false, reason: 'quota_exhausted', used: quota.used, limit: quota.limit });
+        return;
+      }
+      consumeCanvasQuota(userEmail, false);
+    }
+
     const normalizedCmd = normalizeUserPrompt(rawCmd);
     const cmd = (normalizedCmd || rawCmd).trim();
     setCommandInput('');
@@ -4800,10 +5107,19 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
 
         // Try FastAPI Backend agent-plan (2.5s timeout — cloud LLM fallback or fast heuristic planner)
         try {
+          const activeFiles = Object.values(gState?.nodes || {})
+            .filter(n => n?.data?.file?.name)
+            .map(n => n.data.file.name);
+
           const res = await fetchWithTimeout(`${BACKEND_URL}/api/canvas/agent-plan`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: queryText, graph_state: gState, last_active_nodes: lastActive })
+            body: JSON.stringify({
+              query: queryText,
+              files: activeFiles,
+              graph_state: gState,
+              last_active_nodes: lastActive
+            })
           }, 2500);
           if (res.ok) {
             const data = await res.json();
@@ -5107,7 +5423,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
 
       if (spawnedOps.length === 0 && reusedOps.length === 0) {
         setIsThinking(false);
-        showToast('Intent unrecognized. Try verbs like: merge, compress, split, crop, protect, translate, or unlock.', 'info');
+        showToast('Intent unrecognized. Try verbs like: merge, compress, split, crop, protect, or unlock.', 'info');
         return;
       }
 
@@ -5358,45 +5674,88 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
               else if (aId === 'pdf-to-word') outputName = `${baseName}.docx`;
               else if (aId === 'pdf-to-excel') outputName = `${baseName}.xlsx`;
               else if (aId === 'pdf-to-powerpoint') outputName = `${baseName}.pptx`;
-              else if (aId === 'ai-translator') outputName = `${baseName}_translated.pdf`;
 
               outputsList = [{ blob: resultBlob, name: outputName }];
             }
 
+            const hasDownstreamConsumers = ordered.some(nextOp => nextOp && Array.isArray(nextOp.inputIds) && nextOp.inputIds.includes(op.id))
+              || operations.some(nextOp => nextOp && Array.isArray(nextOp.inputIds) && nextOp.inputIds.includes(op.id));
+
             if (op.toolId === 'split-pdf' || op.toolId === 'pdf-to-image' || op.toolId === 'unzip-file') {
               try {
                 if (engineResult && engineResult.outputs && engineResult.outputs.length > 0 && (!engineResult.outputIds || engineResult.outputIds.length === 0)) {
-                  isSplitUnpack = true;
-                  for (let idx = 0; idx < engineResult.outputs.length; idx++) {
-                    const item = engineResult.outputs[idx];
-                    const mime = resolveMimeType(item.name, item.blob?.type);
-                    const file = new File([item.blob], item.name, { type: mime });
-                    const outId = createCompletedOutputNode(file.name, op.x, op.y, file, allocatedCardPositions, op.ancestry);
-                    splitOutputIds.push(outId);
-                    splitOutputsList.push({ blob: item.blob, name: file.name });
+                  const rawOutputs = engineResult.outputs;
+                  const totalFiles = rawOutputs.length;
+                  const shouldUnpack = shouldUnpackCanvasCards(hasDownstreamConsumers, totalFiles, MAX_INDIVIDUAL_CANVAS_CARDS);
+
+                  if (shouldUnpack) {
+                    isSplitUnpack = true;
+                    for (let idx = 0; idx < totalFiles; idx++) {
+                      const item = rawOutputs[idx];
+                      const mime = resolveMimeType(item.name, item.blob?.type);
+                      const file = new File([item.blob], item.name, { type: mime });
+                      const outId = createCompletedOutputNode(file.name, op.x, op.y, file, allocatedCardPositions, op.ancestry);
+                      splitOutputIds.push(outId);
+                      splitOutputsList.push({ blob: item.blob, name: file.name });
+                    }
+                    outputIdsList = splitOutputIds;
+                    outputsList = splitOutputsList;
+                  } else {
+                    // Intermediate operator optimization or Large batch cap (> 5 files)
+                    // Keep all individual outputs in memory so downstream operators can consume them directly
+                    outputsList = rawOutputs;
+                    // If resultBlob is not already a zip, generate a zip archive
+                    if (!resultBlob || resultBlob.type !== 'application/zip') {
+                      const zip = new JSZip();
+                      rawOutputs.forEach(item => zip.file(item.name, item.blob));
+                      resultBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 9 } });
+                      if (!outputName.endsWith('.zip')) {
+                        const baseName = inputFiles[0]?.name ? inputFiles[0].name.replace(/\.[^.]+$/, '') : 'bundle';
+                        outputName = `${baseName}_outputs.zip`;
+                      }
+                    }
+                    // Spawn at most 1 consolidated collection / zip bundle card
+                    const bundleNodeId = createCompletedOutputNode(outputName, op.x, op.y, resultBlob, allocatedCardPositions, op.ancestry);
+                    outputIdsList = [bundleNodeId];
+                    isSplitUnpack = false;
                   }
-                  outputIdsList = splitOutputIds;
-                  outputsList = splitOutputsList;
                 } else if (resultBlob && (resultBlob.type === 'application/zip' || (outputName && outputName.endsWith('.zip')))) {
                   const zip = new JSZip();
                   const zipContent = await zip.loadAsync(resultBlob);
                   const fileKeys = Object.keys(zipContent.files).filter(name => !zipContent.files[name].dir);
                   const totalFiles = fileKeys.length;
+
                   if (totalFiles > 0) {
-                    isSplitUnpack = true;
+                    const extractedOutputs = [];
                     for (let idx = 0; idx < totalFiles; idx++) {
                       const filename = fileKeys[idx];
                       const fileEntry = zipContent.files[filename];
                       const blob = await fileEntry.async('blob');
-                      const mime = resolveMimeType(filename, blob.type);
-                      const file = new File([blob], filename, { type: mime });
-                      
-                      const outId = createCompletedOutputNode(file.name, op.x, op.y, file, allocatedCardPositions, op.ancestry);
-                      splitOutputIds.push(outId);
-                      splitOutputsList.push({ blob, name: file.name });
+                      extractedOutputs.push({ blob, name: filename });
                     }
-                    outputIdsList = splitOutputIds;
-                    outputsList = splitOutputsList;
+                    outputsList = extractedOutputs;
+
+                    const shouldUnpack = shouldUnpackCanvasCards(hasDownstreamConsumers, totalFiles, MAX_INDIVIDUAL_CANVAS_CARDS);
+
+                    if (shouldUnpack) {
+                      isSplitUnpack = true;
+                      for (let idx = 0; idx < totalFiles; idx++) {
+                        const item = extractedOutputs[idx];
+                        const mime = resolveMimeType(item.name, item.blob?.type);
+                        const file = new File([item.blob], item.name, { type: mime });
+                        const outId = createCompletedOutputNode(file.name, op.x, op.y, file, allocatedCardPositions, op.ancestry);
+                        splitOutputIds.push(outId);
+                        splitOutputsList.push(item);
+                      }
+                      outputIdsList = splitOutputIds;
+                      outputsList = splitOutputsList;
+                    } else {
+                      // Intermediate operator optimization or Large batch cap (> 5 files)
+                      // Spawn at most 1 consolidated collection / zip bundle card
+                      const bundleNodeId = createCompletedOutputNode(outputName, op.x, op.y, resultBlob, allocatedCardPositions, op.ancestry);
+                      outputIdsList = [bundleNodeId];
+                      isSplitUnpack = false;
+                    }
                   }
                 }
               } catch (zipErr) {
@@ -5405,17 +5764,22 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
             }
 
             // Store result for downstream ops in this same pipeline run
-            pipelineOutputs[op.id] = { blob: resultBlob, name: outputName, outputs: outputsList, unpacked: isSplitUnpack, outputIds: outputIdsList };
+            pipelineOutputs[op.id] = { blob: resultBlob, name: outputName, outputs: outputsList, unpacked: isSplitUnpack || (outputsList && outputsList.length > 1), outputIds: outputIdsList };
 
             // Create output node and mark op completed
             let outputNodeId;
             let outputIdsToTrack = [];
-            if (isSplitUnpack || (engineResult && engineResult.outputs && engineResult.outputIds && engineResult.outputIds.length > 0)) {
+            if (outputIdsList && outputIdsList.length > 0) {
               outputNodeId = outputIdsList[outputIdsList.length - 1];
               outputIdsToTrack = outputIdsList;
             } else {
               outputNodeId = createCompletedOutputNode(outputName, op.x, op.y, resultBlob, allocatedCardPositions, op.ancestry);
               outputIdsToTrack = [outputNodeId];
+            }
+
+            // Also map pipelineOutputs by outputNodeId so downstream ops connected to output node find it instantly
+            if (outputNodeId) {
+              pipelineOutputs[outputNodeId] = pipelineOutputs[op.id];
             }
 
             const pInputSize = inputFiles.reduce((acc, f) => acc + (f.size || 0), 0);
@@ -5452,6 +5816,8 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
               showToast(`Unzip skipped (already extracted)`);
             } else if (isSplitUnpack) {
               showToast(`split pdf -> split into ${splitOutputIds.length} files`);
+            } else if (outputsList && outputsList.length > 1) {
+              showToast(`Generated ${outputsList.length} files bundled in ${outputName}`);
             } else {
               showToast(`${aId.replace(/-/g, ' ')} -> ${outputName}`);
             }
@@ -6188,7 +6554,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                 } ${
                   op.toolId.includes('compress') ? 'border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.05)] animate-pulse-slow' :
                   op.toolId.includes('split') || op.toolId.includes('merge') ? 'border-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.05)]' :
-                  op.toolId.includes('ocr') || op.toolId.includes('translate') ? 'border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.05)]' : ''
+                  op.toolId.includes('ocr') ? 'border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.05)]' : ''
                 } ${
                   isCompleted ? 'border-primary bg-primary/5 shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.12)]' : ''
                 } ${
@@ -6396,7 +6762,7 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                     {(() => {
                       const showPageRangeInput = [
                         'compress-pdf', 'rotate-pdf', 'ocr-pdf', 'add-watermark', 'add-page-numbers',
-                        'sign-pdf', 'edit-pdf', 'redact-pdf', 'ai-translator', 'repair-pdf',
+                        'sign-pdf', 'edit-pdf', 'redact-pdf', 'repair-pdf',
                         'pdf-to-word', 'pdf-to-excel', 'pdf-to-powerpoint', 'pdf-to-pdfa'
                       ].includes(op.toolId);
                       if (!showPageRangeInput) return null;
@@ -6894,31 +7260,6 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                       </div>
                     )}
 
-                    {/* 15. AI TRANSLATOR */}
-                    {op.toolId === 'ai-translator' && (
-                      <div className="flex flex-col gap-1 w-full text-[9.5px]">
-                        <label className="text-[9px] font-bold text-on-surface-variant">Target Language:</label>
-                        <select
-                          value={params.target_language || 'Bengali'}
-                          onChange={(e) => updateOperatorParams(op.id, { target_language: e.target.value })}
-                          onPointerDown={(e) => e.stopPropagation()}
-                          className="w-full text-[9.5px] px-2 py-1 rounded bg-surface border border-outline-variant text-on-background focus:outline-none cursor-pointer"
-                        >
-                          <option value="Bengali">Bengali (বাংলা)</option>
-                          <option value="Spanish">Spanish (Español)</option>
-                          <option value="French">French (Français)</option>
-                          <option value="German">German (Deutsch)</option>
-                          <option value="Italian">Italian (Italiano)</option>
-                          <option value="Portuguese">Portuguese (Português)</option>
-                          <option value="Japanese">Japanese (日本語)</option>
-                          <option value="Chinese (Simplified)">Chinese (简体)</option>
-                          <option value="Korean">Korean (한국어)</option>
-                          <option value="Arabic">Arabic (العربية)</option>
-                          <option value="Russian">Russian (Русский)</option>
-                        </select>
-                      </div>
-                    )}
-
                     {/* 16. UNLOCK PDF */}
                     {op.toolId === 'unlock-pdf' && (
                       <div className="flex flex-col gap-1 w-full text-[9px]">
@@ -7371,9 +7712,12 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
             )}
           </div>
 
-          <div className="bg-surface/85 backdrop-blur-md border border-outline-variant/60 shadow-lg px-4 py-1.5 h-10 rounded-xl flex items-center gap-3.5 select-none">
-            <div className="flex items-center gap-2">
+          <div className="bg-surface/85 backdrop-blur-md border border-outline-variant/60 shadow-lg px-3.5 py-1.5 h-10 rounded-xl flex items-center gap-2.5 select-none">
+            <div className="flex items-center gap-1.5">
               <span className="font-bold text-[13px] text-on-background tracking-tight">DocScalar Studio</span>
+              <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[9.5px] font-bold tracking-wider uppercase bg-primary/10 text-primary border border-primary/20 leading-none">
+                Beta
+              </span>
             </div>
             
             <div className="h-4 w-[1px] bg-outline-variant/60" />
@@ -7586,6 +7930,9 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
               onClick={() => {
                 const nextVal = !autoFitViewport;
                 setAutoFitViewport(nextVal);
+                if (nextVal) {
+                  handleFitToView();
+                }
                 showToast(nextVal ? 'Auto-fit viewport enabled' : 'Auto-fit viewport disabled (zoom stays still)', 'info');
               }} 
               className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
@@ -7960,12 +8307,11 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
                     ]
                   },
                   {
-                    category: 'Utilities & AI',
+                    category: 'Utilities',
                     icon: 'construction',
                     items: [
                       { id: 'unzip-file', label: 'Unzip/Expand File' },
-                      { id: 'qr-generator', label: 'QR Generator' },
-                      { id: 'ai-translator', label: 'AI Translator' }
+                      { id: 'qr-generator', label: 'QR Generator' }
                     ]
                   }
                 ].map((catGroup) => (
@@ -8451,6 +8797,8 @@ You must return ONLY a JSON object of this exact format, with no markdown fences
         </div>,
         document.body
       )}
+
+      <GuestLimitModal />
     </div>
   );
 }

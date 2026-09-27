@@ -8,27 +8,26 @@ import {
   useInView,
   animate,
 } from 'framer-motion';
-import { FileType, Image as ImageIcon, Shield, SearchCode, Database, Cpu, Wand2, Grid, FileText, Lock, CreditCard, Workflow, Link2, Zap } from "lucide-react";
+import { FileType, Image as ImageIcon, Shield, SearchCode, Database, Cpu, Grid, FileText, Lock, CreditCard, Workflow } from "lucide-react";
 import { TOOLS } from '../utils/constants';
-import {
-  generateMarianaHtml,
-  generateOliviaHtml,
-  generateJonathanHtml,
-  generateEmmaHtml,
-  generateCharlesHtml,
-  generateKathleenHtml,
-  generateRichardHtml,
-  generateSanchezDarkHtml,
-  generateWilsonLightHtml,
-  generateSanchezMonoHtml,
-  generateSanchezWaveHtml,
-  generateOngBurgundyHtml,
-  generateSchumacherCharcoalHtml,
-  generateZivOliveHtml,
-  generateAdoraDiagonalHtml,
-  generateWilsonMinimalHtml,
-  generateAlvaradoSlateHtml
-} from '../engines/utility/resumeTemplates';
+import { useAuth } from '../context/AuthContext';
+import { generateMarianaHtml } from '../engines/utility/templates/mariana';
+import { generateOliviaHtml } from '../engines/utility/templates/olivia';
+import { generateJonathanHtml } from '../engines/utility/templates/jonathan';
+import { generateEmmaHtml } from '../engines/utility/templates/emma';
+import { generateCharlesHtml } from '../engines/utility/templates/charles';
+import { generateKathleenHtml } from '../engines/utility/templates/kathleen';
+import { generateRichardHtml } from '../engines/utility/templates/richard';
+import { generateSanchezDarkHtml } from '../engines/utility/templates/sanchez_dark';
+import { generateWilsonLightHtml } from '../engines/utility/templates/wilson_light';
+import { generateSanchezMonoHtml } from '../engines/utility/templates/sanchez_mono';
+import { generateSanchezWaveHtml } from '../engines/utility/templates/sanchez_wave';
+import { generateOngBurgundyHtml } from '../engines/utility/templates/ong_burgundy';
+import { generateSchumacherCharcoalHtml } from '../engines/utility/templates/schumacher_charcoal';
+import { generateZivOliveHtml } from '../engines/utility/templates/ziv_olive';
+import { generateAdoraDiagonalHtml } from '../engines/utility/templates/adora_diagonal';
+import { generateWilsonMinimalHtml } from '../engines/utility/templates/wilson_minimal';
+import { generateAlvaradoSlateHtml } from '../engines/utility/templates/alvarado_slate';
 import { StickyStack } from './StickyStack';
 
 const MOCK_RESUME_DATA = {
@@ -324,24 +323,26 @@ function WaveText({ text, className = '' }) {
 
 // 6. InfiniteMarquee — CSS-animation dual-direction infinite scroll
 function InfiniteMarquee({ items, direction = 'left', speed = 30, className = '' }) {
+  const navigate = useNavigate();
   const quadrupled = [...items, ...items, ...items, ...items];
   const cls = direction === 'left' ? 'animate-marquee-left' : 'animate-marquee-right';
   return (
     <div
-      className={`relative flex w-full overflow-hidden group ${className}`}
+      className={`relative flex w-full items-center overflow-hidden py-3.5 group ${className}`}
       style={{
         maskImage: 'linear-gradient(to right, transparent, white 10%, white 90%, transparent)',
         WebkitMaskImage: 'linear-gradient(to right, transparent, white 10%, white 90%, transparent)',
       }}
     >
       <div
-        className={`flex w-fit ${cls} hover:[animation-play-state:paused]`}
+        className={`flex w-fit items-center py-1.5 ${cls} hover:[animation-play-state:paused]`}
         style={{ '--marquee-speed': `${speed}s` }}
       >
         {quadrupled.map((tool, i) => (
           <div
             key={`${tool.id}-${i}`}
-            className="flex-shrink-0 mx-3 sm:mx-4 px-5 py-2.5 border rounded-2xl font-sans text-[12.5px] sm:text-[13.5px] font-semibold tracking-tight whitespace-nowrap shadow-sm cursor-pointer transition-all duration-300 flex items-center gap-2"
+            onClick={() => navigate(tool.path || `/${tool.id}`)}
+            className="flex-shrink-0 mx-3 sm:mx-4 px-5 py-2.5 border rounded-2xl font-sans text-[12.5px] sm:text-[13.5px] font-semibold tracking-tight whitespace-nowrap shadow-sm cursor-pointer transition-all duration-300 flex items-center gap-2 hover:scale-105 active:scale-95"
             style={{
               background: 'var(--bg-glass)',
               borderColor: 'var(--border-subtle)',
@@ -352,11 +353,13 @@ function InfiniteMarquee({ items, direction = 'left', speed = 30, className = ''
               e.currentTarget.style.borderColor = 'var(--color-primary)';
               e.currentTarget.style.color = 'var(--color-primary)';
               e.currentTarget.style.background = 'rgba(var(--color-primary-rgb), 0.05)';
+              e.currentTarget.style.boxShadow = '0 0 16px rgba(var(--color-primary-rgb), 0.25), 0 2px 8px rgba(0, 0, 0, 0.04)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = 'var(--border-subtle)';
               e.currentTarget.style.color = 'var(--text-primary)';
               e.currentTarget.style.background = 'var(--bg-glass)';
+              e.currentTarget.style.boxShadow = '';
             }}
           >
             <span
@@ -367,7 +370,7 @@ function InfiniteMarquee({ items, direction = 'left', speed = 30, className = ''
                     ? 'var(--color-primary)'
                     : tool.category === 'image'
                     ? 'var(--color-accent)'
-                    : tool.category === 'pdf-security' || tool.category === 'pdf-intelligence'
+                    : tool.category === 'pdf-security'
                     ? '#a855f7'
                     : '#3b82f6',
               }}
@@ -640,7 +643,7 @@ const BENTO_FEATURES = [
     id: 'pdf',
     title: 'Everything for Documents',
     subtitle: 'Convert · Edit · Secure · Organize · Analyze',
-    desc: 'Whatever you need to do with a document, DocScalar does it — all locally, instantly, without queues or waiting for a cloud server to wake up.',
+    desc: 'Whatever you need to do with a document, DocScalar does it — instantly, securely, without long queues or complex setups.',
     icon: 'auto_awesome',
     span: 'md:col-span-2',
     accent: 'var(--color-primary)',
@@ -657,20 +660,20 @@ const BENTO_FEATURES = [
     accentRgb: '255,127,28',
   },
   {
-    id: 'ai',
-    title: 'On-Device AI',
-    subtitle: 'Translate · Summarize · Understand',
-    desc: 'AI tools that live on your machine — not in the cloud. Zero API keys. Zero subscriptions. The model caches once, runs forever.',
-    icon: 'psychology',
+    id: 'smart-crop',
+    title: 'Smart Scanning & Cropper',
+    subtitle: 'Detect · Auto-Crop · Enhance',
+    desc: 'Intelligently detect scan borders, eliminate dark photocopy margins, and auto-align physical documents with pixel precision.',
+    icon: 'crop',
     span: 'md:col-span-1',
-    accent: '#a78bfa',
-    accentRgb: '167,139,250',
+    accent: '#06b6d4',
+    accentRgb: '6,182,212',
   },
   {
     id: 'resume',
     title: 'Resume and CV Studio',
     subtitle: 'Design · Preview · Export',
-    desc: 'Create clean professional resumes with live preview, custom photo support, and private local generation.',
+    desc: 'Create clean professional resumes with live preview, custom photo support, and one-click ATS friendly PDF export.',
     icon: 'workspace_premium',
     span: 'md:col-span-1',
     accent: 'var(--color-accent)',
@@ -678,9 +681,9 @@ const BENTO_FEATURES = [
   },
   {
     id: 'privacy',
-    title: 'Your Files. Your Rules.',
-    subtitle: 'Local · Private · Secure',
-    desc: 'Nothing leaves your machine. No server ever sees your content. Start working instantly — no account, no tracking, no compromise.',
+    title: 'Enterprise-Grade Security',
+    subtitle: 'Encrypted · Private · Automatic Purge',
+    desc: 'Encrypted file transfer in transit. Files are processed securely in isolated memory and automatically purged immediately after download.',
     icon: 'shield',
     span: 'md:col-span-2',
     accent: 'var(--color-primary)',
@@ -690,23 +693,23 @@ const BENTO_FEATURES = [
 
 const PRIVACY_CARDS = [
   {
-    icon: 'terminal',
-    title: 'Browser-Native Engines',
-    desc: 'All conversion operations execute inside sandboxed browser threads using compiled local engines running at near-native speed — zero external service calls.',
+    icon: 'lock',
+    title: 'Secure Transit Encryption',
+    desc: 'All operations execute over secure encrypted connections. File streams are processed in transient secure memory and never exposed.',
     accent: 'var(--color-primary)',
     accentRgb: '66,247,97',
   },
   {
-    icon: 'storage',
-    title: 'Local Workspace Storage',
-    desc: "Your documents and queue state are saved as binary objects in your browser's private local storage. Only your device can access this data.",
+    icon: 'timer',
+    title: 'Automatic File Purging',
+    desc: 'Uploaded documents and converted outputs are automatically purged from processing instances immediately upon completion.',
     accent: 'var(--color-accent)',
     accentRgb: '255,127,28',
   },
   {
     icon: 'vpn_lock',
-    title: 'Zero-Log Architecture',
-    desc: 'No analytics are attached to file content. Password operations are processed locally and never retained. Files expire from local cache automatically.',
+    title: 'Zero Content Retention',
+    desc: 'We never store, inspect, or log your document content. What you convert remains 100% private to you.',
     accent: '#a78bfa',
     accentRgb: '167,139,250',
   },
@@ -714,28 +717,28 @@ const PRIVACY_CARDS = [
 
 const FAQ_ITEMS = [
   {
-    q: 'Does DocScalar upload my files to a server?',
-    a: 'No. All standard operations run entirely inside your browser using locally compiled conversion engines. Files never leave your device. For certain heavy-pipeline operations a local server bridge handles processing — never an external cloud.',
+    q: 'How are my files handled during processing?',
+    a: 'DocScalar processes documents securely over encrypted connections. Files are held in transient isolated workers only for the duration of the conversion, after which they are automatically purged. We never store or log your file content.',
   },
   {
     q: 'What is the Studio Canvas workspace?',
-    a: 'The Studio Canvas is a Miro style visual node editor at the /canvas route. You drag document nodes onto a dot grid workspace, draw cable connections to operation nodes, and the built in recursive solver executes your entire pipeline in sequence — all Client Side.',
+    a: 'The Studio Canvas is a visual node-based workspace at the /canvas route. You can drag documents onto the canvas, connect conversion and editing nodes, and execute the entire pipeline with one click.',
   },
   {
     q: 'What are the file size limits per plan?',
-    a: 'Guest users can process files up to 10MB. Free account holders get 100MB per file with 5 queue slots. Pro subscribers get 1GB per file with 50 slots, chunked uploading for 10GB+ files, and On Device AI translation.',
+    a: 'Guest visitors can process files up to 10MB (3 free operations per day). Free registered accounts get 15MB per file with unlimited daily document operations and saved history. Pro subscribers get 1GB file limits, high-concurrency pipelines, unlimited Smart Cropping, and complete studio access.',
   },
   {
-    q: 'How does On Device AI translation work?',
-    a: 'Our AI translator runs a local neural machine translation model downloaded once to your browser cache. It runs on your CPU or GPU with no calls to OpenAI, Anthropic, or any third party API — completely private after the first visit.',
+    q: 'How does the Smart Cropper and scan detection work?',
+    a: 'Our Smart Cropper automatically analyzes document boundaries, detecting dark borders and skewed margins from scanned files and physical pages to give you crisp, clean page framing.',
   },
   {
-    q: 'Can I use DocScalar fully Client Side?',
-    a: 'Yes — after the initial page load. All Client Side tools work with no internet connection. The AI translation model is cached locally after first use, enabling On Device translation on return visits.',
+    q: 'Do I need an account to use DocScalar?',
+    a: 'No. You can start converting and editing files immediately as a guest with full access to standard tools and the Studio Canvas.',
   },
   {
     q: 'Is my content used to train AI models?',
-    a: 'Absolutely not. DocScalar processes everything locally and has no telemetry pipeline attached to document content. Your files and their contents are never seen by our systems.',
+    a: 'No. DocScalar never uses your documents or personal data to train AI models. Processing is private, isolated, and auto-purged.',
   },
 ];
 
@@ -763,6 +766,30 @@ const RESUME_TEMPLATES = [
 function Resume3DCarousel({ templates, navigate }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+
+  // Memoize generated HTML for all carousel templates once to avoid re-running generators on every render
+  const templateHtmlMap = useMemo(() => {
+    const map = {};
+    templates.forEach((tpl) => {
+      const generateHtml = TEMPLATE_FUNCTIONS[tpl.name];
+      if (generateHtml) {
+        try {
+          const customData = {
+            ...MOCK_RESUME_DATA,
+            personalInfo: {
+              ...MOCK_RESUME_DATA.personalInfo,
+              name: tpl.displayName || tpl.name,
+            }
+          };
+          map[tpl.name] = generateHtml(customData);
+        } catch (e) {
+          console.error(e);
+          map[tpl.name] = '';
+        }
+      }
+    });
+    return map;
+  }, [templates]);
 
   const next = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % templates.length);
@@ -824,24 +851,7 @@ function Resume3DCarousel({ templates, navigate }) {
               if (absOffset > 2) return null; // Render only 5 nearest templates
 
               const isCenter = displayOffset === 0;
-
-              // Extract HTML with custom displayName mapped onto the document candidate name
-              const generateHtml = TEMPLATE_FUNCTIONS[tpl.name];
-              let cvHtml = '';
-              if (generateHtml) {
-                try {
-                  const customData = {
-                    ...MOCK_RESUME_DATA,
-                    personalInfo: {
-                      ...MOCK_RESUME_DATA.personalInfo,
-                      name: tpl.displayName || tpl.name,
-                    }
-                  };
-                  cvHtml = generateHtml(customData);
-                } catch (e) {
-                  console.error(e);
-                }
-              }
+              const cvHtml = templateHtmlMap[tpl.name] || '';
 
               return (
                 <motion.div
@@ -871,6 +881,7 @@ function Resume3DCarousel({ templates, navigate }) {
                         <iframe
                           srcDoc={cvHtml}
                           title={tpl.name}
+                          loading="lazy"
                           className="w-full h-full border-0 pointer-events-none select-none bg-white"
                         />
                       </div>
@@ -917,85 +928,209 @@ function Resume3DCarousel({ templates, navigate }) {
   );
 }
 
-// 8. StudioCanvasSection — Exact Match to Original User Canvas Visuals
+// 8. StudioCanvasSection — Real DocScalar Studio Canvas UI & Cinematic Interactive Simulation
 function StudioCanvasSection() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: false, amount: 0.2 });
 
-  const [presetIdx, setPresetIdx] = useState(0);
-  const [stage, setStage] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-
-  const presets = useMemo(() => [
-    {
-      id: 'format-auto-healing',
-      title: 'Format Auto-Healing',
-      input1: { name: 'raw_scan.jpg', size: '1.4 MB', tag: 'JPG', bg: 'bg-orange-500' },
-      input2: { name: 'contract.pdf', size: '2.8 MB', tag: 'PDF', bg: 'bg-rose-500' },
-      op1: { title: 'Auto-Heal Adapter', icon: 'auto_fix_high', param: 'Image -> PDF Auto-Insert', border: 'border-indigo-500', text: 'text-indigo-600 dark:text-indigo-400' },
-      op2: { title: 'Merge & Optimize', icon: 'join_inner', param: 'Multi-Format Pipeline', border: 'border-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' },
-      outputNode: { name: 'healed_pipeline.pdf', size: '1.2 MB', suffix: 'Auto-Healed', tag: 'OUTPUT', bg: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' }
-    },
-    {
-      id: 'type-safe-guard',
-      title: 'Type-Safe Cable Guard',
-      input1: { name: 'annual_report.pdf', size: '4.2 MB', tag: 'PDF', bg: 'bg-rose-500' },
-      input2: { name: 'receipt.png', size: '610 KB', tag: 'PNG', bg: 'bg-emerald-500' },
-      op1: { title: 'MIME Validator', icon: 'verified_user', param: 'Port Type Validation', border: 'border-indigo-500', text: 'text-indigo-600 dark:text-indigo-400' },
-      op2: { title: 'Cycle Guard', icon: 'block', param: 'Loop & Cycle Prevented', border: 'border-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' },
-      outputNode: { name: 'validated_output.pdf', size: '1.1 MB', suffix: 'Type Safe', tag: 'OUTPUT', bg: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' }
-    },
-    {
-      id: 'multibranch-dag',
-      title: 'Multi-Branch DAG Engine',
-      input1: { name: 'master_bundle.pdf', size: '5.1 MB', tag: 'PDF', bg: 'bg-rose-500' },
-      input2: { name: 'appendix.pdf', size: '820 KB', tag: 'PDF', bg: 'bg-rose-500' },
-      op1: { title: 'Recursive DAG', icon: 'account_tree', param: 'Multi-Branch Parallel', border: 'border-indigo-500', text: 'text-indigo-600 dark:text-indigo-400' },
-      op2: { title: 'Fast Processing', icon: 'bolt', param: 'Instant Local Execution', border: 'border-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' },
-      outputNode: { name: 'cascade_result.pdf', size: '1.8 MB', suffix: 'Zero Latency', tag: 'OUTPUT', bg: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' }
+  const handleOpenCanvas = () => {
+    if (isAuthenticated) {
+      navigate('/canvas');
+    } else {
+      navigate('/signup', { state: { from: { pathname: '/canvas' } } });
     }
-  ], []);
-
-  const currentPreset = presets[presetIdx];
-
-  const runSimulation = useCallback(() => {
-    setIsRunning(true);
-    setStage(0);
-
-    const t1 = setTimeout(() => setStage(1), 150);
-    const t2 = setTimeout(() => setStage(2), 600);
-    const t3 = setTimeout(() => setStage(3), 1800);
-    const t4 = setTimeout(() => {
-      setStage(4);
-      setIsRunning(false);
-    }, 2800);
-
-    return () => {
-      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isInView && stage === 0 && !isRunning) {
-      runSimulation();
-    }
-  }, [isInView]);
-
-  const handlePresetSelect = (idx) => {
-    setPresetIdx(idx);
-    setStage(0);
-    setTimeout(() => {
-      setIsRunning(true);
-      setStage(1);
-      setTimeout(() => setStage(2), 500);
-      setTimeout(() => setStage(3), 1600);
-      setTimeout(() => {
-        setStage(4);
-        setIsRunning(false);
-      }, 2500);
-    }, 80);
   };
+
+  // Animation Step States:
+  // 0: Empty Canvas (Upload Card)
+  // 1: Cursor Clicks Upload
+  // 2: OS File Picker Opens & Clicks Open
+  // 3: Files Spawn on Canvas
+  // 4: Camera Zooms In to Bottom Chatbox
+  // 5: Typewriter Prompt Typing
+  // 6: Cursor Clicks Send
+  // 7: Camera Zooms Out (AI Planning)
+  // 8: Operators & Flow Cables Spawn & Process
+  // 9: Pipeline Completed (Output Node Ready)
+  const [step, setStep] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [typedText, setTypedText] = useState('');
+
+  const PROMPT_TARGET = "Merge both documents and compress to under 2MB";
+
+  // Animation Timeline Controller
+  useEffect(() => {
+    if (!isInView || isPaused) return;
+
+    let timeoutId;
+
+    if (step === 0) {
+      setTypedText('');
+      timeoutId = setTimeout(() => setStep(1), 800);
+    } else if (step === 1) {
+      // Cursor glides to Upload button and hovers
+      timeoutId = setTimeout(() => setStep(2), 700);
+    } else if (step === 2) {
+      // Cursor clicks Upload button smoothly
+      timeoutId = setTimeout(() => setStep(3), 350);
+    } else if (step === 3) {
+      // File picker modal opens, cursor glides to Open (2 Files)
+      timeoutId = setTimeout(() => setStep(4), 700);
+    } else if (step === 4) {
+      // Cursor clicks Open (2 Files) smoothly
+      timeoutId = setTimeout(() => setStep(5), 350);
+    } else if (step === 5) {
+      // Files land on canvas with bounce
+      timeoutId = setTimeout(() => setStep(6), 850);
+    } else if (step === 6) {
+      // Camera zooms in, cursor moves to chatbox and clicks to focus
+      timeoutId = setTimeout(() => setStep(7), 750);
+    } else if (step === 7) {
+      // Typewriter effect
+      let charIdx = 0;
+      const typeInterval = setInterval(() => {
+        charIdx++;
+        setTypedText(PROMPT_TARGET.slice(0, charIdx));
+        if (charIdx >= PROMPT_TARGET.length) {
+          clearInterval(typeInterval);
+          timeoutId = setTimeout(() => setStep(8), 400);
+        }
+      }, 35);
+      return () => {
+        clearInterval(typeInterval);
+        clearTimeout(timeoutId);
+      };
+    } else if (step === 8) {
+      // Cursor glides to the Send button
+      timeoutId = setTimeout(() => setStep(9), 650);
+    } else if (step === 9) {
+      // Cursor clicks the Send button smoothly
+      timeoutId = setTimeout(() => {
+        setTypedText(''); // Clear input upon command submission
+        setStep(10);
+      }, 350);
+    } else if (step === 10) {
+      // Camera zooms out + AI planning banner pulses
+      timeoutId = setTimeout(() => setStep(11), 1300);
+    } else if (step === 11) {
+      // Operators and flow cables execute
+      timeoutId = setTimeout(() => setStep(12), 1600);
+    } else if (step === 12) {
+      // Hold result for 4.5 seconds, then loop
+      timeoutId = setTimeout(() => {
+        setStep(0);
+      }, 4500);
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [isInView, step, isPaused]);
+
+  // Restart animation handler
+  const handleRestart = () => {
+    setStep(0);
+    setTypedText('');
+    setIsPaused(false);
+  };
+
+  const canvasViewportRef = useRef(null);
+  const uploadBtnRef = useRef(null);
+  const realFileInputRef = useRef(null);
+  const filePickerBtnRef = useRef(null);
+  const chatInputRef = useRef(null);
+  const sendBtnRef = useRef(null);
+  const downloadBtnRef = useRef(null);
+
+  const handleRealUploadClick = () => {
+    if (realFileInputRef.current) {
+      realFileInputRef.current.click();
+    }
+  };
+
+  const handleRealFileChange = (e) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      if (isAuthenticated) {
+        navigate('/canvas', { state: { initialFiles: Array.from(files) } });
+      } else {
+        navigate('/signup', { state: { from: { pathname: '/canvas' }, initialFiles: Array.from(files) } });
+      }
+    }
+  };
+
+  const [cursorPos, setCursorPos] = useState({ x: '58%', y: '28%' });
+
+  // Clean cursor state mapped per step without distracting floating text badges
+  const cursorMap = useMemo(() => ({
+    0: { clicked: false },
+    1: { clicked: false },
+    2: { clicked: true },
+    3: { clicked: false },
+    4: { clicked: true },
+    5: { clicked: false },
+    6: { clicked: true },
+    7: { clicked: false },
+    8: { clicked: false },
+    9: { clicked: true },
+    10: { clicked: false },
+    11: { clicked: false },
+    12: { clicked: false },
+  }), []);
+
+  const activeCursor = cursorMap[step] || cursorMap[0];
+  const isZoomedIn = step >= 6 && step <= 9;
+
+  // Dynamically track exact button coordinates across responsive screens and camera zoom
+  useEffect(() => {
+    const updatePosition = () => {
+      if (!canvasViewportRef.current) return;
+      const vRect = canvasViewportRef.current.getBoundingClientRect();
+
+      let targetEl = null;
+      if (step === 1 || step === 2) targetEl = uploadBtnRef.current;
+      else if (step === 3 || step === 4) targetEl = filePickerBtnRef.current;
+      else if (step === 6 || step === 7) targetEl = chatInputRef.current;
+      else if (step === 8 || step === 9) targetEl = sendBtnRef.current;
+      else if (step === 12) targetEl = downloadBtnRef.current;
+
+      if (targetEl) {
+        const tRect = targetEl.getBoundingClientRect();
+        // Position cursor tip directly on button center
+        const xPx = `${Math.round(tRect.left - vRect.left + tRect.width / 2)}px`;
+        const yPx = `${Math.round(tRect.top - vRect.top + tRect.height / 2)}px`;
+        setCursorPos(prev => {
+          if (prev.x === xPx && prev.y === yPx) return prev;
+          return { x: xPx, y: yPx };
+        });
+      } else {
+        const fallbacks = {
+          0: { x: '58%', y: '28%' },
+          5: { x: '42%', y: '45%' },
+          10: { x: '72%', y: '50%' },
+          11: { x: '56%', y: '42%' },
+        };
+        const fb = fallbacks[step] || { x: '50%', y: '50%' };
+        setCursorPos(prev => {
+          if (prev.x === fb.x && prev.y === fb.y) return prev;
+          return fb;
+        });
+      }
+    };
+
+    updatePosition();
+    const timers = [
+      setTimeout(updatePosition, 60),
+      setTimeout(updatePosition, 200),
+      setTimeout(updatePosition, 450),
+      setTimeout(updatePosition, 750),
+    ];
+    window.addEventListener('resize', updatePosition);
+    return () => {
+      timers.forEach(t => clearTimeout(t));
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [step, isZoomedIn]);
 
   return (
     <section
@@ -1004,48 +1139,34 @@ function StudioCanvasSection() {
       className="py-20 px-6 sm:px-8 max-w-[1400px] mx-auto"
       style={{ scrollMarginTop: 120 }}
     >
-      <style>{`
-        @keyframes flow-march {
-          to { stroke-dashoffset: -20; }
-        }
-        .animated-pipeline-flow {
-          stroke-dasharray: 6 4;
-          animation: flow-march 1s linear infinite;
-        }
-      `}</style>
-
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
-        {/* ── Left Column: Canvas Superpowers Features List ── */}
+        {/* ── Left Column: Clean Enterprise Highlights (Zero AI Slop) ── */}
         <ScrollReveal className="flex flex-col gap-6 lg:col-span-4 text-left">
-          <div className="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-            CANVAS SUPERPOWERS
-          </div>
-
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-            Design Pipelines Visually
+            Design Document Pipelines Visually
           </h2>
 
           <p className="text-[13px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-            The Studio Canvas lets you drag document nodes, draw Bezier cable connections between operations, and execute the entire chain locally with zero server latency.
+            Orchestrate multistep document operations on an intuitive visual canvas. Connect files to specialized processing tools, build automated pipelines, or trigger workflows with natural language instructions.
           </p>
 
           <ul className="flex flex-col gap-5 my-2">
             {[
-              [Zap, 'Format Auto-Healing', 'Dynamically inserts format converter adapters when wiring incompatible ports.'],
-              [Shield, 'Type-Safe Cable Guard', 'Real-time MIME format validation and cycle loop prevention on drag-wires.'],
-              [Workflow, 'Multi-Branch DAG Engine', 'Recursive execution engine automatically triggers downstream nodes in parallel.'],
-              [Database, 'Auto-Persistent Workbench', 'Graph coordinates, wire connections, and tool settings save locally to IndexedDB.'],
-            ].map(([Icon, title, desc]) => (
+              ['tune', 'Automated Format Alignment', 'Seamlessly bridges document formats between PDF, Word, and Excel without requiring manual conversions.'],
+              ['verified_user', 'Pipeline Validation & Safeguards', 'Ensures type compatibility between tools and prevents configuration errors before operations begin.'],
+              ['account_tree', 'Parallel Workflow Execution', 'Chains multiple operations including merging, OCR, and compression into unified high performance processing pipelines.'],
+              ['sync_saved_locally', 'Browser State Persistence', 'Canvas layouts, document queues, and parameter configurations remain safely saved across your sessions.'],
+            ].map(([icon, title, desc]) => (
               <li key={title} className="flex items-start gap-3 text-left">
                 <div
                   className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
                   style={{
-                    background: 'rgba(99, 102, 241, 0.1)',
+                    background: 'rgba(249, 115, 22, 0.1)',
+                    color: '#f97316',
                   }}
                 >
-                  <Icon className="w-4 h-4 text-indigo-500" />
+                  <span className="material-symbols-outlined text-[16px]">{icon}</span>
                 </div>
                 <div className="flex flex-col gap-0.5">
                   <span className="font-bold text-[13px]" style={{ color: 'var(--text-primary)' }}>{title}</span>
@@ -1056,425 +1177,816 @@ function StudioCanvasSection() {
           </ul>
 
           <motion.button
-            onClick={() => navigate('/canvas')}
+            onClick={handleOpenCanvas}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="self-start flex items-center gap-2 px-6 py-3 rounded-lg text-xs font-bold cursor-pointer border-none select-none shadow-md transition-all duration-300 bg-indigo-600 hover:bg-indigo-700 text-white mt-2"
+            className="self-start flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-bold cursor-pointer border-none select-none shadow-md transition-all duration-300 text-white mt-2"
+            style={{
+              background: '#f97316',
+            }}
           >
             <span>Open Studio Canvas Workspace</span>
             <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
           </motion.button>
         </ScrollReveal>
 
-        {/* ── Right Column: Authentic Clean Canvas Viewport ── */}
+        {/* ── Right Column: Interactive Canvas Cinematic Simulation ── */}
         <ScrollReveal delay={0.15} className="lg:col-span-8 w-full">
           <div
-            className="relative rounded-2xl overflow-hidden shadow-2xl border transition-colors duration-300 bg-white dark:bg-[#0f1115]"
+            className="relative rounded-2xl overflow-hidden shadow-2xl border transition-colors duration-300 bg-white dark:bg-[#0f141c]"
             style={{
               borderColor: 'var(--border-subtle)',
             }}
           >
-            {/* Window Chrome Header */}
+            {/* Real Canvas Window Chrome Header */}
             <div
-              className="px-4 py-3 border-b flex items-center justify-between gap-3 select-none"
-              style={{ borderColor: 'var(--border-subtle)' }}
+              className="px-4 py-2.5 border-b flex items-center justify-between gap-3 select-none"
+              style={{
+                background: 'var(--bg-glass)',
+                borderColor: 'var(--border-subtle)',
+              }}
             >
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
                 <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                <span className="ml-2 text-[10px] font-mono tracking-wider opacity-70 hidden sm:inline-block" style={{ color: 'var(--text-primary)' }}>
+                <span className="ml-2 text-[11px] font-bold tracking-tight opacity-90 hidden sm:inline-block" style={{ color: 'var(--text-primary)' }}>
                   DocScalar Studio Canvas
                 </span>
               </div>
 
-              {/* Workflow Presets Selector */}
-              <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 p-1 rounded-lg border border-black/5 dark:border-white/5">
-                {presets.map((preset, idx) => (
-                  <button
-                    key={preset.id}
-                    onClick={() => handlePresetSelect(idx)}
-                    className={`px-3 py-1 rounded-md text-[10px] font-semibold transition-all cursor-pointer border-none ${
-                      presetIdx === idx
-                        ? 'bg-indigo-600 text-white shadow-sm'
-                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                    }`}
-                  >
-                    {preset.title}
-                  </button>
-                ))}
-              </div>
+              {/* Playback Controls */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsPaused(!isPaused)}
+                  className="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-[#f97316] flex items-center justify-center cursor-pointer transition-colors bg-white/50 dark:bg-slate-900/50"
+                  title={isPaused ? 'Resume Simulation' : 'Pause Simulation'}
+                >
+                  <span className="material-symbols-outlined text-[15px]">{isPaused ? 'play_arrow' : 'pause'}</span>
+                </button>
 
-              {/* Simulation Trigger */}
-              <button
-                onClick={runSimulation}
-                disabled={isRunning}
-                className="flex items-center justify-center w-7 h-7 rounded-lg text-white transition-all shadow-sm cursor-pointer border-none bg-indigo-600 hover:bg-indigo-700"
-                style={{ opacity: isRunning ? 0.6 : 1 }}
-              >
-                <span className="material-symbols-outlined text-[14px]">{isRunning ? 'sync' : 'play_arrow'}</span>
-              </button>
+                <button
+                  onClick={handleRestart}
+                  className="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-[#f97316] flex items-center justify-center cursor-pointer transition-colors bg-white/50 dark:bg-slate-900/50"
+                  title="Restart Simulation"
+                >
+                  <span className="material-symbols-outlined text-[15px]">restart_alt</span>
+                </button>
+              </div>
             </div>
 
-            {/* Canvas Surface with Scaled Vector Graphic Coordinate System (viewBox 0 0 1000 440) */}
-            <div className="relative w-full aspect-[16/9] overflow-hidden">
-              {/* Subtle Dot Grid Layer matching the authentic image */}
+            {/* Canvas Surface with Scaled Dynamic Viewport & Camera Zoom */}
+            <div ref={canvasViewportRef} className="relative w-full aspect-[16/9] min-h-[380px] overflow-hidden">
+              {/* Dot Grid Layer matching real StitchCanvas (.stitch-dot-grid) */}
               <div
-                className="absolute inset-0 pointer-events-none"
+                className="absolute inset-0 pointer-events-none stitch-dot-grid"
                 style={{
-                  backgroundImage: 'radial-gradient(rgba(156, 163, 175, 0.4) 1.2px, transparent 1.2px)',
-                  backgroundSize: '24px 24px',
+                  backgroundPosition: '0px 0px',
                 }}
               />
 
-              {/* Vector SVG Space */}
-              <svg
-                className="absolute inset-0 w-full h-full z-0"
-                viewBox="0 0 1000 440"
-                preserveAspectRatio="xMidYMid meet"
+              {/* CAMERA VIEWPORT WRAPPER: Zooms into chatbox on step 4-6, zooms out on step 7 */}
+              <motion.div
+                animate={{
+                  scale: isZoomedIn ? 1.45 : 1,
+                  y: isZoomedIn ? -32 : 0,
+                }}
+                transition={{
+                  duration: 0.8,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="relative w-full h-full origin-bottom"
               >
-                {/* SVG Connecting Cables */}
-                <g>
-                  {presetIdx === 0 && (
-                    <>
-                      {/* Preset 0: Format Auto-Healing Wiring */}
-                      {/* Cable 1: raw_scan.jpg (Top Left) -> Auto-Heal Adapter (Top Center) */}
-                      <path
-                        d="M 180 140 C 270 140, 270 145, 360 145"
-                        fill="none"
-                        stroke={stage >= 1 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        className={stage >= 1 && stage < 2 ? "animated-pipeline-flow" : ""}
-                      />
-                      {/* Cable 2: Auto-Heal Adapter -> Merge & Optimize */}
-                      <path
-                        d="M 500 145 C 560 145, 560 205, 620 205"
-                        fill="none"
-                        stroke={stage >= 2 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="2"
-                        className={stage >= 2 && stage < 3 ? "animated-pipeline-flow" : ""}
-                      />
-                      {/* Cable 3: contract.pdf (Bottom Left) -> Merge & Optimize */}
-                      <path
-                        d="M 180 300 C 400 300, 450 235, 620 235"
-                        fill="none"
-                        stroke={stage >= 1 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        className={stage >= 1 && stage < 3 ? "animated-pipeline-flow" : ""}
-                      />
-                      {/* Cable 4: Merge & Optimize -> Final Output */}
-                      <path
-                        d="M 760 220 L 830 220"
-                        fill="none"
-                        stroke={stage >= 3 ? "#10b981" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="1.5"
-                        className={stage >= 3 && stage < 4 ? "animated-pipeline-flow" : ""}
-                      />
-                    </>
-                  )}
-
-                  {presetIdx === 1 && (
-                    <>
-                      {/* Preset 1: Type-Safe Cable Guard Wiring */}
-                      {/* Cable 1: Valid PDF -> MIME Validator */}
-                      <path
-                        d="M 180 140 C 270 140, 270 220, 360 220"
-                        fill="none"
-                        stroke={stage >= 1 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        className={stage >= 1 && stage < 2 ? "animated-pipeline-flow" : ""}
-                      />
-                      {/* Cable 2: REJECTED Incompatible MP4 -> Stopped by Cable Guard */}
-                      <path
-                        d="M 180 300 C 240 300, 250 270, 280 270"
-                        fill="none"
-                        stroke="#ef4444"
-                        strokeWidth="2.5"
-                        strokeDasharray="4 4"
-                        strokeLinecap="round"
-                      />
-                      {/* Cable 3: MIME Validator -> Cycle Guard */}
-                      <path
-                        d="M 500 220 L 620 220"
-                        fill="none"
-                        stroke={stage >= 2 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="1.5"
-                        className={stage >= 2 && stage < 3 ? "animated-pipeline-flow" : ""}
-                      />
-                      {/* Cable 4: Cycle Guard -> Output */}
-                      <path
-                        d="M 760 220 L 830 220"
-                        fill="none"
-                        stroke={stage >= 3 ? "#10b981" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="1.5"
-                        className={stage >= 3 && stage < 4 ? "animated-pipeline-flow" : ""}
-                      />
-                    </>
-                  )}
-
-                  {presetIdx === 2 && (
-                    <>
-                      {/* Preset 2: Multi-Branch DAG Engine Wiring */}
-                      {/* Cable 1: Input 1 -> Recursive DAG */}
-                      <path
-                        d="M 180 140 C 270 140, 270 220, 360 220"
-                        fill="none"
-                        stroke={stage >= 1 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                      />
-                      {/* Cable 2: Input 2 -> Recursive DAG */}
-                      <path
-                        d="M 180 300 C 270 300, 270 220, 360 220"
-                        fill="none"
-                        stroke={stage >= 1 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                      />
-                      {/* Branch A: Recursive DAG -> Top WASM Worker 1 */}
-                      <path
-                        d="M 500 220 C 560 220, 560 140, 620 140"
-                        fill="none"
-                        stroke={stage >= 2 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="2"
-                        className={stage >= 2 && stage < 3 ? "animated-pipeline-flow" : ""}
-                      />
-                      {/* Branch B: Recursive DAG -> Bottom WASM Worker 2 */}
-                      <path
-                        d="M 500 220 C 560 220, 560 300, 620 300"
-                        fill="none"
-                        stroke={stage >= 2 ? "#6366f1" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="2"
-                        className={stage >= 2 && stage < 3 ? "animated-pipeline-flow" : ""}
-                      />
-                      {/* Top Worker Output */}
-                      <path
-                        d="M 760 140 L 830 140"
-                        fill="none"
-                        stroke={stage >= 3 ? "#10b981" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="1.5"
-                      />
-                      {/* Bottom Worker Output */}
-                      <path
-                        d="M 760 300 L 830 300"
-                        fill="none"
-                        stroke={stage >= 3 ? "#10b981" : "rgba(156, 163, 175, 0.3)"}
-                        strokeWidth="1.5"
-                      />
-                    </>
-                  )}
-                </g>
-
-                {/* Node Cards */}
-
-                {/* Node 1: Input File 1 */}
-                <foreignObject x="40" y="105" width="140" height="70" className="overflow-visible">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: stage >= 1 ? 1 : 0.7, scale: 1 }}
-                    className="w-full h-full p-2.5 rounded-xl border bg-white dark:bg-[#1a1d24] flex flex-col justify-center shadow-sm select-none"
-                    style={{ borderColor: 'var(--border-subtle)' }}
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className={`px-1.5 py-0.5 rounded flex-shrink-0 flex items-center justify-center font-bold text-[8px] text-white ${currentPreset.input1.bg}`}>
-                        {currentPreset.input1.tag}
-                      </div>
-                      <span className="text-[10px] font-bold truncate" style={{ color: 'var(--text-primary)' }}>
-                        {currentPreset.input1.name}
-                      </span>
-                    </div>
-                    <span className="text-[8px] font-mono opacity-60" style={{ color: 'var(--text-secondary)' }}>
-                      {currentPreset.input1.size}
-                    </span>
-                  </motion.div>
-                </foreignObject>
-
-                {/* Node 2: Input File 2 */}
-                <foreignObject x="40" y="265" width="140" height="70" className="overflow-visible">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: stage >= 1 ? 1 : 0.7, scale: 1 }}
-                    className="w-full h-full p-2.5 rounded-xl border bg-white dark:bg-[#1a1d24] flex flex-col justify-center shadow-sm select-none"
-                    style={{ borderColor: 'var(--border-subtle)' }}
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className={`px-1.5 py-0.5 rounded flex-shrink-0 flex items-center justify-center font-bold text-[8px] text-white ${currentPreset.input2.bg}`}>
-                        {currentPreset.input2.tag}
-                      </div>
-                      <span className="text-[10px] font-bold truncate" style={{ color: 'var(--text-primary)' }}>
-                        {presetIdx === 1 ? 'video_clip.mp4' : currentPreset.input2.name}
-                      </span>
-                    </div>
-                    <span className="text-[8px] font-mono opacity-60" style={{ color: 'var(--text-secondary)' }}>
-                      {presetIdx === 1 ? '18.4 MB' : currentPreset.input2.size}
-                    </span>
-                  </motion.div>
-                </foreignObject>
-
-                {/* Type-Safe Cable Guard Rejected Badge for Preset 1 */}
-                {presetIdx === 1 && (
-                  <foreignObject x="220" y="250" width="125" height="40" className="overflow-visible">
-                    <div className="px-2 py-1 rounded-md bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 font-extrabold text-[8px] flex items-center gap-1 shadow-sm">
-                      <span className="material-symbols-outlined text-[10px]">block</span>
-                      <span>MIME Blocked</span>
-                    </div>
-                  </foreignObject>
-                )}
-
-                {/* Node 3: Operator 1 */}
-                <foreignObject x="360" y={presetIdx === 0 ? 105 : 180} width="140" height="80" className="overflow-visible">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: stage >= 2 ? 1 : 0.6, scale: 1 }}
-                    className={`w-full h-full p-2 rounded-xl border bg-white dark:bg-[#1a1d24] flex flex-col justify-between shadow-sm select-none ${stage === 2 ? currentPreset.op1.border : ''}`}
-                    style={{ borderColor: stage === 2 ? undefined : 'var(--border-subtle)' }}
-                  >
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className={`w-5 h-5 rounded-md bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center ${currentPreset.op1.text}`}>
-                        <span className="material-symbols-outlined text-[12px]">{currentPreset.op1.icon}</span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-bold" style={{ color: 'var(--text-primary)' }}>
-                          {currentPreset.op1.title}
-                        </span>
-                        <span className={`text-[8px] font-mono ${currentPreset.op1.text}`}>
-                          {currentPreset.op1.param}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="w-full flex items-center justify-between px-1 text-[7px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
-                      <span>Status</span>
-                      <span className={stage === 2 ? "text-indigo-500 animate-pulse font-bold" : stage > 2 ? "text-emerald-500 font-bold" : ""}>
-                        {stage === 2 ? "RUNNING" : stage > 2 ? "DONE" : "-"}
-                      </span>
-                    </div>
-                  </motion.div>
-                </foreignObject>
-
-                {/* Node 4: Operator 2 */}
-                <foreignObject x="620" y={presetIdx === 2 ? 105 : 180} width="140" height="80" className="overflow-visible">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: stage >= 3 ? 1 : 0.6, scale: 1 }}
-                    className={`w-full h-full p-2 rounded-xl border bg-white dark:bg-[#1a1d24] flex flex-col justify-between shadow-sm select-none ${stage === 3 ? currentPreset.op2.border : ''}`}
-                    style={{ borderColor: stage === 3 ? undefined : 'var(--border-subtle)' }}
-                  >
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className={`w-5 h-5 rounded-md bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center ${currentPreset.op2.text}`}>
-                        <span className="material-symbols-outlined text-[12px]">{currentPreset.op2.icon}</span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-bold" style={{ color: 'var(--text-primary)' }}>
-                          {currentPreset.op2.title}
-                        </span>
-                        <span className={`text-[8px] font-mono ${currentPreset.op2.text}`}>
-                          {currentPreset.op2.param}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="w-full flex items-center justify-between px-1 text-[7px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
-                      <span>Status</span>
-                      <span className={stage === 3 ? "text-emerald-500 animate-pulse font-bold" : stage > 3 ? "text-emerald-500 font-bold" : ""}>
-                        {stage === 3 ? "RUNNING" : stage > 3 ? "DONE" : "READY"}
-                      </span>
-                    </div>
-                  </motion.div>
-                </foreignObject>
-
-                {/* Optional Second Parallel Worker for Multi-Branch DAG (Preset 2) */}
-                {presetIdx === 2 && (
-                  <foreignObject x="620" y="265" width="140" height="80" className="overflow-visible">
+                {/* 1. Empty State Card (Visible on Step 0, 1, 2) matching StitchCanvas.jsx:7108 */}
+                <AnimatePresence>
+                  {step < 3 && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: stage >= 3 ? 1 : 0.6, scale: 1 }}
-                      className={`w-full h-full p-2 rounded-xl border bg-white dark:bg-[#1a1d24] flex flex-col justify-between shadow-sm select-none ${stage === 3 ? 'border-emerald-500' : ''}`}
-                      style={{ borderColor: stage === 3 ? undefined : 'var(--border-subtle)' }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.3 } }}
+                      className="absolute inset-0 flex items-center justify-center p-4 pointer-events-none z-10"
                     >
-                      <div className="flex items-center gap-2 mt-1">
-                        <div className="w-5 h-5 rounded-md bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
-                          <span className="material-symbols-outlined text-[12px]">description</span>
+                      <div className="w-[320px] rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-[#161c28]/90 backdrop-blur-md p-5 text-center flex flex-col items-center justify-center gap-2.5 shadow-xl pointer-events-auto select-none">
+                        <div className="w-10 h-10 rounded-xl bg-[#f97316]/10 flex items-center justify-center text-[#f97316] flex-shrink-0">
+                          <span className="material-symbols-outlined text-[22px]">upload_file</span>
                         </div>
-                        <div className="flex flex-col">
-                          <span className="text-[10px] font-bold" style={{ color: 'var(--text-primary)' }}>
-                            Extract Text
-                          </span>
-                          <span className="text-[8px] font-mono text-emerald-600">
-                            Parallel Branch 2
-                          </span>
+                        <div>
+                          <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100">Your Workspace Canvas is empty</h4>
+                          <p className="text-[9.5px] text-slate-500 dark:text-slate-400 mt-0.5 leading-normal font-medium">
+                            Drop documents anywhere on the grid or click below to start.
+                          </p>
+                        </div>
+                        <motion.button
+                          ref={uploadBtnRef}
+                          onClick={handleRealUploadClick}
+                          animate={{
+                            scale: step === 2 ? 0.98 : 1,
+                            backgroundColor: step === 2 ? '#ea580c' : '#f97316',
+                            boxShadow: step === 2
+                              ? '0 1px 4px rgba(249, 115, 22, 0.3)'
+                              : '0 2px 8px rgba(249, 115, 22, 0.2)',
+                          }}
+                          transition={{ duration: 0.15, ease: 'easeOut' }}
+                          className="relative px-4 py-2 rounded-xl font-bold text-[11px] shadow-sm text-white transition-colors cursor-pointer mt-1 select-none"
+                        >
+                          <span>Upload Documents</span>
+                        </motion.button>
+                        <input
+                          ref={realFileInputRef}
+                          type="file"
+                          multiple
+                          accept=".pdf,.docx,.xlsx,.pptx,.txt"
+                          className="hidden"
+                          onChange={handleRealFileChange}
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* 2. Authentic Windows 11 Desktop Open Dialog (Visible on Step 3 & 4) */}
+                <AnimatePresence>
+                  {(step === 3 || step === 4) && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.96, y: 10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.96, y: -8, transition: { duration: 0.2 } }}
+                      className="absolute inset-0 z-30 flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-3 pointer-events-none"
+                    >
+                      <div className="w-[620px] max-w-[98%] rounded-lg bg-[#191919] border border-[#2d2d2d] shadow-2xl overflow-hidden flex flex-col pointer-events-auto select-none font-sans text-[#e5e5e5]">
+                        {/* Windows 11 Title Bar */}
+                        <div className="h-8 px-2.5 bg-[#202020] border-b border-[#2d2d2d] flex items-center justify-between select-none">
+                          <div className="flex items-center gap-2">
+                            {/* Authentic Chrome Logo SVG */}
+                            <svg width="15" height="15" viewBox="0 0 48 48" className="shrink-0" fill="none">
+                              <path fill="#4CAF50" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"/>
+                              <path fill="#FBC02D" d="M43.911,22.428L24.524,24l-6.495,11.25L4.542,28.847C7.625,37.801,15.772,44,24,44 c11.045,0,20-8.955,20-20C44,23.47,43.969,22.944,43.911,22.428z"/>
+                              <path fill="#E53935" d="M4.542,28.847L18.029,24l6.495-11.25L42.234,14.65C38.65,8.196,31.825,4,24,4 C12.955,4,4,12.955,4,24C4,25.662,4.204,27.276,4.542,28.847z"/>
+                              <path fill="#FBC02D" d="M43.911,22.428C43.32,15.545,38.65,9.657,32.32,6.973L24.524,24l5.657,9.799 C36.938,32.793,42.541,28.21,43.911,22.428z"/>
+                              <path fill="#E53935" d="M32.32,6.973C29.835,5.064,27.026,4,24,4C14.735,4,6.916,10.334,4.542,18.847L18.029,24 l6.495-11.25L32.32,6.973z"/>
+                              <circle cx="24" cy="24" r="10" fill="#FFFFFF"/>
+                              <circle cx="24" cy="24" r="7.5" fill="#1976D2"/>
+                            </svg>
+                            <span className="text-[12px] font-normal text-white">Open</span>
+                          </div>
+                          <div className="flex items-center h-full text-[#cccccc]">
+                            <div className="w-11 h-8 flex items-center justify-center hover:bg-white/[0.08] transition-colors cursor-default" title="Minimize">
+                              <svg width="10" height="1" viewBox="0 0 10 1"><rect width="10" height="1" fill="currentColor" /></svg>
+                            </div>
+                            <div className="w-11 h-8 flex items-center justify-center hover:bg-white/[0.08] transition-colors cursor-default" title="Maximize">
+                              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1"><rect x="0.5" y="0.5" width="9" height="9" /></svg>
+                            </div>
+                            <div className="w-11 h-8 flex items-center justify-center hover:bg-[#c42b1c] hover:text-white transition-colors cursor-default" title="Close">
+                              <svg width="10" height="10" viewBox="0 0 10 10" stroke="currentColor" strokeWidth="1.2"><path d="M1 1L9 9M9 1L1 9" /></svg>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Navigation & Address Bar */}
+                        <div className="px-2.5 py-1.5 bg-[#202020] border-b border-[#2d2d2d] flex items-center gap-2 text-[11px]">
+                          <div className="flex items-center text-[#cccccc] gap-0.5">
+                            <div className="w-6 h-6 rounded flex items-center justify-center hover:bg-white/[0.08] cursor-default">
+                              <span className="material-symbols-outlined text-[15px]">arrow_back</span>
+                            </div>
+                            <div className="w-6 h-6 rounded flex items-center justify-center text-[#555555] cursor-default">
+                              <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
+                            </div>
+                            <div className="w-6 h-6 rounded flex items-center justify-center hover:bg-white/[0.08] cursor-default">
+                              <span className="material-symbols-outlined text-[15px]">arrow_upward</span>
+                            </div>
+                          </div>
+                          {/* Breadcrumb Path Pill */}
+                          <div className="flex-1 h-6 px-2 rounded bg-[#2b2b2b] border border-[#383838] flex items-center justify-between text-[#cccccc] text-[10.5px]">
+                            <div className="flex items-center gap-1.5">
+                              <span className="material-symbols-outlined text-[13px] text-amber-400">folder</span>
+                              <span className="text-[#666666]">›</span>
+                              <span className="hover:text-white cursor-default">Downloads</span>
+                              <span className="text-[#666666]">›</span>
+                              <span className="text-white font-medium flex items-center gap-1 hover:bg-white/[0.06] px-1 py-0.5 rounded cursor-default">
+                                Documents
+                                <span className="text-[7.5px] text-[#888888]">▾</span>
+                              </span>
+                            </div>
+                            <div className="w-4 h-4 rounded flex items-center justify-center hover:bg-white/[0.08] cursor-default">
+                              <span className="material-symbols-outlined text-[11px] text-[#888888] hover:text-white">refresh</span>
+                            </div>
+                          </div>
+                          {/* Search Box */}
+                          <div className="w-40 h-6 px-2 rounded bg-[#2b2b2b] border border-[#383838] flex items-center justify-between text-[#888888] text-[10px]">
+                            <div className="flex items-center gap-1">
+                              <span className="material-symbols-outlined text-[12px] opacity-70">search</span>
+                              <span className="opacity-60 truncate">Search Documents</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Secondary Command Bar */}
+                        <div className="h-6 px-2.5 bg-[#1e1e1e] border-b border-[#2a2a2a] flex items-center justify-between text-[10px] text-[#cccccc]">
+                          <div className="flex items-center gap-2">
+                            <div className="px-1.5 py-0.5 rounded hover:bg-white/[0.08] cursor-default flex items-center gap-1">
+                              <span>Organize</span>
+                              <span className="text-[8px] text-[#888888]">▾</span>
+                            </div>
+                            <div className="px-1.5 py-0.5 rounded hover:bg-white/[0.08] cursor-default flex items-center gap-1">
+                              <span>New folder</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 text-[#888888]">
+                            <span className="material-symbols-outlined text-[12px] hover:text-white cursor-default">view_list</span>
+                            <span className="material-symbols-outlined text-[12px] hover:text-white cursor-default">preview</span>
+                            <span className="material-symbols-outlined text-[12px] hover:text-white cursor-default">help</span>
+                          </div>
+                        </div>
+
+                        {/* Windows 11 Two-Pane Explorer Body */}
+                        <div className="flex h-[175px] overflow-hidden bg-[#191919]">
+                          {/* Left Navigation Tree (Sidebar) */}
+                          <div className="w-[145px] shrink-0 bg-[#1e1e1e] border-r border-[#2d2d2d] py-1.5 px-1 flex flex-col gap-0.5 text-[10px] text-[#cccccc] overflow-y-auto">
+                            <div className="px-1 text-[9px] font-semibold text-[#888888] flex items-center gap-1">
+                              <span>▾</span>
+                              <span className="truncate">Tanvir Personal</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded hover:bg-[#2b2b2b] text-[#aaaaaa] cursor-default">
+                              <span className="material-symbols-outlined text-[12px] text-blue-400">desktop_windows</span>
+                              <span>Desktop</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded hover:bg-[#2b2b2b] text-[#aaaaaa] cursor-default">
+                              <span className="material-symbols-outlined text-[12px] text-teal-400">download</span>
+                              <span>Downloads</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/[0.08] text-white font-medium cursor-default">
+                              <span className="material-symbols-outlined text-[12px] text-amber-400">folder</span>
+                              <span>Documents</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded hover:bg-[#2b2b2b] text-[#aaaaaa] cursor-default">
+                              <span className="material-symbols-outlined text-[12px] text-blue-400">image</span>
+                              <span>Pictures</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded hover:bg-[#2b2b2b] text-[#aaaaaa] cursor-default">
+                              <span className="material-symbols-outlined text-[12px] text-pink-400">music_note</span>
+                              <span>Music</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded hover:bg-[#2b2b2b] text-[#aaaaaa] cursor-default">
+                              <span className="material-symbols-outlined text-[12px] text-purple-400">movie</span>
+                              <span>Videos</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded hover:bg-[#2b2b2b] text-[#aaaaaa] cursor-default">
+                              <span className="material-symbols-outlined text-[12px] text-amber-400">folder</span>
+                              <span>ocr data</span>
+                            </div>
+                            <div className="px-1 pt-1 text-[9px] font-semibold text-[#888888] flex items-center gap-1">
+                              <span>▸</span>
+                              <span className="truncate">This PC</span>
+                            </div>
+                          </div>
+
+                          {/* Right Main File List */}
+                          <div className="flex-1 flex flex-col min-w-0 bg-[#191919]">
+                            {/* Column Headers */}
+                            <div className="grid grid-cols-12 px-2.5 py-1 bg-[#1e1e1e] border-b border-[#2d2d2d] text-[8.5px] text-[#888888] font-normal select-none">
+                              <div className="col-span-5">Name</div>
+                              <div className="col-span-3">Date modified</div>
+                              <div className="col-span-2">Type</div>
+                              <div className="col-span-2 text-right">Size</div>
+                            </div>
+                            {/* File Rows with Windows 11 Grouping */}
+                            <div className="flex-1 overflow-y-auto p-1 flex flex-col gap-0.5 text-[9.5px]">
+                              {/* Group: Yesterday */}
+                              <div className="px-1.5 pt-0.5 pb-0 text-[8.5px] text-[#888888] font-semibold flex items-center gap-1">
+                                <span>▾</span> <span>Yesterday</span>
+                              </div>
+
+                              {/* Row 1: Selected PDF */}
+                              <div className="grid grid-cols-12 px-2 py-1 rounded bg-white/[0.09] border border-white/[0.15] text-white font-medium items-center">
+                                <div className="col-span-5 flex items-center gap-1.5 truncate">
+                                  <span className="w-3.5 h-3.5 rounded bg-red-600 text-white font-bold text-[6.5px] flex items-center justify-center shrink-0">PDF</span>
+                                  <span className="truncate">annual_report_2024.pdf</span>
+                                </div>
+                                <div className="col-span-3 text-[#aaaaaa] text-[8.5px]">9/19/2026 11:09 AM</div>
+                                <div className="col-span-2 text-[#aaaaaa] text-[8.5px] truncate">Chrome PDF Docu...</div>
+                                <div className="col-span-2 text-right text-[#aaaaaa] text-[8.5px]">4,210 KB</div>
+                              </div>
+
+                              {/* Row 2: Selected DOCX */}
+                              <div className="grid grid-cols-12 px-2 py-1 rounded bg-white/[0.09] border border-white/[0.15] text-white font-medium items-center">
+                                <div className="col-span-5 flex items-center gap-1.5 truncate">
+                                  <span className="w-3.5 h-3.5 rounded bg-blue-600 text-white font-bold text-[6.5px] flex items-center justify-center shrink-0">W</span>
+                                  <span className="truncate">appendix_tables.docx</span>
+                                </div>
+                                <div className="col-span-3 text-[#aaaaaa] text-[8.5px]">9/19/2026 11:09 AM</div>
+                                <div className="col-span-2 text-[#aaaaaa] text-[8.5px] truncate">Microsoft Word Doc...</div>
+                                <div className="col-span-2 text-right text-[#aaaaaa] text-[8.5px]">1,840 KB</div>
+                              </div>
+
+                              {/* Row 3: Unselected DOCX */}
+                              <div className="grid grid-cols-12 px-2 py-0.5 rounded text-[#cccccc] hover:bg-[#252525] items-center">
+                                <div className="col-span-5 flex items-center gap-1.5 truncate">
+                                  <span className="w-3.5 h-3.5 rounded bg-blue-600/80 text-white font-bold text-[6.5px] flex items-center justify-center shrink-0">W</span>
+                                  <span className="truncate">readme.docx</span>
+                                </div>
+                                <div className="col-span-3 text-[#888888] text-[8.5px]">9/19/2026 10:42 AM</div>
+                                <div className="col-span-2 text-[#888888] text-[8.5px] truncate">Microsoft Word Doc...</div>
+                                <div className="col-span-2 text-right text-[#888888] text-[8.5px]">662 KB</div>
+                              </div>
+
+                              {/* Group: Earlier this year */}
+                              <div className="px-1.5 pt-1 pb-0 text-[8.5px] text-[#888888] font-semibold flex items-center gap-1">
+                                <span>▾</span> <span>Earlier this year</span>
+                              </div>
+
+                              {/* Row 4: Unselected PDF */}
+                              <div className="grid grid-cols-12 px-2 py-0.5 rounded text-[#cccccc] hover:bg-[#252525] items-center">
+                                <div className="col-span-5 flex items-center gap-1.5 truncate">
+                                  <span className="w-3.5 h-3.5 rounded bg-red-600/80 text-white font-bold text-[6.5px] flex items-center justify-center shrink-0">PDF</span>
+                                  <span className="truncate">ocr_test_handwritten.pdf</span>
+                                </div>
+                                <div className="col-span-3 text-[#888888] text-[8.5px]">6/28/2026 9:51 AM</div>
+                                <div className="col-span-2 text-[#888888] text-[8.5px] truncate">Chrome PDF Docu...</div>
+                                <div className="col-span-2 text-right text-[#888888] text-[8.5px]">2,851 KB</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Windows 11 Bottom Dialog Controls Bar */}
+                        <div className="px-3 py-2 bg-[#202020] border-t border-[#2d2d2d] flex flex-col gap-1.5 text-[10px] relative">
+                          {/* File Name Row */}
+                          <div className="flex items-center gap-2">
+                            <span className="w-16 text-[#cccccc] text-right shrink-0 text-[10px]">File name:</span>
+                            <div className="flex-1 h-5 px-2 bg-[#2b2b2b] border border-[#3d3d3d] rounded text-white text-[9.5px] flex items-center justify-between truncate">
+                              <span className="truncate">"annual_report_2024.pdf" "appendix_tables.docx"</span>
+                              <span className="text-[8px] text-[#888888] shrink-0 ml-1">▾</span>
+                            </div>
+                            <div className="w-40 h-5 px-2 bg-[#2b2b2b] border border-[#3d3d3d] rounded text-[#cccccc] text-[9.5px] flex items-center justify-between shrink-0">
+                              <span className="truncate">Custom Files (*.pdf;*.docx)</span>
+                              <span className="text-[8px] text-[#888888]">▾</span>
+                            </div>
+                          </div>
+
+                          {/* Action Buttons Row */}
+                          <div className="flex items-center justify-end gap-2 pt-0.5">
+                            {/* Split Open Button */}
+                            <motion.button
+                              ref={filePickerBtnRef}
+                              animate={{
+                                scale: step === 4 ? 0.98 : 1,
+                                backgroundColor: step === 4 ? '#ea580c' : '#333333',
+                                borderColor: step === 4 ? '#ea580c' : '#4d4d4d',
+                              }}
+                              transition={{ duration: 0.15, ease: 'easeOut' }}
+                              className="h-6 rounded bg-[#333333] border border-[#4d4d4d] flex items-center overflow-hidden cursor-pointer shadow-2xs hover:bg-[#3d3d3d]"
+                            >
+                              <span className="px-3.5 h-full flex items-center justify-center text-white font-medium text-[10.5px]">
+                                <span>Open</span>
+                              </span>
+                              <div className="w-[1px] h-3.5 bg-[#4d4d4d]" />
+                              <span className="px-1.5 h-full flex items-center justify-center text-[8px] text-[#aaaaaa] hover:bg-white/10">
+                                ▾
+                              </span>
+                            </motion.button>
+                            <button
+                              type="button"
+                              className="h-6 px-3.5 rounded bg-[#2b2b2b] border border-[#3d3d3d] text-[#cccccc] text-[10.5px] hover:bg-[#333333] cursor-default font-medium"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+
+                          {/* Window Corner Resize Grip */}
+                          <svg width="8" height="8" viewBox="0 0 8 8" className="absolute bottom-1 right-1 opacity-30 pointer-events-none">
+                            <circle cx="6.5" cy="1.5" r="0.6" fill="#cccccc" />
+                            <circle cx="6.5" cy="4" r="0.6" fill="#cccccc" />
+                            <circle cx="6.5" cy="6.5" r="0.6" fill="#cccccc" />
+                            <circle cx="4" cy="4" r="0.6" fill="#cccccc" />
+                            <circle cx="4" cy="6.5" r="0.6" fill="#cccccc" />
+                            <circle cx="1.5" cy="6.5" r="0.6" fill="#cccccc" />
+                          </svg>
                         </div>
                       </div>
-                      <div className="w-full flex items-center justify-between px-1 text-[7px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
-                        <span>Status</span>
-                        <span className={stage === 3 ? "text-emerald-500 animate-pulse font-bold" : stage > 3 ? "text-emerald-500 font-bold" : "READY"}>
-                          {stage === 3 ? "RUNNING" : stage > 3 ? "DONE" : "READY"}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* 3. Vector SVG Cables Layer (Spawns on Step 8 & 9) */}
+                <svg
+                  className="absolute inset-0 w-full h-full z-0 pointer-events-none"
+                  viewBox="0 0 1140 420"
+                  preserveAspectRatio="xMidYMid meet"
+                >
+                  <g>
+                    {/* Cable 1: Node 1 -> Merge PDF */}
+                    {step >= 11 && (
+                      <path
+                        d="M 250 110 C 305 110, 305 188, 360 188"
+                        fill="none"
+                        stroke="#f97316"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        className={step === 11 ? "stitch-cable-active" : ""}
+                      />
+                    )}
+                    {/* Cable 2: Node 2 -> Merge PDF */}
+                    {step >= 11 && (
+                      <path
+                        d="M 250 270 C 305 270, 305 188, 360 188"
+                        fill="none"
+                        stroke="#f97316"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        className={step === 11 ? "stitch-cable-active" : ""}
+                      />
+                    )}
+                    {/* Cable 3: Merge PDF -> Compress PDF */}
+                    {step >= 11 && (
+                      <path
+                        d="M 520 188 L 590 188"
+                        fill="none"
+                        stroke="#f97316"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        className={step === 11 ? "stitch-cable-active" : ""}
+                      />
+                    )}
+                    {/* Cable 4: Compress PDF -> Output Node */}
+                    {step >= 12 && (
+                      <path
+                        d="M 750 188 L 830 188"
+                        fill="none"
+                        stroke="#f97316"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      />
+                    )}
+
+                    {/* Port Terminal Connection Anchors (Wired directly to cable endpoints) */}
+                    {step >= 5 && (
+                      <>
+                        {/* Node 1 Output Port Terminal */}
+                        <circle cx="250" cy="110" r="5" fill="#f97316" stroke="#ffffff" strokeWidth="1.5" />
+                        {/* Node 2 Output Port Terminal */}
+                        <circle cx="250" cy="270" r="5" fill="#f97316" stroke="#ffffff" strokeWidth="1.5" />
+                      </>
+                    )}
+                    {step >= 11 && (
+                      <>
+                        {/* Merge PDF Input Port */}
+                        <circle cx="360" cy="188" r="5" fill="#64748b" stroke="#ffffff" strokeWidth="1.5" />
+                        {/* Merge PDF Output Port */}
+                        <circle cx="520" cy="188" r="5" fill="#f97316" stroke="#ffffff" strokeWidth="1.5" />
+                        {/* Compress PDF Input Port */}
+                        <circle cx="590" cy="188" r="5" fill="#64748b" stroke="#ffffff" strokeWidth="1.5" />
+                        {/* Compress PDF Output Port */}
+                        <circle cx="750" cy="188" r="5" fill="#f97316" stroke="#ffffff" strokeWidth="1.5" />
+                      </>
+                    )}
+                    {step >= 12 && (
+                      <>
+                        {/* Output Node Input Port */}
+                        <circle cx="830" cy="188" r="5" fill="#f97316" stroke="#ffffff" strokeWidth="1.5" />
+                      </>
+                    )}
+                  </g>
+
+                  {/* Document Node 1 (Placed on Step 5+) */}
+                  {step >= 5 && (
+                    <foreignObject x="30" y="78" width="220" height="64" className="overflow-visible">
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9, x: -20 }}
+                        animate={{ opacity: 1, scale: 1, x: 0 }}
+                        style={{ width: '220px', height: '64px' }}
+                        className="relative w-full h-full rounded-2xl select-none stitch-node flex flex-col justify-center cursor-pointer z-20 transition-all duration-200"
+                      >
+                        {/* Ordinal Badge #1 */}
+                        <div className="absolute -top-2.5 -left-2.5 z-40 flex items-center justify-center pointer-events-none">
+                          <span
+                            className="rounded-full flex items-center justify-center font-black text-[10px] select-none border"
+                            style={{
+                              width: '22px',
+                              height: '22px',
+                              backgroundColor: 'rgba(249, 115, 22, 0.15)',
+                              borderColor: '#f97316',
+                              color: '#f97316',
+                              boxShadow: '0 2px 8px rgba(249, 115, 22, 0.22)',
+                              borderWidth: '1.5px',
+                            }}
+                          >
+                            1
+                          </span>
+                        </div>
+                        {/* Output Port Dot */}
+                        <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#f97316] border border-white dark:border-[#111827] shadow-sm z-30" />
+
+                        {/* Card Body */}
+                        <div className="flex items-center gap-3 px-3 py-2 min-w-0">
+                          <div className="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center font-bold text-[10px] shadow-sm select-none bg-red-600 text-white">
+                            PDF
+                          </div>
+                          <div className="flex flex-col min-w-0 flex-grow text-left">
+                            <span className="text-[11px] font-bold text-slate-900 dark:text-slate-100 truncate leading-normal">
+                              annual_report_2024.pdf
+                            </span>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className="text-[9px] text-slate-500 dark:text-slate-400 font-medium">4.2 MB</span>
+                            </div>
+                          </div>
+                          <div className="w-5 h-5 rounded-md text-slate-400 hover:text-[#f97316] flex items-center justify-center flex-shrink-0 mr-1 opacity-60">
+                            <span className="material-symbols-outlined text-[13px]">visibility</span>
+                          </div>
+                          <div className="w-5 h-5 rounded-md text-slate-400 hover:text-red-500 flex items-center justify-center flex-shrink-0 opacity-60">
+                            <span className="material-symbols-outlined text-[13px]">delete</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </foreignObject>
+                  )}
+
+                  {/* Document Node 2 (Placed on Step 5+) */}
+                  {step >= 5 && (
+                    <foreignObject x="30" y="238" width="220" height="64" className="overflow-visible">
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9, x: -20 }}
+                        animate={{ opacity: 1, scale: 1, x: 0 }}
+                        style={{ width: '220px', height: '64px' }}
+                        className="relative w-full h-full rounded-2xl select-none stitch-node flex flex-col justify-center cursor-pointer z-20 transition-all duration-200"
+                      >
+                        {/* Ordinal Badge #2 */}
+                        <div className="absolute -top-2.5 -left-2.5 z-40 flex items-center justify-center pointer-events-none">
+                          <span
+                            className="rounded-full flex items-center justify-center font-black text-[10px] select-none border"
+                            style={{
+                              width: '22px',
+                              height: '22px',
+                              backgroundColor: 'rgba(249, 115, 22, 0.15)',
+                              borderColor: '#f97316',
+                              color: '#f97316',
+                              boxShadow: '0 2px 8px rgba(249, 115, 22, 0.22)',
+                              borderWidth: '1.5px',
+                            }}
+                          >
+                            2
+                          </span>
+                        </div>
+                        {/* Output Port Dot */}
+                        <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#f97316] border border-white dark:border-[#111827] shadow-sm z-30" />
+
+                        {/* Card Body */}
+                        <div className="flex items-center gap-3 px-3 py-2 min-w-0">
+                          <div className="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center font-bold text-[10px] shadow-sm select-none bg-blue-600 text-white">
+                            W
+                          </div>
+                          <div className="flex flex-col min-w-0 flex-grow text-left">
+                            <span className="text-[11px] font-bold text-slate-900 dark:text-slate-100 truncate leading-normal">
+                              appendix_tables.docx
+                            </span>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className="text-[9px] text-slate-500 dark:text-slate-400 font-medium">1.8 MB</span>
+                            </div>
+                          </div>
+                          <div className="w-5 h-5 rounded-md text-slate-400 hover:text-[#f97316] flex items-center justify-center flex-shrink-0 mr-1 opacity-60">
+                            <span className="material-symbols-outlined text-[13px]">visibility</span>
+                          </div>
+                          <div className="w-5 h-5 rounded-md text-slate-400 hover:text-red-500 flex items-center justify-center flex-shrink-0 opacity-60">
+                            <span className="material-symbols-outlined text-[13px]">delete</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </foreignObject>
+                  )}
+
+                  {/* Operator 1: Merge PDF (Spawns on Step 11+) */}
+                  {step >= 11 && (
+                    <foreignObject x="360" y="140" width="160" height="96" className="overflow-visible">
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.85, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        className={`relative w-[160px] rounded-xl select-none stitch-node flex flex-col p-3 items-center justify-center text-center cursor-pointer z-20 transition-all duration-200 ${
+                          step === 11
+                            ? 'border-[#f97316] shadow-[0_0_20px_rgba(249,115,22,0.25)]'
+                            : 'border-[#f97316] bg-[#f97316]/5 shadow-[0_0_20px_rgba(249,115,22,0.12)]'
+                        }`}
+                      >
+                        {/* Floating Timer Badge */}
+                        {step === 11 && (
+                          <div className="absolute -top-7 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-bold shadow-md bg-[#f97316] text-white animate-pulse">
+                            <span className="material-symbols-outlined text-[11px] animate-spin">progress_activity</span>
+                            <span>0.2s</span>
+                          </div>
+                        )}
+                        <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-slate-400 dark:bg-slate-600 border border-white dark:border-[#111827] shadow-sm z-30" />
+                        <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#f97316] border border-white dark:border-[#111827] shadow-sm z-30" />
+
+                        <div className="w-8 h-8 rounded-full bg-[#f97316]/10 flex items-center justify-center mb-1 text-[#f97316] flex-shrink-0">
+                          <span className="material-symbols-outlined text-[18px]">join_inner</span>
+                        </div>
+                        <h4 className="text-[11px] font-bold text-slate-900 dark:text-slate-100 capitalize">
+                          Merge PDF
+                        </h4>
+                        <span className="text-[8px] font-mono text-[#f97316] font-bold mt-0.5 select-none">
+                          {step === 11 ? 'MERGING...' : 'COMPLETED'}
+                        </span>
+                      </motion.div>
+                    </foreignObject>
+                  )}
+
+                  {/* Operator 2: Compress PDF (Spawns on Step 11+) */}
+                  {step >= 11 && (
+                    <foreignObject x="590" y="140" width="160" height="96" className="overflow-visible">
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.85, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        className={`relative w-[160px] rounded-xl select-none stitch-node flex flex-col p-3 items-center justify-center text-center cursor-pointer z-20 transition-all duration-200 ${
+                          step === 11
+                            ? 'border-[#f97316] shadow-[0_0_20px_rgba(249,115,22,0.25)]'
+                            : 'border-[#f97316] bg-[#f97316]/5 shadow-[0_0_20px_rgba(249,115,22,0.12)]'
+                        }`}
+                      >
+                        {/* Floating Timer Badge */}
+                        {step === 11 && (
+                          <div className="absolute -top-7 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-bold shadow-md bg-[#f97316] text-white animate-pulse">
+                            <span className="material-symbols-outlined text-[11px] animate-spin">progress_activity</span>
+                            <span>0.4s</span>
+                          </div>
+                        )}
+                        <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-slate-400 dark:bg-slate-600 border border-white dark:border-[#111827] shadow-sm z-30" />
+                        <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#f97316] border border-white dark:border-[#111827] shadow-sm z-30" />
+
+                        <div className="w-8 h-8 rounded-full bg-[#f97316]/10 flex items-center justify-center mb-1 text-[#f97316] flex-shrink-0">
+                          <span className="material-symbols-outlined text-[18px]">compress</span>
+                        </div>
+                        <h4 className="text-[11px] font-bold text-slate-900 dark:text-slate-100 capitalize">
+                          Compress PDF
+                        </h4>
+                        <span className="text-[8px] font-mono text-[#f97316] font-bold mt-0.5 select-none">
+                          {step === 11 ? 'OPTIMIZING...' : 'COMPLETED'}
+                        </span>
+                      </motion.div>
+                    </foreignObject>
+                  )}
+
+                  {/* Output Node (Appears on Step 12) */}
+                  {step >= 12 && (
+                    <foreignObject x="830" y="132" width="220" height="112" className="overflow-visible">
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9, x: 20 }}
+                        animate={{ opacity: 1, scale: 1, x: 0 }}
+                        className="relative w-[220px] rounded-2xl select-none stitch-node flex flex-col cursor-pointer z-20 transition-all duration-200"
+                      >
+                        {/* Ordinal Badge #3 */}
+                        <div className="absolute -top-2.5 -left-2.5 z-40 flex items-center justify-center pointer-events-none">
+                          <span
+                            className="rounded-full flex items-center justify-center font-black text-[10px] select-none border"
+                            style={{
+                              width: '22px',
+                              height: '22px',
+                              backgroundColor: 'rgba(249, 115, 22, 0.08)',
+                              borderColor: 'rgba(249, 115, 22, 0.5)',
+                              color: '#f97316',
+                              boxShadow: '0 1px 4px rgba(249, 115, 22, 0.12)',
+                              borderWidth: '1.5px',
+                            }}
+                          >
+                            3
+                          </span>
+                        </div>
+                        <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#f97316] border border-white dark:border-[#111827] shadow-sm z-30" />
+                        <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#f97316] border border-white dark:border-[#111827] shadow-sm z-30" />
+
+                        {/* Card Body */}
+                        <div className="flex items-center gap-3 p-3 min-w-0">
+                          <div className="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center font-bold text-[10px] shadow-sm select-none bg-red-600 text-white">
+                            PDF
+                          </div>
+                          <div className="flex flex-col min-w-0 flex-grow text-left">
+                            <span className="text-[11px] font-bold text-slate-900 dark:text-slate-100 truncate leading-normal">
+                              annual_report_merged_compressed.pdf
+                            </span>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className="text-[9px] text-slate-500 dark:text-slate-400 font-medium">1.4 MB</span>
+                              <span className="text-[7.5px] font-extrabold bg-[#f97316]/10 border border-[#f97316]/20 text-[#f97316] px-1 py-0.5 rounded leading-none">
+                                -76%
+                              </span>
+                            </div>
+                          </div>
+                          <div className="w-5 h-5 rounded-md text-slate-400 hover:text-[#f97316] flex items-center justify-center flex-shrink-0 mr-1 opacity-60">
+                            <span className="material-symbols-outlined text-[13px]">visibility</span>
+                          </div>
+                          <div className="w-5 h-5 rounded-md text-slate-400 hover:text-red-500 flex items-center justify-center flex-shrink-0 opacity-60">
+                            <span className="material-symbols-outlined text-[13px]">delete</span>
+                          </div>
+                        </div>
+
+                        {/* Dynamic Action Download Section */}
+                        <div className="px-3 pb-3 border-t border-slate-200/60 dark:border-slate-800/60 pt-2 flex flex-col gap-1.5">
+                          <motion.button
+                            ref={downloadBtnRef}
+                            animate={{
+                              scale: step === 12 ? 1.02 : 1,
+                              borderColor: step === 12 ? '#f97316' : undefined,
+                              color: step === 12 ? '#f97316' : undefined,
+                              boxShadow: step === 12 ? '0 1px 4px rgba(249, 115, 22, 0.15)' : 'none',
+                            }}
+                            transition={{ duration: 0.15 }}
+                            className="w-full py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 text-[10px] font-bold transition-all bg-slate-100/60 dark:bg-slate-800/60 text-slate-800 dark:text-slate-200 flex items-center justify-center gap-1 cursor-pointer shadow-sm select-none"
+                          >
+                            <span className="material-symbols-outlined text-[12px]">download</span>
+                            <span>Download</span>
+                          </motion.button>
+                        </div>
+                      </motion.div>
+                    </foreignObject>
+                  )}
+                </svg>
+
+                {/* 4. AI Planning Thinking Overlay (Visible during Step 10) */}
+                <AnimatePresence>
+                  {step === 10 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none"
+                    >
+                      <div className="px-4 py-2.5 rounded-2xl bg-white/95 dark:bg-[#161c28]/95 border border-[#f97316]/30 shadow-2xl flex items-center gap-2.5">
+                        <span className="material-symbols-outlined text-[16px] text-[#f97316] animate-spin">progress_activity</span>
+                        <span className="text-[11px] font-bold text-slate-800 dark:text-slate-100 font-mono">
+                          Planning DAG: Merge PDF → Compress PDF...
                         </span>
                       </div>
                     </motion.div>
-                  </foreignObject>
-                )}
+                  )}
+                </AnimatePresence>
 
-                {/* Node 5: Output */}
-                <foreignObject x="830" y={presetIdx === 2 ? 105 : 180} width="100" height="80" className="overflow-visible">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: stage >= 4 ? 1 : 0.4, scale: 1 }}
-                    className={`w-full h-full p-2.5 rounded-xl border flex flex-col justify-center shadow-sm select-none ${currentPreset.outputNode.bg}`}
+                {/* 5. Bottom Stitch Chat Command Input Bar matching StitchCanvas.jsx:7164 */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 w-full max-w-[560px] px-3">
+                  <div
+                    className={`relative w-full rounded-2xl glass-widget border shadow-xl p-2 flex items-center gap-2 transition-all duration-300 ${
+                      isZoomedIn
+                        ? 'border-[#f97316] shadow-[0_0_24px_rgba(249,115,22,0.25)]'
+                        : 'border-slate-200/80 dark:border-slate-800/80'
+                    }`}
                   >
-                    <div className="flex flex-col text-left gap-0.5">
-                      <span className="text-[7px] font-black uppercase tracking-widest opacity-80">{currentPreset.outputNode.tag}</span>
-                      <span className="text-[9px] font-bold truncate">
-                        {currentPreset.outputNode.name}
-                      </span>
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[16px]">terminal</span>
                     </div>
-                    <div className="flex items-center gap-1 mt-2 text-[7px] font-mono opacity-80">
-                      <span>{currentPreset.outputNode.size}</span>
-                      <span>{currentPreset.outputNode.suffix}</span>
-                    </div>
-                  </motion.div>
-                </foreignObject>
-
-                {/* Second Output for Parallel Branching (Preset 2) */}
-                {presetIdx === 2 && (
-                  <foreignObject x="830" y="265" width="100" height="80" className="overflow-visible">
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: stage >= 4 ? 1 : 0.4, scale: 1 }}
-                      className="w-full h-full p-2.5 rounded-xl border flex flex-col justify-center shadow-sm select-none bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
+                    <div
+                      ref={chatInputRef}
+                      className="flex-1 text-[11px] font-semibold text-slate-800 dark:text-slate-100 flex items-center overflow-hidden min-h-[22px]"
                     >
-                      <div className="flex flex-col text-left gap-0.5">
-                        <span className="text-[7px] font-black uppercase tracking-widest opacity-80">TEXT</span>
-                        <span className="text-[9px] font-bold truncate">
-                          extracted.txt
+                      {typedText ? (
+                        <span>
+                          {typedText}
+                          {step === 7 && <span className="inline-block w-1.5 h-3.5 bg-[#f97316] ml-0.5 animate-pulse" />}
                         </span>
-                      </div>
-                      <div className="flex items-center gap-1 mt-2 text-[7px] font-mono opacity-80">
-                        <span>42 KB</span>
-                        <span>Parallel</span>
-                      </div>
-                    </motion.div>
-                  </foreignObject>
-                )}
-              </svg>
+                      ) : (
+                        <span className="text-slate-400 dark:text-slate-500 text-[10.5px]">
+                          Describe workflow, e.g. 'Merge both files and compress'...
+                        </span>
+                      )}
+                    </div>
+                    <motion.button
+                      ref={sendBtnRef}
+                      animate={{
+                        scale: step === 9 ? 0.96 : 1,
+                        backgroundColor: step === 9 ? '#ea580c' : '#f97316',
+                        boxShadow: step === 9
+                          ? '0 1px 4px rgba(249, 115, 22, 0.3)'
+                          : '0 2px 8px rgba(249, 115, 22, 0.25)',
+                      }}
+                      transition={{ duration: 0.15, ease: 'easeOut' }}
+                      className="relative w-8 h-8 rounded-xl text-white flex items-center justify-center shadow-sm flex-shrink-0 cursor-pointer select-none"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">arrow_upward</span>
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* 6. Realistic Animated Virtual Cursor */}
+              <motion.div
+                animate={{
+                  left: cursorPos.x,
+                  top: cursorPos.y,
+                  scale: activeCursor.clicked ? 0.95 : 1,
+                }}
+                transition={{
+                  duration: 0.65,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="absolute pointer-events-none z-50 -translate-x-1 -translate-y-1"
+              >
+                {/* SVG Pointer Arrow */}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="drop-shadow-md">
+                  <path
+                    d="M4.5 2.5L19.5 12L12 14.5L8.5 21.5L4.5 2.5Z"
+                    fill="#0f172a"
+                    stroke="#ffffff"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </motion.div>
             </div>
 
-            {/* Bottom Status Bar */}
-            <div
-              className="px-4 py-1.5 border-t flex items-center justify-between text-[9px] font-mono"
-              style={{
-                background: 'var(--bg-glass)',
-                borderColor: 'var(--border-subtle)',
-                color: 'var(--text-secondary)',
-              }}
-            >
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                <span>Client-Side Execution Engine (Web Workers)</span>
-              </div>
-              <span className="text-emerald-500 font-bold">0 Server Logs</span>
-            </div>
           </div>
         </ScrollReveal>
 
@@ -1505,8 +2017,8 @@ export default function LandingPage({
 
   const NAV_SECTIONS = [
     { name: 'Engine', id: 'tools', icon: Cpu },
-    { name: 'Motion', id: 'canvas', icon: Wand2 },
     { name: 'Features', id: 'features', icon: Grid },
+    { name: 'Studio Canvas', id: 'canvas', icon: Workflow },
     { name: 'CV Studio', id: 'resume', icon: FileText },
     { name: 'Privacy', id: 'privacy', icon: Lock },
     { name: 'Pricing', id: 'pricing', icon: CreditCard },
@@ -1568,7 +2080,7 @@ export default function LandingPage({
             className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-[-0.03em] leading-[1.1]"
           >
             <span className="block">Work on your <FlipWords words={FLIP_WORDS} /></span>
-            <span className="block" style={{ color: 'var(--text-primary)' }}>privately, in your browser</span>
+            <span className="block" style={{ color: 'var(--text-primary)' }}>faster and more securely</span>
           </motion.h1>
 
           {/* Typewriter subheading */}
@@ -1580,7 +2092,7 @@ export default function LandingPage({
             style={{ color: 'var(--text-secondary)' }}
           >
             <TypewriterEffect
-              text="DocScalar runs 38+ document tools, a visual Studio Canvas, and an On Device AI translator — all inside your browser. Files never leave your machine."
+              text="DocScalar delivers 38+ professional document tools, a visual Studio Canvas, and intelligent AI processing — fast, encrypted, and production-ready."
               speed={18}
               delay={700}
             />
@@ -1598,7 +2110,7 @@ export default function LandingPage({
             </MovingBorder>
 
             <motion.button
-              onClick={() => navigate('/canvas')}
+              onClick={() => navigate(isAuthenticated ? '/canvas' : '/signup', { state: { from: { pathname: '/canvas' } } })}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="flex items-center gap-2.5 px-6 py-3 rounded-2xl text-sm font-bold cursor-pointer select-none transition-all duration-300"
@@ -1629,7 +2141,7 @@ export default function LandingPage({
             transition={{ delay: 1.1 }}
             className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 pt-6 mt-2 w-full max-w-xl"
           >
-            {[['38+', 'Local Tools'], ['∞', 'Possibilities'], ['100%', 'Local First'], ['0', 'Server Logs']].map(([val, lbl]) => (
+            {[['38+', 'Doc Tools'], ['∞', 'Possibilities'], ['100%', 'Encrypted'], ['0s', 'Queue Latency']].map(([val, lbl]) => (
               <div key={lbl} className="text-center">
                 <div className="text-2xl font-black" style={{ color: 'var(--color-primary)' }}>{val}</div>
                 <div className="text-[10px] font-bold uppercase tracking-widest mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{lbl}</div>
@@ -1830,10 +2342,10 @@ export default function LandingPage({
       >
         <ScrollReveal className="max-w-7xl mx-auto px-4 mb-16 text-center">
           <h2 className="text-3xl md:text-5xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>
-            38+ Local Engines
+            38+ Document Tools
           </h2>
           <p className="max-w-2xl mx-auto leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-            Process your documents securely on-device with our high-performance suite of tools. No data leaves your machine.
+            Process and convert your documents securely with our high-performance suite of tools. Fully encrypted and instant.
           </p>
         </ScrollReveal>
 
@@ -1863,9 +2375,9 @@ export default function LandingPage({
       >
         <ScrollReveal className="text-center mb-14">
           <p className="text-[11px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--color-primary)' }}>How it works</p>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Built for Privacy by Design</h2>
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Built for Security by Design</h2>
           <p className="text-sm mt-3 max-w-lg mx-auto" style={{ color: 'var(--text-secondary)' }}>
-            Every layer of DocScalar is engineered to process data locally, leaving no trace behind.
+            Every layer of DocScalar is engineered to process data securely, leaving no trace behind.
           </p>
         </ScrollReveal>
 
@@ -1906,7 +2418,7 @@ export default function LandingPage({
             Templates That Get You Hired
           </h2>
           <p className="text-sm mt-3 max-w-lg mx-auto leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-            Stunning, recruiter-ready designs with live preview, custom photo cropping, and one-click PDF export — all completely Local Compute. More templates added regularly.
+            Stunning, recruiter-ready designs with live preview, custom photo cropping, and one-click ATS-friendly PDF export. More templates added regularly.
           </p>
         </ScrollReveal>
 
@@ -1934,7 +2446,7 @@ export default function LandingPage({
         <ScrollReveal className="text-center mb-12">
           <p className="text-[11px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--color-primary)' }}>Pricing</p>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Simple. Transparent. Fair.</h2>
-          <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>Every plan includes 100% Local First processing.</p>
+          <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>Every plan includes high performance encrypted processing.</p>
 
           {/* Billing toggle */}
           <div className="flex items-center justify-center gap-3 mt-6">
@@ -1983,7 +2495,7 @@ export default function LandingPage({
               period: 'No account needed',
               accent: 'var(--border-medium)',
               accentRgb: '60,75,58',
-              features: ['10MB file limit', '1 active slot', 'Core PDF & image tools', 'QR code generator', 'URL to PDF'],
+              features: ['10MB file limit', '3 free ops / day', 'All 41 PDF & image tools', 'QR code generator', 'URL to PDF'],
               cta: { label: 'Try as Guest', route: '/', primary: false },
               pro: false,
             },
@@ -1993,7 +2505,7 @@ export default function LandingPage({
               period: 'Forever free',
               accent: 'var(--color-accent)',
               accentRgb: '255,127,28',
-              features: ['100MB file limit', '5 queue slots', 'Workspace history', 'All PDF tools', '3 CV Templates'],
+              features: ['15MB file limit', 'Unlimited daily operations', '10 Daily Canvas actions', 'All 41 tools', 'Workspace history'],
               cta: { label: 'Create Account', route: '/signup', primary: false },
               pro: false,
             },
@@ -2003,7 +2515,7 @@ export default function LandingPage({
               period: billing === 'monthly' ? '/ month' : '/ month · billed yearly',
               accent: 'var(--color-primary)',
               accentRgb: '66,247,97',
-              features: ['1GB file limit', '50 queue slots', 'Chunked 10GB+ uploads', 'On Device AI Translator', '17 CV Templates', 'Secure e-Signatures'],
+              features: ['1GB file limit', '50 queue slots', 'Chunked 10GB+ uploads', 'AI Document Suite', '17 CV Templates', 'Secure e-Signatures'],
               cta: { label: 'Go Pro', route: '/pricing', primary: true },
               pro: true,
             },

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Crop, Maximize } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../../../utils/pdfConfig';
+import { releaseCanvas, safeDestroyPdf, safeCancelRenderTask } from '../../../utils/canvasLifecycle';
 
 export default function CropStudio({ file, params, onChange, nlpOp }) {
   const [pdfDocument, setPdfDocument] = useState(null);
@@ -23,6 +25,13 @@ export default function CropStudio({ file, params, onChange, nlpOp }) {
   const pdfCanvasRef = useRef(null);
   const overlayRef = useRef(null);
 
+  // Teardown canvas memory on unmount
+  useEffect(() => {
+    return () => {
+      releaseCanvas(pdfCanvasRef.current);
+    };
+  }, []);
+
   // Load PDF
   useEffect(() => {
     let active = true;
@@ -31,10 +40,11 @@ export default function CropStudio({ file, params, onChange, nlpOp }) {
     const loadPdf = async () => {
       try {
         setLoading(true);
+        setPdfDocument(null);
         const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await loadPdfDocument(arrayBuffer).promise;
         if (!active) {
-          pdf.destroy();
+          safeDestroyPdf(pdf);
           return;
         }
         loadedPdf = pdf;
@@ -51,7 +61,7 @@ export default function CropStudio({ file, params, onChange, nlpOp }) {
 
     return () => {
       active = false;
-      if (loadedPdf) loadedPdf.destroy();
+      safeDestroyPdf(loadedPdf);
     };
   }, [file]);
 
@@ -59,9 +69,14 @@ export default function CropStudio({ file, params, onChange, nlpOp }) {
   useEffect(() => {
     if (!pdfDocument) return;
 
+    let renderTask = null;
+    let cancelled = false;
+
     const renderPage = async () => {
       try {
         const page = await pdfDocument.getPage(activePageIndex + 1);
+        if (cancelled) return;
+
         const canvas = pdfCanvasRef.current;
         if (!canvas) return;
 
@@ -70,13 +85,21 @@ export default function CropStudio({ file, params, onChange, nlpOp }) {
         canvas.height = viewport.height;
 
         const ctx = canvas.getContext('2d');
-        await page.render({ canvasContext: ctx, viewport }).promise;
+        renderTask = page.render({ canvasContext: ctx, viewport });
+        await renderTask.promise;
       } catch (err) {
-        console.error("Error rendering PDF page in CropStudio:", err);
+        if (err?.name !== 'RenderingCancelledException') {
+          console.error("Error rendering PDF page in CropStudio:", err);
+        }
       }
     };
 
     renderPage();
+
+    return () => {
+      cancelled = true;
+      safeCancelRenderTask(renderTask);
+    };
   }, [pdfDocument, activePageIndex]);
 
   // Sync parameters back to parent StitchCanvas operator

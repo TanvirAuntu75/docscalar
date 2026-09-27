@@ -1178,6 +1178,14 @@ export function resumeReducer(state, action) {
       const incomingTheme = payload.theme || {};
       const incomingUi = payload.ui || {};
 
+      // If imported data does not provide a photo, ensure photoUrl is blank so we never retain dummy stock photo
+      const photoUrl = typeof incomingData.photoUrl === 'string' ? incomingData.photoUrl : '';
+
+      // If imported data includes skills, completely overwrite default dummy skills
+      const skills = Array.isArray(incomingData.skills) && incomingData.skills.length > 0
+        ? incomingData.skills
+        : (incomingData.skills || state.data.skills || []);
+
       // Ensure custom section IDs and references are retained in sectionOrder
       const currentOrder = (incomingTheme.sectionOrder || state.theme.sectionOrder || [
         'summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'references', 'custom_languages'
@@ -1199,7 +1207,9 @@ export function resumeReducer(state, action) {
         ...state,
         data: {
           ...state.data,
-          ...incomingData
+          ...incomingData,
+          photoUrl,
+          skills
         },
         theme: {
           ...state.theme,

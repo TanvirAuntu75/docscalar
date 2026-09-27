@@ -1,21 +1,99 @@
-# Ignore node modules and build artifacts
+# =================================================
+# DocScalar Production .dockerignore
+# =================================================
+# Everything listed here is excluded from the Docker
+# build context entirely — it never enters any stage.
+
+# --- Dependencies & Build Artifacts ---
 node_modules/
 dist/
 build/
+.venv/
+venv/
+env/
 
-# Ignore Python cache and virtual environments
+# --- Python Cache ---
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
-env/
-venv/
-.venv/
+.pytest_cache/
+.ruff_cache/
 pip-log.txt
-pip-delete-this-directory.txt
 
-# Ignore temporary downloads and extraction folders
+# --- Test Suites (NEVER ship to production) ---
+tests/
+backend/tests/
+benchmarks/
+
+# --- Training & OCR Data (heavy, not needed at runtime) ---
+training/
+ocr_data/
+
+# --- Scratch / Dev Artifacts ---
+scratch/
+*.bak
+
+# --- Agent Memory & Docs (dev-only) ---
+.agents/
+docs/
+.Jules/
+.github/
+GEMINI.md
+
+# --- UI/UX Design Skill (dev-only) ---
+ui-ux-pro-max-skill/
+
+# --- Tauri Desktop Build (not for web deploy) ---
+src-tauri/
+
+# --- Git & IDE ---
+.git/
+.gitignore
+.vscode/
+.idea/
+.gemini/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# --- Secrets & Environment ---
+.env
+.env.*
+*.jwt_secret
+*.pat
+*.token
+*.key
+*.pem
+mcp_config.json
+
+# --- SQLite DBs ---
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+
+# --- Test & Scratch PDFs/Images in root ---
+scratch_*.pdf
+test_*.pdf
+test_*.png
+*.zip
+crop_*.png
+temp_*.png
+line_lemons.png
+p12_test.png
+user_icon_crop.png
+
+# --- Misc dev scripts ---
+update.js
+update.py
+run_backend.bat
+run_project.bat
+
+# --- Legacy installer artifacts ---
 7za920.zip
 7za_extracted/
 tesseract-setup.exe
@@ -24,10 +102,3 @@ gImageReader_portable.zip
 gImageReader_extracted/
 7z-extra.7z
 7z_extra/
-
-# Ignore git and local IDE configs
-.git/
-.gitignore
-.vscode/
-.idea/
-.gemini/

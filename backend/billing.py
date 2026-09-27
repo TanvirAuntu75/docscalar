@@ -48,6 +48,28 @@ def create_checkout(
         raise HTTPException(status_code=400, detail=f"Stripe error: {e!s}")
 
 
+@router.post("/create-portal-session")
+def create_portal_session(
+    current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    """Creates a Stripe Customer Portal session for self-service billing management."""
+    if not stripe.api_key:
+        raise HTTPException(status_code=501, detail="Stripe is not configured.")
+
+    sub = db.query(Subscription).filter(Subscription.user_id == current_user.id).first()
+    if not sub or not sub.stripe_customer_id:
+        raise HTTPException(status_code=404, detail="No active subscription found.")
+
+    try:
+        session = stripe.billing_portal.Session.create(
+            customer=sub.stripe_customer_id,
+            return_url=os.getenv("STRIPE_PORTAL_RETURN_URL", "https://docscalar.app/pricing"),
+        )
+        return {"portal_url": session.url}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Stripe portal error: {e!s}")
+
+
 @router.post("/webhook")
 async def stripe_webhook(
     request: Request,

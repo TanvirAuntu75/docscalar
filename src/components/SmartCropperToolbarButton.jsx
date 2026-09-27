@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import SmartCropperModal from './SmartCropperModal';
+import SmartCropLimitModal from './SmartCropLimitModal';
+import { useAuth } from '../context/AuthContext';
+import { getSmartCropQuota } from '../utils/smartCropQuota';
 import {
   shouldAutoShowSmartCropModal,
   getSmartCropPreference,
@@ -32,6 +35,13 @@ export function SmartCropperToolbarButton({
 }) {
   if (!cropper) return null;
 
+  let auth = null;
+  try {
+    auth = useAuth();
+  } catch {
+    auth = { isAuthenticated: false, userTier: 'guest', isPro: false, userEmail: '' };
+  }
+
   const {
     hasDetectedBorders,
     isActive,
@@ -45,9 +55,13 @@ export function SmartCropperToolbarButton({
   const [isOpen, setIsOpen] = useState(false);
   const [internalModalOpen, setInternalModalOpen] = useState(false);
   const [internalInfoOnly, setInternalInfoOnly] = useState(false);
+  const [internalLimitModalOpen, setInternalLimitModalOpen] = useState(false);
+  const [internalLimitModalType, setInternalLimitModalType] = useState('guest');
   const [coords, setCoords] = useState({ top: 0, left: 0 });
   const [customRangeDraft, setCustomRangeDraft] = useState('');
   const [rememberChoice, setRememberChoice] = useState(false);
+
+  const activeQuota = cropper?.quota || getSmartCropQuota(auth);
 
   const containerRef = useRef(null);
   const popoverRef = useRef(null);
@@ -214,7 +228,66 @@ export function SmartCropperToolbarButton({
     );
   };
 
+  const isLimitModalOpen = Boolean(cropper?.limitModalOpen || internalLimitModalOpen);
+  const limitModalVariant = cropper?.limitModalType || internalLimitModalType;
+
+  const renderLimitModal = () => {
+    if (!isLimitModalOpen) return null;
+    return (
+      <SmartCropLimitModal
+        isOpen={isLimitModalOpen}
+        type={limitModalVariant}
+        onClose={() => {
+          if (typeof cropper?.closeLimitModal === 'function') {
+            cropper.closeLimitModal();
+          }
+          setInternalLimitModalOpen(false);
+        }}
+        usedCount={activeQuota.used}
+        dailyLimit={activeQuota.limit}
+      />
+    );
+  };
+
+  const renderTierBadge = () => {
+    if (activeQuota.isPro) {
+      return (
+        <span className="text-[9px] font-bold bg-[var(--color-primary)] text-white px-1.5 py-0.2 rounded font-mono shadow-2xs">
+          PRO
+        </span>
+      );
+    }
+    if (!activeQuota.isAuthenticated) {
+      return (
+        <span className="text-[9px] font-semibold bg-amber-500/20 text-amber-700 dark:text-amber-300 px-1.5 py-0.2 rounded flex items-center gap-0.5">
+          <span className="material-symbols-outlined text-[10px]">lock</span>
+          <span>Free 3/day</span>
+        </span>
+      );
+    }
+    return (
+      <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded ${
+        activeQuota.remaining > 0 
+          ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' 
+          : 'bg-red-500/20 text-red-700 dark:text-red-300'
+      }`}>
+        {activeQuota.remaining}/{activeQuota.limit} left
+      </span>
+    );
+  };
+
   const handleActivateClick = (e) => {
+    if (!activeQuota.isAuthenticated || !activeQuota.allowed) {
+      if (typeof cropper?.activate === 'function') {
+        const ok = cropper.activate();
+        if (!ok) return;
+      } else {
+        setInternalLimitModalType(!activeQuota.isAuthenticated ? 'guest' : 'limit_reached');
+        setInternalLimitModalOpen(true);
+        return;
+      }
+    }
+
     setInternalInfoOnly(false);
     if (shouldAutoShowSmartCropModal()) {
       if (typeof cropper?.onOpenInfo === 'function') {
@@ -469,6 +542,7 @@ export function SmartCropperToolbarButton({
                 {badge}
               </span>
             )}
+            {renderTierBadge()}
             <span className="material-symbols-outlined text-[13px] opacity-60 group-hover:opacity-100 group-hover:text-red-500 transition-colors">
               undo
             </span>
@@ -503,6 +577,7 @@ export function SmartCropperToolbarButton({
         </div>
         {renderDropdownPopover()}
         {renderInfoModal()}
+        {renderLimitModal()}
       </>
     );
   }
@@ -532,6 +607,7 @@ export function SmartCropperToolbarButton({
                 {badge}
               </span>
             )}
+            {renderTierBadge()}
           </button>
 
           {options && (
@@ -563,6 +639,7 @@ export function SmartCropperToolbarButton({
         </div>
         {renderDropdownPopover()}
         {renderInfoModal()}
+        {renderLimitModal()}
       </>
     );
   }
@@ -593,6 +670,7 @@ export function SmartCropperToolbarButton({
           )}
         </div>
         {renderInfoModal()}
+        {renderLimitModal()}
       </>
     );
   }
@@ -621,6 +699,7 @@ export function SmartCropperToolbarButton({
               {badge}
             </span>
           )}
+          {renderTierBadge()}
         </button>
 
         {options && (
@@ -652,6 +731,7 @@ export function SmartCropperToolbarButton({
       </div>
       {renderDropdownPopover()}
       {renderInfoModal()}
+      {renderLimitModal()}
     </>
   );
 }

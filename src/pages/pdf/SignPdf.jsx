@@ -7,14 +7,13 @@ const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.u
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
-import AdPlaceholder from '../../components/AdPlaceholder';
 import useFileProcessor from '../../hooks/useFileProcessor';
 import { signPdf } from '../../engines/pdf/signPdf';
 import { generateAuditCertificatePdf, computeSha256Hash } from '../../engines/pdf/auditCertificate';
 import { saveFile } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import { useJobPoller } from '../../hooks/useJobPoller';
-import { apiFetch, uploadFileSecure } from '../../utils/api';
+import { apiFetch, uploadFileSecure, BACKEND_URL } from '../../utils/api';
 
 import { useSignStudioState } from '../../components/SignStudio/useSignStudioState';
 import SignCanvasViewport from '../../components/SignStudio/SignCanvasViewport';
@@ -24,8 +23,6 @@ import AuditCertificateModal from '../../components/SignStudio/AuditCertificateM
 import useSmartCropper from '../../hooks/useSmartCropper';
 import { useAuth } from '../../context/AuthContext';
 import { scanDocumentSignatureZones } from '../../engines/pdf/signatureLineDetector';
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
 export default function SignPdf() {
   const {
@@ -68,6 +65,7 @@ export default function SignPdf() {
   const [pdfDocument, setPdfDocument] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
   const [activePageIndex, setActivePageIndex] = useState(0);
+  const [docLoading, setDocLoading] = useState(false);
   const cropper = useSmartCropper({ totalPages });
 
   // Active signature & initials memory
@@ -160,7 +158,7 @@ export default function SignPdf() {
     let isCancelled = false;
 
     const loadPdf = async () => {
-      setProcessing(true);
+      setDocLoading(true);
       setError(null);
       try {
         const file = files[0];
@@ -177,7 +175,7 @@ export default function SignPdf() {
           setError('Failed to parse PDF document. It may be corrupt or password-protected.');
         }
       } finally {
-        if (!isCancelled) setProcessing(false);
+        if (!isCancelled) setDocLoading(false);
       }
     };
 
@@ -472,10 +470,13 @@ export default function SignPdf() {
       description="Place signatures, initials, dates, and stamps on your PDF document."
       files={files}
       hasResult={Boolean(result)}
+      setFiles={setFiles}
+      setResult={setResult}
+      onReset={handleReset}
     >
       <SEOHead
-        title="Sign PDF Online Free (100% Local & Private) | DocScalar"
-        description="Sign PDF documents securely online. Draw or type handwritten signatures, place initials, dates, and stamps with 100% client-side privacy and tamper-evident SHA-256 audit certificates."
+        title="Sign PDF Online Free — Electronic & Digital Signatures | DocScalar"
+        description="Sign PDF documents securely online. Draw or type handwritten signatures, place initials, dates, and stamps with enterprise privacy and tamper-evident SHA-256 audit certificates."
       />
 
       {!result ? (
@@ -606,8 +607,6 @@ export default function SignPdf() {
         onDownloadCertificate={handleDownloadCertificate}
         onDownloadSignedPdf={handleDownloadSignedPdf}
       />
-
-      <AdPlaceholder format="leaderboard" />
     </ToolPageLayout>
   );
 }

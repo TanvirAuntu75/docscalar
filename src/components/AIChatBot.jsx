@@ -23,22 +23,25 @@ import {
 export default function AIChatBot() {
   const location = useLocation();
   const navigate = useNavigate();
-  const isCanvas = location.pathname === '/canvas' || location.pathname === '/workspace';
-  const isStudio = isCanvas || 
-    location.pathname.startsWith('/edit-pdf') || 
-    location.pathname.startsWith('/crop-pdf') || 
-    location.pathname.startsWith('/document-viewer') || 
-    location.pathname.startsWith('/redact-pdf') || 
-    location.pathname.startsWith('/repair-pdf') || 
-    location.pathname.startsWith('/pdf-forms') || 
-    (typeof document !== 'undefined' && document.body?.classList?.contains('studio-mode-active'));
+  const isCanvas = location.pathname === '/canvas';
+  const isWorkspace = location.pathname === '/workspace';
+  const hasHeavySidebar = 
+    !isCanvas && !isWorkspace && (
+      location.pathname.startsWith('/edit-pdf') || 
+      location.pathname.startsWith('/crop-pdf') || 
+      location.pathname.startsWith('/document-viewer') || 
+      location.pathname.startsWith('/redact-pdf') || 
+      location.pathname.startsWith('/repair-pdf') || 
+      location.pathname.startsWith('/pdf-forms') || 
+      (typeof document !== 'undefined' && document.body?.classList?.contains('studio-mode-active'))
+    );
 
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: 'welcome',
       type: 'bot',
-      text: 'Hi there! I am your **DocScalar Copilot**.\n\nI can help you navigate our 44+ PDF and document tools, automate multi-step pipelines on **Stitch Canvas**, or explain how our 100% client-side WebAssembly architecture keeps your files completely private.',
+      text: 'Hi there! I am your **DocScalar Copilot**.\n\nI can help you navigate our 44+ PDF and document tools, automate multi-step pipelines on **Stitch Canvas**, or answer any questions about our fast, secure, and encrypted document processing.',
       time: new Date()
     }
   ]);
@@ -100,12 +103,11 @@ export default function AIChatBot() {
       return ['Pixel heatmap vs text diff', 'Swipe divider mode', 'Export diff report'];
     }
     return [
-      '100% Local Privacy guarantee',
-      '☀️ Tokyo Weather',
-      '💱 100 USD to EUR',
-      '📖 Define serendipity',
-      '🌍 Time in London',
-      '😄 Tell me a joke',
+      'Enterprise TLS & privacy',
+      'Convert PDF to Word or Excel',
+      'Compress PDF without quality loss',
+      'Batch redact sensitive PII',
+      'Digitally sign PDF contracts',
       'What are the file size limits?',
       'Show all 44 tools'
     ];
@@ -286,7 +288,7 @@ export default function AIChatBot() {
   const synthesizeCopilotResponse = (rawQuery, topMatch, kb) => {
     if (!topMatch) {
       return {
-        text: "I specialize in DocScalar's 100% private, on-device document processing and visual workflow tools. How can I assist you with your PDFs or documents today?",
+        text: "I specialize in DocScalar's secure document processing and visual workflow tools. How can I assist you with your PDFs or documents today?",
         action: {
           chips: [
             { title: 'Merge PDFs', path: '/merge-pdf', icon: 'call_merge' },
@@ -315,7 +317,7 @@ export default function AIChatBot() {
       const toolObj = TOOLS.find(t => t.id === toolId) || {};
       const title = toolObj.title || topMatch.metadata?.title || titleMatch?.[1]?.trim() || 'Document Tool';
       const path = toolObj.path || topMatch.metadata?.path || pathMatch?.[1]?.trim() || `/${toolId}`;
-      const desc = toolObj.description || topMatch.metadata?.description || descMatch?.[1]?.trim() || 'Process documents with 100% client-side privacy.';
+      const desc = toolObj.description || topMatch.metadata?.description || descMatch?.[1]?.trim() || 'Process documents with enterprise security and privacy.';
       const formats = formatsMatch?.[1]?.trim() || '.pdf';
 
       let actionInstruction = "Configure your preferences and preview the output in real time.";
@@ -345,7 +347,7 @@ export default function AIChatBot() {
         `1. **Upload**: Select or drop your files (${formats}) into the workspace.\n` +
         `2. **Customize**: ${actionInstruction}\n` +
         `3. **Export**: Click **Process** to download your output instantly.\n\n` +
-        `🔒 **100% Client-Side Privacy**: Runs locally in your browser via WebAssembly. Zero bytes are uploaded to any cloud server.`;
+        `**Enterprise Security**: Processed with secure transit encryption and transient memory cleanup. Zero permanent retention.`;
 
       return {
         text: synthesizedText,
@@ -369,11 +371,11 @@ export default function AIChatBot() {
 
       if (queryLower.includes('privacy') || queryLower.includes('upload') || queryLower.includes('safe') || queryLower.includes('security') || queryLower.includes('server')) {
         pureAnswer = 
-          `### **100% Client-Side Privacy Architecture**\n\n` +
-          `**Zero Server Uploads**: ${pureAnswer}\n\n` +
-          `• **Local Compute**: All conversions, OCR, and PDF transformations execute strictly on your device via WebAssembly and Web Workers.\n` +
-          `• **Air-Gapped Operation**: DocScalar functions even if your device is completely disconnected from the internet.\n` +
-          `• **Zero Telemetry**: We never track, inspect, or retain your documents or sensitive data.`;
+          `### **Enterprise Security & Privacy Architecture**\n\n` +
+          `**Confidential Document Processing**: ${pureAnswer}\n\n` +
+          `• **Transient In-Memory Pipeline**: All conversions, OCR, and PDF transformations run in isolated memory-mapped sandboxes and are immediately purged after download.\n` +
+          `• **Secure Transit Encryption**: All file transfers are protected with transit encryption.\n` +
+          `• **Zero Data Retention**: We never train on, inspect, or retain your documents or sensitive data.`;
       }
 
       return {
@@ -448,11 +450,11 @@ export default function AIChatBot() {
       cleanLower.includes('what is docscalar') || cleanLower.includes('what is this site') || cleanLower.includes('what can you do')
     ) {
       await new Promise(r => setTimeout(r, 250));
-      let replyText = "Hello! I am **DocScalar's On Device AI Copilot**. How can I assist with your document workflows today?";
+      let replyText = "Hello! I am **DocScalar's Document AI Copilot**. How can I assist with your document workflows today?";
       if (cleanLower.includes('who are you') || cleanLower.includes('what is your name') || cleanLower.includes('what are you')) {
-        replyText = "I am DocScalar's built in **100% Client Side AI Copilot**. I possess complete technical knowledge of all 44+ tools, canvas DAG pipelines, privacy architecture, and document operations.";
+        replyText = "I am DocScalar's built-in **Document AI Copilot**. I possess complete technical knowledge of all 41 tools, canvas DAG pipelines, privacy architecture, and document operations.";
       } else if (cleanLower.includes('what is docscalar') || cleanLower.includes('what is this site')) {
-        replyText = "DocScalar is a privacy first, 100% local compute document operating system. All PDF transformations, conversions, OCR, and visual DAG pipelines execute directly in your browser using WebAssembly and Web Workers—zero cloud uploads.";
+        replyText = "DocScalar is an enterprise document operating system. All PDF transformations, conversions, OCR, and visual DAG pipelines execute with strict memory sandboxing, secure transit encryption, and automatic file purge.";
       }
       setMessages(prev => [
         ...prev,
@@ -463,17 +465,17 @@ export default function AIChatBot() {
     }
 
     // 2. All 44 Tools Catalog Query Check
-    const isAllToolsQuery = /\b(all (44|40\+|45\+|the)?\s*tools|what tools|list tools|all features|show all tools|every tool|tell me about (all|the) tools|overview of tools|all available tools)\b/i.test(cleanLower);
+    const isAllToolsQuery = /\b(all (42|40\+|45\+|the)?\s*tools|what tools|list tools|all features|show all tools|every tool|tell me about (all|the) tools|overview of tools|all available tools)\b/i.test(cleanLower);
 
     if (isAllToolsQuery) {
       await new Promise(r => setTimeout(r, 200));
-      const catalogReply = "DocScalar includes **44 document tools and visual studios** designed for 100% private, client side processing:\n\n" +
+      const catalogReply = "DocScalar includes **42 document tools and visual studios** designed for high-performance, secure document processing:\n\n" +
         "• **Organize & Structure**: Merge PDF, Split PDF, Remove Pages, Extract Pages, Organize Pages, Scan to PDF.\n" +
         "• **Convert & Transform**: Word/Docx to PDF, Excel to PDF, PowerPoint to PDF, HTML to PDF, Image to PDF, Text to PDF, PDF to Word, PDF to Excel, PDF to PowerPoint, PDF to Image, PDF to PDF/A.\n" +
         "• **Optimize & Quality**: Compress PDF (Lossless & Lossy), Repair PDF, OCR Text Recognition, Un OCR Page Flattening.\n" +
         "• **Edit & Annotate**: Edit PDF, Fill Forms (AcroForms), Crop PDF, Rotate PDF, Add Page Numbers, Add Watermark, Bates Numbering.\n" +
         "• **Security & Compliance**: Sign PDF (Vector & X.509 Digital), Protect PDF (256-bit AES), Unlock PDF, Redact PDF (PII & Metadata Sanitizer).\n" +
-        "• **Advanced Studios & Utilities**: Stitch Canvas (Visual DAG Pipeline Builder), Compare PDF (4 Diff Modes), AI Summarizer, AI Translator, Resume Builder (89 ATS Verified Templates), Image Tools (Converter, Compressor, Resizer), QR Code Generator, and Unzip Archive.\n\n" +
+        "• **Advanced Studios & Utilities**: Stitch Canvas (Visual DAG Pipeline Builder), Compare PDF (4 Diff Modes), Resume Builder (89 ATS Verified Templates), Image Tools (Converter, Compressor, Resizer), QR Code Generator, and Unzip Archive.\n\n" +
         "Which specific tool or workflow would you like to know more about?";
 
       setMessages(prev => [
@@ -516,8 +518,8 @@ export default function AIChatBot() {
         setActiveJoke(prev => prev ? { ...prev, revealed: true } : null);
         
         const punchlineReply = wasRevealed
-          ? `Haha, like I said: **${activeJoke.punchline}** 😄`
-          : `**${activeJoke.punchline}** 😄`;
+          ? `Like I said: **${activeJoke.punchline}**`
+          : `**${activeJoke.punchline}**`;
 
         setMessages(prev => [
           ...prev,
@@ -527,8 +529,8 @@ export default function AIChatBot() {
             text: punchlineReply,
             action: {
               chips: [
-                { title: '😄 Another Joke', query: 'tell me a joke' },
-                { title: '💡 Daily Advice', query: 'give me some advice' }
+                { title: 'Another Joke', query: 'tell me a joke' },
+                { title: 'Daily Advice', query: 'give me some advice' }
               ]
             },
             time: new Date()
@@ -539,7 +541,7 @@ export default function AIChatBot() {
       }
 
       // Check for laughter reactions (e.g. "haha", "lol", "lmao", "good one", etc.)
-      const isLaughter = /^(ha(ha)+|he(he)+|lol|lmao|rofl|funny|good one|nice one|nice|😂|😆|classic|haha!|great one)$/i.test(cleanNormalized);
+      const isLaughter = /^(ha(ha)+|he(he)+|lol|lmao|rofl|funny|good one|nice one|nice|classic|haha!|great one)$/i.test(cleanNormalized);
       if (isLaughter) {
         await new Promise(r => setTimeout(r, 200));
         setMessages(prev => [
@@ -547,10 +549,10 @@ export default function AIChatBot() {
           {
             id: `bot-joke-laugh-${Date.now()}`,
             type: 'bot',
-            text: `Glad that gave you a smile! 😄`,
+            text: `Glad that gave you a smile!`,
             action: {
               chips: [
-                { title: '😄 Another Joke', query: 'tell me a joke' }
+                { title: 'Another Joke', query: 'tell me a joke' }
               ]
             },
             time: new Date()
@@ -577,8 +579,8 @@ export default function AIChatBot() {
               text: `**${nextJoke.setup}**`,
               action: {
                 chips: [
-                  { title: 'Reveal Punchline 🎭', query: 'reveal punchline' },
-                  { title: '😄 Tell me another', query: 'tell me a joke' }
+                  { title: 'Reveal Punchline', query: 'reveal punchline' },
+                  { title: 'Tell me another', query: 'tell me a joke' }
                 ]
               },
               time: new Date()
@@ -629,12 +631,12 @@ export default function AIChatBot() {
         {
           id: `bot-clarify-${Date.now()}`,
           type: 'bot',
-          text: `Could you clarify what you're asking about? I can guide you through any of our 44+ PDF tools, explain how our on-device privacy works, or answer questions!`,
+          text: `Could you clarify what you're asking about? I can guide you through any of our 44+ PDF tools, explain how our privacy architecture works, or answer questions!`,
           action: {
             chips: [
               { title: 'Show All Tools', query: 'show all tools' },
-              { title: '☀️ Tokyo Weather', query: 'weather in Tokyo' },
-              { title: '😄 Tell me a joke', query: 'tell me a joke' }
+              { title: 'Security & Privacy', query: 'privacy and security' },
+              { title: 'Convert PDF to Word', query: 'convert pdf to word' }
             ]
           },
           time: new Date()
@@ -673,8 +675,8 @@ export default function AIChatBot() {
               text: `**${jokeData.setup}**`,
               action: {
                 chips: [
-                  { title: 'Reveal Punchline 🎭', query: 'reveal punchline' },
-                  { title: '😄 Tell me another', query: 'tell me a joke' }
+                  { title: 'Reveal Punchline', query: 'reveal punchline' },
+                  { title: 'Tell me another', query: 'tell me a joke' }
                 ]
               }
             };
@@ -748,9 +750,6 @@ export default function AIChatBot() {
       if (strippedNav === 'resume' || strippedNav === 'cv' || strippedNav === 'resume builder' || strippedNav === 'cv builder') {
         return t.id === 'resume-builder';
       }
-      if (strippedNav === 'ai summarizer' || strippedNav === 'summarizer' || strippedNav === 'summary') {
-        return t.id === 'ai-summarizer';
-      }
 
       if (strippedNav.length >= 3 && (titleClean.startsWith(strippedNav) || idClean.startsWith(strippedNav))) return true;
       return false;
@@ -812,7 +811,7 @@ export default function AIChatBot() {
           {
             id: `bot-pipeline-${Date.now()}`,
             type: 'bot',
-            text: `You can chain **${pipelineKeywords.map(k => k.toUpperCase()).join(' → ')}** together into a single automated pipeline on the **Stitch Canvas**. Connect operators with interactive cables for zero upload local execution.`,
+            text: `You can chain **${pipelineKeywords.map(k => k.toUpperCase()).join(' → ')}** together into a single automated pipeline on the **Stitch Canvas**. Connect operators with interactive cables for automated studio pipeline execution.`,
             action: {
               type: 'canvas',
               path: '/workspace',
@@ -903,7 +902,7 @@ export default function AIChatBot() {
         {
           id: `bot-err-${Date.now()}`,
           type: 'bot',
-          text: "I am ready to help! All client side tools and canvas operations are running locally on your device.",
+          text: "I am ready to help! All tools and canvas operations are ready for secure processing.",
           time: new Date()
         }
       ]);
@@ -962,11 +961,18 @@ export default function AIChatBot() {
     const isTop = dock.includes('top');
     const isMiddle = dock.includes('middle');
 
-    // In studio mode (e.g. Edit PDF, Crop PDF, Document Viewer), the right sidebar is 380px wide on desktop (340px on laptop, 320px on tablet).
-    // If docking on the right edge, shift maxX clear of the right sidebar so it never occludes primary Save/Export action buttons!
+    // On heavy studio sidebars (380px editor inspector), keep clear of the inspector panel.
+    // On Canvas, clear the slim 56px floating tool palette (positioned right-4 = 16px, total ~72px).
+    // On all other pages (Workspace, Landing, etc.), use standard padding (16px).
+    const rightOffset = hasHeavySidebar 
+      ? (studioSidebarWidth + 16) 
+      : isCanvas 
+        ? 80 
+        : padding;
+
     const maxX = Math.max(
       padding,
-      windowSize.width - (isStudio ? (studioSidebarWidth + buttonSize + 16) : (buttonSize + padding))
+      windowSize.width - buttonSize - rightOffset
     );
     const maxY = Math.max(topNavOffset + 10, windowSize.height - buttonSize - padding);
     const midY = Math.max(topNavOffset + 10, (windowSize.height - buttonSize) / 2);
@@ -995,7 +1001,7 @@ export default function AIChatBot() {
 
     const chatboxLeft = isLeft 
       ? padding 
-      : Math.max(padding, windowSize.width - (isStudio ? (studioSidebarWidth + panelWidth + 16) : (panelWidth + padding)));
+      : Math.max(padding, windowSize.width - panelWidth - rightOffset);
     const chatboxTop = isTop 
       ? topNavOffset + 10 
       : isMiddle 
@@ -1108,9 +1114,15 @@ export default function AIChatBot() {
     const isTop = dockSide.includes('top');
     const isMiddle = dockSide.includes('middle');
 
+    const rightOffset = hasHeavySidebar 
+      ? (studioSidebarWidth + 16) 
+      : isCanvas 
+        ? 80 
+        : padding;
+
     const targetLeft = isLeft 
       ? padding 
-      : Math.max(padding, windowSize.width - (isStudio ? (studioSidebarWidth + panelWidth + 16) : (panelWidth + padding)));
+      : Math.max(padding, windowSize.width - panelWidth - rightOffset);
     const targetTop = isTop 
       ? topNavOffset + 10 
       : isMiddle 
@@ -1139,7 +1151,7 @@ export default function AIChatBot() {
         drag
         dragConstraints={{
           left: padding,
-          right: Math.max(padding, windowSize.width - (isStudio ? (studioSidebarWidth + buttonSize + 16) : (buttonSize + padding))),
+          right: Math.max(padding, windowSize.width - buttonSize - (hasHeavySidebar ? (studioSidebarWidth + 16) : padding)),
           top: topNavOffset,
           bottom: Math.max(topNavOffset, windowSize.height - buttonSize - padding)
         }}
@@ -1217,7 +1229,7 @@ export default function AIChatBot() {
                   <h3 className="text-xs font-bold tracking-tight text-[var(--text-primary)] m-0">DocScalar Copilot</h3>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[9px] text-[var(--text-secondary)] font-semibold uppercase tracking-wider">100% Client-Side Engine</span>
+                    <span className="text-[9px] text-[var(--text-secondary)] font-semibold uppercase tracking-wider">Enterprise Copilot</span>
                   </div>
                 </div>
               </div>

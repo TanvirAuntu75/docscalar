@@ -77,7 +77,7 @@ export async function redactPdf(file, params = {}, onProgress) {
             if (jobData && jobData.job_id) {
               for (let attempt = 0; attempt < 30; attempt++) {
                 await new Promise((r) => setTimeout(r, 800));
-                const statusRes = await apiFetch(`${BACKEND_URL}/api/jobs/status/${jobData.job_id}`);
+                const statusRes = await apiFetch(`${BACKEND_URL}/api/job/${jobData.job_id}/status`);
                 if (statusRes.ok) {
                   const statusData = await statusRes.json();
                   if (statusData.status === 'finished') {

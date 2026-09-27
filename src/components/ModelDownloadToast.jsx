@@ -126,7 +126,7 @@ export default function ModelDownloadToast() {
           color: isError ? '#fca5a5' : isReady ? '#86efac' : '#e2e8f0',
           letterSpacing: '0.02em',
         }}>
-          {isError ? 'Download Failed' : isReady ? 'AI Ready' : 'On-Device AI'}
+          {isError ? 'Download Failed' : isReady ? 'AI Ready' : 'DocScalar AI'}
         </span>
       </div>
 

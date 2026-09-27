@@ -1,5 +1,5 @@
 import React from "react";
-import { Cpu, Layers, Fingerprint } from "lucide-react";
+import { Cpu, ShieldCheck, Fingerprint } from "lucide-react";
 import { CascadeTextHover } from "./ui/cascade-text";
 
 const cards = [
@@ -12,10 +12,10 @@ const cards = [
   },
   {
     id: 2,
-    title: "On-Device Processing",
-    description: "Your files never leave your browser. All document and image operations run directly in your local window, keeping your data 100% secure and private.",
-    icon: Layers,
-    color: "from-purple-100/50 to-pink-100/50 dark:from-purple-900/30 dark:to-pink-900/30"
+    title: "Confidential Processing",
+    description: "Enterprise security by default. Document operations run with secure transit encryption, isolated memory pipelines, and automatic file purging.",
+    icon: ShieldCheck,
+    color: "from-sky-100/50 to-blue-100/50 dark:from-sky-900/30 dark:to-blue-900/30"
   },
   {
     id: 3,

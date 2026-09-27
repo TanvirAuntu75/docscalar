@@ -1,3 +1,11 @@
 User-agent: *
 Allow: /
+
+Disallow: /workspace
+Disallow: /dashboard
+Disallow: /canvas
+Disallow: /login
+Disallow: /signup
+Disallow: /api/
+
 Sitemap: https://docscalar.app/sitemap.xml

@@ -102,7 +102,42 @@ export function extractStudioCommand(toolId, text) {
   return delta;
 }
 
+/**
+ * Maximum number of individual output DOM cards allowed to be spawned on the canvas.
+ * Batches exceeding this threshold are consolidated into a single bundle/zip collection card.
+ */
+export const MAX_INDIVIDUAL_CANVAS_CARDS = 5;
 
+/**
+ * Evaluates whether an operator's multi-file output should be unpacked into individual
+ * canvas DOM cards or consolidated into a single virtual bundle/collection card.
+ *
+ * @param {boolean} hasDownstreamConsumers - Whether next operators in pipeline/canvas consume this output
+ * @param {number} totalFiles - Total number of generated files
+ * @param {number} maxCards - Maximum individual card cap (defaults to MAX_INDIVIDUAL_CANVAS_CARDS = 5)
+ * @returns {boolean} True if safe to unpack individual cards; false to consolidate into 1 bundle card
+ */
+export function shouldUnpackCanvasCards(hasDownstreamConsumers, totalFiles, maxCards = MAX_INDIVIDUAL_CANVAS_CARDS) {
+  if (hasDownstreamConsumers) return false;
+  if (!totalFiles || totalFiles <= 0) return false;
+  return totalFiles <= maxCards;
+}
+
+/**
+ * Checks whether an operator ID is referenced as an input by any downstream operator
+ * in the ordered pipeline execution sequence or in the active canvas operations list.
+ *
+ * @param {string} opId - Target operator ID
+ * @param {Array} ordered - Dependency-ordered pipeline operations
+ * @param {Array} operations - Active canvas operations
+ * @returns {boolean} True if any downstream operator depends on opId
+ */
+export function checkHasDownstreamConsumers(opId, ordered = [], operations = []) {
+  if (!opId) return false;
+  const inOrdered = Array.isArray(ordered) && ordered.some(nextOp => nextOp && Array.isArray(nextOp.inputIds) && nextOp.inputIds.includes(opId));
+  const inOperations = Array.isArray(operations) && operations.some(nextOp => nextOp && Array.isArray(nextOp.inputIds) && nextOp.inputIds.includes(opId));
+  return inOrdered || inOperations;
+}
 /**
  * Extract parameters from a natural language query for a specific tool.
  */
@@ -656,7 +691,7 @@ export async function parseLocalNLPCommand(clauseText, activePool, selectedNodeI
     return new NLPResolution('unzip-file', { confidence: 1.0 });
   }
   if (hasAny('images to pdf', 'photos to pdf', 'pictures to pdf', 'image to pdf', 'jpg to pdf', 'png to pdf', 'jpeg to pdf') ||
-      /\b(?:make\s+)?(?:each\s+of\s+)?(?:the\s+)?(?:images?|photos?|pictures?)\s+(?:in)?to\s+pdf(?:\s+file|\s+document)?\b/i.test(text) ||
+      /\b(?:make\s+)?(?:each\s+(?:of\s+the\s+)?|all\s+(?:the\s+)?)?(?:the\s+)?(?:images?|photos?|pictures?|pngs?|jpe?gs?)\s+(?:in)?to\s+(?:separate\s+|individual\s+)?pdf(?:\s+file|\s+document)?\b/i.test(text) ||
       /\b(?:images?|photos?|pictures?)\s+(?:files?|documents?)?\s*(?:in)?to\s*pdf\b/i.test(text)) {
     return new NLPResolution('image-to-pdf', { confidence: 1.0 });
   }
@@ -1417,7 +1452,9 @@ export function resolveDocumentTargets(clauseText, activePool, initialSourceNode
   const hasMergedPdf = /\b(?:the\s+)?first\s+merged(?:\s+(?:pdf|document|file))?\b/i.test(lower) || /\bthe\s+merged\s+(?:pdf|document|file)\b/i.test(lower);
   const hasSplitHalves = /\b(?:the\s+)?first\s+half\s+of\s+(?:the\s+)?(?:(?:two|\d+)\s+)?(?:split|splitted)\b/i.test(lower);
   const hasImgToPdfTargets = /\beach\s+of\s+the\s+pdfs?\b/i.test(lower) || /\ball\s+the\s+pdfs?\b/i.test(lower) || (/\bthe\s+pdf\b/i.test(lower) && activePool.some(n => n.toolId === 'image-to-pdf' || (n.id || '').includes('image-to-pdf')));
-  const hasImageTargets = /\beach\s+of\s+the\s+(?:images?|pngs?|jpe?gs?)\b/i.test(lower) || /\ball\s+the\s+images?\b/i.test(lower);
+  const hasImageTargets = /\beach\s+(?:of\s+the\s+)?(?:images?|pngs?|jpe?gs?|files?|photos?|pictures?)\b/i.test(lower) ||
+    /\ball\s+(?:the\s+)?(?:images?|pngs?|jpe?gs?|files?|photos?|pictures?)\b/i.test(lower) ||
+    /\b(?:all|every)\s+(?:images?|pngs?|jpe?gs?|photos?|pictures?)\b/i.test(lower);
 
   if (hasSplitHalves || hasMergedPdf || hasImgToPdfTargets || hasImageTargets) {
     const included = [];
@@ -1979,7 +2016,7 @@ export async function planCanvasWorkflow(cmd, graphState = [], lastActiveNodesLi
   const vPat = verbs.join('|');
   const pattern = new RegExp(
     `\\b(?:and\\s+then|then|after\\s+that|next|followed\\s+by|and\\s+finally|lastly|subsequently)\\b` +
-    `|\\b(?:and|to)\\b(?=\\s*(?:run\\s+|do\\s+|go\\s+)?(?:${vPat}))` +
+    `|\\b(?:and|to)\\b(?=\\s*(?:run\\s+|do\\s+|go\\s+)?(?:${vPat}|each|every|individually|separately))` +
     `|\\bafter\\b(?=\\s+(?:${vPat}))` +
     `|\\s*,\\s*(?=\\s*(?:run\\s+|do\\s+|go\\s+)?(?:${vPat}))` +
     `|\\s*;\\s*` +
@@ -2267,12 +2304,17 @@ export async function planCanvasWorkflow(cmd, graphState = [], lastActiveNodesLi
     const cleanActionId = (typeof actionId === 'object' && actionId?.actionId) ? actionId.actionId : String(actionId);
 
     // Multi-target fan-out for single-input tools (e.g. "split the 1 and 2 in half")
+    // or distributive fan-out for multi-input tools (e.g. "each image to pdf", "separately convert images to pdf")
     const isSingleInputFanOut = validation.maxInputs === 1 && targetInputs.length > 1;
-    const inputGroups = isSingleInputFanOut
+    const isDistributiveFanOut = /\b(?:each|separately|individually|one\s+by\s+one|separate\s+pdf|individual\s+pdf)\b/i.test(lowerClause);
+    const isFanOutNeeded = (validation.maxInputs === 1 && targetInputs.length > 1) || (isDistributiveFanOut && targetInputs.length > 1);
+    const inputGroups = isFanOutNeeded
       ? targetInputs.map(ti => [ti])
       : [targetInputs];
 
-    for (const group of inputGroups) {
+    const baseStepIdx = stepIdx;
+    for (let idx = 0; idx < inputGroups.length; idx++) {
+      const group = inputGroups[idx];
       let resolvedGroup = [...group];
 
       const isWordToExcel = /\b(?:word|docx|doc)\s*(?:file|document)?\s*(?:in)?to\s*(?:excel|xlsx|sheet|csv)(?:\s+file|\s+document)?\b/i.test(clause) ||
@@ -2332,10 +2374,13 @@ export async function planCanvasWorkflow(cmd, graphState = [], lastActiveNodesLi
         parameters.initialNlpPrompt = clause;
       }
 
+      const mainOutId = isDistributiveFanOut ? `output:${baseStepIdx}-${idx}` : `output:${stepIdx}`;
+
       ops.push({
         tool_id: cleanActionId,
         target_node_ids: resolvedGroup.map(ti => ti.id),
-        parameters
+        parameters,
+        output_id: mainOutId
       });
 
       activePool = activePool.filter(ap => !resolvedGroup.some(ti => ti.id === ap.id && (ti.id.startsWith('output:') || ti.id.startsWith('ws-out-'))));
@@ -2353,7 +2398,6 @@ export async function planCanvasWorkflow(cmd, graphState = [], lastActiveNodesLi
       }
       else if (['image-to-pdf', 'docx-to-pdf', 'excel-to-pdf', 'powerpoint-to-pdf', 'split-pdf', 'merge-pdf'].includes(cleanActionId)) outExt = '.pdf';
 
-      const mainOutId = `output:${stepIdx}`;
       activePool.push({
         id: mainOutId,
         name: `${cleanActionId}_output${outExt}`,
@@ -2411,8 +2455,9 @@ export function materializeCanvasOperations(planOps = [], workspaceQueue = [], e
 
     (step.target_node_ids || []).forEach(input => {
       if (input.startsWith('output:')) {
-        const upstreamIdx = parseInt(input.split(':')[1]);
-        const upstreamOpId = stepOpMap[upstreamIdx];
+        const rawRef = input.split(':')[1];
+        const upstreamIdx = parseInt(rawRef);
+        const upstreamOpId = stepOpMap[input] || stepOpMap[rawRef] || stepOpMap[upstreamIdx];
         if (upstreamOpId) {
           resolvedInputIds.push(upstreamOpId);
           const upstreamOp = [...existingOperations, ...spawnedOps].find(o => o.id === upstreamOpId);
@@ -2437,6 +2482,12 @@ export function materializeCanvasOperations(planOps = [], workspaceQueue = [], e
     const defaultParams = validation.defaultParams || {};
     const opId = `op-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
     stepOpMap[i] = opId;
+    if (step.output_id) {
+      stepOpMap[step.output_id] = opId;
+      if (step.output_id.startsWith('output:')) {
+        stepOpMap[step.output_id.split(':')[1]] = opId;
+      }
+    }
 
     const newOp = {
       id: opId,

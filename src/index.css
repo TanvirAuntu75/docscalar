@@ -612,6 +612,26 @@ input, select, textarea {
   padding: 0 !important;
 }
 
+/* ── QR Studio Wide Layout Override ────────────────────────────────────────── */
+.tool-page:has(.qr-studio-root),
+.tool-page:has([data-tool="qr-generator"]) {
+  max-width: 1380px !important;
+  width: 100% !important;
+  padding: 1.5rem var(--space-xl) var(--space-2xl) !important;
+  margin: 0 auto !important;
+}
+
+.tool-page:has(.qr-studio-root) .tool-page-header,
+.tool-page:has([data-tool="qr-generator"]) .tool-page-header {
+  margin-bottom: 1.75rem !important;
+}
+
+.tool-page:has(.qr-studio-root) .tool-page-subtitle,
+.tool-page:has([data-tool="qr-generator"]) .tool-page-subtitle {
+  max-width: 760px !important;
+  margin: 0 auto 1rem auto !important;
+}
+
 /* Compact the header and hide trust/subtitle/related on resume builder & gallery */
 .tool-page:has(.resume-builder-page) .trust-bar,
 .tool-page:has(.resume-builder-page) .tool-page-subtitle,
@@ -725,13 +745,34 @@ input, select, textarea {
   background: var(--color-success);
 }
 
-/* Template Gallery Grid — responsive fit-to-width card layout */
+/* Template Gallery Grid — 4 resumes each row on desktop with responsive scaling */
 .cv-template-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.5rem;
   margin-top: 1rem;
   width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .cv-template-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .cv-template-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .cv-template-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+  }
 }
 
 /* Outer card shell — looks like a floating sheet with soft shadow */
@@ -1001,6 +1042,9 @@ body.studio-mode-active .site-header-nav {
   border-bottom: 1px solid var(--border-subtle) !important;
   padding: 0 1.5rem !important;
   height: 56px !important;
+  background: var(--bg-secondary) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
 }
 
@@ -1013,10 +1057,20 @@ body.studio-mode-active .main-content {
   padding-top: 56px !important;
 }
 
+html.studio-mode-active,
+html:has(body.studio-mode-active) {
+  overflow: hidden !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overscroll-behavior: none !important;
+  scroll-behavior: auto !important;
+}
+
 body.studio-mode-active {
   overflow: hidden !important;
   height: 100vh !important;
   max-height: 100vh !important;
+  overscroll-behavior: none !important;
 }
 
 body.studio-mode-active footer,
@@ -1043,6 +1097,9 @@ body.studio-editor-active .site-header-nav {
   border-bottom: 1px solid var(--border-subtle) !important;
   padding: 0 1.5rem !important;
   height: 56px !important;
+  background: var(--bg-secondary) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
 }
 
@@ -1052,7 +1109,7 @@ body.studio-editor-active .site-header-inner {
 }
 
 body.studio-editor-active .main-content {
-  padding-top: 60px !important;
+  padding-top: 56px !important;
 }
 
 body.studio-editor-active footer,
@@ -1065,8 +1122,10 @@ body.studio-editor-active .footer {
   position: relative !important;
   width: 100vw !important;
   max-width: 100vw !important;
-  height: calc(100vh - 64px) !important;
-  max-height: calc(100vh - 64px) !important;
+  height: calc(100vh - 56px) !important;
+  height: calc(100dvh - 56px) !important;
+  max-height: calc(100vh - 56px) !important;
+  max-height: calc(100dvh - 56px) !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
@@ -1170,12 +1229,16 @@ body.studio-editor-active .footer {
 .tool-page.studio-viewport .breadcrumb,
 .tool-page.studio-viewport .related-tools,
 .tool-page.studio-viewport .tool-content-guide,
-.tool-page.studio-viewport .site-footer {
+.tool-page.studio-viewport .site-footer,
+.studio-viewport .upgrade-banner,
+.studio-viewport .ad-placeholder,
+.studio-mode-active .upgrade-banner,
+.studio-mode-active .ad-placeholder {
   display: none !important;
 }
 
 /* Center non-split studio tools (e.g. conversion tools) cleanly */
-.studio-viewport > div.flex-1:not(:has(.studio-canvas-area)):not(:has(.workspace-canvas-wrapper)) {
+.studio-viewport > div.flex-1:not(:has(.studio-canvas-area)):not(:has(.workspace-canvas-wrapper)):not(:has(.cv-template-selection-page)) {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1258,15 +1321,15 @@ div:has(> .workspace-canvas-wrapper) > .options-panel {
 }
 
 .studio-viewport .workspace-toolbar {
-  height: 51px !important;
   min-height: 51px !important;
-  max-height: 51px !important;
-  padding: 0 1rem !important;
+  height: auto !important;
+  max-height: none !important;
+  padding: 0.375rem 1rem !important;
   display: flex !important;
   align-items: center !important;
   box-sizing: border-box !important;
-  flex-wrap: nowrap !important;
-  overflow-x: auto !important;
+  flex-wrap: wrap !important;
+  gap: 0.5rem !important;
 }
 
 .studio-viewport .options-panel > div:first-child {
@@ -1692,7 +1755,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 .workspace-toolbar {
   min-height: 48px;
-  max-height: 52px;
+  height: auto;
+  max-height: none;
   padding: 0.4rem 1rem !important;
   display: flex;
   align-items: center;
@@ -2848,28 +2912,80 @@ html, body {
   background: transparent !important;
   padding: 0 !important;
   border: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: var(--space-lg) !important;
+  width: 100% !important;
 }
 
 .docx {
   background: white !important;
   color: black !important;
-  box-shadow: none !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.06) !important;
   margin-bottom: var(--space-lg) !important;
-  border: none !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 2px !important;
+  box-sizing: border-box !important;
 }
 
 /* Hide or clean page-break elements rendered as dark blocks */
 .docx-preview-wrap section, 
 .docx-wrapper section {
   margin-bottom: var(--space-md) !important;
-  box-shadow: none !important;
-  border: none !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 2px !important;
+  background: white !important;
 }
 
 .docx-wrapper header, 
 .docx-wrapper footer {
   background: transparent !important;
   border: none !important;
+}
+
+/* Dynamic Page Size & Orientation overrides for live Word preview */
+.docx-preview-host .docx,
+.docx-preview-host .docx-wrapper section {
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), min-height 0.25s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Landscape Overrides (A4: 29.7cm x 21cm) */
+.docx-preview-host[data-orientation="landscape"] .docx,
+.docx-preview-host[data-orientation="landscape"] .docx-wrapper section,
+.docx-preview-host.docx-preview-landscape .docx,
+.docx-preview-host.docx-preview-landscape .docx-wrapper section {
+  width: 29.7cm !important;
+  min-height: 21cm !important;
+  max-width: 95vw !important;
+}
+
+/* Landscape US Letter Override (11in x 8.5in = 27.94cm x 21.59cm) */
+.docx-preview-host[data-orientation="landscape"][data-pagesize="letter"] .docx,
+.docx-preview-host[data-orientation="landscape"][data-pagesize="letter"] .docx-wrapper section,
+.docx-preview-host.docx-preview-landscape.docx-preview-letter .docx,
+.docx-preview-host.docx-preview-landscape.docx-preview-letter .docx-wrapper section {
+  width: 27.94cm !important;
+  min-height: 21.59cm !important;
+}
+
+/* Portrait US Letter Override (8.5in x 11in = 21.59cm x 27.94cm) */
+.docx-preview-host[data-orientation="portrait"][data-pagesize="letter"] .docx,
+.docx-preview-host[data-orientation="portrait"][data-pagesize="letter"] .docx-wrapper section,
+.docx-preview-host.docx-preview-portrait.docx-preview-letter .docx,
+.docx-preview-host.docx-preview-portrait.docx-preview-letter .docx-wrapper section {
+  width: 21.59cm !important;
+  min-height: 27.94cm !important;
+}
+
+/* Portrait A4 Override (21cm x 29.7cm) */
+.docx-preview-host[data-orientation="portrait"][data-pagesize="a4"] .docx,
+.docx-preview-host[data-orientation="portrait"][data-pagesize="a4"] .docx-wrapper section,
+.docx-preview-host.docx-preview-portrait.docx-preview-a4 .docx,
+.docx-preview-host.docx-preview-portrait.docx-preview-a4 .docx-wrapper section {
+  width: 21cm !important;
+  min-height: 29.7cm !important;
 }
 
 /* Theme-aware dropdown option styles */

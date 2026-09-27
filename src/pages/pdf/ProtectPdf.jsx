@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
@@ -15,6 +15,7 @@ const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.u
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 export default function ProtectPdf() {
+  const location = useLocation();
   const [files, setFiles] = useState([]);
   const [activeFileIndex, setActiveFileIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -82,9 +83,19 @@ export default function ProtectPdf() {
     checkServer();
   }, []);
 
-  // 2. Restore Draft Session on Mount
+  // 2. Ingest Initial Files or Restore Draft Session on Mount
   useEffect(() => {
     let isMounted = true;
+    if (location.state?.initialFiles && Array.isArray(location.state.initialFiles) && location.state.initialFiles.length > 0) {
+      setFiles(location.state.initialFiles);
+      const firstFile = location.state.initialFiles[0];
+      if (firstFile?.name) {
+        const base = firstFile.name.replace(/\.[^.]+$/, '');
+        setOutputFileName(`${base}_protected.pdf`);
+      }
+      return;
+    }
+
     const restoreSession = async () => {
       try {
         const draft = await loadStudioDraft('protect-pdf');
@@ -112,7 +123,7 @@ export default function ProtectPdf() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [location.state]);
 
   // 3. Save Draft Session on State Change
   useEffect(() => {
@@ -372,7 +383,7 @@ export default function ProtectPdf() {
     setError(null);
     setProcessing(false);
     setProgress(0);
-    poller.resetPoller();
+    poller.resetPoller(true);
   };
 
   return (
@@ -381,6 +392,7 @@ export default function ProtectPdf() {
       title="Protect PDF with Password"
       description="Encrypt your PDF with military-grade 256-bit AES protection and custom permission rules."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
@@ -722,7 +734,7 @@ export default function ProtectPdf() {
               </div>
 
               {/* Sticky Primary CTA Action Button */}
-              <div className="p-4 border-t border-[var(--border-subtle)] bg-[var(--bg-primary)]">
+              <div className="p-4 border-t border-[var(--border-subtle)] bg-[var(--bg-primary)] flex flex-col gap-2">
                 <button
                   type="button"
                   onClick={handleProtect}
@@ -741,6 +753,20 @@ export default function ProtectPdf() {
                     </>
                   )}
                 </button>
+                {processing && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      poller.cancelJob();
+                      setProcessing(false);
+                      setProgress(0);
+                    }}
+                    className="w-full py-2 px-3 text-xs font-semibold text-red-500 hover:bg-red-500/10 rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-[15px]">cancel</span>
+                    Cancel Encryption
+                  </button>
+                )}
               </div>
             </div>
           </div>

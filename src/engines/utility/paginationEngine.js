@@ -632,8 +632,8 @@ export const computePageBudgetMetrics = (contentHeight, a4Height = A4_HEIGHT) =>
   }
 
   const badgeText = isOverflowing
-    ? `⚠️ Page 1 Overflow (+${Math.abs(headroomPx)}px)`
-    : `📄 Page 1: ${page1FillPct}% · ${headroomPx}px headroom`;
+    ? `Page 1 Overflow (+${Math.abs(headroomPx)}px)`
+    : `Page 1: ${page1FillPct}% · ${headroomPx}px headroom`;
 
   return {
     a4Height,

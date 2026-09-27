@@ -1,7 +1,7 @@
-{
+﻿{
   "name": "DocScalar — Free Document & PDF Studio",
   "short_name": "DocScalar",
-  "description": "Fast, 100% private in-browser document processing and visual studio.",
+  "description": "Fast, secure document processing and visual studio.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0e1a",
@@ -9,8 +9,20 @@
   "icons": [
     {
       "src": "/favicon.svg",
-      "sizes": "192x192 512x512",
+      "sizes": "any",
       "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],

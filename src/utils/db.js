@@ -1,4 +1,6 @@
-// DocScalar Local IndexedDB Utility for Local First Data Storage
+// DocScalar IndexedDB Utility for Offline Cache & Draft Storage
+import { scheduleIdleTask, runWhenIdle } from './idleTask.js';
+
 const DB_NAME = 'docscalar_db';
 const DB_VERSION = 2; // Upgraded version to support canvas layout saving
 const STORE_NAME = 'file_history';
@@ -65,25 +67,45 @@ export async function saveFile(name, size, type, action, blob) {
       const request = store.add(record);
 
       request.onsuccess = () => {
-        try {
-          const historyRaw = localStorage.getItem('conversionHistory');
-          let history = [];
-          if (historyRaw) {
-            history = JSON.parse(historyRaw);
+        // Defer conversionHistory localStorage serialization to idle frame so UI thread stays responsive
+        scheduleIdleTask(() => {
+          try {
+            if (typeof localStorage === 'undefined') return;
+            const historyRaw = localStorage.getItem('conversionHistory');
+            let history = [];
+            if (historyRaw) {
+              try {
+                const parsed = JSON.parse(historyRaw);
+                history = Array.isArray(parsed) ? parsed : [];
+              } catch (_) {
+                history = [];
+              }
+            }
+            history.unshift({
+              id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
+              filename: name,
+              toolName: action,
+              timestamp: new Date().toISOString()
+            });
+            if (history.length > 100) {
+              history = history.slice(0, 100);
+            }
+            try {
+              localStorage.setItem('conversionHistory', JSON.stringify(history));
+            } catch (quotaErr) {
+              // Auto-recovery for quota-limited storage (e.g. mobile Safari private mode)
+              try {
+                history = history.slice(0, 25);
+                localStorage.setItem('conversionHistory', JSON.stringify(history));
+              } catch (fallbackErr) {
+                console.warn('Failed to persist conversion history even after quota trimming:', fallbackErr);
+              }
+            }
+          } catch (err) {
+            console.error('Failed to save conversion history to localStorage:', err);
           }
-          history.unshift({
-            id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
-            filename: name,
-            toolName: action,
-            timestamp: new Date().toISOString()
-          });
-          if (history.length > 100) {
-            history = history.slice(0, 100);
-          }
-          localStorage.setItem('conversionHistory', JSON.stringify(history));
-        } catch (err) {
-          console.error('Failed to save conversion history to localStorage:', err);
-        }
+        }, { timeout: 2000 });
+
         resolve(request.result); // Returns key (id)
       };
 
@@ -165,20 +187,59 @@ export async function clearFiles() {
   }
 }
 
+let pendingCanvasSaveTask = null;
+let canvasSaveSequence = 0;
+
 export async function saveCanvasState(state) {
-  try {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(CANVAS_STORE_NAME, 'readwrite');
-      const store = transaction.objectStore(CANVAS_STORE_NAME);
-      const request = store.put({ key: 'current', state, date: new Date().toISOString() });
-      request.onsuccess = () => resolve();
-      request.onerror = (e) => reject('Failed to save canvas state: ' + e.target.error);
-    });
-  } catch (err) {
-    console.error(err);
-    throw err;
+  const currentSeq = ++canvasSaveSequence;
+
+  if (pendingCanvasSaveTask && typeof pendingCanvasSaveTask.cancel === 'function') {
+    // Cancel superseded in-flight idle task to prevent redundant writes and race conditions
+    try {
+      pendingCanvasSaveTask.cancel(new Error('Superseded by newer canvas state'));
+    } catch (_) {}
   }
+
+  const task = runWhenIdle(async () => {
+    // Abort if superseded or cleared before idle frame execution
+    if (currentSeq !== canvasSaveSequence) {
+      return null;
+    }
+
+    try {
+      const db = await openDB();
+
+      // Double-check sequence after awaiting openDB to eliminate race condition
+      if (currentSeq !== canvasSaveSequence) {
+        return null;
+      }
+
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(CANVAS_STORE_NAME, 'readwrite');
+        const store = transaction.objectStore(CANVAS_STORE_NAME);
+        const request = store.put({ key: 'current', state, date: new Date().toISOString() });
+        request.onsuccess = () => resolve();
+        request.onerror = (e) => reject('Failed to save canvas state: ' + e.target.error);
+      });
+    } catch (err) {
+      console.error('Failed to save canvas state:', err);
+      throw err;
+    } finally {
+      if (pendingCanvasSaveTask === task) {
+        pendingCanvasSaveTask = null;
+      }
+    }
+  }, 2000);
+
+  pendingCanvasSaveTask = task;
+
+  // Gracefully handle cancellation so superseded callers don't trigger unhandled promise rejections
+  return task.catch((err) => {
+    if (err?.message === 'Superseded by newer canvas state' || err?.message === 'Superseded by canvas clear' || err?.message?.includes('cancelled')) {
+      return null;
+    }
+    throw err;
+  });
 }
 
 export async function loadCanvasState() {
@@ -198,6 +259,15 @@ export async function loadCanvasState() {
 }
 
 export async function clearCanvasState() {
+  // Invalidate any in-flight or queued saveCanvasState tasks to prevent resurrection of cleared state
+  canvasSaveSequence++;
+  if (pendingCanvasSaveTask && typeof pendingCanvasSaveTask.cancel === 'function') {
+    try {
+      pendingCanvasSaveTask.cancel(new Error('Superseded by canvas clear'));
+    } catch (_) {}
+    pendingCanvasSaveTask = null;
+  }
+
   try {
     const db = await openDB();
     return new Promise((resolve, reject) => {
@@ -212,33 +282,196 @@ export async function clearCanvasState() {
   }
 }
 
+export const DRAFT_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
 /**
- * Persist active studio drafts (Organize, Merge, Sign, Image-to-PDF) to survive browser reloads.
+ * Direct internal pruning function that executes immediately and guarantees
+ * completion of the delete transaction before resolving.
  */
-export async function saveStudioDraft(key, data) {
+export async function _pruneExpiredStudioDraftsDirect(maxAgeMs = DRAFT_TTL_MS) {
   try {
     const db = await openDB();
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
+      let isSettled = false;
+      const settle = (count) => {
+        if (!isSettled) {
+          isSettled = true;
+          resolve(count);
+        }
+      };
+
       const transaction = db.transaction(CANVAS_STORE_NAME, 'readwrite');
       const store = transaction.objectStore(CANVAS_STORE_NAME);
-      const request = store.put({ key: `studio_draft_${key}`, data, date: new Date().toISOString() });
-      request.onsuccess = () => resolve();
-      request.onerror = (e) => reject('Failed to save studio draft: ' + e.target.error);
+      const request = store.getAll();
+
+      let pruned = 0;
+
+      request.onsuccess = () => {
+        const records = request.result || [];
+        const now = Date.now();
+
+        for (const rec of records) {
+          if (rec.key && rec.key.startsWith('studio_draft_')) {
+            const age = rec.date ? now - new Date(rec.date).getTime() : Infinity;
+            if (age > maxAgeMs) {
+              store.delete(rec.key);
+              pruned++;
+            }
+          }
+        }
+        // Fallback resolution in case runtime or mock environment does not fire oncomplete
+        setTimeout(() => settle(pruned), 10);
+      };
+
+      // Ensure transaction finishes committing so storage quota is actually freed
+      transaction.oncomplete = () => {
+        settle(pruned);
+      };
+
+      transaction.onerror = () => {
+        settle(0);
+      };
+
+      request.onerror = () => {
+        settle(0);
+      };
     });
   } catch (err) {
-    console.warn('Studio draft save skipped:', err);
+    console.warn('Direct pruning of expired studio drafts failed:', err);
+    return 0;
   }
+}
+
+const pendingPruneTasks = new Map();
+
+/**
+ * Prune studio drafts older than maxAgeMs to protect mobile storage quota.
+ * Scheduled during browser idle frames to eliminate startup thread contention.
+ * Defaults to 24 hours. Coalesces concurrent calls for the same maxAgeMs.
+ */
+export function pruneExpiredStudioDrafts(maxAgeMs = DRAFT_TTL_MS) {
+  if (pendingPruneTasks.has(maxAgeMs)) {
+    return pendingPruneTasks.get(maxAgeMs);
+  }
+
+  const task = runWhenIdle(async () => {
+    try {
+      return await _pruneExpiredStudioDraftsDirect(maxAgeMs);
+    } finally {
+      pendingPruneTasks.delete(maxAgeMs);
+    }
+  }, 3000);
+
+  const sharedPromise = task.catch((err) => {
+    pendingPruneTasks.delete(maxAgeMs);
+    throw err;
+  });
+
+  pendingPruneTasks.set(maxAgeMs, sharedPromise);
+  return sharedPromise;
+}
+
+const pendingDraftSaveTasks = new Map();
+const draftSaveSequences = new Map();
+
+/**
+ * Persist active studio drafts (Organize, Merge, Sign, Image-to-PDF) to survive browser reloads.
+ * Implements QuotaExceededError recovery with automatic storage sweep.
+ * Scheduled during browser idle frames to prevent blocking typing or canvas dragging.
+ * Deduplicates and cancels superseded in-flight saves per key to prevent write storms and race conditions.
+ */
+export async function saveStudioDraft(key, data) {
+  const currentSeq = (draftSaveSequences.get(key) || 0) + 1;
+  draftSaveSequences.set(key, currentSeq);
+
+  if (pendingDraftSaveTasks.has(key)) {
+    const existingTask = pendingDraftSaveTasks.get(key);
+    if (existingTask && typeof existingTask.cancel === 'function') {
+      try {
+        existingTask.cancel(new Error(`Superseded by newer draft for ${key}`));
+      } catch (_) {}
+    }
+  }
+
+  const task = runWhenIdle(async () => {
+    // Abort if superseded or cleared before idle frame execution
+    if (draftSaveSequences.get(key) !== currentSeq) {
+      return null;
+    }
+
+    try {
+      const db = await openDB();
+
+      // Double-check sequence after awaiting openDB
+      if (draftSaveSequences.get(key) !== currentSeq) {
+        return null;
+      }
+
+      const putPromise = () =>
+        new Promise((resolve, reject) => {
+          const transaction = db.transaction(CANVAS_STORE_NAME, 'readwrite');
+          const store = transaction.objectStore(CANVAS_STORE_NAME);
+          const request = store.put({ key: `studio_draft_${key}`, data, date: new Date().toISOString() });
+          request.onsuccess = () => resolve();
+          request.onerror = (e) => reject(e.target?.error || e);
+        });
+
+      try {
+        await putPromise();
+      } catch (err) {
+        // QuotaExceededError recovery: prune drafts older than 1 hour directly and retry immediately
+        console.warn('Draft save error, attempting storage quota recovery:', err);
+        await _pruneExpiredStudioDraftsDirect(60 * 60 * 1000);
+        try {
+          if (draftSaveSequences.get(key) === currentSeq) {
+            await putPromise();
+          }
+        } catch (retryErr) {
+          console.warn('Studio draft save skipped after quota recovery attempt:', retryErr);
+        }
+      }
+    } catch (err) {
+      console.warn('Studio draft save skipped:', err);
+    } finally {
+      if (pendingDraftSaveTasks.get(key) === task) {
+        pendingDraftSaveTasks.delete(key);
+      }
+    }
+  }, 2000);
+
+  pendingDraftSaveTasks.set(key, task);
+
+  return task.catch((err) => {
+    if (err?.message?.includes('Superseded') || err?.message?.includes('cancelled')) {
+      return null;
+    }
+    throw err;
+  });
 }
 
 export async function loadStudioDraft(key) {
   try {
     const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(CANVAS_STORE_NAME, 'readonly');
+    return new Promise((resolve) => {
+      const transaction = db.transaction(CANVAS_STORE_NAME, 'readwrite');
       const store = transaction.objectStore(CANVAS_STORE_NAME);
       const request = store.get(`studio_draft_${key}`);
-      request.onsuccess = () => resolve(request.result ? request.result.data : null);
-      request.onerror = (e) => reject('Failed to load studio draft: ' + e.target.error);
+      request.onsuccess = () => {
+        const record = request.result;
+        if (!record) {
+          resolve(null);
+          return;
+        }
+        // Invalidate if older than 24 hours
+        const age = record.date ? Date.now() - new Date(record.date).getTime() : Infinity;
+        if (age > DRAFT_TTL_MS) {
+          store.delete(`studio_draft_${key}`);
+          resolve(null);
+          return;
+        }
+        resolve(record.data || null);
+      };
+      request.onerror = () => resolve(null);
     });
   } catch (err) {
     console.warn('Studio draft load skipped:', err);
@@ -247,14 +480,26 @@ export async function loadStudioDraft(key) {
 }
 
 export async function clearStudioDraft(key) {
+  // Invalidate any in-flight or queued saveStudioDraft tasks for this key to prevent resurrection
+  draftSaveSequences.set(key, (draftSaveSequences.get(key) || 0) + 1);
+  if (pendingDraftSaveTasks.has(key)) {
+    const existingTask = pendingDraftSaveTasks.get(key);
+    if (existingTask && typeof existingTask.cancel === 'function') {
+      try {
+        existingTask.cancel(new Error(`Superseded by draft clear for ${key}`));
+      } catch (_) {}
+    }
+    pendingDraftSaveTasks.delete(key);
+  }
+
   try {
     const db = await openDB();
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const transaction = db.transaction(CANVAS_STORE_NAME, 'readwrite');
       const store = transaction.objectStore(CANVAS_STORE_NAME);
       const request = store.delete(`studio_draft_${key}`);
       request.onsuccess = () => resolve();
-      request.onerror = (e) => reject('Failed to clear studio draft: ' + e.target.error);
+      request.onerror = () => resolve();
     });
   } catch (err) {
     console.warn('Studio draft clear skipped:', err);

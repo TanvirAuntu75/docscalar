@@ -149,7 +149,7 @@ export async function generateDiffAuditReportPdf(params = {}) {
   });
 
   // Footer
-  page.drawText('Verified by DocScalar Client-Side Forensic Diff Engine. Confidential.', {
+  page.drawText('Verified by DocScalar Forensic Diff Engine. Confidential.', {
     x: margin,
     y: 30,
     size: 8,

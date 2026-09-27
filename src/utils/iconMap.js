@@ -61,15 +61,12 @@ export const toolIconsMap = {
   'sign-pdf': SignatureIcon,
   'redact-pdf': EyeOff,
   'compare-pdf': GitCompare,
-  'ai-summarizer': Sparkles,
-  'ai-translator': Languages,
   
   // Image & Utilities
   'image-converter': RefreshCw,
   'image-compressor': ImageIcon,
   'image-resizer': Maximize2,
   'qr-generator': QrCode,
-  'conversion-pipeline': Workflow,
   'unzip-file': FolderOpen,
   'url-to-pdf': Link2,
   'resume-builder': Briefcase,

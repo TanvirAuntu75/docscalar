@@ -112,6 +112,7 @@ export function extractDocxElements(xmlContent = '') {
     } else if (elXml.startsWith('<w:tbl')) {
       // Table handling: extract rows and columns
       const rowMatches = elXml.match(/<w:tr[ >][\s\S]*?<\/w:tr>/g) || [];
+      const tableRows = [];
       for (const rowXml of rowMatches) {
         const cellMatches = rowXml.match(/<w:tc[ >][\s\S]*?<\/w:tc>/g) || [];
         const cellTexts = [];
@@ -120,10 +121,13 @@ export function extractDocxElements(xmlContent = '') {
           const cellStr = tMatches.map(t => t.replace(/<[^>]+>/g, '')).join(' ').trim();
           cellTexts.push(sanitizeWinAnsiText(cellStr));
         }
-        const rowText = cellTexts.filter(Boolean).join('  |  ');
-        if (rowText) {
-          items.push({ text: rowText, isHeading: false, isTable: true });
+        if (cellTexts.length > 0) {
+          tableRows.push(cellTexts);
         }
+      }
+      if (tableRows.length > 0) {
+        const tableText = tableRows.map(r => r.filter(Boolean).join('  |  ')).filter(Boolean).join('\n');
+        items.push({ text: tableText, isHeading: false, isTable: true, rows: tableRows });
       }
     }
   }
@@ -205,6 +209,28 @@ export async function directDocxToPdf(file, options = {}, onProgress = () => {})
       : isTable
       ? rgb(0.2, 0.25, 0.35)
       : rgb(0.15, 0.15, 0.15);
+
+    // If structured table, render row by row
+    if (isTable && items[i].rows && items[i].rows.length > 0) {
+      for (const row of items[i].rows) {
+        const rowLine = row.filter(Boolean).join('  |  ');
+        if (!rowLine) continue;
+        if (currentY - lineHeight < margin) addNewPage();
+        try {
+          currentPage.drawText(rowLine, {
+            x: margin,
+            y: currentY,
+            size: fontSize,
+            font,
+            color: textColor
+          });
+        } catch (e) {}
+        currentY -= lineHeight;
+      }
+      currentY -= 4;
+      onProgress(50 + Math.round(((i + 1) / Math.max(1, items.length)) * 40));
+      continue;
+    }
 
     // Word wrapping
     const words = text.split(/\s+/);

@@ -13,6 +13,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
+import { generateBatchImageThumbnails, safeRevokeUrls } from '../../utils/imagePreviewHelper';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import {
@@ -74,6 +75,7 @@ export default function ImageConverter() {
   const [viewMode, setViewMode] = useState('inspect'); // 'inspect' | 'gallery'
   const [zoomScale, setZoomScale] = useState(1.0);
   const [previewUrls, setPreviewUrls] = useState([]);
+  const [thumbnails, setThumbnails] = useState([]);
   const [compareSliderPos, setCompareSliderPos] = useState(50); // 0 - 100 percentage
   const [isComparing, setIsComparing] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState(null);
@@ -133,37 +135,76 @@ export default function ImageConverter() {
     }
   }, [files, targetFormat, quality, backgroundMatte, colorMode, scalePreset]);
 
-  // 3. Generate Object URLs & Measure Natural Dimensions
+  // 3. Generate Object URLs, Downsampled Thumbnails & Measure Natural Dimensions
   useEffect(() => {
+    let isCancelled = false;
+    const cancellationToken = { isCancelled: false };
+
+    // High-resolution preview URLs for single-image inspect and interactive compare stage
     const urls = files.map((f) => URL.createObjectURL(f));
     setPreviewUrls(urls);
 
-    // Measure natural dimensions for each image
-    const dimsPromises = urls.map((url) => {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          const w = img.naturalWidth || 800;
-          const h = img.naturalHeight || 600;
-          const aspect = (w / h).toFixed(2);
-          const mp = ((w * h) / 1000000).toFixed(1);
-          resolve({ width: w, height: h, aspect, mp });
-        };
-        img.onerror = () => {
-          resolve({ width: 800, height: 600, aspect: '1.33', mp: '0.5' });
-        };
-        img.src = url;
+    // Generate downsampled thumbnails for gallery cards and extract dimensions
+    generateBatchImageThumbnails(files, {
+      maxDimension: 320,
+      quality: 0.8,
+      cancellationToken
+    })
+      .then((thumbs) => {
+        if (!isCancelled) {
+          setThumbnails(thumbs);
+          // Preserve full dimension metadata (naturalDims) directly from decoded images
+          const dims = thumbs.map((t) => {
+            const w = t.originalWidth || 800;
+            const h = t.originalHeight || 600;
+            const aspect = (w / (h || 1)).toFixed(2);
+            const mp = ((w * h) / 1000000).toFixed(1);
+            return { width: w, height: h, aspect, mp };
+          });
+          setNaturalDims(dims);
+        } else {
+          safeRevokeUrls(thumbs);
+        }
+      })
+      .catch((err) => {
+        if (!isCancelled) {
+          console.warn('Image Converter thumbnail generation warning:', err);
+          // Resilient fallback dimensions measurement
+          const dimsPromises = urls.map((url) => {
+            return new Promise((resolve) => {
+              const img = new Image();
+              img.onload = () => {
+                const w = img.naturalWidth || 800;
+                const h = img.naturalHeight || 600;
+                const aspect = (w / (h || 1)).toFixed(2);
+                const mp = ((w * h) / 1000000).toFixed(1);
+                resolve({ width: w, height: h, aspect, mp });
+              };
+              img.onerror = () => {
+                resolve({ width: 800, height: 600, aspect: '1.33', mp: '0.5' });
+              };
+              img.src = url;
+            });
+          });
+          Promise.all(dimsPromises).then((dims) => {
+            if (!isCancelled) setNaturalDims(dims);
+          });
+        }
       });
-    });
-
-    Promise.all(dimsPromises).then((dims) => {
-      setNaturalDims(dims);
-    });
 
     return () => {
-      urls.forEach((u) => URL.revokeObjectURL(u));
+      isCancelled = true;
+      cancellationToken.isCancelled = true;
+      safeRevokeUrls(urls);
     };
   }, [files]);
+
+  // Clean up downsampled thumbnail URLs on unmount
+  useEffect(() => {
+    return () => {
+      safeRevokeUrls(thumbnails);
+    };
+  }, [thumbnails]);
 
   // 4. Keyboard Shortcuts (Arrow Left/Right to cycle images, + / - to zoom, Escape to reset)
   useEffect(() => {
@@ -201,6 +242,15 @@ export default function ImageConverter() {
   // 6. Remove Single File
   const handleRemoveFile = (indexToRemove, e) => {
     if (e) e.stopPropagation();
+    // Meticulous cleanup of removed item's blob URLs
+    if (previewUrls[indexToRemove]) {
+      safeRevokeUrls(previewUrls[indexToRemove]);
+    }
+    if (thumbnails[indexToRemove]) {
+      safeRevokeUrls(thumbnails[indexToRemove]);
+    }
+    setThumbnails((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+    setNaturalDims((prev) => prev.filter((_, idx) => idx !== indexToRemove));
     setFiles((prev) => {
       const updated = prev.filter((_, idx) => idx !== indexToRemove);
       if (activeFileIndex >= updated.length) {
@@ -401,7 +451,10 @@ export default function ImageConverter() {
 
   const resetWorkspace = () => {
     clearStudioDraft('image-converter');
+    safeRevokeUrls(previewUrls);
+    safeRevokeUrls(thumbnails);
     setFiles([]);
+    setThumbnails([]);
     setActiveFileIndex(0);
     setNaturalDims([]);
     setResult(null);
@@ -422,14 +475,15 @@ export default function ImageConverter() {
     <ToolPageLayout
       toolId="image-converter"
       title="Image Converter Studio"
-      description="Convert images between PNG, JPG, WEBP, BMP, ICO, and PDF formats with subpixel fidelity, batch processing, and privacy-first local encoding."
+      description="Convert images between PNG, JPG, WEBP, BMP, ICO, and PDF formats with subpixel fidelity, batch processing, and privacy-first processing."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="Image Converter Online Free — Convert PNG, JPG, WEBP, BMP, ICO, PDF | DocScalar"
-        description="Convert single or batch images to PNG, JPG, WEBP, BMP, ICO, and PDF online for free. 100% private in-browser WebAssembly processing with zero server uploads."
+        description="Convert single or batch images to PNG, JPG, WEBP, BMP, ICO, and PDF online for free. Fast, high-fidelity processing with strict data privacy."
       />
 
       {/* Hidden File Input for Adding More Images */}
@@ -764,7 +818,7 @@ export default function ImageConverter() {
                             {/* Card Thumbnail */}
                             <div className="w-full aspect-square bg-[var(--bg-secondary)] rounded-xl overflow-hidden flex items-center justify-center relative">
                               <img
-                                src={previewUrls[idx]}
+                                src={thumbnails[idx]?.previewUrl || previewUrls[idx]}
                                 alt={file.name}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                               />

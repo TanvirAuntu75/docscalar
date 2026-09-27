@@ -12,8 +12,10 @@ import { useAuth } from '../context/AuthContext';
 export default function AdPlaceholder({ format = 'rectangle' }) {
   const { isAuthenticated, isPro } = useAuth();
 
-  // Pro users never see this
-  if (isPro) return null;
+  // Pro users never see this, and never render inside full-screen studio workspaces
+  if (isPro || (typeof document !== 'undefined' && document.body?.classList?.contains('studio-mode-active'))) {
+    return null;
+  }
 
   return (
     <div className={`upgrade-banner mt-10 md:mt-12 relative overflow-hidden bg-gradient-to-r from-[#1C1917] via-[#292524] to-[#1C1917] text-white rounded-xl shadow-md border border-[#44403C] ${

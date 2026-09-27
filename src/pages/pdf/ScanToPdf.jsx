@@ -277,7 +277,7 @@ export default function ScanToPdf() {
     >
       <SEOHead
         title="Scan to PDF Online Free — Camera Document Scanner | DocScalar"
-        description="Capture documents with your webcam or mobile camera, adjust rotations, apply scan enhancements, and bundle into a clean PDF. 100% Client-side."
+        description="Capture documents with your webcam or mobile camera, adjust rotations, apply scan enhancements, and bundle into a clean PDF. 100% secure in-memory processing."
       />
 
       {!result ? (

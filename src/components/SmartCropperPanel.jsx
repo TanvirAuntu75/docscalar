@@ -11,6 +11,7 @@
  */
 import React from 'react';
 import SmartCropperModal from './SmartCropperModal';
+import SmartCropLimitModal from './SmartCropLimitModal';
 import { shouldAutoShowSmartCropModal } from '../utils/smartCropperStorage';
 
 export default function SmartCropperPanel({ cropper, totalPages = 0, onActivate, onRevert, className = '' }) {
@@ -31,7 +32,8 @@ export default function SmartCropperPanel({ cropper, totalPages = 0, onActivate,
     pageRange,
     setPageRange,
     activate,
-    revert
+    revert,
+    quota
   } = cropper;
 
   const edgeLabels = { top: 'Top', bottom: 'Bottom', left: 'Left', right: 'Right' };
@@ -49,13 +51,17 @@ export default function SmartCropperPanel({ cropper, totalPages = 0, onActivate,
   };
 
   const handleActivate = () => {
+    if (quota && (!quota.isAuthenticated || !quota.allowed)) {
+      activate(); // triggers limit modal
+      return;
+    }
     if (shouldAutoShowSmartCropModal() && (cropper.onOpenInfo || cropper.setShowInfoModal)) {
       if (cropper.onOpenInfo) cropper.onOpenInfo(false);
       else if (cropper.setShowInfoModal) cropper.setShowInfoModal(true);
       return;
     }
-    activate();
-    if (onActivate) onActivate();
+    const ok = activate();
+    if (ok && onActivate) onActivate();
   };
 
   const handleRevert = () => {
@@ -94,6 +100,17 @@ export default function SmartCropperPanel({ cropper, totalPages = 0, onActivate,
             marginLeft: 'auto'
           }}>Inverted Doc</span>
         )}
+        {quota && !isActive && !isInvertedDocument && (
+          <span style={{
+            fontSize: '10px', fontWeight: 600, padding: '2px 6px',
+            borderRadius: '4px',
+            backgroundColor: quota.isPro ? '#FFEDD5' : quota.remaining > 0 ? '#E0E7FF' : '#FEE2E2',
+            color: quota.isPro ? '#C2410C' : quota.remaining > 0 ? '#3730A3' : '#991B1B',
+            marginLeft: 'auto'
+          }}>
+            {quota.isPro ? 'PRO UNLIMITED' : !quota.isAuthenticated ? 'Free 3/day' : `${quota.remaining}/${quota.limit} left`}
+          </span>
+        )}
         <button
           type="button"
           onClick={() => {
@@ -103,7 +120,7 @@ export default function SmartCropperPanel({ cropper, totalPages = 0, onActivate,
           style={{
             background: 'none', border: 'none', cursor: 'pointer', padding: '2px',
             color: '#6B7280', display: 'flex', alignItems: 'center',
-            marginLeft: (isActive || isInvertedDocument) ? '6px' : 'auto'
+            marginLeft: (isActive || isInvertedDocument || quota) ? '6px' : 'auto'
           }}
           title="What does Smart Cropping do? (Click for interactive demonstration)"
         >
@@ -330,6 +347,17 @@ export default function SmartCropperPanel({ cropper, totalPages = 0, onActivate,
           detectedCount={hasDetectedBorders ? 1 : 0}
           currentMargin={cleanMargin}
           onMarginChange={cropper.setCleanMargin}
+        />
+      )}
+
+      {/* Tier Quota & Limit Modal */}
+      {cropper.limitModalOpen && (
+        <SmartCropLimitModal
+          isOpen={cropper.limitModalOpen}
+          type={cropper.limitModalType}
+          onClose={cropper.closeLimitModal}
+          usedCount={cropper.quota?.used}
+          dailyLimit={cropper.quota?.limit}
         />
       )}
     </div>

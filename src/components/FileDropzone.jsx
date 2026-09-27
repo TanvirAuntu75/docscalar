@@ -1,8 +1,14 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { formatFileSize, TOOLS } from '../utils/constants';
+import { useAuth } from '../context/AuthContext';
+import { formatFileSize, TOOLS, TIER_LIMITS } from '../utils/constants';
 
 export default function FileDropzone({ accept, multiple, files = [], setFiles = () => {}, maxFiles = 50, compact = false }) {
+  const { isAuthenticated, userTier } = useAuth();
+  const activeTierKey = userTier === 'pro' ? 'pro' : (isAuthenticated ? 'free' : 'guest');
+  const activeTierLimit = TIER_LIMITS[activeTierKey] || TIER_LIMITS.guest;
+  const dynamicMaxSizeLabel = activeTierLimit.maxFileSizeMB >= 1024 ? '1 GB' : `${activeTierLimit.maxFileSizeMB} MB`;
+
   const inputRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -13,10 +19,11 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
   const dragCounter = useRef(0);
   const [toast, setToast] = useState(null);
 
-  // Dynamic route resolution matching
+  // Dynamic route resolution matching: normalize subpaths (/upload, /studio, /download)
+  const basePath = location.pathname.replace(/\/(upload|studio|download)\/?$/, '').replace(/\/$/, '') || '/';
   const currentPath = location.pathname.replace(/\/$/, '');
   const activeTool = TOOLS.find(
-    (t) => t.path === currentPath || t.path === currentPath + '/'
+    (t) => t.path === basePath || t.path === basePath + '/' || t.path === currentPath || t.path === currentPath + '/'
   );
 
   useEffect(() => {
@@ -96,16 +103,17 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
       }
     }
 
-    // Client Side memory validation alert for large files
-    const largeFiles = arr.filter((file) => file.size > 30 * 1024 * 1024);
-    if (largeFiles.length > 0) {
-      setToast({
-        type: 'warning',
-        message: 'Large file(s) detected (over 30MB). Processing large files Client Side may slow down or freeze your browser tab.'
-      });
-    }
-
     if (arr.length === 0) return;
+
+    // Validate files against active tier file size limit (10MB Guest, 15MB Free, 1GB Pro)
+    const oversized = arr.find((file) => file.size > activeTierLimit.maxFileSizeBytes);
+    if (oversized) {
+      setToast({
+        type: 'error',
+        message: `File "${oversized.name}" (${formatFileSize(oversized.size)}) exceeds the ${dynamicMaxSizeLabel} limit for ${activeTierLimit.name}.`
+      });
+      return;
+    }
 
     if (multiple) {
       setFiles((prev) => {
@@ -115,7 +123,7 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
     } else {
       setFiles(arr.slice(0, 1));
     }
-  }, [multiple, setFiles, maxFiles, accept]);
+  }, [multiple, setFiles, maxFiles, accept, activeTierLimit, dynamicMaxSizeLabel]);
 
   // Global window drag-and-drop listener to trigger the fullscreen drop overlay
   useEffect(() => {
@@ -242,27 +250,27 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
       icon: 'upload_file',
       maxSize: '200MB',
       badges: [
-        { icon: 'shield_lock', label: 'Client Side Processing' },
-        { icon: 'cloud_off', label: 'No File Upload' },
-        { icon: 'verified_user', label: '100% Secure' }
+        { icon: 'shield_lock', label: 'Fast and Secure' },
+        { icon: 'lock', label: 'Encrypted Data Transfer' },
+        { icon: 'verified_user', label: 'Strict Data Privacy' }
       ],
       steps: [
         { title: 'Upload File', desc: 'Select or drag your file to get started.' },
         { title: 'Configure Options', desc: 'Adjust settings to tailor the processing.' },
-        { title: 'Process', desc: 'Our Client Side converter processes the file instantly.' },
+        { title: 'Process', desc: 'Our engine processes the file with high precision.' },
         { title: 'Download', desc: 'Save your optimized file to your device.' }
       ],
       tips: [
-        'Large files may take a few seconds to process locally.',
+        'Large documents are securely streamed and processed.',
         'Ensure the file is not corrupted or password-protected.',
-        'Close other browser tabs for optimal Client Side speed.',
-        'Your documents are private and never touch our servers.'
+        'High speed engines deliver instantaneous downloads.',
+        'Your documents are private, encrypted, and automatically purged.'
       ],
       cards: [
         { icon: 'bolt', title: 'Lightning Fast', desc: 'Process and convert files in milliseconds.' },
-        { icon: 'offline_pin', title: 'Client Side First', desc: 'No internet connection? No problem. Works locally.' },
+        { icon: 'lock', title: 'Encrypted Pipeline', desc: 'Secure encryption protects every document transfer.' },
         { icon: 'high_quality', title: 'Zero Quality Loss', desc: 'Smart algorithms keep document styles and text crisp.' },
-        { icon: 'security', title: '100% Private', desc: 'Your data stays secure on your machine.' }
+        { icon: 'security', title: 'Private Processing', desc: 'Files are automatically purged after processing.' }
       ]
     };
 
@@ -285,15 +293,9 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
     }
 
     if (category === 'image' || toolId === 'image-to-pdf' || toolId === 'scan-to-pdf') {
-      // image-to-pdf and scan-to-pdf: images go in, limit is 40MB
       return getImageMeta(defaultMeta, activeTool);
     } else if (category === 'convert-to-pdf' || category === 'convert-from-pdf' || toolId === 'text-to-pdf') {
-      // Determine the correct max size to display based on the specific tool
-      let docMaxSize = '15MB';
-      if (toolId === 'html-to-pdf' || toolId === 'text-to-pdf') docMaxSize = '15MB';
-      else if (toolId === 'docx-to-pdf' || toolId === 'powerpoint-to-pdf' || toolId === 'excel-to-pdf') docMaxSize = '15MB';
-      else if (category === 'convert-from-pdf') docMaxSize = '200MB'; // PDF → something: input is a PDF
-      return getDocMeta(defaultMeta, activeTool, docMaxSize);
+      return getDocMeta(defaultMeta, activeTool, dynamicMaxSizeLabel);
     } else {
       return getPdfMeta(defaultMeta, activeTool);
     }
@@ -306,10 +308,10 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
       typeName: 'PDF',
       typeNamePlural: 'PDFs',
       icon: 'compress',
-      maxSize: '200MB',
+      maxSize: dynamicMaxSizeLabel,
       badges: [
-        { icon: 'verified_user', label: 'Client Side Processing' },
-        { icon: 'lock', label: 'No File Upload' },
+        { icon: 'verified_user', label: 'Fast Processing' },
+        { icon: 'lock', label: 'Encrypted Pipeline' },
         { icon: 'shield', label: '100% Secure' }
       ],
       steps: tool?.id === 'compress-pdf' ? [
@@ -325,7 +327,7 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
       ] : [
         { title: 'Upload PDF', desc: `Select or drag your ${isMultiple ? 'PDF files' : 'PDF document'} to start.` },
         { title: 'Configure Settings', desc: 'Adjust options like page numbers, watermarks, or rotation.' },
-        { title: 'Process PDF', desc: 'Our in-browser engine runs the action locally.' },
+        { title: 'Process PDF', desc: 'Our high-performance engine processes your document.' },
         { title: 'Download PDF', desc: 'Save your updated document instantly.' }
       ],
       tips: [
@@ -338,7 +340,7 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
         { icon: 'draw', title: 'Preserve Vectors', desc: 'Keep vectors and shapes crisp and clear.' },
         { icon: 'text_fields', title: 'Searchable Text', desc: 'Maintain text layers for full searchability.' },
         { icon: 'high_quality', title: 'Quality Optimized', desc: 'Smart compression ensures best quality output.' },
-        { icon: 'security', title: '100% Secure', desc: 'Your files never leave your device.' }
+        { icon: 'security', title: '100% Secure', desc: 'Your files are processed securely and never retained.' }
       ]
     };
   };
@@ -349,16 +351,16 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
       typeName: 'Image',
       typeNamePlural: 'Images',
       icon: 'image',
-      maxSize: '40MB',
+      maxSize: dynamicMaxSizeLabel,
       badges: [
-        { icon: 'photo_camera', label: 'In-Browser Compression' },
-        { icon: 'cloud_off', label: 'Client Side Enabled' },
+        { icon: 'photo_camera', label: 'High Speed Processing' },
+        { icon: 'bolt', label: 'Instant Conversion' },
         { icon: 'verified_user', label: '100% Private' }
       ],
       steps: [
         { title: 'Upload Images', desc: 'Select or drag your image files to get started.' },
         { title: 'Adjust Settings', desc: 'Configure output format, dimensions, or compression level.' },
-        { title: 'Process Images', desc: 'Files are processed instantly directly in your browser.' },
+        { title: 'Process Images', desc: 'Files are converted with maximum visual fidelity.' },
         { title: 'Download Output', desc: 'Download your converted images individually or as a ZIP.' }
       ],
       tips: [
@@ -371,27 +373,22 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
         { icon: 'high_quality', title: 'Quality Preserved', desc: 'Optimized conversion keeps colors and gradients vibrant.' },
         { icon: 'bolt', title: 'Super Fast', desc: 'Images are processed in milliseconds, saving bandwidth.' },
         { icon: 'layers', title: 'Format Versatility', desc: 'Convert between PNG, JPG, WEBP, and BMP directly.' },
-        { icon: 'security', title: '100% Secure', desc: 'Your photos and personal graphics remain on your device.' }
+        { icon: 'security', title: '100% Secure', desc: 'Your photos and personal graphics remain strictly confidential.' }
       ]
     };
   };
 
-  const getDocMeta = (defaults, tool, maxSize = '15MB') => {
+  const getDocMeta = (defaults, tool, maxSize = dynamicMaxSizeLabel) => {
     const isFromPdf = tool?.category === 'convert-from-pdf';
-    const isHtmlTool = tool?.id === 'html-to-pdf';
     return {
       ...defaults,
       typeName: isFromPdf ? 'PDF' : 'Document',
       typeNamePlural: isFromPdf ? 'PDFs' : 'Documents',
       icon: isFromPdf ? 'picture_as_pdf' : 'description',
       maxSize,
-      badges: isHtmlTool ? [
+      badges: [
         { icon: 'description', label: 'Smart Layout Parsing' },
-        { icon: 'cloud_upload', label: 'Server Side Rendering' },
-        { icon: 'verified_user', label: '100% Secure' }
-      ] : [
-        { icon: 'description', label: 'Smart Layout Parsing' },
-        { icon: 'cloud_off', label: 'No File Upload' },
+        { icon: 'cloud_done', label: 'Encrypted Processing' },
         { icon: 'verified_user', label: '100% Secure' }
       ],
       steps: [
@@ -410,7 +407,7 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
         { icon: 'view_agenda', title: 'Layout Preservation', desc: 'Retain tabular boundaries, margins, and column grids.' },
         { icon: 'text_snippet', title: 'Font Integration', desc: 'All text content remains selectable, editable, and indexable.' },
         { icon: 'high_quality', title: 'High Fidelity', desc: 'Professional-grade rendering matching standard desktop viewers.' },
-        { icon: 'security', title: '100% Secure', desc: 'Processing runs locally or gets encrypted and deleted instantly.' }
+        { icon: 'security', title: '100% Secure', desc: 'Processing runs encrypted and files are auto-purged immediately.' }
       ]
     };
   };
@@ -475,6 +472,22 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
                 Browse Device
               </div>
               <p className="text-[10px] text-text-tertiary">Max file size: {meta.maxSize}</p>
+              
+              {/* Micro-trust badges */}
+              <div className="mt-3 pt-2.5 border-t border-outline-variant/30 flex flex-wrap items-center justify-center gap-3 text-[10px] text-on-surface-variant font-medium">
+                <div className="flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[13px] text-primary">lock</span>
+                  <span>Encrypted File Transfer</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[13px] text-primary">schedule</span>
+                  <span>Automatic File Purge</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[13px] text-primary">verified_user</span>
+                  <span>Zero AI Training</span>
+                </div>
+              </div>
             </div>
 
             <input
@@ -533,6 +546,22 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
               </button>
               
               <p className="text-xs text-text-tertiary">Max file size: {meta.maxSize}</p>
+
+              {/* Micro-trust badges */}
+              <div className="mt-6 pt-5 border-t border-outline-variant/30 flex flex-wrap items-center justify-center gap-6 text-[12px] text-on-surface-variant font-medium">
+                <div className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[16px] text-primary">lock</span>
+                  <span>Encrypted File Transfer</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[16px] text-primary">schedule</span>
+                  <span>Automatic File Purge</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[16px] text-primary">verified_user</span>
+                  <span>Zero AI Training</span>
+                </div>
+              </div>
 
               <input
                 ref={inputRef}
@@ -602,7 +631,7 @@ export default function FileDropzone({ accept, multiple, files = [], setFiles = 
             {/* trust locker tagline */}
             <div className="trust-lock-footer-row select-none">
               <span className="material-symbols-outlined">lock</span>
-              Your files are safe and secure. We process everything in your browser.
+              Enterprise Security: Encrypted in transit, processed in isolated transient memory, and purged automatically after download.
             </div>
           </div>
         )

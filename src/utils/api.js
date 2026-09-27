@@ -9,12 +9,26 @@ export const BACKEND_URL =
     : (import.meta.env?.VITE_BACKEND_URL || 'http://127.0.0.1:8000');
 
 /**
+ * Resolves any relative API path against the configured BACKEND_URL.
+ * Leaves absolute URLs (http://, https://, blob:, data:) untouched.
+ */
+export function resolveApiUrl(url) {
+  if (!url) return BACKEND_URL;
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) {
+    return url;
+  }
+  const cleanPath = url.startsWith('/') ? url : `/${url}`;
+  return `${BACKEND_URL}${cleanPath}`;
+}
+
+/**
  * Secure wrapper around native fetch that automatically injects the stored JWT
- * access token in the Authorization header for API requests.
+ * access token in the Authorization header for API requests, and resolves relative URLs.
  */
 export async function apiFetch(url, options = {}) {
   const token = localStorage.getItem('accessToken');
   const headers = options.headers || {};
+  const targetUrl = resolveApiUrl(url);
   
   // Format headers correctly whether they are a Headers object or a plain object
   let newHeaders;
@@ -30,22 +44,31 @@ export async function apiFetch(url, options = {}) {
     }
   }
   
-  return fetch(url, {
+  const response = await fetch(targetUrl, {
     ...options,
     headers: newHeaders
   });
+
+  // Intercept expired or revoked authentication tokens
+  if (response.status === 401 && token) {
+    localStorage.removeItem('accessToken');
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('docscalar:auth-expired'));
+    }
+  }
+
+  return response;
 }
 
 /**
  * Uploads a file securely.
- * If the file is > 25MB and the user has a token, it uses the chunked upload endpoint.
+ * If the file is > 25MB, it uses the chunked upload endpoint (supports both guest and authenticated users).
  * Otherwise, it uses the standard single POST upload endpoint.
  */
 export async function uploadFileSecure(backendUrl, file, onProgress) {
-  const token = localStorage.getItem('accessToken');
   const CHUNK_SIZE = 20 * 1024 * 1024; // 20 MB chunks
 
-  if (file.size > 25 * 1024 * 1024 && token) {
+  if (file.size > 25 * 1024 * 1024) {
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     const uploadId = crypto.randomUUID();
 
@@ -96,6 +119,10 @@ export async function uploadFileSecure(backendUrl, file, onProgress) {
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
       throw new Error(errData.detail || 'Upload failed.');
+    }
+
+    if (onProgress) {
+      onProgress(100);
     }
 
     return res.json();

@@ -9,7 +9,8 @@ import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
 import useCanvasPinchZoom from '../../hooks/useCanvasPinchZoom';
-import { BACKEND_URL } from '../../utils/api';
+import { apiFetch, uploadFileSecure, BACKEND_URL } from '../../utils/api';
+import { useJobPoller } from '../../hooks/useJobPoller';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -60,11 +61,12 @@ export default function RepairPdf() {
 
   const canvasRef = useRef(null);
   const currentRenderTaskRef = useRef(null);
+  const poller = useJobPoller(BACKEND_URL);
 
   // Backend Health Check
   useEffect(() => {
     let isMounted = true;
-    fetch(`${BACKEND_URL}/health`)
+    apiFetch(`${BACKEND_URL}/api/meta/conversions`, { signal: AbortSignal.timeout(1500) })
       .then((res) => {
         if (res.ok && isMounted) setBackendActive(true);
       })
@@ -75,6 +77,42 @@ export default function RepairPdf() {
       isMounted = false;
     };
   }, []);
+
+  // Monitor Backend Polling Job Status
+  useEffect(() => {
+    if (poller.status === 'finished' && poller.result) {
+      setProcessing(false);
+      const originalName = files[activeFileIndex]?.name.replace(/\.[^.]+$/, '') || 'document';
+      const downloadUrl = poller.result.downloadUrl;
+      const finalName = outputFileName || `${originalName}_repaired.pdf`;
+
+      apiFetch(downloadUrl)
+        .then((res) => res.blob())
+        .then((blob) => {
+          setResult({
+            downloadUrl,
+            blob,
+            name: finalName,
+            size: blob.size,
+            strategy: 'pikepdf-fitz-deep'
+          });
+          saveFile(finalName, blob.size, 'application/pdf', 'Repair PDF', blob);
+          clearStudioDraft('repair-pdf');
+        })
+        .catch(() => {
+          setResult({
+            downloadUrl,
+            name: finalName
+          });
+          clearStudioDraft('repair-pdf');
+        });
+    } else if (poller.status === 'failed') {
+      setProcessing(false);
+      setError(poller.error || 'Server repair task failed.');
+    } else if (poller.status === 'started' || poller.status === 'queued') {
+      setProgress(poller.progress || 45);
+    }
+  }, [poller.status, poller.result, poller.error, poller.progress, files, activeFileIndex, outputFileName]);
 
   // Keyboard Arrow Page Navigation
   useEffect(() => {
@@ -266,6 +304,34 @@ export default function RepairPdf() {
     setResult(null);
 
     const file = files[activeFileIndex] || files[0];
+    const finalName = outputFileName || `${file.name.replace(/\.[^.]+$/, '')}_repaired.pdf`;
+
+    if (backendActive) {
+      try {
+        setProgress(20);
+        const uploadData = await uploadFileSecure(BACKEND_URL, file, setProgress);
+        if (!uploadData.success) throw new Error(uploadData.detail || 'Upload failed');
+
+        setProgress(45);
+        const repairFormData = new FormData();
+        repairFormData.append('file_id', uploadData.file_id);
+        repairFormData.append('filename', uploadData.filename);
+        repairFormData.append('mode', repairMode);
+        repairFormData.append('strip_corrupt_metadata', stripCorruptMetadata ? 'true' : 'false');
+
+        const repairRes = await apiFetch(`${BACKEND_URL}/api/repair-pdf`, {
+          method: 'POST',
+          body: repairFormData
+        });
+
+        if (!repairRes.ok) throw new Error('Failed to queue repair task on server.');
+        const repairData = await repairRes.json();
+        poller.startPolling(repairData.job_id);
+        return;
+      } catch (err) {
+        console.warn('Server repair failed, falling back to local client engine:', err);
+      }
+    }
 
     try {
       const repairResult = await repairPdf(
@@ -277,8 +343,6 @@ export default function RepairPdf() {
         },
         (p) => setProgress(p)
       );
-
-      const finalName = outputFileName || `${file.name.replace(/\.[^.]+$/, '')}_repaired.pdf`;
 
       setResult({
         blob: repairResult.blob,
@@ -327,6 +391,7 @@ export default function RepairPdf() {
       title="Repair PDF"
       description="Fix damaged, corrupted, or unreadable PDF documents and restore clean structure."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >

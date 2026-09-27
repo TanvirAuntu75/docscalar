@@ -113,20 +113,32 @@ def enqueue_job(func, *args, **kwargs):
         def run_task():
             _current_job_state.current_job_id = job_id
             with in_memory_jobs_lock:
+                if in_memory_jobs.get(job_id, {}).get("status") == "cancelled":
+                    return
                 in_memory_jobs[job_id]["status"] = "started"
             try:
                 # Execute the function via helper
                 res = run_sync_or_async(func, *args, **kwargs)
                 with in_memory_jobs_lock:
+                    if in_memory_jobs.get(job_id, {}).get("status") == "cancelled":
+                        return
                     in_memory_jobs[job_id]["status"] = "finished"
                     in_memory_jobs[job_id]["result"] = res
             except Exception as e:
                 with in_memory_jobs_lock:
+                    if in_memory_jobs.get(job_id, {}).get("status") == "cancelled":
+                        return
                     in_memory_jobs[job_id]["status"] = "failed"
                     in_memory_jobs[job_id]["error"] = str(e)
             finally:
                 if hasattr(_current_job_state, "current_job_id"):
                     del _current_job_state.current_job_id
+                # Force-stop and reclaim physical memory immediately when background job finishes
+                try:
+                    from backend.services.ocr import teardown_ocr_engine
+                    teardown_ocr_engine()
+                except Exception:
+                    pass
 
         thread_pool.submit(run_task)
         return job_id
@@ -162,6 +174,52 @@ def update_job_progress(percent: int, message: str = None):
                         in_memory_jobs[job_id]["message"] = message
     except Exception:
         pass
+
+
+def cancel_job(job_id: str) -> bool:
+    """
+    Cancel an in-flight or queued job.
+    Supports both Redis/RQ and ThreadPool fallback.
+    """
+    if USE_REDIS:
+        try:
+            from rq.job import Job
+
+            job = Job.fetch(job_id, connection=redis_conn)
+            job.cancel()
+            return True
+        except Exception:
+            return False
+    else:
+        with in_memory_jobs_lock:
+            if job_id in in_memory_jobs:
+                in_memory_jobs[job_id]["status"] = "cancelled"
+                in_memory_jobs[job_id]["error"] = "Job was cancelled by user."
+                return True
+            return False
+
+
+def is_job_cancelled(job_id: str = None) -> bool:
+    """
+    Check if a job has been cancelled. Useful for long-running conversion loops.
+    """
+    if not job_id and hasattr(_current_job_state, "current_job_id"):
+        job_id = _current_job_state.current_job_id
+    if not job_id:
+        return False
+
+    if USE_REDIS:
+        try:
+            from rq.job import Job
+
+            job = Job.fetch(job_id, connection=redis_conn)
+            return job.get_status() in ("cancelled", "stopped")
+        except Exception:
+            return False
+    else:
+        with in_memory_jobs_lock:
+            job = in_memory_jobs.get(job_id)
+            return bool(job and job.get("status") == "cancelled")
 
 
 def get_job_status(job_id: str):

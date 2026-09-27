@@ -35,6 +35,7 @@ export const CUSTOM_SECTION_PRESETS = {
   leadership: /^(?:leadership|leadership\s+&\s+(?:activities|service)|campus\s+involvement|extracurricular(?:\s+activities)?)\b/i,
   affiliations: /^(?:professional\s+)?(?:affiliations|memberships|associations)\b/i,
   interests: /^(?:interests|hobbies|personal\s+interests)\b/i,
+  coursework: /^(?:relevant\s+coursework|courses|coursework)\b/i,
   additional: /^(?:additional\s+(?:information|details|activities)|other)\b/i
 };
 
@@ -47,40 +48,72 @@ export const PAGINATION_REGEX = /^(?:page\s+\d+(?:\s+of\s+\d+)?|\b\d+\s*\/\s*\d+
 
 const COMMON_ROLE_TITLES = /\b(?:engineer|developer|manager|director|architect|lead|analyst|designer|consultant|specialist|officer|administrator|coordinator|associate|intern|vp|vice president|founder|co-founder)\b/i;
 
-const SECTION_INDICATOR_KEYWORDS = /\b(?:experience|history|background|activities|service|involvement|publications|papers|articles|research|awards|honors|achievements|accolades|projects|portfolio|skills|competencies|technologies|tools|languages|interests|hobbies|patents|engagements|speaking|talks|exhibitions|affiliations|memberships|associations|training|education|credentials|information|details)\b/i;
+const SECTION_INDICATOR_KEYWORDS = /\b(?:experience|history|background|activities|service|involvement|publications|papers|articles|research|awards|honors|achievements|accolades|projects|portfolio|skills|competencies|technologies|tools|languages|interests|hobbies|patents|engagements|speaking|talks|exhibitions|affiliations|memberships|associations|training|education|credentials|information|details|coursework|courses|certifications|certificates|licenses|work|employment)\b/i;
+
+/**
+ * Splits a string by delimiter while strictly preserving content inside parentheses or brackets.
+ */
+export function splitRespectingParentheses(str, delimiter = ',') {
+  if (!str || typeof str !== 'string') return [];
+  const tokens = [];
+  let current = '';
+  let depth = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    if (char === '(' || char === '[' || char === '{') depth++;
+    else if (char === ')' || char === ']' || char === '}') depth = Math.max(0, depth - 1);
+
+    if (char === delimiter && depth === 0) {
+      if (current.trim()) tokens.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  if (current.trim()) tokens.push(current.trim());
+  return tokens;
+}
 
 /**
  * Detects standalone uppercase or title-case lines representing custom section headings.
  */
-export function detectGenericSectionHeader(clean) {
+export function detectGenericSectionHeader(clean, candidateName = '') {
   if (!clean || typeof clean !== 'string') return false;
   const s = clean.trim().replace(/^[:#*\-_—\s]+|[:#*\-_—\s]+$/g, '');
-  if (s.length < 3 || s.length > 40) return false;
+  if (s.length < 3 || s.length > 50) return false;
   if (BULLET_START_REGEX.test(s) || DATE_RANGE_REGEX.test(s)) return false;
-  if (s.includes('@') || /https?:\/\/|www\./i.test(s) || /\+?\d{3}/.test(s)) return false;
+  if (s.includes('@') || /https?:\/\/|www\./i.test(s)) return false;
   if (/[.,;]$/.test(s)) return false;
-  if (COMMON_ROLE_TITLES.test(s) && /\b(?:engineer|developer|manager|director|architect|lead|analyst|designer|consultant|specialist|officer|administrator|coordinator|associate|intern|vp|vice president)\b/i.test(s)) return false;
-  if (/\b(?:inc\.?|llc|corp\.?|corporation|ltd\.?|university|college|school)\b/i.test(s)) return false;
+
+  // Filter out candidate name
+  if (candidateName && s.toLowerCase() === candidateName.toLowerCase()) return false;
+
+  // Filter out grade, GPA, and completion status
+  if (/\b(?:gpa|cgpa|grade|score|marks|completed|graduated)\b/i.test(s)) return false;
+  if (/\d+\.\d+\s*\/\s*\d+\.\d+/.test(s)) return false;
+
+  // Filter out course proficiency / key-value lines
+  if (/:\s*(?:proficient|beginner|intermediate|advanced|expert|native|fluent|basic|independent|[A-C][12]|\d+)/i.test(s)) return false;
+
+  // Filter out Europass CEFR table headers
+  if (/\b(?:understanding|speaking|writing|listening|reading|spoken\s+production|spoken\s+interaction|mother\s+tongue|cefr)\b/i.test(s)) return false;
+
+  // Markdown headers with keyword
+  if (s.startsWith('#') || s.startsWith('---')) return true;
+
+  // Must contain a section indicator keyword
+  if (!SECTION_INDICATOR_KEYWORDS.test(s)) return false;
 
   const lettersOnly = s.replace(/[^a-zA-Z]/g, '');
   const words = s.split(/\s+/).filter(Boolean);
 
-  // Markdown or delimited header e.g. "### Key Achievements" or "--- Speaking ---"
-  if (s.startsWith('#') || s.startsWith('---') || s.endsWith(':')) {
-    return true;
-  }
-
-  // ALL CAPS (at least 3 letters)
+  // ALL CAPS with section indicator keyword
   if (lettersOnly.length >= 3 && lettersOnly === lettersOnly.toUpperCase()) {
-    // Exclude if it looks like a personal name (2 short words without section keyword)
-    if (words.length <= 2 && !SECTION_INDICATOR_KEYWORDS.test(s)) {
-      return false;
-    }
     return true;
   }
 
-  // Title Case: MUST contain a section indicator keyword to prevent false matching candidate names
-  if (words.length >= 1 && words.length <= 4 && SECTION_INDICATOR_KEYWORDS.test(s)) {
+  // Title Case with section indicator keyword
+  if (words.length >= 1 && words.length <= 5) {
     const isTitleCased = words.every((w, idx) => {
       if (idx > 0 && /^(?:and|of|in|for|the|&)$/i.test(w)) return true;
       return /^[A-Z]/.test(w);
@@ -96,7 +129,7 @@ export function detectGenericSectionHeader(clean) {
 /**
  * Checks if a line matches a known section header or arbitrary custom section
  */
-export function identifySectionHeader(line) {
+export function identifySectionHeader(line, candidateName = '') {
   let clean = line.trim().replace(/^[:#*\-_—\s]+|[:#*\-_—\s]+$/g, '');
   if (clean.length === 0 || clean.length > 50) return null;
 
@@ -118,12 +151,112 @@ export function identifySectionHeader(line) {
   }
 
   // Tier 3: Generic Section Header Sniffer
-  if (detectGenericSectionHeader(cleanNoCont)) {
+  if (detectGenericSectionHeader(cleanNoCont, candidateName)) {
     const slug = cleanNoCont.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
     return `custom_${slug || 'section'}`;
   }
 
   return null;
+}
+
+/**
+ * Extracts international or standard phone number from text.
+ */
+export function extractPhoneNumber(text) {
+  if (!text || typeof text !== 'string') return '';
+  const labelMatch = text.match(/(?:phone(?:\s*number)?|mobile|cell|tel)[:\s]*([+(\d][^\n\r]{6,35})/i);
+  if (labelMatch) {
+    let candidate = labelMatch[1].trim();
+    candidate = candidate.split(/email|web|\n|\r/i)[0].trim();
+    candidate = candidate.replace(/\s*\([a-zA-Z\s]+\)$/, '').replace(/\s+[a-zA-Z]+$/, '').trim();
+    const digits = candidate.replace(/\D/g, '');
+    if (digits.length >= 7 && digits.length <= 16) {
+      return candidate;
+    }
+  }
+
+  const patterns = [
+    /(?:\+\d{1,4}[-.\s]*)?(?:\(\+?\d{1,4}\)[-.\s]*)?(?:\(?\d{2,5}\)?[-.\s]*)?\d{3,5}[-.\s]?\d{3,5}\b/,
+    /\+\d{1,3}[-.\s]?\d{1,4}[-.\s]?\d{3,4}[-.\s]?\d{3,4}\b/,
+    /\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/
+  ];
+
+  for (const pat of patterns) {
+    const m = text.match(pat);
+    if (m) {
+      const candidate = m[0].trim();
+      const digits = candidate.replace(/\D/g, '');
+      if (digits.length >= 7 && digits.length <= 15) {
+        return candidate;
+      }
+    }
+  }
+  return '';
+}
+
+/**
+ * Extracts physical address or location string from text or top header lines.
+ */
+export function extractLocation(text, lines = []) {
+  if (typeof text === 'string') {
+    const labeled = text.match(/(?<!email\s+)(?:address|location)[:\s]*([^\n\r]+)/i);
+    if (labeled) {
+      let loc = labeled[1].trim();
+      loc = loc.replace(/\s*\((?:home|office|current|permanent|work)\)$/i, '').trim();
+      if (loc.length >= 3 && !loc.includes('@') && !loc.includes('http')) {
+        return loc;
+      }
+    }
+  }
+
+  const safeLines = Array.isArray(lines) ? lines : [];
+  for (let i = 0; i < Math.min(8, safeLines.length); i++) {
+    const l = safeLines[i].trim();
+    if (!l) continue;
+    if (/^(?:summary|profile|about|experience|education|skills|projects|certifications)\b/i.test(l)) {
+      break;
+    }
+
+    // Check tokens separated by bullets, pipes, or slashes
+    const parts = l.split(/[·•|]/).map(p => p.trim()).filter(Boolean);
+    for (const part of parts) {
+      if (
+        !part ||
+        part.includes('@') ||
+        /https?:\/\/|www\./i.test(part) ||
+        /^\+?\d{2,}/.test(part) ||
+        /^(?:phone|email|github|linkedin|website|portfolio|mobile|tel)\b/i.test(part)
+      ) {
+        continue;
+      }
+
+      if (part.includes(',')) {
+        const segs = part.split(',').map(s => s.trim());
+        if (segs.length >= 2 && segs[0].length >= 2) {
+          if (!/^(?:software|engineer|developer|architect|lead|manager|analyst|director|senior|junior|intern|principal)\b/i.test(part)) {
+            return part;
+          }
+        }
+      }
+    }
+
+    if (!l.includes('@') && !/https?:\/\/|www\./i.test(l) && !/^\+?\d{2,}/.test(l) && !/^(?:phone|email|github|linkedin)\b/i.test(l)) {
+      if (l.includes(',') && (/\d{4,5}/.test(l) || /\b(?:bangladesh|india|usa|united states|uk|canada|germany|australia|city|street|road|avenue|bazar|district|cumilla|dhaka|chittagong|london|york|berlin)\b/i.test(l))) {
+        return l;
+      }
+      if (l.includes(',') && l.split(',').length >= 2 && !/^(?:summary|profile|education|experience|skills)\b/i.test(l)) {
+        return l;
+      }
+    }
+  }
+
+  const topText = safeLines.slice(0, 8).join('\n');
+  const locMatch = topText.match(/\b([A-Z][a-zA-Z\s.-]+,\s*(?:[A-Z]{2}|[A-Z][a-zA-Z\s.-]+))\b/);
+  if (locMatch && !locMatch[1].toLowerCase().includes('university') && !locMatch[1].toLowerCase().includes('company')) {
+    return locMatch[1].trim();
+  }
+
+  return '';
 }
 
 /**
@@ -139,6 +272,7 @@ export function parsePdfResumeText(fullText) {
   const result = {
     name: '',
     title: '',
+    photoUrl: '',
     email: '',
     phone: '',
     location: '',
@@ -154,10 +288,10 @@ export function parsePdfResumeText(fullText) {
     references: [],
     customSections: [],
     sectionTitles: {
-      summary: 'About Me',
+      summary: 'Profile',
       experience: 'Work Experience',
       education: 'Education',
-      skills: 'Expertise',
+      skills: 'Technical Skills',
       projects: 'Projects',
       certifications: 'Certifications',
       references: 'References'
@@ -167,11 +301,20 @@ export function parsePdfResumeText(fullText) {
   if (lines.length === 0) return result;
 
   // ── 1. Contact & Identity Extraction ──
-  for (let i = 0; i < Math.min(5, lines.length); i++) {
-    const line = lines[i];
-    if (identifySectionHeader(line)) {
-      break;
+  for (let i = 0; i < Math.min(6, lines.length); i++) {
+    const line = lines[i].replace(/^[#*\s]+|[#*\s]+$/g, '').trim();
+    if (!line) continue;
+
+    // Check if line hits a canonical section header
+    let isCanonicalHeader = false;
+    for (const [secKey, regex] of Object.entries(SECTION_HEADERS)) {
+      if (regex.test(line)) {
+        isCanonicalHeader = true;
+        break;
+      }
     }
+    if (isCanonicalHeader) break;
+
     if (
       !result.name &&
       line.length >= 2 &&
@@ -179,11 +322,13 @@ export function parsePdfResumeText(fullText) {
       !line.includes('@') &&
       !line.includes('http') &&
       !/^(?:curriculum\s+vitae|resume|page\s+\d+|cv)\b/i.test(line) &&
-      !/\d{3}/.test(line)
+      !/\d{3}/.test(line) &&
+      !/^(?:phone|email|address|location|github|linkedin|website)\b/i.test(line)
     ) {
-      result.name = line.replace(/^[#*\s]+/, '').trim();
+      result.name = line;
       continue;
     }
+
     if (
       result.name &&
       !result.title &&
@@ -191,9 +336,12 @@ export function parsePdfResumeText(fullText) {
       line.length <= 60 &&
       !line.includes('@') &&
       !line.includes('+') &&
-      !line.includes('http')
+      !line.includes('http') &&
+      !/^(?:phone|email|address|location|github|linkedin|website)\b/i.test(line) &&
+      !/\d{3}/.test(line) &&
+      (COMMON_ROLE_TITLES.test(line) || /^[A-Z][a-zA-Z\s/&-]+$/.test(line))
     ) {
-      result.title = line.trim();
+      result.title = line;
     }
   }
 
@@ -201,9 +349,8 @@ export function parsePdfResumeText(fullText) {
   const emailMatch = cleaned.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
   if (emailMatch) result.email = emailMatch[0].trim();
 
-  // Phone Number
-  const phoneMatch = cleaned.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
-  if (phoneMatch) result.phone = phoneMatch[0].trim();
+  // Phone Number (International + Domestic)
+  result.phone = extractPhoneNumber(cleaned);
 
   // LinkedIn Profile
   const linkedinMatch = cleaned.match(/(?:https?:\/\/)?(?:www\.)?(?:linkedin\.com\/in\/[a-zA-Z0-9_-]+|li\/[a-zA-Z0-9_-]+)/i);
@@ -213,18 +360,27 @@ export function parsePdfResumeText(fullText) {
   const githubMatch = cleaned.match(/(?:https?:\/\/)?(?:www\.)?github\.com\/[a-zA-Z0-9_-]+/i);
   if (githubMatch) result.github = githubMatch[0].replace(/^https?:\/\/(?:www\.)?/, '').trim();
 
-  // Website / Portfolio
-  const cleanForSite = cleaned
-    .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '')
-    .replace(/(?:https?:\/\/)?(?:www\.)?(?:github\.com|linkedin\.com)\/[^\s]+/gi, '');
-  const siteMatch = cleanForSite.match(/(?:https?:\/\/[^\s]+|www\.[^\s]+|(?:[a-zA-Z0-9-]+\.)+(?:com|org|net|io|dev|me|app|ai|co)(?:\/[^\s]*)?)/i);
-  if (siteMatch) result.website = siteMatch[0].replace(/^https?:\/\//, '').trim();
-
-  // Location heuristic
-  const locationMatch = cleaned.match(/\b([A-Z][a-zA-Z\s.-]+,\s*(?:[A-Z]{2}|[A-Z][a-zA-Z\s.-]+))\b/);
-  if (locationMatch && !locationMatch[1].toLowerCase().includes('university') && !locationMatch[1].toLowerCase().includes('company')) {
-    result.location = locationMatch[1].trim();
+  // Website / Portfolio (Only from labeled lines or top header block to avoid capturing certification/university URLs)
+  const websiteMatch = cleaned.match(/(?:website|portfolio|web)[:\s]*(https?:\/\/[^\s]+|www\.[^\s]+)/i);
+  if (websiteMatch) {
+    result.website = websiteMatch[1].replace(/^https?:\/\//, '').trim();
+  } else {
+    const headerLines = [];
+    for (const line of lines) {
+      if (identifySectionHeader(line, result.name)) break;
+      headerLines.push(line);
+    }
+    const cleanHeaderForSite = headerLines.join('\n')
+      .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '')
+      .replace(/(?:https?:\/\/)?(?:www\.)?(?:github\.com|linkedin\.com)\/[^\s]+/gi, '');
+    const siteMatch = cleanHeaderForSite.match(/(?:https?:\/\/[^\s]+|www\.[^\s]+|(?:[a-zA-Z0-9-]+\.)+(?:com|org|net|io|dev|me|app|ai|co)(?:\/[^\s]*)?)/i);
+    if (siteMatch) {
+      result.website = siteMatch[0].replace(/^https?:\/\//, '').trim();
+    }
   }
+
+  // Location / Address
+  result.location = extractLocation(cleaned, lines);
 
   // ── 2. Section Segmentation with Multi-Page Filtration ──
   const sections = {};
@@ -250,7 +406,7 @@ export function parsePdfResumeText(fullText) {
       continue;
     }
 
-    const detectedSec = identifySectionHeader(trimmed);
+    const detectedSec = identifySectionHeader(trimmed, result.name);
     if (detectedSec) {
       currentSec = detectedSec;
       if (!sections[currentSec]) sections[currentSec] = [];
@@ -474,22 +630,25 @@ function parseExperienceLines(lines) {
 /**
  * Parses raw lines from an education section into structured entries.
  */
-function parseEducationLines(lines) {
+export function parseEducationLines(lines) {
   const entries = [];
   let currentEntry = null;
+
+  const DEGREE_REGEX = /\b(?:higher\s+secondary(?:\s+certificate)?|secondary\s+school(?:\s+certificate)?|high\s+school(?:\s+diploma)?|bachelor|master|phd|doctor|b\.s\.|m\.s\.|b\.a\.|m\.b\.a\.|mba|associate|diploma|certificate|hsc|ssc|o-level|a-level|matric|intermediate|qualifications)\b/i;
+  const SCHOOL_REGEX = /\b(?:university|college|school|institute|academy|faculty|polytechnic)\b/i;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) continue;
 
     const dateMatch = line.match(DATE_RANGE_REGEX);
-    const hasDegreeWord = /\b(?:bachelor|master|b\.s\.|m\.s\.|b\.a\.|m\.b\.a\.|ph\.?d|doctor|associate|degree|diploma|certificate)\b/i.test(line);
-    const hasSchoolWord = /\b(?:university|college|institute|school|academy|polytechnic)\b/i.test(line);
+    const isDegree = DEGREE_REGEX.test(line);
+    const isSchool = !isDegree && SCHOOL_REGEX.test(line);
 
-    if (hasDegreeWord || hasSchoolWord) {
+    if (isDegree || isSchool) {
       const shouldPush = currentEntry && (
-        (hasDegreeWord && currentEntry.degree && currentEntry.degree !== 'Degree / Major') ||
-        (hasSchoolWord && currentEntry.school && currentEntry.school !== 'Institution / University')
+        (isDegree && currentEntry.degree) ||
+        (isSchool && currentEntry.school && !currentEntry.degree)
       );
 
       if (shouldPush) {
@@ -497,20 +656,20 @@ function parseEducationLines(lines) {
         currentEntry = null;
       }
 
-      let startDate = '2016';
-      let endDate = '2020';
+      let startDate = '';
+      let endDate = '';
       if (dateMatch) {
         const rawDate = dateMatch[0].trim();
         const dateParts = rawDate.split(/\s*(?:[-–—/]+|\bto\b)\s*/i);
-        startDate = dateParts[0]?.trim() || '2016';
-        endDate = dateParts[1]?.trim() || '2020';
+        startDate = dateParts[0]?.trim() || '';
+        endDate = (dateParts[1] || dateParts[0])?.trim() || '';
       }
 
       if (!currentEntry) {
         currentEntry = {
           id: `edu_${Date.now()}_${entries.length + 1}`,
-          degree: hasDegreeWord ? line.replace(DATE_RANGE_REGEX, '').replace(/^[|·,•\s]+|[|·,•\s]+$/g, '').trim() : 'Degree / Major',
-          school: hasSchoolWord ? line.replace(DATE_RANGE_REGEX, '').replace(/^[|·,•\s]+|[|·,•\s]+$/g, '').trim() : 'Institution / University',
+          degree: isDegree ? line.replace(DATE_RANGE_REGEX, '').replace(/^[|·,•\s]+|[|·,•\s]+$/g, '').trim() : '',
+          school: isSchool ? line.replace(DATE_RANGE_REGEX, '').replace(/^[|·,•\s]+|[|·,•\s]+$/g, '').trim() : '',
           startDate,
           endDate,
           start: startDate,
@@ -519,13 +678,13 @@ function parseEducationLines(lines) {
           gpa: ''
         };
       } else {
-        if (hasDegreeWord) {
+        if (isDegree && !currentEntry.degree) {
           currentEntry.degree = line.replace(DATE_RANGE_REGEX, '').replace(/^[|·,•\s]+|[|·,•\s]+$/g, '').trim();
         }
-        if (hasSchoolWord) {
+        if (isSchool && !currentEntry.school) {
           currentEntry.school = line.replace(DATE_RANGE_REGEX, '').replace(/^[|·,•\s]+|[|·,•\s]+$/g, '').trim();
         }
-        if (dateMatch) {
+        if (dateMatch && !currentEntry.endDate) {
           currentEntry.startDate = startDate;
           currentEntry.endDate = endDate;
           currentEntry.start = startDate;
@@ -538,22 +697,24 @@ function parseEducationLines(lines) {
     if (dateMatch && currentEntry) {
       const rawDate = dateMatch[0].trim();
       const dateParts = rawDate.split(/\s*(?:[-–—/]+|\bto\b)\s*/i);
-      currentEntry.startDate = dateParts[0]?.trim() || '2016';
-      currentEntry.endDate = dateParts[1]?.trim() || '2020';
-      currentEntry.start = currentEntry.startDate;
-      currentEntry.end = currentEntry.endDate;
+      const startDate = dateParts[0]?.trim() || '';
+      const endDate = (dateParts[1] || dateParts[0])?.trim() || '';
+      currentEntry.startDate = startDate;
+      currentEntry.endDate = endDate;
+      currentEntry.start = startDate;
+      currentEntry.end = endDate;
       continue;
     }
 
     if (currentEntry) {
-      const gpaMatch = line.match(/\b(?:gpa[:\s]*)?([0-4]\.\d{1,2}(?:\s*\/\s*4\.0)?)\b/i);
+      const gpaMatch = line.match(/\b(?:gpa|cgpa|grade)[:\s]*([0-9.]+(?:\s*\/\s*[0-9.]+)?)/i);
       if (gpaMatch) {
         currentEntry.gpa = gpaMatch[1];
         currentEntry.note = `GPA: ${gpaMatch[1]}`;
+      } else if (!currentEntry.school && SCHOOL_REGEX.test(line)) {
+        currentEntry.school = line.replace(/^[|·,•\s]+|[|·,•\s]+$/g, '').trim();
       } else if (/honors|magna|cum\s+laude|dean/i.test(line)) {
         currentEntry.note = currentEntry.note ? `${currentEntry.note} · ${line}` : line;
-      } else if (currentEntry.degree === 'Degree / Major') {
-        currentEntry.degree = line;
       }
     }
   }
@@ -565,15 +726,18 @@ function parseEducationLines(lines) {
 /**
  * Parses raw lines from a skills section into unique string tokens.
  */
-function parseSkillsLines(lines) {
+export function parseSkillsLines(lines) {
   const skills = [];
   for (const line of lines) {
     const cleanLine = line.replace(/^[A-Za-z\s]+:\s*/, '');
-    const tokens = cleanLine.split(/[,•|·\t/]/).map((s) => s.trim()).filter(Boolean);
+    const tokens = splitRespectingParentheses(cleanLine, ',');
     for (const tok of tokens) {
-      const cleanedTok = tok.replace(BULLET_START_REGEX, '').trim();
-      if (cleanedTok.length >= 2 && cleanedTok.length <= 40 && !skills.includes(cleanedTok)) {
-        skills.push(cleanedTok);
+      const subTokens = splitRespectingParentheses(tok, '•');
+      for (const sub of subTokens) {
+        const cleanedTok = sub.replace(BULLET_START_REGEX, '').trim();
+        if (cleanedTok.length >= 2 && cleanedTok.length <= 60 && !skills.includes(cleanedTok)) {
+          skills.push(cleanedTok);
+        }
       }
     }
   }
@@ -739,16 +903,69 @@ export function parseReferencesLines(lines) {
  */
 export function parseLanguagesLines(lines) {
   const items = [];
+  const KNOWN_LANGUAGES = /\b(?:english|bengali|bangla|spanish|french|german|mandarin|chinese|japanese|korean|russian|arabic|hindi|urdu|portuguese|italian|dutch|swedish|turkish|polish|vietnamese)\b/i;
+
   for (const line of lines) {
     const cleanLine = line.replace(BULLET_START_REGEX, '').trim();
     if (!cleanLine) continue;
 
-    const parts = cleanLine.split(/[,;]/);
+    // Filter out Europass CEFR scale table headers/noise
+    if (/^(?:understanding|speaking|writing|listening|reading|spoken|levels:|common\s+european)\b/i.test(cleanLine)) {
+      continue;
+    }
+
+    if (/^mother\s+tongue/i.test(cleanLine)) {
+      const match = cleanLine.match(/^mother\s+tongue\(?s?\)?\s*[:\-–—]\s*(.+)$/i);
+      if (match) {
+        items.push({
+          id: `lang_${items.length + 1}`,
+          title: match[1].trim(),
+          value: 'Native'
+        });
+      }
+      continue;
+    }
+
+    // Check if whole line has a delimiter: "Language — Proficiency (Details)" or "Language: Proficiency"
+    const lineDelimMatch = cleanLine.match(/^([A-Za-z\s]+?)\s*[:\-–—]\s*(.+)$/);
+    if (lineDelimMatch && (KNOWN_LANGUAGES.test(lineDelimMatch[1]) || lineDelimMatch[1].trim().split(/\s+/).length <= 2)) {
+      items.push({
+        id: `lang_${items.length + 1}`,
+        title: lineDelimMatch[1].trim(),
+        value: lineDelimMatch[2].trim()
+      });
+      continue;
+    }
+
+    // Check parenthesized format: "English (Native)"
+    const lineParenMatch = cleanLine.match(/^([A-Za-z\s]+?)\s*\(([^)]+)\)$/);
+    if (lineParenMatch && (KNOWN_LANGUAGES.test(lineParenMatch[1]) || lineParenMatch[1].trim().split(/\s+/).length <= 2)) {
+      items.push({
+        id: `lang_${items.length + 1}`,
+        title: lineParenMatch[1].trim(),
+        value: lineParenMatch[2].trim()
+      });
+      continue;
+    }
+
+    // Check CEFR token e.g. "English C2 C1 B2 B2 B2"
+    const cefrMatch = cleanLine.match(/^([A-Za-z]+)\s+([A-C][12].*)$/i);
+    if (cefrMatch && KNOWN_LANGUAGES.test(cefrMatch[1])) {
+      items.push({
+        id: `lang_${items.length + 1}`,
+        title: cefrMatch[1].trim(),
+        value: cefrMatch[2].trim()
+      });
+      continue;
+    }
+
+    // Otherwise split by comma/semicolon respecting parentheses
+    const parts = splitRespectingParentheses(cleanLine, ',');
     for (const part of parts) {
       const p = part.trim();
       if (!p) continue;
-      const parenMatch = p.match(/^([A-Za-z\s]+)\s*\(([^)]+)\)$/);
-      const delimMatch = p.match(/^([A-Za-z\s]+)\s*[:\-–—]\s*(.+)$/);
+      const parenMatch = p.match(/^([A-Za-z\s]+?)\s*\(([^)]+)\)$/);
+      const delimMatch = p.match(/^([A-Za-z\s]+?)\s*[:\-–—]\s*(.+)$/);
 
       if (parenMatch) {
         items.push({
@@ -762,7 +979,7 @@ export function parseLanguagesLines(lines) {
           title: delimMatch[1].trim(),
           value: delimMatch[2].trim()
         });
-      } else if (p.length >= 2 && p.length <= 25) {
+      } else if (KNOWN_LANGUAGES.test(p) || (p.length >= 2 && p.length <= 25 && /^[A-Z][a-z]+$/.test(p))) {
         items.push({
           id: `lang_${items.length + 1}`,
           title: p,
@@ -975,6 +1192,11 @@ export default {
   cleanRawText,
   identifySectionHeader,
   detectGenericSectionHeader,
+  splitRespectingParentheses,
+  extractPhoneNumber,
+  extractLocation,
+  parseEducationLines,
+  parseSkillsLines,
   parseReferencesLines,
   parseLanguagesLines,
   parseCustomSectionLines,

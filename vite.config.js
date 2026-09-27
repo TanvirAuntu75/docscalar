@@ -11,6 +11,22 @@ export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
     entries: ['index.html'],
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'framer-motion',
+      'lucide-react',
+      'pdf-lib',
+      'pdfjs-dist',
+      'xlsx',
+      'jszip',
+      'mammoth',
+      'jspdf',
+      'html2canvas',
+      'qrcode',
+      'animejs',
+    ],
   },
   resolve: {
     alias: {

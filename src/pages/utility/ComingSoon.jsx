@@ -8,13 +8,13 @@ import ToolIcon from '../../components/ToolIcon';
 const TECHNICAL_STACKS = {
   'remove-pages': {
     library: 'High Speed Stream Slicer',
-    desc: 'Direct page array removal for fast and private page management without file uploads.',
+    desc: 'Direct page array removal for fast and secure page management with zero data retention.',
     difficulty: 'Low',
     progress: 80,
   },
   'extract-pages': {
     library: 'Targeted Page Extractor',
-    desc: 'Extracts selected pages directly into a new document stream locally in your browser.',
+    desc: 'Extracts selected pages directly into a new document stream with high fidelity.',
     difficulty: 'Low',
     progress: 85,
   },

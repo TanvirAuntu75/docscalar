@@ -43,7 +43,7 @@ export default function PdfToExcel() {
   const [zoomScale, setZoomScale] = useState(1.0);
 
   // Conversion Configuration State
-  const [engineMode, setEngineMode] = useState('client'); // 'client' | 'server'
+  const [engineMode, setEngineMode] = useState('server'); // 'client' | 'server'
   const [sheetMode, setSheetMode] = useState('per_page'); // 'per_page' | 'single_sheet'
   const [autoDetectNumbers, setAutoDetectNumbers] = useState(true);
   const [extractScalars, setExtractScalars] = useState(true);
@@ -76,9 +76,13 @@ export default function PdfToExcel() {
         if (res.ok) {
           setBackendActive(true);
           setEngineMode('server');
+        } else {
+          setBackendActive(false);
+          setEngineMode('client');
         }
       } catch (e) {
         setBackendActive(false);
+        setEngineMode('client');
       }
     };
     checkServer();
@@ -185,7 +189,11 @@ export default function PdfToExcel() {
       } catch (err) {
         if (isMounted) {
           console.warn('PDF load error:', err);
-          setError('Failed to load PDF document for preview.');
+          if (err && (err.name === 'PasswordException' || String(err.message).toLowerCase().includes('password'))) {
+            setError('This document is password protected. Please unlock the PDF before converting.');
+          } else {
+            setError('Failed to load PDF document for preview.');
+          }
         }
       } finally {
         if (isMounted) setDocLoading(false);
@@ -429,7 +437,7 @@ export default function PdfToExcel() {
     setActivePreviewSheet(0);
     setPreviewRows([]);
     setScalarCount(0);
-    poller.resetPoller();
+    poller.cancelJob();
   };
 
   const currentFile = files[activeFileIndex] || files[0];
@@ -440,12 +448,13 @@ export default function PdfToExcel() {
       title="PDF to Excel Studio"
       description="Extract tables, financial data, and structured columns from PDF documents into editable Microsoft Excel (.xlsx) spreadsheets."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="PDF to Excel Online Free — Convert PDF to XLSX | DocScalar"
-        description="Convert PDF tables and spreadsheets into Microsoft Excel (.xlsx) format. High-precision coordinate extraction with 100% private local processing."
+        description="Convert PDF tables and spreadsheets into Microsoft Excel (.xlsx) format. High-precision coordinate extraction with encrypted transient processing."
       />
 
       {!result ? (
@@ -781,12 +790,39 @@ export default function PdfToExcel() {
                         style={{ width: `${progress}%` }}
                       />
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        poller.cancelJob();
+                        setProcessing(false);
+                        setProgress(0);
+                        setStatusMessage('');
+                        setError('Operation cancelled by user.');
+                      }}
+                      className="self-end text-[11px] text-red-500 hover:underline cursor-pointer font-semibold flex items-center gap-1 pt-1"
+                    >
+                      <span className="material-symbols-outlined text-[13px]">cancel</span>
+                      <span>Cancel</span>
+                    </button>
                   </div>
                 )}
 
                 {error && (
-                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium">
-                    {error}
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium flex flex-col gap-2">
+                    <div className="flex items-start gap-2">
+                      <span className="material-symbols-outlined text-[16px] shrink-0 mt-0.5">error</span>
+                      <span>{error}</span>
+                    </div>
+                    {error.toLowerCase().includes('password') && (
+                      <Link
+                        to="/pdf/unlock-pdf"
+                        state={{ initialFiles: files }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-[11px] rounded-lg transition-colors w-fit shadow-xs"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">lock_open</span>
+                        <span>Unlock Document with Unlock PDF →</span>
+                      </Link>
+                    )}
                   </div>
                 )}
               </div>

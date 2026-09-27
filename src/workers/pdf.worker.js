@@ -14,6 +14,7 @@ if (typeof self !== 'undefined' && !self.document) {
 import { PDFDocument, PDFName, degrees, rgb, StandardFonts } from 'pdf-lib';
 import { cleanAndRefitDocument } from '../engines/pdf/cleanAndRefitPage.js';
 import * as pdfjsLib from 'pdfjs-dist';
+import { CMAP_URL, CMAP_PACKED, STANDARD_FONT_DATA_URL, getPdfjsDocParams } from '../utils/pdfConfig.js';
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -422,7 +423,7 @@ async function handleSplitPdf(arrayBuffer, mode, range, options = {}) {
       self.postMessage({ type: 'progress', progress: Math.round((end / totalPages) * 100) });
     }
   } else if (mode === 'by-bookmarks') {
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer, disableWorker: true }).promise;
+    const pdf = await pdfjsLib.getDocument(getPdfjsDocParams(arrayBuffer, { disableWorker: true })).promise;
     const outline = await pdf.getOutline();
     if (!outline || outline.length === 0) {
       pdf.destroy();
@@ -479,7 +480,7 @@ async function handleSplitPdf(arrayBuffer, mode, range, options = {}) {
       }
     }
   } else if (mode === 'by-blank-page') {
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer, disableWorker: true }).promise;
+    const pdf = await pdfjsLib.getDocument(getPdfjsDocParams(arrayBuffer, { disableWorker: true })).promise;
     const blankPageIndices = [];
     for (let i = 1; i <= totalPages; i++) {
       const page = await pdf.getPage(i);
@@ -739,7 +740,7 @@ async function handlePdfToImages(arrayBuffer, options) {
   const { format = 'png', quality = 0.92, scale = 2, pagesToConvert = null } = options;
   const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png';
   
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer, disableWorker: true }).promise;
+  const pdf = await pdfjsLib.getDocument(getPdfjsDocParams(arrayBuffer, { disableWorker: true })).promise;
   const totalPages = pdf.numPages;
   
   const targetPages = pagesToConvert || Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -1178,7 +1179,7 @@ async function handlePdfToImagesStream(arrayBuffer, options) {
   const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png';
   const ext = format === 'jpeg' ? 'jpg' : 'png';
 
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer, disableWorker: true }).promise;
+  const pdf = await pdfjsLib.getDocument(getPdfjsDocParams(arrayBuffer, { disableWorker: true })).promise;
   const totalPages = pdf.numPages;
 
   const targetPages = pagesToConvert || Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -1246,7 +1247,7 @@ async function handleRedactPdf(arrayBuffer, params = {}) {
   const { boxes = [], textPatterns = [] } = params;
 
   // Load via pdfjs for text extraction
-  const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer.slice(), disableWorker: true }).promise;
+  const pdfDoc = await pdfjsLib.getDocument(getPdfjsDocParams(arrayBuffer.slice(), { disableWorker: true })).promise;
 
   // Resolve text-pattern boxes per page
   const patternBoxes = [...boxes];
@@ -1355,3 +1356,4 @@ async function handleRedactPdf(arrayBuffer, params = {}) {
   return pdfBytes.buffer;
 }
 
+export { getPdfjsDocParams, CMAP_URL, CMAP_PACKED, STANDARD_FONT_DATA_URL };

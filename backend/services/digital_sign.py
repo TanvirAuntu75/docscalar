@@ -18,7 +18,7 @@ from backend.services.libreoffice import ConversionResult
 
 
 def generate_self_signed_pfx(
-    email: str = "security@docscalar.com", common_name: str = "DocScalar Trust Seal"
+    email: str = "security@docscalar.app", common_name: str = "DocScalar Trust Seal"
 ) -> bytes:
     """
     Generate an offline, self-signed X.509 certificate and private key in PKCS#12 format.
@@ -32,7 +32,7 @@ def generate_self_signed_pfx(
         [
             x509.NameAttribute(NameOID.COMMON_NAME, common_name),
             x509.NameAttribute(NameOID.EMAIL_ADDRESS, email),
-            x509.NameAttribute(NameOID.ORGANIZATION_NAME, "DocScalar Privacy First LLC"),
+            x509.NameAttribute(NameOID.ORGANIZATION_NAME, "DocScalar Inc."),
             x509.NameAttribute(NameOID.COUNTRY_NAME, "US"),
         ]
     )

@@ -140,6 +140,20 @@ export function AuthProvider({ children }) {
     });
   };
 
+  // Synchronize React state when apiFetch intercepts an expired/invalid token
+  useEffect(() => {
+    const handleAuthExpired = () => {
+      dispatch({ type: AUTH_ACTIONS.LOGOUT });
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('docscalar:auth-expired', handleAuthExpired);
+      return () => {
+        window.removeEventListener('docscalar:auth-expired', handleAuthExpired);
+      };
+    }
+  }, []);
+
   const value = {
     ...state,
     isPro: state.isAuthenticated && state.userTier === 'pro',

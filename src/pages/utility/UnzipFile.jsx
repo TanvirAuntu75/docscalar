@@ -224,14 +224,15 @@ export default function UnzipFile() {
     <ToolPageLayout
       toolId="unzip-file"
       title="Unzip & Archive Explorer Studio"
-      description="Inspect archive contents, filter items, and selectively decompress ZIP files directly in your browser."
+      description="Inspect archive contents, filter items, and selectively decompress ZIP files with high performance."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Unzip Files Online — In-Browser ZIP Archive Extractor & Explorer | DocScalar"
-        description="Inspect and extract files from ZIP archives in-browser with zero upload to external servers. High-speed selective extraction with folder hierarchy preservation."
+        title="Unzip Files Online — Secure ZIP Archive Extractor & Explorer | DocScalar"
+        description="Inspect and extract files from ZIP archives securely with zero persistent retention. High-speed selective extraction with folder hierarchy preservation."
       />
 
       {!result ? (
@@ -694,13 +695,13 @@ export default function UnzipFile() {
                 </Link>
 
                 <Link
-                  to="/conversion-pipeline"
+                  to="/canvas"
                   className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[20px] text-pink-500">account_tree</span>
                   <div className="min-w-0">
-                    <p className="font-bold truncate group-hover:text-[var(--color-primary)]">Workflows</p>
-                    <p className="text-[10px] text-[var(--text-secondary)] truncate">Chain conversions</p>
+                    <p className="font-bold truncate group-hover:text-[var(--color-primary)]">Stitch Canvas</p>
+                    <p className="text-[10px] text-[var(--text-secondary)] truncate">DAG workflow studio</p>
                   </div>
                 </Link>
               </div>

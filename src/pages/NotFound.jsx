@@ -13,7 +13,7 @@ export default function NotFound() {
         </h1>
         <h3 className="font-h3 text-h3 text-on-background mb-4">This document was not found.</h3>
         <p className="font-body-md text-body-md text-on-surface-variant mb-8 leading-relaxed">
-          The page you are looking for does not exist (but these private local tools might be what you need!)
+          The page you are looking for does not exist, but you can explore our most popular document tools below.
         </p>
 
         <div className="flex flex-col gap-3.5 mb-8">

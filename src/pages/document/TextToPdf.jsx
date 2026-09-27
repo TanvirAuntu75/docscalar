@@ -195,12 +195,13 @@ export default function TextToPdf() {
       title="Text to PDF Studio"
       description="Convert plain text notes, code snippets, or uploaded TXT files into beautifully formatted, paginated PDF documents."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="Text to PDF Online Free — Convert TXT or Notes to PDF | DocScalar"
-        description="Convert raw text or text files (.txt) to formatted PDF documents with customizable fonts, margins, and page numbers. 100% private in-browser tool."
+        description="Convert raw text or text files (.txt) to formatted PDF documents with customizable fonts, margins, and page numbers. Fast, private, and secure."
       />
 
       {!result ? (

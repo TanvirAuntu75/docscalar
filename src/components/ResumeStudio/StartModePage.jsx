@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 import React, { useState, useRef } from 'react';
+import { Zap } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 import ToolPageLayout from '../ToolPageLayout';
 import SEOHead from '../SEOHead';
@@ -192,10 +193,14 @@ export default function StartModePage() {
                 padding: '3px 9px',
                 fontSize: '0.68rem',
                 fontWeight: '700',
-                letterSpacing: '0.02em'
+                letterSpacing: '0.02em',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
               }}
             >
-              ⚡ Quickest way
+              <Zap size={11} strokeWidth={2.5} />
+              <span>Quickest way</span>
             </div>
 
             <span className="material-symbols-outlined">

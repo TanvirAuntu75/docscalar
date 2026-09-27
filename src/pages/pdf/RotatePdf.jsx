@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../../utils/pdfConfig';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import { organizePdf } from '../../engines/pdf/organizePdf';
@@ -18,6 +19,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 export default function RotatePdf() {
   const [files, setFiles] = useState([]);
   const [processing, setProcessing] = useState(false);
+  const [docLoading, setDocLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -116,7 +118,7 @@ export default function RotatePdf() {
     let isCancelled = false;
 
     const loadNewFiles = async () => {
-      setProcessing(true);
+      setDocLoading(true);
       setError(null);
       try {
         let newCards = [];
@@ -125,7 +127,7 @@ export default function RotatePdf() {
         for (let fileIndex = parsedFilesCount.current; fileIndex < files.length; fileIndex++) {
           const file = files[fileIndex];
           const arrayBuffer = await file.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const pdf = await loadPdfDocument(arrayBuffer).promise;
           if (isCancelled) {
             pdf.destroy();
             return;
@@ -149,7 +151,7 @@ export default function RotatePdf() {
 
         setPageCards((prev) => [...prev, ...newCards]);
         parsedFilesCount.current = files.length;
-        setProcessing(false);
+        setDocLoading(false);
 
         // Set default output filename
         if (files.length === 1) {
@@ -207,7 +209,7 @@ export default function RotatePdf() {
                   baseViewport: { width: page.view[2], height: page.view[3] }
                 };
 
-                paintThumbnailCanvas(targetCard.id, cropper.isActive || hasScanBorders);
+                paintThumbnailCanvas(targetCard.id, cropper.isActive);
               } catch (err) {
                 console.warn(`Error rendering thumbnail for file ${item.fileIndex}, page ${i + 1}:`, err);
               }
@@ -220,14 +222,11 @@ export default function RotatePdf() {
                 return matched ? { ...c, hasScanBorders: matched.hasScanBorders, cropBox: matched.cropBox } : c;
               })
             );
-            if (newCards.some((c) => c.hasScanBorders)) {
-              cropper.activate();
-            }
           }
         }, 100);
       } catch (err) {
         if (!isCancelled) {
-          setProcessing(false);
+          setDocLoading(false);
           setError('Failed to parse PDF document. Please verify the file is readable.');
         }
       }
@@ -422,12 +421,13 @@ export default function RotatePdf() {
       title="Rotate PDF"
       description="Rotate individual pages or all pages from multiple PDFs visually."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Rotate PDF Pages Online Free (100% Local) | DocScalar"
-        description="Rotate PDF pages from multiple files visually locally in your browser. Fully private, no server uploads."
+        title="Rotate PDF Pages Online Free — Rotate PDF Documents | DocScalar"
+        description="Rotate PDF pages from multiple files visually with subpixel precision. Fully private and fast."
       />
 
       {!result ? (
@@ -446,8 +446,8 @@ export default function RotatePdf() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-y-auto relative bg-[var(--bg-tertiary)]">
               {/* Sticky Workspace Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2.5 flex items-center justify-between flex-wrap gap-2.5">
-                  <div className="flex items-center gap-2.5 flex-wrap">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
+                  <div className="flex items-center gap-2 shrink-0">
                     <label className="h-8 px-3.5 py-1.5 rounded-lg border border-[var(--color-primary)] bg-[var(--color-primary)] text-white hover:opacity-90 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs text-xs font-semibold select-none shrink-0">
                       <span className="material-symbols-outlined text-[16px]">add_circle</span>
                       <span>Add PDFs</span>
@@ -602,14 +602,20 @@ export default function RotatePdf() {
 
               {/* Visual Grid of PDF Pages */}
               <div className="workspace-canvas flex-1 p-4 sm:p-6">
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: getGridTemplate(),
-                    gap: zoomLevel === 1 ? '0.75rem' : '1.25rem'
-                  }}
-                  className="w-full"
-                >
+                {docLoading ? (
+                  <div className="flex flex-col items-center justify-center min-h-[360px] py-16 gap-3 text-slate-500">
+                    <div className="w-9 h-9 border-3 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+                    <span className="text-xs font-semibold text-[var(--text-secondary)]">Reading document pages...</span>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: getGridTemplate(),
+                      gap: zoomLevel === 1 ? '0.75rem' : '1.25rem'
+                    }}
+                    className="w-full"
+                  >
                   {visibleCards.map((card) => {
                     const { uiIndex } = card;
 
@@ -767,6 +773,7 @@ export default function RotatePdf() {
                     />
                   </label>
                 </div>
+                )}
               </div>
             </div>
 
@@ -944,13 +951,18 @@ export default function RotatePdf() {
                 <button
                   type="button"
                   onClick={handleRotate}
-                  disabled={!pageCards.length || processing}
+                  disabled={!pageCards.length || processing || docLoading}
                   className="w-full py-3 px-4 bg-[var(--color-primary)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl shadow-lg shadow-[var(--color-primary)]/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
                 >
                   {processing ? (
                     <>
                       <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
                       <span>Rotating ({progress}%)...</span>
+                    </>
+                  ) : docLoading ? (
+                    <>
+                      <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+                      <span>Loading Pages...</span>
                     </>
                   ) : (
                     <>

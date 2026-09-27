@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { CATEGORIES, TOOLS, getToolsByCategory } from '../utils/constants';
 import ToolIcon from './ToolIcon';
 import { categoryIcons } from '../utils/iconMap';
+import { apiFetch, BACKEND_URL } from '../utils/api';
 
 const renderToolIcon = (tool, size = '16px') => {
   if (!tool.icon) return null;
@@ -241,22 +242,28 @@ export default function Header() {
 
   const [isStudioActive, setIsStudioActive] = useState(false);
 
+  // Synchronous studio route detection — immediate evaluation during render without waiting for MutationObserver
+  const isStudioRoute = 
+    location.pathname.endsWith('/studio') || 
+    location.pathname.includes('/studio/') ||
+    ['/canvas', '/qr-generator', '/resume-builder', '/document-viewer'].some(
+      route => location.pathname === route || location.pathname.startsWith(route + '/')
+    );
+
+  const isStudioClass = typeof document !== 'undefined' && (
+    document.body.classList.contains('studio-mode-active') ||
+    document.body.classList.contains('studio-editor-active')
+  );
+
+  const isStudio = isStudioRoute || isStudioActive || isStudioClass;
+
   useEffect(() => {
     const checkStudio = () => {
-      // Dedicated routes that are 100% full-page studio workspaces with zero upload step
-      const isDedicatedStudioRoute = [
-        '/canvas', '/qr-generator'
-      ].some(route => location.pathname === route || location.pathname.startsWith(route + '/'));
-
-      // For all tools with upload pages (PDF Forms, Edit PDF, Merge, Split, etc.),
-      // studio navbar mode is active strictly when files are loaded into the studio canvas
-      // (signaled via document.body class 'studio-mode-active' or 'studio-editor-active')
-      const isStudioClass = typeof document !== 'undefined' && (
+      const isClassActive = typeof document !== 'undefined' && (
         document.body.classList.contains('studio-mode-active') ||
         document.body.classList.contains('studio-editor-active')
       );
-
-      setIsStudioActive(isDedicatedStudioRoute || isStudioClass);
+      setIsStudioActive(isStudioRoute || isClassActive);
     };
 
     checkStudio();
@@ -265,9 +272,7 @@ export default function Header() {
       observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
       return () => observer.disconnect();
     }
-  }, [location.pathname]);
-
-  const isStudio = isStudioActive;
+  }, [location.pathname, isStudioRoute]);
 
   return (
     <div className={`site-header-wrapper fixed left-0 w-full z-50 flex justify-center pointer-events-none transition-all duration-300 ${isStudio ? 'top-0 px-0' : 'top-5 px-6'}`}>
@@ -307,15 +312,15 @@ export default function Header() {
             : (scrolled
                 ? "var(--bg-glass-strong, rgba(250,248,244,0.97))"
                 : "var(--bg-glass, rgba(250,248,244,0.85))"),
-          backdropFilter: "blur(24px) saturate(1.4)",
-          WebkitBackdropFilter: "blur(24px) saturate(1.4)",
+          backdropFilter: isStudio ? "none" : "blur(24px) saturate(1.4)",
+          WebkitBackdropFilter: isStudio ? "none" : "blur(24px) saturate(1.4)",
         }}
       >
         <div className={`site-header-inner flex justify-between items-center gap-4 lg:gap-8 relative transition-all duration-300 ${isStudio ? 'px-6 py-2 h-[56px] w-full max-w-full' : 'px-8 py-3.5'}`}>
         {/* Logo & Brand */}
         <div className="flex items-center gap-4 flex-shrink-0">
           <div 
-            className="flex items-center gap-2 cursor-pointer select-none font-h2 text-h2 font-semibold text-primary tracking-tight"
+            className="flex items-center gap-2 cursor-pointer select-none font-h2 text-h2 font-semibold text-primary tracking-tight focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-lg p-1"
             onClick={handleLogoClick}
             role="button"
             tabIndex={0}
@@ -335,7 +340,7 @@ export default function Header() {
         <div className="hidden lg:flex items-center gap-2 font-body-md text-body-md font-medium">
           {/* Workspace / Home link */}
           <Link 
-            className={`relative px-4 py-2 transition-colors ${
+            className={`relative px-4 py-2 rounded-xl transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
               (location.pathname === '/' || location.pathname === '/workspace') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'
             }`} 
             to={isAuthenticated ? '/workspace' : '/'}
@@ -355,7 +360,7 @@ export default function Header() {
           {/* Canvas link (Flagship Visual Studio for Authenticated Users) */}
           {isAuthenticated && (
             <Link 
-              className={`relative px-4 py-2 transition-colors ${location.pathname === '/canvas' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
+              className={`relative px-4 py-2 rounded-xl transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${location.pathname === '/canvas' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
               to="/canvas"
               style={{ whiteSpace: 'nowrap' }}
             >
@@ -382,7 +387,7 @@ export default function Header() {
                 setActiveDropdown(null);
                 navigate('/?category=all');
               }}
-              className={`relative flex items-center gap-1 px-4 py-2 transition-colors cursor-pointer select-none bg-transparent border-none ${
+              className={`relative flex items-center gap-1 px-4 py-2 rounded-xl transition-colors cursor-pointer select-none bg-transparent border-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
                 activeDropdown === 'all-tools' || location.search.includes('category=') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'
               }`}
               style={{ whiteSpace: 'nowrap' }}
@@ -464,7 +469,7 @@ export default function Header() {
 
           {/* CV Builder link */}
           <Link 
-            className={`relative px-4 py-2 transition-colors ${location.pathname === '/resume-builder' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
+            className={`relative px-4 py-2 rounded-xl transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${location.pathname === '/resume-builder' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
             to="/resume-builder"
             style={{ whiteSpace: 'nowrap' }}
           >
@@ -481,7 +486,7 @@ export default function Header() {
 
           {/* Document Viewer link */}
           <Link 
-            className={`relative px-4 py-2 transition-colors ${location.pathname === '/document-viewer' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
+            className={`relative px-4 py-2 rounded-xl transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${location.pathname === '/document-viewer' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
             to="/document-viewer"
             style={{ whiteSpace: 'nowrap' }}
           >
@@ -498,7 +503,7 @@ export default function Header() {
 
           {/* Pricing link */}
           <Link 
-            className={`relative px-4 py-2 transition-colors ${location.pathname === '/pricing' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
+            className={`relative px-4 py-2 rounded-xl transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${location.pathname === '/pricing' ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`} 
             to="/pricing"
             style={{ whiteSpace: 'nowrap' }}
           >
@@ -599,6 +604,48 @@ export default function Header() {
                     </div>
 
                     <div className="border-t border-outline-variant/60 my-1"></div>
+
+                    {isPro && (
+                      <div className="py-1 px-1">
+                        <button
+                          onClick={async () => {
+                            setProfileDropdownOpen(false);
+                            try {
+                              const res = await apiFetch(`${BACKEND_URL}/api/billing/create-portal-session`, { method: 'POST' });
+                              if (res.ok) {
+                                const data = await res.json();
+                                if (data.portal_url) window.location.href = data.portal_url;
+                              }
+                            } catch {}
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-xl transition-all text-left"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">credit_card</span>
+                          Manage Subscription
+                        </button>
+                      </div>
+                    )}
+
+                    <div className="px-1 py-1">
+                      <button
+                        onClick={async () => {
+                          setProfileDropdownOpen(false);
+                          if (!window.confirm(
+                            'Are you sure you want to permanently delete your account? ' +
+                            'This action is irreversible and will erase all your data, ' +
+                            'conversion history, and subscription records.'
+                          )) return;
+                          try {
+                            await apiFetch(`${BACKEND_URL}/api/auth/delete-account`, { method: 'DELETE' });
+                            handleLogout();
+                          } catch {}
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-error/70 hover:text-error hover:bg-error/5 rounded-xl transition-all text-left"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">person_remove</span>
+                        Delete Account
+                      </button>
+                    </div>
 
                     {/* Sign Out */}
                     <div className="px-1">

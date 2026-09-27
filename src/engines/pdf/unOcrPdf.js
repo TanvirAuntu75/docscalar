@@ -1,5 +1,5 @@
 /* Un-OCR / Flatten PDF Engine: Stream Stripping & Rasterization Support */
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, PDFName } from 'pdf-lib';
 
 /**
  * Extract array buffer from any file/blob/buffer input

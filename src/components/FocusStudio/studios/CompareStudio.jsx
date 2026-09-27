@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Split, Layers, Sparkles } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../../../utils/pdfConfig';
+import { releaseCanvas, safeDestroyPdf, safeCancelRenderTask } from '../../../utils/canvasLifecycle';
 
 export default function CompareStudio({ files, params, onChange, nlpOp }) {
   const fileA = files[0];
@@ -22,6 +24,16 @@ export default function CompareStudio({ files, params, onChange, nlpOp }) {
   const canvasBOverlayRef = useRef(null);
   const containerRef = useRef(null);
 
+  // Teardown canvas memory on unmount
+  useEffect(() => {
+    return () => {
+      releaseCanvas(canvasARef.current);
+      releaseCanvas(canvasBRef.current);
+      releaseCanvas(canvasAOverlayRef.current);
+      releaseCanvas(canvasBOverlayRef.current);
+    };
+  }, []);
+
   // Load PDF A
   useEffect(() => {
     let active = true;
@@ -30,10 +42,12 @@ export default function CompareStudio({ files, params, onChange, nlpOp }) {
       if (!fileA) return;
       try {
         const arrayBuffer = await fileA.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await loadPdfDocument(arrayBuffer).promise;
         if (active) {
           loadedPdf = pdf;
           setPdfA(pdf);
+        } else {
+          safeDestroyPdf(pdf);
         }
       } catch (err) {
         console.error("Failed to load PDF A:", err);
@@ -42,7 +56,7 @@ export default function CompareStudio({ files, params, onChange, nlpOp }) {
     loadA();
     return () => {
       active = false;
-      if (loadedPdf) loadedPdf.destroy();
+      safeDestroyPdf(loadedPdf);
     };
   }, [fileA]);
 
@@ -54,10 +68,12 @@ export default function CompareStudio({ files, params, onChange, nlpOp }) {
       if (!fileB) return;
       try {
         const arrayBuffer = await fileB.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await loadPdfDocument(arrayBuffer).promise;
         if (active) {
           loadedPdf = pdf;
           setPdfB(pdf);
+        } else {
+          safeDestroyPdf(pdf);
         }
       } catch (err) {
         console.error("Failed to load PDF B:", err);
@@ -66,7 +82,7 @@ export default function CompareStudio({ files, params, onChange, nlpOp }) {
     loadB();
     return () => {
       active = false;
-      if (loadedPdf) loadedPdf.destroy();
+      safeDestroyPdf(loadedPdf);
     };
   }, [fileB]);
 
@@ -99,53 +115,87 @@ export default function CompareStudio({ files, params, onChange, nlpOp }) {
   useEffect(() => {
     if (!pdfA || !pdfB) return;
 
+    let cancelled = false;
+    const renderTasks = [];
+
     const renderCanvases = async () => {
       try {
+        // Explicitly evict previous canvas buffers before allocating new viewports on page transitions
+        releaseCanvas([
+          canvasARef.current,
+          canvasBRef.current,
+          canvasAOverlayRef.current,
+          canvasBOverlayRef.current
+        ]);
+
         // Render A Page
         const pageA = await pdfA.getPage(currentPage);
+        if (cancelled) return;
         const viewportA = pageA.getViewport({ scale: 0.85 });
 
         const canvasA = canvasARef.current;
-        if (canvasA) {
+        if (canvasA && !cancelled) {
           canvasA.width = viewportA.width;
           canvasA.height = viewportA.height;
           const ctxA = canvasA.getContext('2d');
-          await pageA.render({ canvasContext: ctxA, viewport: viewportA }).promise;
+          const taskA = pageA.render({ canvasContext: ctxA, viewport: viewportA });
+          renderTasks.push(taskA);
+          await taskA.promise;
         }
 
         const canvasAOverlay = canvasAOverlayRef.current;
-        if (canvasAOverlay) {
+        if (canvasAOverlay && !cancelled) {
           canvasAOverlay.width = viewportA.width;
           canvasAOverlay.height = viewportA.height;
           const ctxAOverlay = canvasAOverlay.getContext('2d');
-          await pageA.render({ canvasContext: ctxAOverlay, viewport: viewportA }).promise;
+          const taskAOverlay = pageA.render({ canvasContext: ctxAOverlay, viewport: viewportA });
+          renderTasks.push(taskAOverlay);
+          await taskAOverlay.promise;
         }
 
         // Render B Page
         const pageB = await pdfB.getPage(currentPage);
+        if (cancelled) return;
         const viewportB = pageB.getViewport({ scale: 0.85 });
 
         const canvasB = canvasBRef.current;
-        if (canvasB) {
+        if (canvasB && !cancelled) {
           canvasB.width = viewportB.width;
           canvasB.height = viewportB.height;
           const ctxB = canvasB.getContext('2d');
-          await pageB.render({ canvasContext: ctxB, viewport: viewportB }).promise;
+          const taskB = pageB.render({ canvasContext: ctxB, viewport: viewportB });
+          renderTasks.push(taskB);
+          await taskB.promise;
         }
 
         const canvasBOverlay = canvasBOverlayRef.current;
-        if (canvasBOverlay) {
+        if (canvasBOverlay && !cancelled) {
           canvasBOverlay.width = viewportB.width;
           canvasBOverlay.height = viewportB.height;
           const ctxBOverlay = canvasBOverlay.getContext('2d');
-          await pageB.render({ canvasContext: ctxBOverlay, viewport: viewportB }).promise;
+          const taskBOverlay = pageB.render({ canvasContext: ctxBOverlay, viewport: viewportB });
+          renderTasks.push(taskBOverlay);
+          await taskBOverlay.promise;
         }
       } catch (err) {
-        console.error("Error rendering compare canvases:", err);
+        if (err?.name !== 'RenderingCancelledException') {
+          console.error("Error rendering compare canvases:", err);
+        }
       }
     };
 
     renderCanvases();
+
+    return () => {
+      cancelled = true;
+      safeCancelRenderTask(renderTasks);
+      releaseCanvas([
+        canvasARef.current,
+        canvasBRef.current,
+        canvasAOverlayRef.current,
+        canvasBOverlayRef.current
+      ]);
+    };
   }, [pdfA, pdfB, currentPage, viewMode]);
 
   // Notify parent of state parameters

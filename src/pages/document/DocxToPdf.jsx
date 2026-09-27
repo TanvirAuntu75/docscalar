@@ -34,6 +34,7 @@ export default function DocxToPdf() {
   const [previewError, setPreviewError] = useState(null);
   const [isLegacyDoc, setIsLegacyDoc] = useState(false);
   const [docxTelemetry, setDocxTelemetry] = useState(null);
+  const [renderCount, setRenderCount] = useState(0);
 
   // Conversion Configuration State
   const [engineMode, setEngineMode] = useState('server'); // 'client' | 'server'
@@ -123,7 +124,12 @@ export default function DocxToPdf() {
 
   // 4. Render Live Word Document Preview using docx-preview
   useEffect(() => {
-    if (files.length === 0 || !previewContainerRef.current) return;
+    if (files.length === 0) return;
+
+    if (!previewContainerRef.current) {
+      const frame = requestAnimationFrame(() => setRenderCount((c) => c + 1));
+      return () => cancelAnimationFrame(frame);
+    }
 
     const currentFile = files[activeFileIndex] || files[0];
     let isMounted = true;
@@ -147,61 +153,92 @@ export default function DocxToPdf() {
           format: isLegacy ? 'Word 97-2003 (.doc)' : 'OpenXML (.docx)'
         };
 
-        if (isLegacy) {
-          if (previewContainerRef.current) previewContainerRef.current.innerHTML = '';
+        let elements = [];
+        if (!isLegacy) {
+          // Extract telemetry from OpenXML package
+          try {
+            const zip = await JSZip.loadAsync(arrayBuffer);
+            const docXmlFile = zip.file('word/document.xml');
+            if (docXmlFile) {
+              const xmlStr = await docXmlFile.async('string');
+              elements = extractDocxElements(xmlStr);
+              let pCount = 0;
+              let tCount = 0;
+              let wordCount = 0;
+              elements.forEach((el) => {
+                if (el.isTable) tCount++;
+                else pCount++;
+                if (el.text) {
+                  const words = el.text.trim().split(/\s+/).filter(Boolean);
+                  wordCount += words.length;
+                }
+              });
+              telemetry = {
+                paragraphsCount: pCount,
+                tablesCount: tCount,
+                estWords: wordCount,
+                hasTables: tCount > 0,
+                format: 'OpenXML (.docx)'
+              };
+            }
+          } catch (zipErr) {
+            console.warn('Docx telemetry extraction notice:', zipErr);
+          }
+        } else {
           setPreviewError('Legacy Word (.doc) format detected. Full Precision mode is recommended for complete formatting.');
           if (backendActive) setEngineMode('server');
-          if (isMounted) setDocxTelemetry(telemetry);
-          return;
         }
 
-        // Extract telemetry from OpenXML package
-        try {
-          const zip = await JSZip.loadAsync(arrayBuffer);
-          const docXmlFile = zip.file('word/document.xml');
-          if (docXmlFile) {
-            const xmlStr = await docXmlFile.async('string');
-            const elements = extractDocxElements(xmlStr);
-            let pCount = 0;
-            let tCount = 0;
-            let wordCount = 0;
-            elements.forEach((el) => {
-              if (el.isTable) tCount++;
-              else pCount++;
-              if (el.text) {
-                const words = el.text.trim().split(/\s+/).filter(Boolean);
-                wordCount += words.length;
-              }
-            });
-            telemetry = {
-              paragraphsCount: pCount,
-              tablesCount: tCount,
-              estWords: wordCount,
-              hasTables: tCount > 0,
-              format: 'OpenXML (.docx)'
-            };
-          }
-        } catch (zipErr) {
-          console.warn('Docx telemetry extraction notice:', zipErr);
-        }
         if (isMounted) setDocxTelemetry(telemetry);
-
-        const { renderAsync } = await import('docx-preview');
-        if (!isMounted) return;
-
-        if (previewContainerRef.current) {
-          previewContainerRef.current.innerHTML = '';
-          await renderAsync(arrayBuffer, previewContainerRef.current, null, {
-            className: 'docx-preview-rendered',
-            inWrapper: false,
-            breakPages: true,
-            useBase64URL: true
-          });
-        }
 
         if (!outputFileName || files.length > 1) {
           const base = currentFile.name.replace(/\.[^.]+$/, '');
           setOutputFileName(`${base}.pdf`);
+        }
+
+        if (!isLegacy) {
+          const { renderAsync } = await import('docx-preview');
+          if (!isMounted) return;
+
+          if (previewContainerRef.current) {
+            previewContainerRef.current.innerHTML = '';
+            try {
+              await renderAsync(arrayBuffer, previewContainerRef.current, null, {
+                className: 'docx',
+                inWrapper: true,
+                breakPages: true,
+                useBase64URL: true,
+                renderHeaders: true,
+                renderFooters: true,
+                renderFootnotes: true,
+                renderEndnotes: true
+              });
+            } catch (renderErr) {
+              console.warn('docx-preview renderAsync failed, rendering extracted content:', renderErr);
+              if (previewContainerRef.current && elements.length > 0) {
+                const escapeHtml = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                previewContainerRef.current.innerHTML = `
+                  <div class="docx p-8 sm:p-12 bg-white text-slate-900 rounded-sm shadow-xl max-w-full">
+                    ${elements.map(el => el.isTable 
+                      ? `<div class="my-4 p-3 bg-slate-50 border border-slate-200 rounded text-xs">[Table: ${el.rows?.length || 0} rows]</div>`
+                      : `<p class="my-2 text-sm leading-relaxed text-slate-800">${escapeHtml(el.text)}</p>`
+                    ).join('')}
+                  </div>
+                `;
+              }
+            }
+          }
+        } else {
+          // Legacy .doc preview fallback
+          if (previewContainerRef.current) {
+            previewContainerRef.current.innerHTML = `
+              <div class="docx p-12 bg-white text-center rounded-sm shadow-xl max-w-full">
+                <span class="material-symbols-outlined text-[48px] text-amber-500 mb-2">description</span>
+                <p class="font-bold text-slate-700">Legacy Word 97-2003 Document (.doc)</p>
+                <p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">Full Precision conversion will compile this document natively via LibreOffice.</p>
+              </div>
+            `;
+          }
         }
       } catch (err) {
         if (isMounted) {
@@ -218,7 +255,7 @@ export default function DocxToPdf() {
     return () => {
       isMounted = false;
     };
-  }, [files, activeFileIndex, backendActive]);
+  }, [files, activeFileIndex, backendActive, renderCount]);
 
   // 5. Monitor Backend Poller (Server Mode)
   useEffect(() => {
@@ -478,12 +515,13 @@ export default function DocxToPdf() {
       title="Word to PDF"
       description="Convert Microsoft Word (.docx, .doc) documents into crisp, printable PDF files with layout preservation."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="Word to PDF Converter Online — Convert DOCX to PDF | DocScalar"
-        description="Convert Microsoft Word documents (.docx, .doc) to PDF with precision layout fidelity. Client-side private conversion and desktop high-fidelity support."
+        description="Convert Microsoft Word documents (.docx, .doc) to PDF with precision layout fidelity. Fast, encrypted conversion and desktop high-fidelity support."
       />
 
       {!result ? (
@@ -536,6 +574,20 @@ export default function DocxToPdf() {
                       <span className="uppercase">{pageSize}</span>
                       <span className="text-[var(--text-tertiary)]">•</span>
                       <span className="capitalize">{orientation}</span>
+                      <span className="text-[var(--text-tertiary)]">•</span>
+                      <span className="text-[11px] text-[var(--color-primary)] flex items-center gap-1">
+                        {engineMode === 'server' ? (
+                          <>
+                            <Sparkles size={12} />
+                            <span>Full Precision</span>
+                          </>
+                        ) : (
+                          <>
+                            <Zap size={12} />
+                            <span>Fast Mode</span>
+                          </>
+                        )}
+                      </span>
                     </div>
 
                     {isLegacyDoc && (
@@ -579,36 +631,39 @@ export default function DocxToPdf() {
 
               {/* Viewport Canvas Stage */}
               <div className="flex-1 overflow-auto p-4 sm:p-8 flex items-start justify-center relative bg-pattern select-none">
-                {docLoading ? (
-                  <div className="flex flex-col items-center gap-3 text-[var(--text-secondary)] my-auto">
-                    <span className="material-symbols-outlined text-[32px] animate-spin text-[var(--color-primary)]">
-                      progress_activity
-                    </span>
-                    <span className="text-xs font-semibold">Reading Word document layout...</span>
-                  </div>
-                ) : (
+                <div
+                  className={`relative transition-all duration-200 origin-top flex flex-col items-center w-full ${
+                    orientation === 'landscape' ? 'max-w-[1180px]' : 'max-w-[850px]'
+                  }`}
+                  style={{
+                    transform: `scale(${zoomScale})`
+                  }}
+                >
+                  {/* Loading Spinner Overlay */}
+                  {docLoading && (
+                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center min-h-[450px] gap-3 bg-white/85 dark:bg-slate-900/85 backdrop-blur-xs text-[var(--text-secondary)] rounded-sm border border-[var(--border-subtle)] shadow-xl">
+                      <span className="material-symbols-outlined text-[32px] animate-spin text-[var(--color-primary)]">
+                        progress_activity
+                      </span>
+                      <span className="text-xs font-semibold">Reading Word document layout...</span>
+                    </div>
+                  )}
+
+                  {previewError && (
+                    <div className="w-full mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-700 dark:text-amber-300 font-medium flex items-center gap-2">
+                      <AlertCircle size={15} className="shrink-0" />
+                      <span>{previewError}</span>
+                    </div>
+                  )}
+
+                  {/* docx-preview Host Container — always mounted so ref is never nullified */}
                   <div
-                    className="relative bg-white shadow-2xl rounded-sm border border-slate-300 dark:border-slate-700 p-8 sm:p-12 transition-transform duration-150 origin-top text-slate-800"
-                    style={{
-                      transform: `scale(${zoomScale})`,
-                      maxWidth: '850px',
-                      minHeight: '1100px',
-                      width: '100%'
-                    }}
-                  >
-                    {previewError && (
-                      <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-700 dark:text-amber-300 font-medium flex items-center gap-2">
-                        <AlertCircle size={15} className="shrink-0" />
-                        <span>{previewError}</span>
-                      </div>
-                    )}
-                    <div
-                      ref={previewContainerRef}
-                      className="docx-preview-host prose prose-slate max-w-none text-left bg-white text-slate-900"
-                      style={{ color: '#1e293b' }}
-                    />
-                  </div>
-                )}
+                    ref={previewContainerRef}
+                    data-orientation={orientation}
+                    data-pagesize={pageSize}
+                    className={`docx-preview-host w-full flex flex-col items-center docx-preview-${orientation} docx-preview-${pageSize}`}
+                  />
+                </div>
               </div>
             </div>
 

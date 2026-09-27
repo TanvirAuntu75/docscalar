@@ -34,19 +34,21 @@ export function generateMarianaHtml(
   // ── Modular Renderers with Canonical Data Attributes ──
   const renderExperienceItems = (items, isContinuation = false, globalOffset = 0) => {
     if (!items || !items.length) return '';
+    const isCont = typeof isContinuation === 'object' && isContinuation !== null ? Boolean(isContinuation.isContinuation) : Boolean(isContinuation);
     return `
       <section class="main-section">
-        <h2 class="section-heading" data-df-field="heading:experience">${isContinuation ? (safeData.sectionTitles?.experience ? `${safeData.sectionTitles.experience} (Continued)` : 'Experience (Continued)') : (safeData.sectionTitles?.experience || 'Experience')}</h2>
+        <h2 class="section-heading" data-df-field="heading:experience">${isCont ? (safeData.sectionTitles?.experience ? `${safeData.sectionTitles.experience} (Continued)` : 'Experience (Continued)') : (safeData.sectionTitles?.experience || 'Experience')}</h2>
         <div class="main-line"></div>
         <div class="timeline-container">
           ${items.map((e, idx) => {
             const actualIdx = globalOffset + idx;
+            const dateStr = (e.start && e.end && e.start !== e.end) ? `${e.start} – ${e.end}` : (e.end || e.start || '');
             return `
               <div class="timeline-item">
                 <div class="timeline-dot"></div>
                 <div class="timeline-header">
                   <div class="timeline-role" data-df-field="exp:${actualIdx}:role">${e.role || ''}</div>
-                  <div class="timeline-date" data-df-field="exp:${actualIdx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
+                  <div class="timeline-date" data-df-field="exp:${actualIdx}:date">${dateStr}</div>
                 </div>
                 <div class="timeline-company"><span data-df-field="exp:${actualIdx}:company">${e.company || ''}</span>${safeData.location ? `<span class="timeline-loc"> · ${safeData.location}</span>` : ''}</div>
                 ${e.highlights && e.highlights.filter(Boolean).length ? `
@@ -69,16 +71,19 @@ export function generateMarianaHtml(
         <h2 class="section-heading" data-df-field="heading:education">${safeData.sectionTitles?.education || 'Education'}</h2>
         <div class="main-line"></div>
         <div class="timeline-container">
-          ${items.map((e, idx) => `
+          ${items.map((e, idx) => {
+            const dateStr = (e.start && e.end && e.start !== e.end) ? `${e.start} – ${e.end}` : (e.end || e.start || '');
+            return `
             <div class="timeline-item">
               <div class="timeline-dot"></div>
               <div class="timeline-header">
                 <div class="timeline-role" data-df-field="edu:${idx}:degree">${e.degree || ''}</div>
-                <div class="timeline-date" data-df-field="edu:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
+                <div class="timeline-date" data-df-field="edu:${idx}:date">${dateStr}</div>
               </div>
               <div class="timeline-company"><span data-df-field="edu:${idx}:school">${e.school || ''}</span>${e.note ? `<span class="timeline-loc"> · ${e.note}</span>` : ''}</div>
             </div>
-          `).join('')}
+          `;
+          }).join('')}
         </div>
       </section>
     `;
@@ -90,14 +95,17 @@ export function generateMarianaHtml(
       <div class="sidebar-section">
         <h3 class="section-heading" data-df-field="heading:education">${safeData.sectionTitles?.education || 'Education'}</h3>
         <div class="sidebar-line"></div>
-        ${items.map((e, idx) => `
+        ${items.map((e, idx) => {
+          const dateStr = (e.start && e.end && e.start !== e.end) ? `${e.start} – ${e.end}` : (e.end || e.start || '');
+          return `
           <div class="edu-item">
-            <div class="edu-date" data-df-field="edu:${idx}:date">${e.start || ''}${e.start && e.end ? ' – ' : ''}${e.end || ''}</div>
+            <div class="edu-date" data-df-field="edu:${idx}:date">${dateStr}</div>
             <div class="edu-degree" data-df-field="edu:${idx}:degree">${e.degree || ''}</div>
             <div class="edu-school" data-df-field="edu:${idx}:school">${e.school || ''}</div>
             ${e.note ? `<div class="edu-note">${e.note}</div>` : ''}
           </div>
-        `).join('')}
+        `;
+        }).join('')}
       </div>
     `;
   };
@@ -169,9 +177,10 @@ export function generateMarianaHtml(
 
   const renderProjectItems = (items, isContinuation = false, globalOffset = 0) => {
     if (!items || !items.length) return '';
+    const isCont = typeof isContinuation === 'object' && isContinuation !== null ? Boolean(isContinuation.isContinuation) : Boolean(isContinuation);
     return `
       <section class="main-section">
-        <h2 class="section-heading" data-df-field="heading:projects">${isContinuation ? (safeData.sectionTitles?.projects ? `${safeData.sectionTitles.projects} (Continued)` : 'Projects (Continued)') : (safeData.sectionTitles?.projects || 'Projects')}</h2>
+        <h2 class="section-heading" data-df-field="heading:projects">${isCont ? (safeData.sectionTitles?.projects ? `${safeData.sectionTitles.projects} (Continued)` : 'Projects (Continued)') : (safeData.sectionTitles?.projects || 'Projects')}</h2>
         <div class="main-line"></div>
         ${items.map((p, idx) => {
           const actualIdx = globalOffset + idx;
@@ -191,14 +200,22 @@ export function generateMarianaHtml(
 
   const renderCertItems = (items, isContinuation = false, globalOffset = 0) => {
     if (!items || !items.length) return '';
+    const isCont = typeof isContinuation === 'object' && isContinuation !== null ? Boolean(isContinuation.isContinuation) : Boolean(isContinuation);
     return `
       <section class="main-section">
-        <h2 class="section-heading" data-df-field="heading:certifications">${isContinuation ? (safeData.sectionTitles?.certifications ? `${safeData.sectionTitles.certifications} (Continued)` : 'Certifications (Continued)') : (safeData.sectionTitles?.certifications || 'Certifications')}</h2>
+        <h2 class="section-heading" data-df-field="heading:certifications">${isCont ? (safeData.sectionTitles?.certifications ? `${safeData.sectionTitles.certifications} (Continued)` : 'Certifications (Continued)') : (safeData.sectionTitles?.certifications || 'Certifications')}</h2>
         <div class="main-line"></div>
         <ul class="cert-list">
           ${items.map((c, idx) => {
             const actualIdx = globalOffset + idx;
-            return `<li data-df-field="cert:${actualIdx}">${typeof c === 'object' ? c.name || '' : c}</li>`;
+            const text = typeof c === 'object' ? c.name || '' : c;
+            const urlMatch = typeof text === 'string' ? text.match(/(https?:\/\/[^\s]+)/) : null;
+            let contentHtml = text;
+            if (urlMatch) {
+              const url = urlMatch[1];
+              contentHtml = text.replace(url, `<a href="${url}" target="_blank" style="color: ${accent}; text-decoration: none; word-break: break-all;">${url}</a>`);
+            }
+            return `<li data-df-field="cert:${actualIdx}">${contentHtml}</li>`;
           }).join('')}
         </ul>
       </section>
@@ -207,9 +224,10 @@ export function generateMarianaHtml(
 
   const renderReferenceItems = (items, isContinuation = false, globalOffset = 0) => {
     if (!items || !items.length) return '';
+    const isCont = typeof isContinuation === 'object' && isContinuation !== null ? Boolean(isContinuation.isContinuation) : Boolean(isContinuation);
     return `
       <section class="main-section">
-        <h2 class="section-heading" data-df-field="heading:references">${isContinuation ? (safeData.sectionTitles?.references ? `${safeData.sectionTitles.references} (Continued)` : 'References (Continued)') : (safeData.sectionTitles?.references || 'References')}</h2>
+        <h2 class="section-heading" data-df-field="heading:references">${isCont ? (safeData.sectionTitles?.references ? `${safeData.sectionTitles.references} (Continued)` : 'References (Continued)') : (safeData.sectionTitles?.references || 'References')}</h2>
         <div class="main-line"></div>
         <div class="reference-grid">
           ${items.map((r, idx) => {
@@ -233,7 +251,7 @@ export function generateMarianaHtml(
     if (!rawItems.length) return '';
     return `
       <section class="main-section">
-        <h2 data-df-field="custom:${cs.id}:title">${cs.title || 'Additional Information'}</h2>
+        <h2 class="section-heading" data-df-field="custom:${cs.id}:title">${cs.title || 'Additional Information'}</h2>
         <div class="main-line"></div>
         <div class="custom-grid">
           ${rawItems.map((i, idx) => {
@@ -241,7 +259,7 @@ export function generateMarianaHtml(
             const valText = typeof i === 'object' && i !== null ? (i.value || '') : '';
             return `
               <div class="custom-item">
-                <strong data-df-field="custom:${cs.id}:${idx}:title">${titleText}</strong>${valText ? `: <span data-df-field="custom:${cs.id}:${idx}:value">${valText}</span>` : ''}
+                <span data-df-field="custom:${cs.id}:${idx}:title">${titleText}</span>${valText ? `: <span data-df-field="custom:${cs.id}:${idx}:value">${valText}</span>` : ''}
               </div>
             `;
           }).join('')}
@@ -273,13 +291,31 @@ export function generateMarianaHtml(
     const langSection = (safeData.customSections || []).find(cs => cs.id === 'custom_languages' || cs.title?.toLowerCase() === 'languages');
     const items = langSection?.items || safeData.custom_languages || [];
     if (!items || !items.length) return '';
+    const secId = langSection ? langSection.id : 'custom_languages';
     return `
       <div class="sidebar-section">
-        <h3 data-df-field="custom:${langSection ? langSection.id : 'custom_languages'}:title">${langSection?.title || 'Languages'}</h3>
+        <h3 class="section-heading" data-df-field="custom:${secId}:title">${langSection?.title || 'Languages'}</h3>
         <div class="sidebar-line"></div>
-        <ul class="lang-list">
-          ${items.map((i, idx) => `<li data-df-field="custom:${langSection ? langSection.id : 'custom_languages'}:${idx}:title">${typeof i === 'string' ? i : (i.title || i.name || '')}${typeof i === 'object' && i !== null && i.value ? ' — ' + i.value : ''}</li>`).join('')}
-        </ul>
+        <div class="lang-list">
+          ${items.map((i, idx) => {
+            let nameStr = typeof i === 'string' ? i : (i.title || i.name || '');
+            let valStr = typeof i === 'object' && i !== null && i.value ? i.value : '';
+            if (typeof i === 'string' && (i.includes(' — ') || i.includes(' - '))) {
+              const delimiter = i.includes(' — ') ? ' — ' : ' - ';
+              const parts = i.split(delimiter);
+              nameStr = parts[0].trim();
+              valStr = parts.slice(1).join(delimiter).trim();
+            }
+            return `
+              <div class="lang-item-card">
+                <div class="lang-header-row">
+                  <span class="lang-name" data-df-field="custom:${secId}:${idx}:title">${nameStr}</span>
+                  ${valStr ? `<span class="lang-badge" data-df-field="custom:${secId}:${idx}:value">${valStr}</span>` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
       </div>
     `;
   };
@@ -380,31 +416,30 @@ export function generateMarianaHtml(
       width: 33%;
       background: ${accent};
       color: #ffffff;
-      padding: ${35 + pageMargin}px 20px;
+      padding: ${35 + pageMargin}px 24px;
       font-size: 8.5pt;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
       height: 100%;
       min-height: 100%;
       box-sizing: border-box;
-      gap: 16px;
+      gap: 22px;
     }
     .sidebar-content-flow {
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      flex: 1;
-      justify-content: space-between;
+      gap: 22px;
+      justify-content: flex-start;
     }
     .avatar-container {
       display: flex;
       justify-content: center;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
     .avatar-mask {
-      width: 145px;
-      height: 145px;
+      width: 135px;
+      height: 135px;
       border-radius: 50%;
       border: 3px solid rgba(255, 255, 255, 0.45);
       overflow: hidden;
@@ -426,114 +461,167 @@ export function generateMarianaHtml(
       page-break-inside: avoid;
     }
     .sidebar-section h3 {
-      font-size: 10pt;
+      font-size: 9.5pt;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1.2px;
       color: #ffffff;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
     .sidebar-line {
       border-bottom: 1.5px solid rgba(255, 255, 255, 0.25);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .sidebar-contact-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
+    .contact-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 5px;
+      padding: 6px 10px;
+      break-inside: avoid;
+    }
     .contact-item .label {
       display: block;
       font-weight: 700;
-      font-size: 7.5pt;
+      font-size: 7pt;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: rgba(255, 255, 255, 0.85);
+      letter-spacing: 0.8px;
+      color: rgba(255, 255, 255, 0.7);
     }
     .contact-item .val {
       display: block;
-      color: rgba(255, 255, 255, 0.95);
+      color: #ffffff;
       margin-top: 1px;
       overflow-wrap: anywhere;
       word-break: break-word;
       font-size: 8.3pt;
+      font-weight: 500;
+      line-height: 1.35;
     }
     .edu-item {
       margin-bottom: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 5px;
+      padding: 6px 10px;
       break-inside: avoid;
     }
     .edu-date {
-      font-size: 8pt;
+      font-size: 7.8pt;
       color: rgba(255, 255, 255, 0.8);
       font-weight: 600;
     }
     .edu-degree {
-      font-size: 9.5pt;
+      font-size: 9pt;
       font-weight: 700;
       color: #ffffff;
       margin-top: 1px;
     }
     .edu-school {
-      font-size: 8.5pt;
+      font-size: 8.2pt;
       color: rgba(255, 255, 255, 0.9);
       font-style: italic;
     }
     .edu-note {
       font-size: 7.8pt;
       color: rgba(255, 255, 255, 0.75);
-      margin-top: 1px;
+      margin-top: 2px;
     }
     .skills-grid {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       gap: 6px;
     }
     .skill-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      font-size: 8.3pt;
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 8pt;
+      line-height: 1.3;
+      break-inside: avoid;
+      max-width: 100%;
+      box-sizing: border-box;
     }
     .skill-name {
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.95);
+      color: #ffffff;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     .skill-level {
-      font-size: 7.5pt;
-      color: rgba(255, 255, 255, 0.75);
+      font-size: 7.2pt;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 6px;
+      flex-shrink: 0;
     }
     .lang-list {
-      list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      font-size: 8.3pt;
-      color: rgba(255, 255, 255, 0.95);
+      gap: 7px;
+    }
+    .lang-item-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 5px;
+      padding: 6px 10px;
+      font-size: 8.2pt;
+      line-height: 1.35;
+      break-inside: avoid;
+    }
+    .lang-header-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .lang-name {
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 8.5pt;
+    }
+    .lang-badge {
+      font-size: 7.6pt;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     
     /* Main Content (67%) */
     .main-content {
       width: 67%;
-      padding: ${35 + pageMargin}px ${35 + pageMargin}px;
+      padding: ${35 + pageMargin}px 32px;
       display: flex;
       flex-direction: column;
       gap: 16px;
       box-sizing: border-box;
     }
     .main-header h1 {
-      font-size: 26pt;
+      font-size: 24pt;
       font-weight: 800;
       letter-spacing: -0.5px;
       color: #0f172a;
-      line-height: 1.1;
+      line-height: 1.15;
       text-transform: uppercase;
     }
     .main-header .title {
-      font-size: 11pt;
+      font-size: 10.5pt;
       font-weight: 600;
       color: ${accent};
       text-transform: uppercase;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       margin-top: 4px;
     }
     .main-section {
@@ -541,22 +629,23 @@ export function generateMarianaHtml(
       page-break-inside: avoid;
     }
     .main-section h2 {
-      font-size: 11pt;
-      font-weight: 700;
+      font-size: 10.5pt;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.2px;
       color: #0f172a;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
     .main-line {
-      border-bottom: 2px solid ${accent};
+      height: 2px;
+      background: linear-gradient(to right, ${accent}, ${accent}40 60%, transparent);
       margin-bottom: 12px;
     }
     .summary-text {
       font-size: 8.8pt;
-      color: #475569;
+      color: #334155;
       line-height: ${runtime.adjustedLineSpacing};
-      text-align: justify;
+      text-align: left;
     }
     .timeline-container {
       display: flex;
@@ -565,8 +654,8 @@ export function generateMarianaHtml(
     }
     .timeline-item {
       position: relative;
-      padding-left: 14px;
-      border-left: 2px solid #cbd5e1;
+      padding-left: 16px;
+      border-left: 2px solid #e2e8f0;
       break-inside: avoid;
     }
     .timeline-dot {
@@ -577,6 +666,7 @@ export function generateMarianaHtml(
       height: 8px;
       border-radius: 50%;
       background: ${accent};
+      box-shadow: 0 0 0 2px #ffffff;
     }
     .timeline-header {
       display: flex;
@@ -589,16 +679,26 @@ export function generateMarianaHtml(
       color: #0f172a;
     }
     .timeline-date {
-      font-size: 8.3pt;
-      color: #64748b;
-      font-style: italic;
+      font-size: 8.5pt;
+      color: ${accent};
+      font-weight: 600;
     }
     .timeline-company {
       font-size: 8.8pt;
       color: #334155;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .timeline-loc {
       font-weight: 600;
-      margin-top: 1px;
-      margin-bottom: 4px;
+      color: #0f172a;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 3px;
+      padding: 1px 6px;
+      margin-left: 4px;
+      font-size: 8pt;
+      display: inline-block;
     }
     .timeline-desc {
       list-style-type: disc;
@@ -606,12 +706,16 @@ export function generateMarianaHtml(
       font-size: 8.3pt;
       color: #475569;
       line-height: ${runtime.adjustedLineSpacing};
+      margin-top: 4px;
     }
     .timeline-desc li {
       margin-bottom: 2px;
     }
     .entry-item {
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      position: relative;
+      padding-left: 14px;
+      border-left: 2.5px solid ${accent};
       break-inside: avoid;
     }
     .entry-header {
@@ -627,21 +731,23 @@ export function generateMarianaHtml(
     .entry-url {
       font-size: 8.3pt;
       color: ${accent};
+      font-weight: 600;
     }
     .entry-desc {
       font-size: 8.5pt;
       color: #475569;
-      margin-top: 2px;
+      margin-top: 3px;
       line-height: ${runtime.adjustedLineSpacing};
     }
     .cert-list {
       list-style-type: disc;
-      padding-left: 16px;
+      padding-left: 18px;
       font-size: 8.5pt;
-      color: #475569;
+      color: #334155;
     }
     .cert-list li {
-      margin-bottom: 3px;
+      margin-bottom: 4px;
+      line-height: 1.4;
     }
     .reference-grid {
       display: grid;
@@ -662,10 +768,21 @@ export function generateMarianaHtml(
       margin-bottom: 2px;
     }
     .custom-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
       font-size: 8.8pt;
+    }
+    .custom-item {
+      display: inline-flex;
+      align-items: center;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 8.3pt;
+      font-weight: 500;
+      color: #1e293b;
     }
     .cv-page-white {
       display: block !important;

@@ -318,12 +318,13 @@ export default function UnOcrPdf() {
       title="Un-OCR / Flatten PDF Studio"
       description="Flatten searchable PDFs into static image-only documents by permanently stripping text layers and interactive fields."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="Un-OCR PDF Online Free — Flatten PDF Pages | DocScalar"
-        description="Flatten searchable PDFs into purely rasterized, image-only documents. Strips text layers, font dictionaries, and interactive fields Client Side."
+        description="Flatten searchable PDFs into purely rasterized, image-only documents. Strips text layers, font dictionaries, and interactive fields securely."
       />
 
       {!result ? (

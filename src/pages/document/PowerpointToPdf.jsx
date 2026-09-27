@@ -26,7 +26,7 @@ export default function PowerpointToPdf() {
   const [zoomScale, setZoomScale] = useState(1.0);
 
   // Conversion Configuration State
-  const [engineMode, setEngineMode] = useState('client'); // 'client' | 'server'
+  const [engineMode, setEngineMode] = useState('server'); // 'client' | 'server'
   const [aspectRatio, setAspectRatio] = useState('16:9'); // '16:9' | '4:3'
   const [orientation, setOrientation] = useState('landscape'); // 'landscape' | 'portrait'
   const [outputFileName, setOutputFileName] = useState('');
@@ -49,9 +49,13 @@ export default function PowerpointToPdf() {
         if (res.ok) {
           setBackendActive(true);
           setEngineMode('server');
+        } else {
+          setBackendActive(false);
+          setEngineMode('client');
         }
       } catch (e) {
         setBackendActive(false);
+        setEngineMode('client');
       }
     };
     checkServer();
@@ -239,12 +243,13 @@ export default function PowerpointToPdf() {
       title="PowerPoint to PDF Studio"
       description="Convert PowerPoint presentations (.pptx, .ppt) into pristine, widescreen PDF slides with visual layout preservation."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="PowerPoint to PDF Online Free — Convert PPTX to PDF | DocScalar"
-        description="Convert PPTX and PPT presentations to PDF with high formatting fidelity. Fast, secure, and client-side private conversion."
+        description="Convert PPTX and PPT presentations to PDF with high formatting fidelity. Fast, secure, and confidential document conversion."
       />
 
       {!result ? (

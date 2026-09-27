@@ -10,6 +10,7 @@ import {
 } from '../../engines/image/compressImage';
 import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
+import { generateBatchImageThumbnails, safeRevokeUrls } from '../../utils/imagePreviewHelper';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import {
@@ -39,6 +40,7 @@ export default function ImageCompressor() {
   const [viewMode, setViewMode] = useState('inspect'); // 'inspect' | 'gallery'
   const [zoomScale, setZoomScale] = useState(1.0);
   const [previewUrls, setPreviewUrls] = useState([]);
+  const [thumbnails, setThumbnails] = useState([]);
 
   // Processing & Results State
   const [processing, setProcessing] = useState(false);
@@ -85,14 +87,47 @@ export default function ImageCompressor() {
     }
   }, [files, presetId, quality]);
 
-  // 3. Generate Object URLs for Previews
+  // 3. Generate Object URLs & Downsampled Thumbnails for Previews
   useEffect(() => {
+    let isCancelled = false;
+    const cancellationToken = { isCancelled: false };
+
+    // Full-resolution object URLs for single image inspect stage
     const urls = files.map((f) => URL.createObjectURL(f));
     setPreviewUrls(urls);
+
+    // Bounded downsampled thumbnails for gallery cards and multi-item lists
+    generateBatchImageThumbnails(files, {
+      maxDimension: 320,
+      quality: 0.8,
+      cancellationToken
+    })
+      .then((thumbs) => {
+        if (!isCancelled) {
+          setThumbnails(thumbs);
+        } else {
+          safeRevokeUrls(thumbs);
+        }
+      })
+      .catch((err) => {
+        if (!isCancelled) {
+          console.warn('Image Compressor thumbnail generation failed:', err);
+        }
+      });
+
     return () => {
-      urls.forEach((u) => URL.revokeObjectURL(u));
+      isCancelled = true;
+      cancellationToken.isCancelled = true;
+      safeRevokeUrls(urls);
     };
   }, [files]);
+
+  // Ensure downsampled thumbnail URLs are cleanly revoked on unmount or refresh
+  useEffect(() => {
+    return () => {
+      safeRevokeUrls(thumbnails);
+    };
+  }, [thumbnails]);
 
   // 4. Handle Preset Selection
   const applyPreset = (preset) => {
@@ -166,7 +201,10 @@ export default function ImageCompressor() {
 
   const resetWorkspace = () => {
     clearStudioDraft('image-compressor');
+    safeRevokeUrls(previewUrls);
+    safeRevokeUrls(thumbnails);
     setFiles([]);
+    setThumbnails([]);
     setActiveFileIndex(0);
     setResult(null);
     setError(null);
@@ -183,6 +221,7 @@ export default function ImageCompressor() {
       title="Image Compressor Studio"
       description="Compress JPG, PNG, and WebP images with adaptive quantization and instant savings telemetry."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
@@ -370,7 +409,7 @@ export default function ImageCompressor() {
                       >
                         <div className="w-full aspect-square bg-[var(--bg-secondary)] rounded-xl overflow-hidden flex items-center justify-center relative">
                           <img
-                            src={previewUrls[idx]}
+                            src={thumbnails[idx]?.previewUrl || previewUrls[idx]}
                             alt={file.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                           />

@@ -247,6 +247,9 @@ export default function CompressPdf() {
         if (!isCancelled) {
           console.warn('Failed to render page thumbnails:', err);
           setLoadingThumbnails(false);
+          if (err && (err.name === 'PasswordException' || String(err.message).toLowerCase().includes('password'))) {
+            setError('This document is password protected. Please unlock the PDF before compressing.');
+          }
         }
       }
     };
@@ -694,7 +697,7 @@ export default function CompressPdf() {
     setQuality(0.65);
     setScale(1.5);
     setUltraCompactPortalMode(false);
-    poller.resetPoller();
+    poller.cancelJob();
   };
 
   const handleAddFiles = (e) => {
@@ -814,12 +817,14 @@ export default function CompressPdf() {
       title="Compress PDF"
       description="Reduce PDF file size drastically while preserving text layers, vector clarity, and document searchability."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
+      setResult={setResult}
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Compress PDF Online Free — Reduce PDF Size (100% Local Studio) | DocScalar"
-        description="Reduce PDF file size while maintaining crisp readability. High-speed local compression with quality dials and batch compression support."
+        title="Compress PDF Online Free — Reduce PDF Size Fast | DocScalar"
+        description="Reduce PDF file size while maintaining crisp readability. High-speed compression with quality dials and batch processing support."
       />
 
       {!result ? (
@@ -1224,7 +1229,7 @@ export default function CompressPdf() {
                             <span>•</span>
                             <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
                               <span className="material-symbols-outlined text-[13px]">shield</span>
-                              <span>100% Client-Side Private</span>
+                              <span>Encrypted & Private</span>
                             </span>
                           </div>
                         </div>
@@ -2058,8 +2063,21 @@ export default function CompressPdf() {
 
 
                 {error && (
-                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium">
-                    {error}
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium flex flex-col gap-2">
+                    <div className="flex items-start gap-2">
+                      <span className="material-symbols-outlined text-[16px] shrink-0 mt-0.5">error</span>
+                      <span>{error}</span>
+                    </div>
+                    {error.toLowerCase().includes('password') && (
+                      <Link
+                        to="/pdf/unlock-pdf"
+                        state={{ initialFiles: files }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-[11px] rounded-lg transition-colors w-fit shadow-xs"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">lock_open</span>
+                        <span>Unlock Document with Unlock PDF →</span>
+                      </Link>
+                    )}
                   </div>
                 )}
               </div>

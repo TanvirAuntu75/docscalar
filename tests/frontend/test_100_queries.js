@@ -79,16 +79,16 @@ const TEST_CASES = [
   { id: 59, query: "blackout confidential numbers in legal document", expectType: 'Tool', expectId: 'redact-pdf' },
   { id: 60, query: "is my document data secure and private?", expectSource: 'Privacy Guarantee' },
 
-  // ── 7. Document Intelligence & Utilities (10 queries) ─────────────────────
+  // ── 7. Document Utilities & Converters (10 queries) ──────────────────────
   { id: 61, query: "compare two pdf revisions with pixel heatmap and text diff", expectType: 'Tool', expectId: 'compare-pdf' },
-  { id: 62, query: "summarize document executive highlights with local textrank", expectType: 'Tool', expectId: 'ai-summarizer' },
-  { id: 63, query: "offline local neural translation for documents", expectType: 'Tool', expectId: 'ai-translator' },
+  { id: 62, query: "reduce pdf file size without quality loss", expectType: 'Tool', expectId: 'compress-pdf' },
+  { id: 63, query: "edit and annotate pdf text directly", expectType: 'Tool', expectId: 'edit-pdf' },
   { id: 64, query: "preview multi-page pdf document in browser", expectType: 'Tool', expectId: 'document-viewer' },
   { id: 65, query: "generate custom qr code with embedded url", expectType: 'Tool', expectId: 'qr-generator' },
   { id: 66, query: "unzip and extract zip archive files in browser", expectType: 'Tool', expectId: 'unzip-file' },
-  { id: 67, query: "batch conversion pipeline multiple operations", expectType: 'Tool', expectId: 'conversion-pipeline' },
+  { id: 67, query: "stitch canvas node workflow studio pipeline", expectType: 'Canvas', expectId: 'canvas' },
   { id: 68, query: "side by side pdf comparison slider", expectType: 'Tool', expectId: 'compare-pdf' },
-  { id: 69, query: "condense 20 page research paper into bullet points", expectType: 'Tool', expectId: 'ai-summarizer' },
+  { id: 69, query: "convert pdf file into editable docx format", expectType: 'Tool', expectId: 'pdf-to-word' },
   { id: 70, query: "convert images between png webp and jpg", expectType: 'Tool', expectId: 'image-converter' },
 
   // ── 8. All 17 Resume Builder Templates (17 queries) ───────────────────────

@@ -23,7 +23,7 @@ from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, Upload
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, EmailStr
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -44,7 +44,7 @@ from backend.auth import (
 from backend.billing import router as billing_router
 from backend.database import JobHistory, Subscription, User, get_db, init_db
 from backend.jobs.cleanup import cleanup_expired_files
-from backend.jobs.queue import enqueue_job, get_job_status
+from backend.jobs.queue import cancel_job, enqueue_job, get_job_status
 from backend.services.compression import compress_pdf
 from backend.services.digital_sign import sign_pdf
 from backend.services.edit_pdf import edit_pdf_backend
@@ -64,6 +64,17 @@ from backend.services.security import protect_pdf, unlock_pdf
 from backend.services.smart_service import process_smart_convert
 from backend.services.split import split_pdf
 from backend.services.url_to_pdf import convert_url_to_pdf
+from backend.services.pdf_ops import (
+    merge_pdfs,
+    rotate_pdf,
+    crop_pdf,
+    add_watermark,
+    add_page_numbers,
+    pdf_to_images,
+    extract_pages,
+    remove_pages,
+    image_to_pdf,
+)
 
 logger = logging.getLogger("docscalar_api")
 
@@ -72,12 +83,13 @@ SENTRY_DSN = os.getenv("SENTRY_DSN", "")
 if SENTRY_DSN:
     sentry_sdk.init(
         dsn=SENTRY_DSN,
-        traces_sample_rate=1.0,
-        profiles_sample_rate=1.0,
+        traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.2")),
+        profiles_sample_rate=float(os.getenv("SENTRY_PROFILES_SAMPLE_RATE", "0.2")),
     )
 
-# Initialize Rate Limiter (disabled for local development to prevent rate-limit blocks)
-limiter = Limiter(key_func=get_remote_address, enabled=False)
+# Initialize Rate Limiter (configurable via RATE_LIMIT_ENABLED; enabled by default in production)
+RATE_LIMIT_ENABLED = os.getenv("RATE_LIMIT_ENABLED", "true" if os.getenv("DOCSCALAR_ENV") == "production" else "false").lower() in ("true", "1", "yes")
+limiter = Limiter(key_func=get_remote_address, enabled=RATE_LIMIT_ENABLED)
 
 app = FastAPI(
     title="DocScalar API Server",
@@ -120,10 +132,25 @@ async def health_check():
     return {"status": "ok"}
 
 
-# Enable CORS for Vite frontend
+# Enable CORS for Vite frontend, Tauri desktop, and production domains
+raw_cors = os.getenv("CORS_ORIGINS", "")
+if raw_cors:
+    cors_origins = [o.strip() for o in raw_cors.split(",") if o.strip()]
+else:
+    cors_origins = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+        "http://localhost:8765",
+        "http://127.0.0.1:8765",
+        "tauri://localhost",
+        "https://tauri.localhost",
+    ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, restrict to actual domain
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -187,13 +214,14 @@ ALLOWED_MIME_TYPES = {
     "application/octet-stream",
 }
 
-# Ceiling size configurations
-FREE_MAX_FILE_SIZE = 100 * 1024 * 1024  # 100 Megabytes
-PRO_MAX_FILE_SIZE = 500 * 1024 * 1024  # 500 Megabytes
+# Ceiling size configurations (10MB Guest, 15MB Free Account, 1GB Pro)
+GUEST_MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 Megabytes (Guest Mode)
+FREE_MAX_FILE_SIZE = 15 * 1024 * 1024   # 15 Megabytes (Free Account Mode)
+PRO_MAX_FILE_SIZE = 1024 * 1024 * 1024  # 1024 Megabytes / 1 GB (Pro Tier)
 
-# iLovePDF Free Limits by file extension
+# Extension limits matching DocScalar tier architecture
 FREE_LIMITS = {
-    "pdf": 200 * 1024 * 1024,
+    "pdf": 15 * 1024 * 1024,
     "docx": 15 * 1024 * 1024,
     "doc": 15 * 1024 * 1024,
     "xlsx": 15 * 1024 * 1024,
@@ -202,13 +230,13 @@ FREE_LIMITS = {
     "ppt": 15 * 1024 * 1024,
     "html": 15 * 1024 * 1024,
     "txt": 15 * 1024 * 1024,
-    "png": 40 * 1024 * 1024,
-    "jpg": 40 * 1024 * 1024,
-    "jpeg": 40 * 1024 * 1024,
-    "webp": 40 * 1024 * 1024,
-    "bmp": 40 * 1024 * 1024,
-    "gif": 40 * 1024 * 1024,
-    "zip": 100 * 1024 * 1024,
+    "png": 15 * 1024 * 1024,
+    "jpg": 15 * 1024 * 1024,
+    "jpeg": 15 * 1024 * 1024,
+    "webp": 15 * 1024 * 1024,
+    "bmp": 15 * 1024 * 1024,
+    "gif": 15 * 1024 * 1024,
+    "zip": 15 * 1024 * 1024,
 }
 
 
@@ -235,7 +263,7 @@ async def canvas_semantic_command(request: CommandRequest):
 
 class AgentPlanRequest(BaseModel):
     query: str
-    files: list[str]
+    files: Optional[List[str]] = []
 
 
 @app.post("/api/canvas/agent-plan")
@@ -274,9 +302,9 @@ async def upload_file(
     Enforces extension-specific limits matching iLovePDF for Free users and 500MB for Pro.
     """
     try:
-        # 1. Path Traversal Protection & Filename Sanitization
+        # 1. Path Traversal Protection & Filename Sanitization (Unicode-safe for international filenames)
         raw_filename = Path(file.filename).name
-        sanitized_filename = re.sub(r"[^a-zA-Z0-9_.-]", "_", raw_filename)
+        sanitized_filename = re.sub(r'[\r\n"\\/\0\x00-\x1f]', '_', raw_filename).strip() or "document.pdf"
 
         # 2. File Extension Validation
         ext = Path(sanitized_filename).suffix.lower()
@@ -294,18 +322,20 @@ async def upload_file(
                 detail=f"Unsupported file content type: {content_type}.",
             )
 
-        # Determine current user tier and limits
-        user_tier = "free"
+        # Determine current user tier and limits (10MB Guest, 15MB Free Account, 1GB Pro)
+        user_tier = "guest"
         if current_user:
             user_tier = current_user.tier
 
         if user_tier == "pro":
             max_allowed_size = PRO_MAX_FILE_SIZE
-            max_allowed_label = "500MB"
+            max_allowed_label = "1GB"
+        elif user_tier == "free":
+            max_allowed_size = FREE_MAX_FILE_SIZE
+            max_allowed_label = "15MB"
         else:
-            ext_key = ext.lstrip(".")
-            max_allowed_size = FREE_LIMITS.get(ext_key, 15 * 1024 * 1024)
-            max_allowed_label = f"{max_allowed_size // (1024 * 1024)}MB"
+            max_allowed_size = GUEST_MAX_FILE_SIZE
+            max_allowed_label = "10MB"
 
         # 4. Generate unique folder per upload to avoid filename collisions
         upload_id = str(uuid.uuid4())
@@ -336,12 +366,22 @@ async def upload_file(
                 shutil.rmtree(upload_folder, ignore_errors=True)
 
             if user_tier == "pro":
-                detail_msg = (
-                    "File exceeds maximum allowed size of 500MB for your account tier."
-                )
+                detail_msg = "File exceeds maximum allowed size of 1GB for DocScalar Pro."
+            elif user_tier == "free":
+                detail_msg = "File exceeds the 15MB limit for free registered accounts. Upgrade to Pro for up to 1GB files."
             else:
-                detail_msg = f"File exceeds the {max_allowed_label} limit for {ext.upper().lstrip('.')} files."
+                detail_msg = "File exceeds the 10MB limit for guest mode. Create a free account to upload files up to 15MB."
             raise HTTPException(status_code=400, detail=detail_msg)
+
+        if total_size == 0:
+            if file_path.exists():
+                file_path.unlink(missing_ok=True)
+            if upload_folder.exists():
+                shutil.rmtree(upload_folder, ignore_errors=True)
+            raise HTTPException(
+                status_code=400,
+                detail="The uploaded file is empty (0 bytes). Please upload a valid document.",
+            )
 
         return {
             "success": True,
@@ -359,6 +399,7 @@ async def upload_file(
         )
 
 
+@app.post("/api/upload/chunk")
 @app.post("/api/upload-chunk")
 @limiter.limit("200/minute")
 async def upload_file_chunk(
@@ -421,7 +462,7 @@ async def upload_file_chunk(
 
 # Core Endpoint: Queue Conversion Job
 @app.post("/api/convert")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def convert_file(
     request: Request,
     file_id: str = Form(...),
@@ -453,7 +494,7 @@ async def convert_file(
 
 # Core Endpoint: AI-Powered SmartConvert Job
 @app.post("/api/smart-convert")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def smart_convert_file(
     request: Request,
     file_id: str = Form(...),
@@ -480,6 +521,31 @@ async def smart_convert_file(
     return {"success": True, "job_id": job_id, "status": "queued"}
 
 
+@app.post("/api/convert/translate-pdf")
+@limiter.limit("30/minute")
+async def api_convert_translate_pdf(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    target_lang: str = Form("Bengali"),
+    target_language: Optional[str] = Form(None),
+    source_lang: Optional[str] = Form(None),
+    current_user: User = Depends(get_current_user_optional),
+):
+    """
+    Queue a PDF translation job (alias forwarding to smart-convert).
+    """
+    target = target_language or target_lang
+    return await smart_convert_file(
+        request=request,
+        file_id=file_id,
+        filename=filename,
+        mode="translate",
+        target_language=target,
+        current_user=current_user,
+    )
+
+
 @app.post("/api/smart-convert/direct")
 @limiter.limit("30/minute")
 async def smart_convert_direct(
@@ -498,8 +564,10 @@ async def smart_convert_direct(
     return {"success": True, "result": result}
 
 
-# Core Endpoint: Poll Job Status
+# Core Endpoint: Poll Job Status (with plural and legacy route aliases)
 @app.get("/api/job/{job_id}/status")
+@app.get("/api/jobs/status/{job_id}")
+@app.get("/api/jobs/{job_id}/status")
 async def check_job_status(job_id: str):
     """
     Check the status and results of a queued conversion job.
@@ -534,27 +602,77 @@ async def check_job_status(job_id: str):
     return status_info
 
 
-# Core Endpoint: Stream Converted Output File
+# Core Endpoint: Cancel Conversion Job (Cooperative Worker Termination)
+@app.post("/api/job/{job_id}/cancel")
+@app.post("/api/jobs/{job_id}/cancel")
+async def cancel_job_endpoint(job_id: str):
+    """
+    Cooperative job cancellation endpoint. Cancels a queued or in-flight conversion job.
+    """
+    cancelled = cancel_job(job_id)
+    return {
+        "success": cancelled,
+        "job_id": job_id,
+        "status": "cancelled" if cancelled else "not_found",
+    }
+
+
+# Core Endpoint: Stream Converted Output File (Multi-Tenant Isolated)
 @app.get("/api/download/{job_id}/{filename}")
 async def download_converted_file(job_id: str, filename: str):
     """
     Downloads/streams the converted document back to the user.
+    Enforces job_id isolation to prevent multi-tenant file collision and data leaks.
     """
-    # Search for matching file inside output directory
-    file_path = config.OUTPUT_DIR / filename
-    if not file_path.exists():
+    safe_job_id = os.path.basename(job_id)
+    safe_filename = os.path.basename(filename)
+
+    # Search isolated job directory first, then fallback to flat output dir for backward compatibility
+    isolated_path = config.OUTPUT_DIR / safe_job_id / safe_filename
+    flat_path = config.OUTPUT_DIR / safe_filename
+
+    target_path = (
+        isolated_path
+        if isolated_path.exists()
+        else (flat_path if flat_path.exists() else None)
+    )
+
+    if not target_path or not target_path.exists():
         raise HTTPException(
-            status_code=404, detail="Requested file was not found or has expired"
+            status_code=404,
+            detail="Requested file was not found or has expired (documents are purged after 30 minutes for security).",
         )
 
     return FileResponse(
-        path=file_path, filename=filename, media_type="application/octet-stream"
+        path=target_path,
+        filename=safe_filename,
+        media_type="application/octet-stream",
+    )
+
+
+@app.get("/api/download/{filename}")
+async def download_file_direct(filename: str):
+    """
+    Direct download fallback for backward-compatible single filename requests.
+    """
+    safe_filename = os.path.basename(filename)
+    file_path = config.OUTPUT_DIR / safe_filename
+    if not file_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Requested file was not found or has expired (documents are purged after 30 minutes for security).",
+        )
+
+    return FileResponse(
+        path=file_path,
+        filename=safe_filename,
+        media_type="application/octet-stream",
     )
 
 
 # Core Endpoint: Edit PDF (apply drawings, shapes, and font-preserving text-edit redactions)
 @app.post("/api/edit-pdf")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def edit_pdf_endpoint(
     request: Request,
     file_id: str = Form(...),
@@ -615,7 +733,7 @@ async def security_protect_file(
 
 
 @app.post("/api/pdf/digitally-sign")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def api_digitally_sign_pdf(
     request: Request,
     file_id: str = Form(...),
@@ -715,7 +833,7 @@ async def security_unlock_file(
 
 
 @app.post("/api/convert/pdf-to-docx")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def api_pdf_to_word(
     request: Request,
     file_id: str = Form(...),
@@ -740,7 +858,7 @@ async def api_pdf_to_word(
 
 
 @app.post("/api/convert/pdf-to-excel")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def api_pdf_to_excel(
     request: Request, file_id: str = Form(...), filename: str = Form(...)
 ):
@@ -761,7 +879,7 @@ async def api_pdf_to_excel(
 
 
 @app.post("/api/convert/excel-to-pdf")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def api_excel_to_pdf(
     request: Request,
     file_id: str = Form(...),
@@ -789,7 +907,7 @@ async def api_excel_to_pdf(
 
 
 @app.post("/api/convert/pdf-to-powerpoint")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def api_pdf_to_powerpoint(
     request: Request, file_id: str = Form(...), filename: str = Form(...)
 ):
@@ -810,7 +928,7 @@ async def api_pdf_to_powerpoint(
 
 
 @app.post("/api/convert/pdf-to-pdfa")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def api_pdf_to_pdfa(
     request: Request,
     file_id: str = Form(...),
@@ -834,7 +952,7 @@ async def api_pdf_to_pdfa(
 
 
 @app.post("/api/security/redact")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def api_redact_pdf(
     request: Request,
     file_id: str = Form(...),
@@ -894,7 +1012,7 @@ async def api_repair_pdf(
 
 
 @app.post("/api/convert/ocr-pdf")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def api_ocr_pdf(
     request: Request,
     file_id: str = Form(...),
@@ -919,7 +1037,7 @@ async def api_ocr_pdf(
 
 
 @app.post("/api/convert/compress-pdf")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def api_compress_pdf(
     request: Request,
     file_id: str = Form(...),
@@ -952,7 +1070,7 @@ async def api_compress_pdf(
 
 
 @app.post("/api/convert/url-to-pdf")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def api_url_to_pdf(
     request: Request,
     url: str = Form(...),
@@ -1014,7 +1132,7 @@ async def convert_html_to_pdf_endpoint(payload: HtmlToPdfRequest):
 
 
 @app.post("/api/convert/split-pdf")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def api_split_pdf(
     request: Request,
     file_id: str = Form(...),
@@ -1040,8 +1158,333 @@ async def api_split_pdf(
     return {"success": True, "job_id": job_id, "status": "queued"}
 
 
+@app.post("/api/convert/merge-pdf")
+@limiter.limit("30/minute")
+async def api_merge_pdf(
+    request: Request,
+    files_json: Optional[str] = Form(None),
+    file_ids: Optional[str] = Form(None),
+    filenames: Optional[str] = Form(None),
+    file_id: Optional[str] = Form(None),
+    filename: Optional[str] = Form(None),
+    current_user: User = Depends(get_current_user_optional),
+):
+    """
+    Queue a high-performance server-side PDF merge job (PyMuPDF).
+    """
+    paths = []
+    if files_json:
+        try:
+            items = json.loads(files_json)
+            for it in items:
+                f_id = it.get("file_id") or it.get("fileId")
+                f_name = it.get("filename") or it.get("fileName")
+                if f_id and f_name:
+                    p = config.UPLOAD_DIR / f_id / f_name
+                    if p.exists():
+                        paths.append(str(p))
+        except Exception:
+            pass
+
+    if not paths and file_ids and filenames:
+        try:
+            f_ids = json.loads(file_ids) if file_ids.startswith("[") else [x.strip() for x in file_ids.split(",")]
+            f_names = json.loads(filenames) if filenames.startswith("[") else [x.strip() for x in filenames.split(",")]
+            for f_id, f_name in zip(f_ids, f_names):
+                p = config.UPLOAD_DIR / f_id / f_name
+                if p.exists():
+                    paths.append(str(p))
+        except Exception:
+            pass
+
+    if not paths and file_id and filename:
+        p = config.UPLOAD_DIR / file_id / filename
+        if p.exists():
+            paths.append(str(p))
+
+    if not paths:
+        raise HTTPException(status_code=400, detail="No valid input files found for merging.")
+
+    job_id = enqueue_job(merge_pdfs, paths)
+    return {"success": True, "job_id": job_id, "status": "queued"}
+
+
+@app.post("/api/convert/rotate-pdf")
+@limiter.limit("30/minute")
+async def api_rotate_pdf(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    angle: int = Form(90),
+    pages: Optional[str] = Form(None),
+    current_user: User = Depends(get_current_user_optional),
+):
+    """
+    Queue a high-performance server-side PDF rotation job (PyMuPDF).
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+    if not input_path.exists():
+        raise HTTPException(status_code=404, detail="Uploaded file not found or expired")
+
+    parsed_pages = None
+    if pages:
+        try:
+            if pages.startswith("["):
+                parsed_pages = [int(x) for x in json.loads(pages)]
+            else:
+                parsed_pages = [int(x.strip()) for x in pages.split(",") if x.strip().isdigit()]
+        except Exception:
+            parsed_pages = None
+
+    job_id = enqueue_job(rotate_pdf, str(input_path), angle, parsed_pages)
+    return {"success": True, "job_id": job_id, "status": "queued"}
+
+
+@app.post("/api/convert/crop-pdf")
+@limiter.limit("30/minute")
+async def api_crop_pdf(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    crop_boxes: Optional[str] = Form(None),
+    margin_top: float = Form(0.0),
+    margin_bottom: float = Form(0.0),
+    margin_left: float = Form(0.0),
+    margin_right: float = Form(0.0),
+    current_user: User = Depends(get_current_user_optional),
+):
+    """
+    Queue a high-performance server-side PDF cropping job (PyMuPDF).
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+    if not input_path.exists():
+        raise HTTPException(status_code=404, detail="Uploaded file not found or expired")
+
+    parsed_boxes = None
+    if crop_boxes:
+        try:
+            parsed_boxes = json.loads(crop_boxes)
+        except Exception:
+            parsed_boxes = None
+
+    job_id = enqueue_job(
+        crop_pdf,
+        str(input_path),
+        parsed_boxes,
+        margin_top,
+        margin_bottom,
+        margin_left,
+        margin_right,
+    )
+    return {"success": True, "job_id": job_id, "status": "queued"}
+
+
+@app.post("/api/convert/add-watermark")
+@limiter.limit("30/minute")
+async def api_add_watermark(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    watermark_type: str = Form("text"),
+    text: str = Form("CONFIDENTIAL"),
+    color: str = Form("#FF0000"),
+    opacity: float = Form(0.25),
+    font_size: float = Form(36.0),
+    rotation: float = Form(45.0),
+    current_user: User = Depends(get_current_user_optional),
+):
+    """
+    Queue a high-performance server-side PDF watermark job (PyMuPDF).
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+    if not input_path.exists():
+        raise HTTPException(status_code=404, detail="Uploaded file not found or expired")
+
+    job_id = enqueue_job(
+        add_watermark,
+        str(input_path),
+        watermark_type,
+        text,
+        color,
+        opacity,
+        font_size,
+        rotation,
+    )
+    return {"success": True, "job_id": job_id, "status": "queued"}
+
+
+@app.post("/api/convert/add-page-numbers")
+@limiter.limit("30/minute")
+async def api_add_page_numbers(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    format_str: str = Form("Page {page} of {total}"),
+    position: str = Form("bottom-center"),
+    font_size: float = Form(10.0),
+    start_page: int = Form(1),
+    margin: float = Form(36.0),
+    color: str = Form("#4A5568"),
+    current_user: User = Depends(get_current_user_optional),
+):
+    """
+    Queue a high-performance server-side PDF page numbering job (PyMuPDF).
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+    if not input_path.exists():
+        raise HTTPException(status_code=404, detail="Uploaded file not found or expired")
+
+    job_id = enqueue_job(
+        add_page_numbers,
+        str(input_path),
+        format_str,
+        position,
+        font_size,
+        start_page,
+        margin,
+        color,
+    )
+    return {"success": True, "job_id": job_id, "status": "queued"}
+
+
+@app.post("/api/convert/pdf-to-image")
+@limiter.limit("30/minute")
+async def api_pdf_to_image(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    dpi: int = Form(150),
+    format: str = Form("png"),
+    pages: Optional[str] = Form(None),
+    current_user: User = Depends(get_current_user_optional),
+):
+    """
+    Queue a high-performance server-side PDF to image rendering job (PyMuPDF).
+    Destroys pixmaps per-page to prevent client-side browser RAM exhaustion.
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+    if not input_path.exists():
+        raise HTTPException(status_code=404, detail="Uploaded file not found or expired")
+
+    parsed_pages = None
+    if pages:
+        try:
+            if pages.startswith("["):
+                parsed_pages = [int(x) for x in json.loads(pages)]
+            else:
+                parsed_pages = [int(x.strip()) for x in pages.split(",") if x.strip().isdigit()]
+        except Exception:
+            parsed_pages = None
+
+    job_id = enqueue_job(pdf_to_images, str(input_path), dpi, format, parsed_pages)
+    return {"success": True, "job_id": job_id, "status": "queued"}
+
+
+@app.post("/api/convert/extract-pages")
+@limiter.limit("30/minute")
+async def api_extract_pages(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    pages: str = Form(...),
+    current_user: User = Depends(get_current_user_optional),
+):
+    """
+    Queue a high-performance server-side page extraction job (PyMuPDF).
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+    if not input_path.exists():
+        raise HTTPException(status_code=404, detail="Uploaded file not found or expired")
+
+    parsed_pages = []
+    try:
+        if pages.startswith("["):
+            parsed_pages = [int(x) for x in json.loads(pages)]
+        else:
+            parsed_pages = [int(x.strip()) for x in pages.split(",") if x.strip().isdigit()]
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid pages format. Expected list of integers.")
+
+    job_id = enqueue_job(extract_pages, str(input_path), parsed_pages)
+    return {"success": True, "job_id": job_id, "status": "queued"}
+
+
+@app.post("/api/convert/remove-pages")
+@limiter.limit("30/minute")
+async def api_remove_pages(
+    request: Request,
+    file_id: str = Form(...),
+    filename: str = Form(...),
+    pages: str = Form(...),
+    current_user: User = Depends(get_current_user_optional),
+):
+    """
+    Queue a high-performance server-side page deletion job (PyMuPDF).
+    """
+    upload_folder = config.UPLOAD_DIR / file_id
+    input_path = upload_folder / filename
+    if not input_path.exists():
+        raise HTTPException(status_code=404, detail="Uploaded file not found or expired")
+
+    parsed_pages = []
+    try:
+        if pages.startswith("["):
+            parsed_pages = [int(x) for x in json.loads(pages)]
+        else:
+            parsed_pages = [int(x.strip()) for x in pages.split(",") if x.strip().isdigit()]
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid pages format. Expected list of integers.")
+
+    job_id = enqueue_job(remove_pages, str(input_path), parsed_pages)
+    return {"success": True, "job_id": job_id, "status": "queued"}
+
+
+@app.post("/api/convert/image-to-pdf")
+@limiter.limit("30/minute")
+async def api_image_to_pdf(
+    request: Request,
+    files_json: Optional[str] = Form(None),
+    file_id: Optional[str] = Form(None),
+    filename: Optional[str] = Form(None),
+    current_user: User = Depends(get_current_user_optional),
+):
+    """
+    Queue a high-performance server-side Image to PDF conversion job (PyMuPDF).
+    """
+    paths = []
+    if files_json:
+        try:
+            items = json.loads(files_json)
+            for it in items:
+                f_id = it.get("file_id") or it.get("fileId")
+                f_name = it.get("filename") or it.get("fileName")
+                if f_id and f_name:
+                    p = config.UPLOAD_DIR / f_id / f_name
+                    if p.exists():
+                        paths.append(str(p))
+        except Exception:
+            pass
+
+    if not paths and file_id and filename:
+        p = config.UPLOAD_DIR / file_id / filename
+        if p.exists():
+            paths.append(str(p))
+
+    if not paths:
+        raise HTTPException(status_code=400, detail="No valid image files found.")
+
+    job_id = enqueue_job(image_to_pdf, paths)
+    return {"success": True, "job_id": job_id, "status": "queued"}
+
+
 @app.post("/api/convert/ocr-image")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def api_ocr_image(
     request: Request,
     file_id: str = Form(...),
@@ -1069,6 +1512,12 @@ async def api_ocr_image(
     except Exception as e:
         logger.exception("OCR Image processing failed")
         raise HTTPException(status_code=500, detail=f"OCR processing failed: {e!s}")
+    finally:
+        try:
+            from backend.services.ocr import teardown_ocr_engine
+            teardown_ocr_engine()
+        except Exception:
+            pass
 
 
 # Metadata endpoint: Available LibreOffice conversions
@@ -1087,6 +1536,7 @@ class AuthSchema(BaseModel):
 
 
 @app.post("/api/auth/signup")
+@app.post("/api/auth/register")
 @limiter.limit("3/minute")
 def signup(request: Request, payload: AuthSchema, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == payload.email).first()
@@ -1114,7 +1564,7 @@ def signup(request: Request, payload: AuthSchema, db: Session = Depends(get_db))
 
 
 @app.post("/api/auth/login")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 def login(request: Request, payload: AuthSchema, db: Session = Depends(get_db)):
     from backend.config import IS_DESKTOP_MODE, IS_PACKAGED
 
@@ -1141,12 +1591,47 @@ def login(request: Request, payload: AuthSchema, db: Session = Depends(get_db)):
     return {"access_token": token, "token_type": "bearer", "tier": user.tier}
 
 
+@app.post("/api/auth/refresh")
+def refresh_token(current_user: User = Depends(get_current_user)):
+    """
+    Refreshes the user's access token, extending session lifetime without requiring re-login.
+    """
+    token = create_access_token({"user_id": current_user.id, "email": current_user.email})
+    return {"access_token": token, "token_type": "bearer", "tier": current_user.tier}
+
+
 @app.get("/api/auth/me")
 def get_me(current_user: User = Depends(get_current_user)):
     return {
         "id": current_user.id,
         "email": current_user.email,
         "tier": current_user.tier,
+    }
+
+
+class UpgradeProRequest(BaseModel):
+    license_key: Optional[str] = None
+
+
+@app.post("/api/auth/upgrade-pro")
+@app.post("/api/billing/activate-beta")
+def upgrade_to_pro(
+    payload: Optional[UpgradeProRequest] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Permanently updates current_user.tier to 'pro' in the SQLite database.
+    Persists across logouts, server restarts, and cross-device logins.
+    """
+    current_user.tier = "pro"
+    db.commit()
+    db.refresh(current_user)
+    return {
+        "success": True,
+        "tier": current_user.tier,
+        "email": current_user.email,
+        "message": "User successfully upgraded to Pro tier in database.",
     }
 
 

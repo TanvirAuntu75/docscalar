@@ -1,6 +1,9 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { detectSmartBorders, computeCleanPdfCropBox } from '../utils/pdfZoneScanner';
 import { getSmartCropPreference, shouldAutoApplySmartCrop, shouldAutoShowSmartCropModal } from '../utils/smartCropperStorage';
+import { useAuth } from '../context/AuthContext';
+import { getSmartCropQuota, consumeSmartCropClick } from '../utils/smartCropQuota';
+import { getPdfjsDocParams } from '../utils/pdfConfig';
 
 /**
  * DocScalar Universal Smart Cropper Hook
@@ -25,6 +28,29 @@ import { getSmartCropPreference, shouldAutoApplySmartCrop, shouldAutoShowSmartCr
  *   - Mixed orientation pages (per-page independent detection)
  */
 export default function useSmartCropper({ canvasRef, totalPages = 0 }) {
+  // ── Auth & Quota Entitlement State ──────────────────────────────────
+  let auth = null;
+  try {
+    auth = useAuth();
+  } catch {
+    auth = { isAuthenticated: false, userTier: 'guest', isPro: false, userEmail: '' };
+  }
+
+  const [quota, setQuota] = useState(() => getSmartCropQuota(auth));
+  const [limitModalOpen, setLimitModalOpen] = useState(false);
+  const [limitModalType, setLimitModalType] = useState('guest'); // 'guest' | 'limit_reached'
+
+  useEffect(() => {
+    const handleQuotaChange = () => {
+      setQuota(getSmartCropQuota(auth));
+    };
+    handleQuotaChange();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('docscalar_smart_crop_quota_changed', handleQuotaChange);
+      return () => window.removeEventListener('docscalar_smart_crop_quota_changed', handleQuotaChange);
+    }
+  }, [auth]);
+
   // ── Detection State ─────────────────────────────────────────────────
   const [detectedCropBoxes, setDetectedCropBoxes] = useState({}); // pageIndex -> smartBorderResult
   const [pdfCropBoxes, setPdfCropBoxes] = useState({}); // pageIndex -> pdfCropBox (in PDF points)
@@ -34,7 +60,11 @@ export default function useSmartCropper({ canvasRef, totalPages = 0 }) {
   const [detectionReason, setDetectionReason] = useState(''); // human-readable status
 
   // ── Crop Control State ──────────────────────────────────────────────
-  const [isActive, setIsActive] = useState(() => shouldAutoApplySmartCrop()); // auto-activate if remembered
+  // STRICT TIER RULE: Only Pro subscribers can auto-apply. Guests and Free users NEVER auto-apply!
+  const [isActive, setIsActive] = useState(() => {
+    const isProUser = Boolean(auth?.isPro || (auth?.isAuthenticated && auth?.userTier === 'pro'));
+    return isProUser && shouldAutoApplySmartCrop();
+  });
   const [cleanMargin, setCleanMargin] = useState(() => {
     const prefMargin = getSmartCropPreference().cleanMargin;
     return typeof prefMargin === 'number' ? prefMargin : 0;
@@ -178,9 +208,10 @@ export default function useSmartCropper({ canvasRef, totalPages = 0 }) {
         .map(([edge]) => edge);
       setDetectionReason(`Scan borders detected on ${activeEdges.join(', ')} edge${activeEdges.length > 1 ? 's' : ''} (${result.overallConfidence}% confidence)`);
 
-      if (shouldAutoApplySmartCrop()) {
+      const isProUser = Boolean(auth?.isPro || (auth?.isAuthenticated && auth?.userTier === 'pro'));
+      if (isProUser && shouldAutoApplySmartCrop()) {
         setIsActive(true);
-      } else if (shouldAutoShowSmartCropModal() && !hasPromptedModalRef.current) {
+      } else if (auth?.isAuthenticated && shouldAutoShowSmartCropModal() && !hasPromptedModalRef.current) {
         hasPromptedModalRef.current = true;
         setShowInfoModal(true);
       }
@@ -189,7 +220,7 @@ export default function useSmartCropper({ canvasRef, totalPages = 0 }) {
     }
 
     return result;
-  }, [canvasRef, enabledEdges]);
+  }, [canvasRef, enabledEdges, auth]);
 
   /**
    * Apply the cropper to the canvas preview. Redraws the canvas with
@@ -249,49 +280,79 @@ export default function useSmartCropper({ canvasRef, totalPages = 0 }) {
 
     const cleanX = cropLeftPx;
     const cleanY = cropTopPx;
-    const cleanW = Math.max(10, canvas.width - cropLeftPx - cropRightPx);
-    const cleanH = Math.max(10, canvas.height - cropTopPx - cropBottomPx);
+    const cleanW = Math.max(1, canvas.width - (cropLeftPx + cropRightPx));
+    const cleanH = Math.max(1, canvas.height - (cropTopPx + cropBottomPx));
 
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    if (!ctx) return;
+    // Convert cleanMargin (in PDF points) to canvas pixels
+    const marginPts = typeof cleanMargin === 'number' ? cleanMargin : 0;
+    const marginPx = Math.round(marginPts * scaleMultiplier);
 
-    // Capture the clean interior
+    // Create an offscreen buffer holding the clean cropped content
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = cleanW;
     tempCanvas.height = cleanH;
-    const tCtx = tempCanvas.getContext('2d');
-    tCtx.drawImage(canvas, cleanX, cleanY, cleanW, cleanH, 0, 0, cleanW, cleanH);
+    const tempCtx = tempCanvas.getContext('2d');
+    tempCtx.drawImage(canvas, cleanX, cleanY, cleanW, cleanH, 0, 0, cleanW, cleanH);
 
-    // Clear and fill with white
-    ctx.fillStyle = '#FFFFFF';
+    // Compute fitted dimensions with margin inside original canvas bounds
+    const availableW = Math.max(1, canvas.width - marginPx * 2);
+    const availableH = Math.max(1, canvas.height - marginPx * 2);
+    const scaleFactor = Math.min(availableW / cleanW, availableH / cleanH);
+
+    const destW = Math.round(cleanW * scaleFactor);
+    const destH = Math.round(cleanH * scaleFactor);
+    const destX = Math.round((canvas.width - destW) / 2);
+    const destY = Math.round((canvas.height - destH) / 2);
+
+    const ctx = canvas.getContext('2d');
+    // Fill background with clean neutral canvas color
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Refit with clean margins (top-aligned to preserve natural document reading order
-    // and eliminate artificial white voids on the upper page)
-    const mPx = cleanMargin * scaleMultiplier;
-    const availW = Math.max(10, canvas.width - 2 * mPx);
-    const availH = Math.max(10, canvas.height - 2 * mPx);
-    const s = Math.min(availW / cleanW, availH / cleanH);
-    const destW = cleanW * s;
-    const destH = cleanH * s;
-    const destX = mPx + (availW - destW) / 2;
-    const destY = mPx;
-
+    // Draw cropped, refitted content
     ctx.drawImage(tempCanvas, destX, destY, destW, destH);
   }, [isActive, currentPageDetection, cleanMargin]);
 
   /**
    * Activate the cropper (user clicked "Clean Borders").
-   * Optionally stores original PDF bytes for undo.
+   * Strictly verifies authentication and daily free quota:
+   * - Guests: Opens guest registration modal, blocks crop.
+   * - Free Users: Consumes 1 click (max 3/day). If limit reached, opens limit modal.
+   * - Pro Subscribers: Unlimited access with 0 deduction.
    *
    * @param {ArrayBuffer} [pdfBytes] - Original PDF file bytes for undo support
+   * @returns {boolean} Whether activation succeeded
    */
   const activate = useCallback((pdfBytes = null) => {
+    const currentQuota = getSmartCropQuota(auth);
+
+    if (!currentQuota.isAuthenticated) {
+      setLimitModalType('guest');
+      setLimitModalOpen(true);
+      return false;
+    }
+
+    if (!currentQuota.allowed) {
+      setLimitModalType('limit_reached');
+      setLimitModalOpen(true);
+      return false;
+    }
+
+    if (!currentQuota.isPro) {
+      const result = consumeSmartCropClick(auth);
+      if (!result.success) {
+        setLimitModalType('limit_reached');
+        setLimitModalOpen(true);
+        return false;
+      }
+      setQuota(result);
+    }
+
     if (pdfBytes && !originalBytesRef.current) {
       originalBytesRef.current = pdfBytes.slice(0); // deep copy
     }
     setIsActive(true);
-  }, []);
+    return true;
+  }, [auth]);
 
   /**
    * Deactivate the cropper (user clicked "Revert to Original").
@@ -392,7 +453,7 @@ export default function useSmartCropper({ canvasRef, totalPages = 0 }) {
     if (missing.length > 0) {
       try {
         const arrayBuffer = await file.arrayBuffer();
-        const pdfDoc = await pdfjs.getDocument({ data: arrayBuffer }).promise;
+        const pdfDoc = await pdfjs.getDocument(getPdfjsDocParams(arrayBuffer)).promise;
         for (let i = 0; i < missing.length; i++) {
           const idx = missing[i];
           const pageNum = idx + 1;
@@ -507,6 +568,14 @@ export default function useSmartCropper({ canvasRef, totalPages = 0 }) {
     isInfoOnlyModal,
     setIsInfoOnlyModal,
     onOpenInfo,
-    closeInfoModal
+    closeInfoModal,
+
+    // Tier Quota & Limit Enforcement
+    quota,
+    limitModalOpen,
+    setLimitModalOpen,
+    limitModalType,
+    setLimitModalType,
+    closeLimitModal: () => setLimitModalOpen(false)
   };
 }

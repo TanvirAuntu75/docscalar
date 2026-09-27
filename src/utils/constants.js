@@ -38,12 +38,6 @@ export const CATEGORIES = [
     cssClass: 'pdf',
   },
   {
-    id: 'pdf-intelligence',
-    title: 'PDF Intelligence',
-    icon: 'psychology',
-    cssClass: 'pdf',
-  },
-  {
     id: 'image',
     title: 'Image Tools',
     icon: 'image',
@@ -99,7 +93,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'extract-pages',
@@ -113,7 +107,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'organize-pdf',
@@ -127,7 +121,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'scan-to-pdf',
@@ -141,7 +135,7 @@ export const TOOLS = [
     accept: 'image/*',
     multiple: true,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
 
   // ── Optimize PDF ──────────────────────────────────
@@ -157,7 +151,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'repair-pdf',
@@ -185,7 +179,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'pro',
+    minTier: 'guest',
   },
   {
     id: 'un-ocr-pdf',
@@ -199,7 +193,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'pro',
+    minTier: 'guest',
   },
   {
     id: 'bates-numbering',
@@ -213,7 +207,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
 
   // ── Convert to PDF ────────────────────────────────
@@ -243,7 +237,7 @@ export const TOOLS = [
     accept: '.docx',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'powerpoint-to-pdf',
@@ -257,7 +251,7 @@ export const TOOLS = [
     accept: '.pptx,.ppt',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'excel-to-pdf',
@@ -271,7 +265,7 @@ export const TOOLS = [
     accept: '.xlsx,.xls,.csv',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'html-to-pdf',
@@ -285,7 +279,7 @@ export const TOOLS = [
     accept: '.html',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
 
   // ── Convert from PDF ──────────────────────────────
@@ -315,7 +309,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'pdf-to-powerpoint',
@@ -329,7 +323,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'pdf-to-excel',
@@ -343,7 +337,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'pdf-to-pdfa',
@@ -357,7 +351,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
 
   // ── Edit PDF ──────────────────────────────────────
@@ -387,7 +381,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'add-watermark',
@@ -401,7 +395,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'crop-pdf',
@@ -459,7 +453,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'unlock-pdf',
@@ -473,7 +467,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'free',
+    minTier: 'guest',
   },
   {
     id: 'sign-pdf',
@@ -487,7 +481,7 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: false,
     implemented: true,
-    minTier: 'pro',
+    minTier: 'guest',
   },
   {
     id: 'redact-pdf',
@@ -515,39 +509,8 @@ export const TOOLS = [
     accept: '.pdf',
     multiple: true,
     implemented: true,
-    minTier: 'free',
-  },
-
-  // ── PDF Intelligence ──────────────────────────────
-  {
-    id: 'ai-summarizer',
-    category: 'pdf-intelligence',
-    title: 'AI Summarizer',
-    description: 'Extract structure summaries and bullet insights natively',
-    icon: 'text_fields',
-    iconBg: 'rgba(99, 102, 241, 0.15)',
-    iconColor: 'hsl(243, 90%, 65%)',
-    path: '/ai-summarizer',
-    accept: '.txt,.docx,.pdf,.md',
-    multiple: false,
-    implemented: true,
     minTier: 'guest',
   },
-  {
-    id: 'ai-translator',
-    category: 'pdf-intelligence',
-    title: 'AI Translator',
-    description: 'Translate documents to target languages natively using local GPU or LLM',
-    icon: 'translate',
-    iconBg: 'rgba(99, 102, 241, 0.15)',
-    iconColor: 'hsl(243, 90%, 65%)',
-    path: '/ai-translator',
-    accept: '.txt,.docx,.pdf,.md',
-    multiple: false,
-    implemented: true,
-    minTier: 'guest',
-  },
-
   // ── Image Tools ───────────────────────────────────
   {
     id: 'image-converter',
@@ -594,20 +557,6 @@ export const TOOLS = [
 
   // ── Utility Tools ──────────────────────────────────
   {
-    id: 'conversion-pipeline',
-    category: 'utility',
-    title: 'Conversion Pipeline',
-    description: 'Chain multiple conversion tools into an automated workflow',
-    icon: 'account_tree',
-    iconBg: 'rgba(236, 72, 153, 0.15)', // Pink-ish
-    iconColor: 'hsl(330, 80%, 65%)',
-    path: '/conversion-pipeline',
-    accept: null,
-    multiple: true,
-    implemented: true,
-    minTier: 'pro',
-  },
-  {
     id: 'text-to-pdf',
     category: 'convert-to-pdf',
     title: 'Text to PDF',
@@ -625,7 +574,7 @@ export const TOOLS = [
     id: 'qr-generator',
     category: 'utility',
     title: 'QR Code Generator',
-    description: 'Generate customizable, high resolution QR codes Client Side',
+    description: 'Generate customizable, high resolution vector QR codes',
     icon: 'qr_code_2',
     iconBg: 'rgba(245, 158, 11, 0.15)',
     iconColor: 'hsl(38, 92%, 55%)',
@@ -714,3 +663,53 @@ export function formatFileSize(bytes) {
   return (isNegative ? '-' : '') + parseFloat((absBytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
 
+export function isToolCompatibleWithFile(tool, file) {
+  if (!file || !tool) return false;
+  if (!tool.accept || tool.accept === '*') return true;
+  const fileName = typeof file === 'string' ? file : file.name;
+  if (!fileName) return false;
+  const ext = '.' + fileName.split('.').pop().toLowerCase();
+  const isImage = ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.gif', '.svg', '.tiff'].includes(ext);
+  if (isImage && tool.accept === 'image/*') return true;
+  const accepts = tool.accept.split(',').map(a => a.trim().toLowerCase());
+  return accepts.includes(ext) || accepts.includes('*');
+}
+
+export const TIER_LIMITS = {
+  guest: {
+    name: 'Guest Mode',
+    maxFileSizeMB: 10,
+    maxFileSizeBytes: 10 * 1024 * 1024,
+    maxSizeBytes: 10 * 1024 * 1024,
+    maxSizeLabel: '10 MB',
+    dailyOpsLimit: 3,
+    dailyOperationsLimit: 3,
+    canvasOpsLimit: 0,
+    dailyCanvasLimit: 0,
+    batchLimit: 1,
+  },
+  free: {
+    name: 'Free Account',
+    maxFileSizeMB: 15,
+    maxFileSizeBytes: 15 * 1024 * 1024,
+    maxSizeBytes: 15 * 1024 * 1024,
+    maxSizeLabel: '15 MB',
+    dailyOpsLimit: Infinity,
+    dailyOperationsLimit: Infinity,
+    canvasOpsLimit: 10,
+    dailyCanvasLimit: 10,
+    batchLimit: 5,
+  },
+  pro: {
+    name: 'DocScalar Pro',
+    maxFileSizeMB: 1024,
+    maxFileSizeBytes: 1024 * 1024 * 1024,
+    maxSizeBytes: 1024 * 1024 * 1024,
+    maxSizeLabel: '1 GB',
+    dailyOpsLimit: Infinity,
+    dailyOperationsLimit: Infinity,
+    canvasOpsLimit: Infinity,
+    dailyCanvasLimit: Infinity,
+    batchLimit: 50,
+  }
+};

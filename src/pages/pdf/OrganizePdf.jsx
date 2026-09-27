@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { loadPdfDocument } from '../../utils/pdfConfig';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
@@ -13,8 +13,18 @@ import { SmartCropperToolbarButton } from '../../components/SmartCropperToolbarB
 import { detectSmartBorders, computeCleanPdfCropBox } from '../../utils/pdfZoneScanner';
 
 export default function OrganizePdf() {
-  const [files, setFiles] = useState([]);
+  const location = useLocation();
+  const [files, setFiles] = useState(() => {
+    if (location.state?.initialFiles && Array.isArray(location.state.initialFiles) && location.state.initialFiles.length > 0) {
+      return location.state.initialFiles;
+    }
+    if (location.state?.initialFile) {
+      return [location.state.initialFile];
+    }
+    return [];
+  });
   const [processing, setProcessing] = useState(false);
+  const [docLoading, setDocLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -35,9 +45,12 @@ export default function OrganizePdf() {
   const parsedFilesCount = useRef(0);
   const fileInputRef = useRef(null);
 
-  // Restore draft session on mount if available
+  // Restore draft session on mount if available (unless fresh files passed via location.state)
   useEffect(() => {
     let isMounted = true;
+    if (location.state?.initialFiles?.length > 0 || location.state?.initialFile) {
+      return; // Prioritize freshly passed document from navigation
+    }
     const restoreSession = async () => {
       try {
         const draft = await loadStudioDraft('organize-pdf');
@@ -61,7 +74,7 @@ export default function OrganizePdf() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [location.state]);
 
   // Save draft session when files change
   useEffect(() => {
@@ -115,7 +128,7 @@ export default function OrganizePdf() {
     let isCancelled = false;
 
     const loadNewFiles = async () => {
-      setProcessing(true);
+      setDocLoading(true);
       setError(null);
       try {
         let newCards = [];
@@ -149,7 +162,7 @@ export default function OrganizePdf() {
 
         setPageCards((prev) => [...prev, ...newCards]);
         parsedFilesCount.current = files.length;
-        setProcessing(false);
+        setDocLoading(false);
 
         // Set default output filename
         if (files.length === 1) {
@@ -207,7 +220,7 @@ export default function OrganizePdf() {
                   baseViewport: { width: page.view[2], height: page.view[3] }
                 };
 
-                paintThumbnailCanvas(targetCard.id, cropper.isActive || hasScanBorders);
+                paintThumbnailCanvas(targetCard.id, cropper.isActive);
               } catch (err) {
                 console.warn(`Error rendering thumbnail for file ${item.fileIndex}, page ${i + 1}:`, err);
               }
@@ -220,14 +233,11 @@ export default function OrganizePdf() {
                 return matched ? { ...c, hasScanBorders: matched.hasScanBorders, cropBox: matched.cropBox } : c;
               })
             );
-            if (newCards.some((c) => c.hasScanBorders)) {
-              cropper.activate();
-            }
           }
         }, 100);
       } catch (err) {
         if (!isCancelled) {
-          setProcessing(false);
+          setDocLoading(false);
           setError('Failed to parse PDF document. Please verify the file is readable.');
         }
       }
@@ -562,10 +572,14 @@ export default function OrganizePdf() {
       files={files}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
+      setFiles={setFiles}
+      setResult={setResult}
+      onReset={resetWorkspace}
+      onResetResult={() => setResult(null)}
     >
       <SEOHead
-        title="Organize PDF Pages Online Free (100% Local) | DocScalar"
-        description="Reorder, rotate, delete, mix, and manage PDF pages from multiple files visually using drag and drop locally in your browser. Fully private, no server uploads."
+        title="Organize PDF Pages Online Free — Reorder, Rotate & Delete | DocScalar"
+        description="Reorder, rotate, delete, mix, and manage PDF pages from multiple files visually using drag and drop. Fast, secure, and private."
       />
 
       {!result ? (
@@ -584,8 +598,8 @@ export default function OrganizePdf() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-y-auto relative bg-[var(--bg-tertiary)]">
               {/* Sticky Workspace Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2.5 flex items-center justify-between flex-wrap gap-2.5">
-                  <div className="flex items-center gap-2.5 flex-wrap">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
+                  <div className="flex items-center gap-2 shrink-0">
                     <label className="h-8 px-3.5 py-1.5 rounded-lg border border-[var(--color-primary)] bg-[var(--color-primary)] text-white hover:opacity-90 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs text-xs font-semibold select-none shrink-0">
                       <span className="material-symbols-outlined text-[16px]">add_circle</span>
                       <span>Add PDFs</span>
@@ -754,14 +768,20 @@ export default function OrganizePdf() {
 
               {/* Visual Grid of PDF Pages */}
               <div className="workspace-canvas flex-1 p-4 sm:p-6">
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: getGridTemplate(),
-                    gap: zoomLevel === 1 ? '0.75rem' : '1.25rem'
-                  }}
-                  className="w-full"
-                >
+                {docLoading ? (
+                  <div className="flex flex-col items-center justify-center min-h-[360px] py-16 gap-3 text-slate-500">
+                    <div className="w-9 h-9 border-3 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+                    <span className="text-xs font-semibold text-[var(--text-secondary)]">Reading document pages...</span>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: getGridTemplate(),
+                      gap: zoomLevel === 1 ? '0.75rem' : '1.25rem'
+                    }}
+                    className="w-full"
+                  >
                   {visibleCards.map((card) => {
                     const { uiIndex } = card;
                     const isDragging = dragIndexRef.current === uiIndex;
@@ -965,6 +985,7 @@ export default function OrganizePdf() {
                     />
                   </label>
                 </div>
+                )}
               </div>
             </div>
 
@@ -1100,13 +1121,18 @@ export default function OrganizePdf() {
                 <button
                   type="button"
                   onClick={handleOrganize}
-                  disabled={!pageCards.length || processing}
+                  disabled={!pageCards.length || processing || docLoading}
                   className="w-full py-3 px-4 bg-[var(--color-primary)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl shadow-lg shadow-[var(--color-primary)]/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
                 >
                   {processing ? (
                     <>
                       <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
                       <span>Organizing ({progress}%)...</span>
+                    </>
+                  ) : docLoading ? (
+                    <>
+                      <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+                      <span>Loading Pages...</span>
                     </>
                   ) : (
                     <>
@@ -1136,7 +1162,7 @@ export default function OrganizePdf() {
                 PDF Successfully Organized!
               </h2>
               <p className="text-sm text-[var(--text-secondary)]">
-                Your document has been compiled and saved locally.
+                Your document has been compiled and is ready for download.
               </p>
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-full text-xs font-semibold text-[var(--text-primary)] mx-auto mt-2 max-w-full">
                 <span className="material-symbols-outlined text-[16px] text-emerald-500">description</span>

@@ -378,30 +378,6 @@ export const TOOLS_MANIFEST = {
     defaultParams: { format: 'png' },
     errorMsg: 'PDF to Image requires at least 1 PDF file.'
   },
-  'ai-translator': {
-    id: 'ai-translator',
-    name: 'AI Translator',
-    accept: ['.pdf', '.txt', '.md', '.docx'],
-    minInputs: 1,
-    maxInputs: 50,
-    outExt: '.pdf',
-    outputType: { type: 'file', format: 'pdf' },
-    synonyms: ['translate', 'translate file', 'language translation', 'translate document', 'multilingual translator'],
-    defaultParams: { target_language: 'Bengali' },
-    errorMsg: 'AI Translator requires at least 1 document file.'
-  },
-  'ai-summarizer': {
-    id: 'ai-summarizer',
-    name: 'AI Summarizer',
-    accept: ['.pdf', '.docx', '.txt', '.md'],
-    minInputs: 1,
-    maxInputs: 50,
-    outExt: '.md',
-    outputType: { type: 'file', format: 'markdown' },
-    synonyms: ['summarize', 'summary', 'ai summary', 'condense', 'executive summary', 'highlights', 'bullet summary', 'key takeaways'],
-    defaultParams: { mode: 'highlights', max_bullets: 5 },
-    errorMsg: 'AI Summarizer requires at least 1 document file.'
-  },
   'unzip-file': {
     id: 'unzip-file',
     name: 'Extract ZIP',
@@ -526,18 +502,6 @@ export const TOOLS_MANIFEST = {
     synonyms: ['scan', 'scanner', 'camera to pdf', 'scan document'],
     defaultParams: {},
     errorMsg: 'Scan to PDF accesses camera input directly.'
-  },
-  'conversion-pipeline': {
-    id: 'conversion-pipeline',
-    name: 'Conversion Pipeline',
-    accept: ['.pdf', '.docx', '.xlsx', '.pptx', '.png', '.jpg', '.txt'],
-    minInputs: 1,
-    maxInputs: 50,
-    outExt: '.pdf',
-    outputType: { type: 'file', format: 'pdf' },
-    synonyms: ['pipeline', 'batch convert', 'multi convert', 'conversion pipeline'],
-    defaultParams: {},
-    errorMsg: 'Conversion Pipeline requires at least 1 document.'
   },
   'resume-builder': {
     id: 'resume-builder',

@@ -216,7 +216,10 @@ def get_action_id_from_text(text: str) -> str:
         return "pdf-to-excel"
     if has_any("pdf to powerpoint", "to powerpoint", "to ppt", "pdf to ppt"):
         return "pdf-to-powerpoint"
-    if has_any(
+    if re.search(
+        r"\b(?:each\s+(?:of\s+the\s+)?|all\s+(?:the\s+)?)?(?:images?|photos?|pictures?|pngs?|jpe?gs?)\s+(?:in)?to\s+(?:separate\s+|individual\s+)?pdf\b",
+        text,
+    ) or has_any(
         "images to pdf",
         "photos to pdf",
         "pictures to pdf",
@@ -431,11 +434,11 @@ def generate_heuristic_plan(
         "decompress",
         "expand",
     ]
-    # Split query by sequential clauses, splitting on 'and' only when followed by a transition verb
+    # Split query by sequential clauses, splitting on 'and' only when followed by a transition verb or distributive keyword
     pattern = (
         r"\b(?:and\s+then|then|after\s+that|next)\b|\band\b(?=\s*(?:"
         + "|".join(verbs)
-        + r"))"
+        + r"|each|every|individually|separately))"
     )
     clauses = re.split(pattern, query, flags=re.IGNORECASE)
     clauses = [c.strip() for c in clauses if c.strip()]
@@ -509,6 +512,20 @@ def generate_heuristic_plan(
 
         step_inputs = []
 
+        # Check if distributive execution is requested
+        is_distributive = bool(
+            re.search(
+                r"\b(?:each|separately|individually|one\s+by\s+one|separate\s+pdf|individual\s+pdf)\b",
+                clause,
+                re.IGNORECASE,
+            )
+            or re.search(
+                r"\b(?:each|separately|individually|one\s+by\s+one|separate\s+pdf|individual\s+pdf)\b",
+                query,
+                re.IGNORECASE,
+            )
+        )
+
         # Heuristic matching of inputs from the active pool based on tool type and file formats
         if tool_config["type"] == "multi":
             # Multi-input tools like merge-pdf or image-to-pdf take all matching inputs
@@ -524,13 +541,48 @@ def generate_heuristic_plan(
                     is_match = ext in accepts
 
                 if is_match:
-                    ref = f"output:{src_id}" if src_id is not None else name
-                    step_inputs.append(ref)
                     matched_pool_items.append(item)
 
             # Remove matched items from active pool so they don't get matched again in this level
             for item in matched_pool_items:
                 active_pool.remove(item)
+
+            if is_distributive and len(matched_pool_items) > 1:
+                # Distributive execution: generate 1-to-1 operations for each matching input
+                out_ext = ".pdf"
+                if action_id == "split-pdf":
+                    out_ext = ".zip"
+                elif action_id == "pdf-to-image":
+                    out_ext = ".png"
+                elif action_id == "pdf-to-word":
+                    out_ext = ".docx"
+                elif action_id == "pdf-to-excel":
+                    out_ext = ".xlsx"
+                elif action_id == "pdf-to-powerpoint":
+                    out_ext = ".pptx"
+                elif action_id == "image-converter":
+                    out_ext = ".png"
+                elif action_id == "unzip-file":
+                    out_ext = ".pdf"
+
+                for item in matched_pool_items:
+                    name, ext, src_id = item
+                    ref = f"output:{src_id}" if src_id is not None else name
+                    steps.append(
+                        {
+                            "step_id": next_step_id,
+                            "actionId": action_id,
+                            "inputs": [ref],
+                        }
+                    )
+                    active_pool.append((f"output:{next_step_id}", out_ext, next_step_id))
+                    next_step_id += 1
+                continue
+            else:
+                for item in matched_pool_items:
+                    name, ext, src_id = item
+                    ref = f"output:{src_id}" if src_id is not None else name
+                    step_inputs.append(ref)
 
         elif tool_config["type"] == "single":
             # Single input tools match the first compatible file in active pool
@@ -564,6 +616,8 @@ def generate_heuristic_plan(
             out_ext = ".pdf"  # Default output of most conversions is PDF
             if action_id == "split-pdf":
                 out_ext = ".zip"
+            elif action_id == "pdf-to-image":
+                out_ext = ".png"
             elif action_id == "pdf-to-word":
                 out_ext = ".docx"
             elif action_id == "pdf-to-excel":
@@ -579,3 +633,7 @@ def generate_heuristic_plan(
             next_step_id += 1
 
     return steps
+
+
+# Alias synthesize_workflow_graph to generate_heuristic_plan for canonical workflow synthesis
+synthesize_workflow_graph = generate_heuristic_plan

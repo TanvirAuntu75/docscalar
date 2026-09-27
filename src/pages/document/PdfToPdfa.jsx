@@ -42,7 +42,7 @@ export default function PdfToPdfa() {
   const [zoomScale, setZoomScale] = useState(1.0);
 
   // Conversion Configuration State
-  const [engineMode, setEngineMode] = useState('client'); // 'client' | 'server'
+  const [engineMode, setEngineMode] = useState('server'); // 'client' | 'server'
   const [conformanceLevel, setConformanceLevel] = useState('2b'); // '1b' | '2b' | '3b'
   const [colorProfile, setColorProfile] = useState('sRGB IEC61966-2.1');
   const [outputFileName, setOutputFileName] = useState('');
@@ -63,9 +63,16 @@ export default function PdfToPdfa() {
     const checkServer = async () => {
       try {
         const res = await apiFetch(`${BACKEND_URL}/api/meta/conversions`, { signal: AbortSignal.timeout(1500) });
-        if (res.ok) setBackendActive(true);
+        if (res.ok) {
+          setBackendActive(true);
+          setEngineMode('server');
+        } else {
+          setBackendActive(false);
+          setEngineMode('client');
+        }
       } catch (e) {
         setBackendActive(false);
+        setEngineMode('client');
       }
     };
     checkServer();
@@ -358,6 +365,7 @@ export default function PdfToPdfa() {
       title="PDF to PDF/A Archival Studio"
       description="Convert standard PDF documents into ISO 19005-compliant PDF/A files for long-term legal, government, and enterprise archiving."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >

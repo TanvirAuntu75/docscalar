@@ -13,7 +13,7 @@ const NEXT_ACTION_MAP = {
     { title: 'Sign Document', icon: FilePenLine, path: '/sign-pdf', desc: 'Add your signature' }
   ],
   'pdf-to-word': [
-    { title: 'Translate Document', icon: FileText, path: '/ai-translator', desc: 'Translate to 30+ languages' },
+    { title: 'Protect PDF', icon: Lock, path: '/protect-pdf', desc: 'Lock with password' },
     { title: 'Compress PDF', icon: FileArchive, path: '/compress-pdf', desc: 'Optimize storage size' }
   ],
   'docx-to-pdf': [
@@ -48,7 +48,7 @@ export default function PostProcessingNextActions({ currentToolId, onSelectNextT
         </div>
         <span className="text-[10px] font-semibold text-on-surface-variant/70 flex items-center gap-1">
           <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-          Zero Cloud Upload
+          Encrypted & Private
         </span>
       </div>
 

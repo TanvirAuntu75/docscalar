@@ -40,3 +40,11 @@ The parent agent must immediately establish a Phase-Gated Task List, launch suba
 - **Block Layout Preservation**: Never apply `display: inline-block !important;` to block-level elements (`h1`, `h2`, `div`, `p`) in direct-edit mode.
 - **Light Theme Harmony**: All canvas tools (rulers, guide boxes, toolbars) must strictly match DocForge's light theme environment.
 - **Zero Ghost Headers**: Never render placeholder text (`TYPE HERE...`) on untouched default templates.
+
+---
+
+## DocScalar OCR Acceptance Criteria & Benchmark Invariant
+- **The 90% / 99% Quality Mandate**: Under NO circumstances should any OCR model or pipeline be declared acceptable or deployment-ready for DocScalar unless it empirically reaches:
+  1. **Raw Model Accuracy**: $\ge 90\%$ Exact Match Accuracy generally across real-world validation benchmarks.
+  2. **Enhanced Pipeline (with Language Model / Lexicon / Post-Processor)**: $> 99\%$ Exact Match Accuracy.
+- **Non-Negotiable Quality Standard**: Never settle for or recommend sub-90% checkpoints as final. If a checkpoint scores below 90% exact match (e.g. ~43%), treat it strictly as an intermediate milestone requiring real-world fine-tuning, dataset expansion, or contextual language model decoding to hit the invariant.

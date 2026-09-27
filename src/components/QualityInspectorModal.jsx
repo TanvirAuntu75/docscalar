@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../utils/pdfConfig';
 import { formatFileSize } from '../utils/constants';
 
 /**
@@ -55,8 +56,8 @@ export default function QualityInspectorModal({
         const compArrayBuffer = await compressedBlob.arrayBuffer();
 
         const [origDoc, compDoc] = await Promise.all([
-          pdfjsLib.getDocument({ data: origArrayBuffer }).promise,
-          pdfjsLib.getDocument({ data: compArrayBuffer }).promise,
+          loadPdfDocument(origArrayBuffer).promise,
+          loadPdfDocument(compArrayBuffer).promise,
         ]);
 
         if (!isMounted) return;

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Type, Highlighter, PenTool, Square, Circle, Minus, ArrowRight, Undo, Redo } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../../../utils/pdfConfig';
+import { releaseCanvas, safeDestroyPdf, safeCancelRenderTask } from '../../../utils/canvasLifecycle';
 
 export default function EditStudio({ file, params, onChange, nlpOp }) {
   const [pdfDocument, setPdfDocument] = useState(null);
@@ -27,6 +29,14 @@ export default function EditStudio({ file, params, onChange, nlpOp }) {
 
   const pdfCanvasRef = useRef(null);
   const overlayCanvasRef = useRef(null);
+
+  // Teardown canvas memory on unmount
+  useEffect(() => {
+    return () => {
+      releaseCanvas(pdfCanvasRef.current);
+      releaseCanvas(overlayCanvasRef.current);
+    };
+  }, []);
 
   const pushUndoSnapshot = () => {
     setUndoStack(prev => [...prev.slice(-30), JSON.parse(JSON.stringify(annotations))]);
@@ -78,10 +88,11 @@ export default function EditStudio({ file, params, onChange, nlpOp }) {
     const loadPdf = async () => {
       try {
         setLoading(true);
+        setPdfDocument(null);
         const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await loadPdfDocument(arrayBuffer).promise;
         if (!active) {
-          pdf.destroy();
+          safeDestroyPdf(pdf);
           return;
         }
         loadedPdf = pdf;
@@ -98,7 +109,7 @@ export default function EditStudio({ file, params, onChange, nlpOp }) {
 
     return () => {
       active = false;
-      if (loadedPdf) loadedPdf.destroy();
+      safeDestroyPdf(loadedPdf);
     };
   }, [file]);
 
@@ -142,9 +153,7 @@ export default function EditStudio({ file, params, onChange, nlpOp }) {
 
     return () => {
       cancelled = true;
-      if (renderTask) {
-        try { renderTask.cancel(); } catch {}
-      }
+      safeCancelRenderTask(renderTask);
     };
   }, [pdfDocument, activePageIndex, annotations]);
 

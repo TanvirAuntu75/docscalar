@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../../utils/pdfConfig';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import { addWatermark } from '../../engines/pdf/addWatermark';
@@ -179,7 +180,7 @@ export default function AddWatermark() {
       setCanvasLoading(true);
       try {
         const arrayBuffer = await currentFile.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await loadPdfDocument(arrayBuffer).promise;
         if (isCancelled) {
           pdf.destroy();
           return;
@@ -397,12 +398,13 @@ export default function AddWatermark() {
       title="Add PDF Watermark"
       description="Stamp custom text, confidentiality marks, or logos across your PDF documents."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Add Watermark to PDF Online Free (100% Local Studio) | DocScalar"
-        description="Add text or image watermarks to PDF files locally in your browser. Stamp confidential markers or logos with total privacy."
+        title="Add Watermark to PDF Online Free — Watermark PDF Pages | DocScalar"
+        description="Add text or image watermarks to PDF files securely. Stamp confidential markers or logos with high precision and privacy."
       />
 
       {!result ? (

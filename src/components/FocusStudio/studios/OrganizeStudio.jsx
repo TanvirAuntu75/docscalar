@@ -2,31 +2,45 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RotateCw, RotateCcw, Trash2, Copy, RefreshCw, Undo, ArrowLeftRight } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../../../utils/pdfConfig';
+import { releaseCanvas, safeDestroyPdf, safeCancelRenderTask } from '../../../utils/canvasLifecycle';
+import { computeThumbnailViewport } from '../../../utils/thumbnailHelper';
+import { useVisibilityObserver } from '../../../utils/viewportVirtualizer';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 // Individual Page Card Component to isolate canvas rendering lifecycle
 function PageCard({ card, idx, pdfDoc, onRotate, onDelete, onDuplicate, onDragStart, onDragOver, onDrop }) {
+  const [cardRef, isVisible] = useVisibilityObserver({ rootMargin: '200px', threshold: 0.01 });
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    if (!pdfDoc) return;
+    if (!pdfDoc || !isVisible) {
+      // Offscreen or doc missing: guarantee canvas context and backing bitmap release
+      releaseCanvas(canvasRef.current);
+      return;
+    }
     let isCancelled = false;
+    let renderTask = null;
 
     const renderPage = async () => {
       try {
         const page = await pdfDoc.getPage(card.originalIndex + 1);
-        const viewport = page.getViewport({ scale: 0.8 });
+        if (isCancelled) return;
+        const viewport = computeThumbnailViewport(page, { targetWidth: 160, maxDpr: 2 });
         const canvas = canvasRef.current;
         if (canvas && !isCancelled) {
           canvas.width = viewport.width;
           canvas.height = viewport.height;
           const ctx = canvas.getContext('2d');
-          await page.render({ canvasContext: ctx, viewport }).promise;
+          renderTask = page.render({ canvasContext: ctx, viewport });
+          await renderTask.promise;
         }
       } catch (err) {
-        console.error(`Failed to render canvas preview for page index ${card.originalIndex}:`, err);
+        if (err?.name !== 'RenderingCancelledException') {
+          console.error(`Failed to render canvas preview for page index ${card.originalIndex}:`, err);
+        }
       }
     };
 
@@ -34,34 +48,50 @@ function PageCard({ card, idx, pdfDoc, onRotate, onDelete, onDuplicate, onDragSt
 
     return () => {
       isCancelled = true;
+      safeCancelRenderTask(renderTask);
+      releaseCanvas(canvasRef.current);
     };
-  }, [pdfDoc, card.originalIndex]);
+  }, [pdfDoc, card.originalIndex, isVisible]);
 
   return (
     <div
+      ref={cardRef}
       draggable
       onDragStart={(e) => onDragStart(e, idx)}
       onDragOver={onDragOver}
       onDrop={(e) => onDrop(e, idx)}
       className="relative bg-white border border-orange-100 rounded-xl p-2 select-none cursor-grab active:cursor-grabbing hover:border-orange-500/80 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(249,115,22,0.12)] transition-all duration-300 group flex flex-col items-center justify-between gap-3 shadow-[0_4px_12px_rgba(0,0,0,0.04)]"
     >
-      {/* Thumbnail Canvas Preview with CSS Rotation */}
+      {/* Thumbnail Canvas Preview with CSS Rotation or Skeleton Placeholder */}
       <div className="relative aspect-[3/4] w-full bg-slate-100 rounded-lg overflow-hidden flex items-center justify-center min-h-[140px]">
-        <canvas
-          ref={canvasRef}
-          style={{
-            maxWidth: '92%',
-            maxHeight: '92%',
-            width: 'auto',
-            height: 'auto',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.08), 0 0 10px rgba(249,115,22,0.05)',
-            borderRadius: '6px',
-            transform: `rotate(${card.rotation}deg)`,
-            transition: 'transform 0.25s ease-in-out',
-            objectFit: 'contain'
-          }}
-          className="pointer-events-none"
-        />
+        {isVisible ? (
+          <canvas
+            ref={canvasRef}
+            style={{
+              maxWidth: '92%',
+              maxHeight: '92%',
+              width: 'auto',
+              height: 'auto',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.08), 0 0 10px rgba(249,115,22,0.05)',
+              borderRadius: '6px',
+              transform: `rotate(${card.rotation}deg)`,
+              transition: 'transform 0.25s ease-in-out',
+              objectFit: 'contain'
+            }}
+            className="pointer-events-none"
+          />
+        ) : (
+          <div 
+            className="w-full h-full flex flex-col items-center justify-center bg-slate-50/80 text-slate-300 animate-pulse select-none"
+            data-testid="page-skeleton"
+            aria-label={`Page ${card.originalIndex + 1} skeleton placeholder`}
+          >
+            <div className="w-10 h-10 rounded-lg bg-slate-200/70 mb-2 flex items-center justify-center text-slate-400 font-medium text-xs">
+              {card.originalIndex + 1}
+            </div>
+            <div className="w-16 h-2 rounded bg-slate-200/60" />
+          </div>
+        )}
         <div className="absolute top-2 left-2 bg-orange-500 text-white rounded-md px-1.5 py-0.5 text-[10px] font-bold z-10 shadow-sm">
           P. {card.originalIndex + 1}
         </div>
@@ -127,16 +157,20 @@ export default function OrganizeStudio({ file, params, onChange, nlpOp }) {
     }
 
     let active = true;
+    let loadedPdf = null;
 
     const loadPdf = async () => {
       try {
         setLoading(true);
+        setPdfDoc(null);
+        setPageCards([]);
         const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await loadPdfDocument(arrayBuffer).promise;
         if (!active) {
-          pdf.destroy();
+          safeDestroyPdf(pdf);
           return;
         }
+        loadedPdf = pdf;
         setPdfDoc(pdf);
         const count = pdf.numPages;
         const initialCards = Array.from({ length: count }, (_, idx) => ({
@@ -156,7 +190,7 @@ export default function OrganizeStudio({ file, params, onChange, nlpOp }) {
 
     return () => {
       active = false;
-      if (pdfDoc) pdfDoc.destroy();
+      safeDestroyPdf(loadedPdf);
     };
   }, [file]);
 

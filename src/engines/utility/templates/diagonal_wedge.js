@@ -70,7 +70,7 @@ export function generateDiagonalWedgeHtml(
         <div class="timeline-wrap">
           ${items.map((e, idx) => {
             const actualIdx = offset + idx;
-            const dateStr = `${e.dates || (e.start ? `${e.start}${e.end ? ` – ${e.end}` : ''}` : '')}`;
+            const dateStr = (e.start && e.end && e.start !== e.end) ? `${e.start} – ${e.end}` : (e.end || e.start || e.dates || '');
             return `
               <div class="timeline-item">
                 <div class="wedge-dot"></div>
@@ -147,7 +147,7 @@ export function generateDiagonalWedgeHtml(
         </div>
         <div class="edu-list">
           ${educationList.map((e, eIdx) => {
-            const dateStr = `${e.dates || (e.start ? `${e.start}${e.end ? ` – ${e.end}` : ''}` : '')}`;
+            const dateStr = (e.start && e.end && e.start !== e.end) ? `${e.start} – ${e.end}` : (e.end || e.start || e.dates || '');
             return `
               <div class="edu-item">
                 <div class="edu-degree" data-df-field="edu:${eIdx}:degree">${e.degree || ''}</div>
@@ -173,7 +173,7 @@ export function generateDiagonalWedgeHtml(
         </div>
         <div class="timeline-wrap">
           ${educationList.map((e, eIdx) => {
-            const dateStr = `${e.dates || (e.start ? `${e.start}${e.end ? ` – ${e.end}` : ''}` : '')}`;
+            const dateStr = (e.start && e.end && e.start !== e.end) ? `${e.start} – ${e.end}` : (e.end || e.start || e.dates || '');
             return `
               <div class="timeline-item">
                 <div class="wedge-dot"></div>
@@ -282,7 +282,16 @@ export function generateDiagonalWedgeHtml(
           <div class="sidebar-line"></div>
         </div>
         <ul class="cert-list">
-          ${certList.map((c, cIdx) => `<li data-df-field="cert:${cIdx}">${typeof c === 'string' ? c : c.name || ''}</li>`).join('')}
+          ${certList.map((c, cIdx) => {
+            const text = typeof c === 'string' ? c : c.name || '';
+            const urlMatch = typeof text === 'string' ? text.match(/(https?:\/\/[^\s]+)/) : null;
+            let contentHtml = text;
+            if (urlMatch) {
+              const url = urlMatch[1];
+              contentHtml = text.replace(url, `<a href="${url}" target="_blank" style="color: ${accent}; text-decoration: none; word-break: break-all;">${url}</a>`);
+            }
+            return `<li data-df-field="cert:${cIdx}">${contentHtml}</li>`;
+          }).join('')}
         </ul>
       </div>
     `;
@@ -298,7 +307,16 @@ export function generateDiagonalWedgeHtml(
           <div class="title-line"></div>
         </div>
         <ul class="cert-list">
-          ${certList.map((c, cIdx) => `<li data-df-field="cert:${cIdx}">${typeof c === 'string' ? c : c.name || ''}</li>`).join('')}
+          ${certList.map((c, cIdx) => {
+            const text = typeof c === 'string' ? c : c.name || '';
+            const urlMatch = typeof text === 'string' ? text.match(/(https?:\/\/[^\s]+)/) : null;
+            let contentHtml = text;
+            if (urlMatch) {
+              const url = urlMatch[1];
+              contentHtml = text.replace(url, `<a href="${url}" target="_blank" style="color: ${accent}; text-decoration: none; word-break: break-all;">${url}</a>`);
+            }
+            return `<li data-df-field="cert:${cIdx}">${contentHtml}</li>`;
+          }).join('')}
         </ul>
       </section>
     `;
@@ -309,13 +327,13 @@ export function generateDiagonalWedgeHtml(
     return `
       <section class="main-section">
         <div class="section-title-wrap">
-          <h3 class="section-title" data-df-field="custom:${cs.id}:title">${cs.title || 'Additional Information'}</h3>
+          <h3 class="section-title section-heading" data-df-field="custom:${cs.id}:title">${cs.title || 'Additional Information'}</h3>
           <div class="title-line"></div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
           ${cs.items.map((i, idx) => `
-            <div style="font-size: 8.5pt;">
-              <strong data-df-field="custom:${cs.id}:${idx}:title">${typeof i === 'string' ? i : (i.title || i.name || '')}</strong>${typeof i === 'object' && i !== null && i.value ? `: <span data-df-field="custom:${cs.id}:${idx}:value">${i.value}</span>` : ''}
+            <div style="font-size: 8.5pt; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 10px; color: #1e293b;">
+              <span data-df-field="custom:${cs.id}:${idx}:title">${typeof i === 'string' ? i : (i.title || i.name || '')}</span>${typeof i === 'object' && i !== null && i.value ? `: <span data-df-field="custom:${cs.id}:${idx}:value">${i.value}</span>` : ''}
             </div>
           `).join('')}
         </div>
@@ -357,13 +375,17 @@ export function generateDiagonalWedgeHtml(
           <h3 class="sidebar-title" data-df-field="custom:${langSection ? langSection.id : 'custom_languages'}:title">${langSection?.title || 'Languages'}</h3>
           <div class="sidebar-line"></div>
         </div>
-        <div class="skills-grid">
-          ${langList.map((l, lIdx) => `
-            <div class="skill-row">
-              <span class="skill-name" data-df-field="custom:${langSection ? langSection.id : 'custom_languages'}:${lIdx}:title">${typeof l === 'string' ? l : (l.title || l.name || '')}</span>
-              ${l.value ? `<span data-df-field="custom:${langSection ? langSection.id : 'custom_languages'}:${lIdx}:value" style="font-size: 7.8pt; color: #64748b;">${l.value}</span>` : ''}
-            </div>
-          `).join('')}
+        <div class="lang-list">
+          ${langList.map((l, lIdx) => {
+            const rawTitle = typeof l === 'string' ? l : (l.title || l.name || '');
+            const rawVal = l.value || '';
+            return `
+              <div class="lang-item">
+                <div class="lang-name" data-df-field="custom:${langSection ? langSection.id : 'custom_languages'}:${lIdx}:title">${rawTitle}</div>
+                ${rawVal ? `<div class="lang-level" data-df-field="custom:${langSection ? langSection.id : 'custom_languages'}:${lIdx}:value">${rawVal}</div>` : ''}
+              </div>
+            `;
+          }).join('')}
         </div>
       </div>
     `;
@@ -457,14 +479,21 @@ export function generateDiagonalWedgeHtml(
     }
     
     /* Diagonal Geometric Polygon Header */
+    .diagonal-header {
+      position: relative;
+      width: 100%;
+      min-height: 175px;
+      box-sizing: border-box;
+      margin-bottom: 8px;
+    }
     .diagonal-header-bg {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 180px;
+      height: 100%;
       background: ${accent};
-      clip-path: polygon(0 0, 100% 0, 100% 75%, 0 100%);
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 32px), 0 100%);
       z-index: 1;
     }
     .diagonal-header-accent {
@@ -472,25 +501,26 @@ export function generateDiagonalWedgeHtml(
       top: 0;
       right: 0;
       width: 48%;
-      height: 180px;
+      height: 100%;
       background: rgba(255, 255, 255, 0.12);
-      clip-path: polygon(30% 0, 100% 0, 100% 88%, 0 100%);
+      clip-path: polygon(30% 0, 100% 0, 100% calc(100% - 18px), 0 100%);
       z-index: 2;
     }
     .header-content {
       position: relative;
       z-index: 5;
-      padding: ${25 + activeMargin}px 40px 12px 40px;
+      padding: ${22 + activeMargin}px 40px 38px 40px;
       display: flex;
       align-items: center;
       gap: 25px;
-      min-height: 145px;
+      min-height: 175px;
+      box-sizing: border-box;
     }
     .avatar-wrapper.avatar-mask {
       position: relative;
       flex-shrink: 0;
-      width: 135px;
-      height: 135px;
+      width: 115px;
+      height: 115px;
       border-radius: 50%;
       border: 4px solid #ffffff;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -691,6 +721,25 @@ export function generateDiagonalWedgeHtml(
       background: ${accent};
     }
     
+    .lang-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .lang-item {
+      font-size: 8.3pt;
+      line-height: 1.35;
+    }
+    .lang-name {
+      font-weight: 600;
+      color: #334155;
+    }
+    .lang-level {
+      font-size: 7.8pt;
+      color: #64748b;
+      margin-top: 1px;
+    }
+    
     .edu-list {
       display: flex;
       flex-direction: column;
@@ -745,21 +794,23 @@ export function generateDiagonalWedgeHtml(
 <body class="${runtime.layoutClass}">
   <!-- PAGE 1 -->
   <div class="cv-page" id="page-1">
-    <div class="diagonal-header-bg"></div>
-    <div class="diagonal-header-accent"></div>
-    
-    <div class="header-content">
-      ${photoSrc ? `
-        <div class="avatar-wrapper avatar-mask">
-          <img class="avatar" src="${photoSrc}" alt="${name || 'Profile Photo'}" />
+    <header class="diagonal-header">
+      <div class="diagonal-header-bg"></div>
+      <div class="diagonal-header-accent"></div>
+      
+      <div class="header-content">
+        ${photoSrc ? `
+          <div class="avatar-wrapper avatar-mask">
+            <img class="avatar" src="${photoSrc}" alt="${name || 'Profile Photo'}" />
+          </div>
+        ` : ''}
+        <div class="header-text">
+          <h1 data-df-field="name">${name}</h1>
+          <div class="candidate-title title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${title || ''}</div>
+          ${!runtime.isSplit ? renderContactBar() : ''}
         </div>
-      ` : ''}
-      <div class="header-text">
-        <h1 data-df-field="name">${name}</h1>
-        <div class="candidate-title title" data-df-field="title" data-placeholder="Professional Title" style="min-height: 1.2em;">${title || ''}</div>
-        ${!runtime.isSplit ? renderContactBar() : ''}
       </div>
-    </div>
+    </header>
     
     <div class="content-columns">
       <div class="main-col ${!runtime.isSplit ? 'main-col-full' : ''}">

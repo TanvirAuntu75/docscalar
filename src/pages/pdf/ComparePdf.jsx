@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
@@ -29,8 +29,19 @@ const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.u
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 export default function ComparePdf() {
-  const [fileA, setFileA] = useState(null);
-  const [fileB, setFileB] = useState(null);
+  const location = useLocation();
+  const [fileA, setFileA] = useState(() => {
+    if (location.state?.initialFiles && Array.isArray(location.state.initialFiles) && location.state.initialFiles.length > 0) {
+      return location.state.initialFiles[0];
+    }
+    return location.state?.initialFile || null;
+  });
+  const [fileB, setFileB] = useState(() => {
+    if (location.state?.initialFiles && Array.isArray(location.state.initialFiles) && location.state.initialFiles.length > 1) {
+      return location.state.initialFiles[1];
+    }
+    return null;
+  });
   const [pdfA, setPdfA] = useState(null);
   const [pdfB, setPdfB] = useState(null);
 
@@ -86,9 +97,12 @@ export default function ComparePdf() {
   const canvasHeatmapRef = useRef(null);
   const containerRef = useRef(null);
 
-  // 1. Restore Draft Session on Mount
+  // 1. Restore Draft Session on Mount (unless fresh files passed via location.state)
   useEffect(() => {
     let isMounted = true;
+    if (location.state?.initialFiles?.length > 0 || location.state?.initialFile) {
+      return;
+    }
     const restoreSession = async () => {
       try {
         const draft = await loadStudioDraft('compare-pdf');
@@ -453,10 +467,27 @@ export default function ComparePdf() {
       files={attachedFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
+      setFiles={(filesArr) => {
+        if (!filesArr || filesArr.length === 0) {
+          setFileA(null);
+          setFileB(null);
+        } else {
+          setFileA(filesArr[0] || null);
+          setFileB(filesArr[1] || null);
+        }
+      }}
+      setResult={setResult}
+      onReset={() => {
+        setFileA(null);
+        setFileB(null);
+        setResult(null);
+        clearStudioDraft('compare-pdf').catch(() => {});
+      }}
+      onResetResult={() => setResult(null)}
     >
       <SEOHead
         title="Compare PDF Files Online Free — Visual Diff & Heatmap | DocScalar"
-        description="Spot changes between PDF revisions with pixel heatmaps, word-level text diffs, and interactive swipe overlays. 100% Client-side."
+        description="Spot changes between PDF revisions with pixel heatmaps, word-level text diffs, and interactive swipe overlays. 100% secure processing."
       />
 
       {!result ? (

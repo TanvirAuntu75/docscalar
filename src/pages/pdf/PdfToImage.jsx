@@ -11,6 +11,7 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import { useDpiQuality } from '../../hooks/useDpiQuality';
 import { DpiQualitySelector } from '../../components/DpiQualitySelector';
+import { BACKEND_URL, apiFetch, uploadFileSecure } from '../../utils/api';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -300,32 +301,88 @@ export default function PdfToImage() {
 
         await clearStudioDraft('pdf-to-image');
       } else {
-        // ZIP Archive Mode
-        setProgressStage('Rendering high-resolution pages in parallel...');
-        const { blobs, names } = await pdfToImages(file, conversionOptions, (p) => {
-          setProgress(Math.round(p * 0.7));
-          setProgressStage(`Rendering pages (${Math.round(p * 0.7)}%)...`);
-        });
-
-        setProgressStage('Packaging images into compressed ZIP archive...');
-        const zip = new JSZip();
-        blobs.forEach((b, i) => zip.file(names[i], b));
-
-        const zipBlob = await zip.generateAsync({ type: 'blob' }, (meta) => {
-          setProgress(70 + Math.round(meta.percent * 0.3));
-        });
-
+        // ZIP Archive Mode - Server-First Execution (Eliminates Browser V8 Heap Ram Spike)
+        let zipBlob = null;
         const finalName = outputArchiveName || `${file.name.replace(/\.[^.]+$/, '')}-images.zip`;
-        const previewUrls = blobs.slice(0, 6).map((b) => URL.createObjectURL(b));
+        let serverSuccess = false;
+
+        try {
+          setProgressStage('Processing high-resolution pages on dedicated server...');
+          const uploadRes = await uploadFileSecure(BACKEND_URL, file, (p) => {
+            setProgress(Math.round(p * 0.25));
+          });
+          const { file_id, filename } = uploadRes;
+
+          const formData = new FormData();
+          formData.append('file_id', file_id);
+          formData.append('filename', filename);
+          formData.append('dpi', String(dpi || 150));
+          formData.append('format', format);
+          if (pageScope === 'custom' && targetPageIndices.length > 0) {
+            formData.append('pages', JSON.stringify(targetPageIndices.map(i => i + 1)));
+          }
+
+          const convertRes = await apiFetch(`${BACKEND_URL}/api/convert/pdf-to-image`, {
+            method: 'POST',
+            body: formData
+          });
+
+          if (convertRes.ok) {
+            const { job_id } = await convertRes.json();
+            let pollStatus = 'queued';
+            let tries = 0;
+            while (pollStatus !== 'finished' && pollStatus !== 'failed' && tries < 300) {
+              await new Promise(r => setTimeout(r, 1000));
+              tries++;
+              const stRes = await apiFetch(`${BACKEND_URL}/api/job/${job_id}/status`);
+              if (stRes.ok) {
+                const stData = await stRes.json();
+                pollStatus = stData.status;
+                if (pollStatus === 'finished' && stData.download_url) {
+                  const dlRes = await fetch(`${BACKEND_URL}${stData.download_url}`);
+                  if (dlRes.ok) {
+                    zipBlob = await dlRes.blob();
+                    serverSuccess = true;
+                  }
+                  break;
+                } else if (pollStatus === 'failed') {
+                  break;
+                } else {
+                  setProgress(25 + Math.min(65, tries * 2));
+                  setProgressStage(`Server rendering pages (${25 + Math.min(65, tries * 2)}%)...`);
+                }
+              }
+            }
+          }
+        } catch (serverErr) {
+          console.warn('[PdfToImage] Server rendering unavailable, falling back to client JS:', serverErr);
+        }
+
+        if (!serverSuccess || !zipBlob) {
+          // Client-Side Fallback
+          setProgressStage('Rendering high-resolution pages in parallel...');
+          const { blobs, names } = await pdfToImages(file, conversionOptions, (p) => {
+            setProgress(Math.round(p * 0.7));
+            setProgressStage(`Rendering pages (${Math.round(p * 0.7)}%)...`);
+          });
+
+          setProgressStage('Packaging images into compressed ZIP archive...');
+          const zip = new JSZip();
+          blobs.forEach((b, i) => zip.file(names[i], b));
+
+          zipBlob = await zip.generateAsync({ type: 'blob' }, (meta) => {
+            setProgress(70 + Math.round(meta.percent * 0.3));
+          });
+        }
+
+        const previewUrls = previewBlobsRef.current.slice(0, 6).map((b) => b.url || URL.createObjectURL(b));
 
         setResult({
           mode: 'zip',
-          blobs,
-          names,
           zipBlob,
           name: finalName,
           size: zipBlob.size,
-          totalPages: blobs.length,
+          totalPages: totalPages || 1,
           format: format.toUpperCase(),
           scale: `${scale}× (${dpi} DPI)`,
           previewUrls
@@ -374,6 +431,7 @@ export default function PdfToImage() {
       title="PDF to Images Studio"
       description="Convert PDF pages into crystal-clear PNG, JPG, or WebP images with custom DPI resolutions."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >

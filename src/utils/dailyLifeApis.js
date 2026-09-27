@@ -1,7 +1,7 @@
 /**
  * DocScalar Client-Side Daily Life API Engine
  * 100% Free, Keyless, and CORS-Friendly APIs with TTL Caching & Abort Timeout.
- * Complies with DocScalar's 100% client-side privacy-first architecture.
+ * Complies with DocScalar's enterprise privacy-first architecture.
  */
 
 // In-memory cache with 10-minute Time-To-Live (TTL)
@@ -265,7 +265,7 @@ export async function getWikiSummary(rawTopic) {
   const pageUrl = data.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${encodeURIComponent(topic)}`;
 
   const markdownText = 
-    `### **🏛️ ${data.title}**\n\n` +
+    `### **${data.title}**\n\n` +
     desc +
     `${data.extract}\n\n` +
     `[Read complete article on Wikipedia →](${pageUrl})`;
@@ -403,7 +403,7 @@ export async function getRandomJoke() {
   if (!data?.setup || !data?.punchline) {
     // Fallback joke if offline or endpoint is congested
     const fallbackSetup = 'Why do programmers prefer dark mode?';
-    const fallbackPunchline = 'Because light attracts bugs! 🐛';
+    const fallbackPunchline = 'Because light attracts bugs!';
     return {
       success: true,
       title: 'Daily Joke',
@@ -464,7 +464,7 @@ export async function getCountryInfo(countryName) {
   const pageUrl = data.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${encodeURIComponent(cleanCountry)}`;
 
   const markdownText = 
-    `### **🌍 ${data.title}** *(${desc})*\n\n` +
+    `### **${data.title}** *(${desc})*\n\n` +
     `${data.extract}\n\n` +
     `[Explore complete country overview on Wikipedia →](${pageUrl})`;
 

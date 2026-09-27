@@ -41,12 +41,9 @@ const TOOL_SYNONYMS = {
   'sign-pdf': ['sign', 'signature', 'sign document', 'e-sign', 'digital signature', 'draw signature', 'x.509 sign'],
   'redact-pdf': ['redact', 'blackout', 'hide sensitive info', 'pii', 'scrub', 'mask confidential', 'luhn credit card', 'ssn blackout'],
   'compare-pdf': ['compare', 'diff pdf', 'compare documents', 'pixel heatmap', 'word diff', 'side by side compare', 'comparison slider'],
-  'ai-summarizer': ['summarize', 'summary', 'highlights', 'bullet points', 'textrank', 'executive summary', 'condense paper', 'condense document'],
-  'ai-translator': ['translate', 'translate file', 'language translation', 'offline translation', 'translate document'],
   'image-converter': ['convert image format', 'png to jpg', 'jpeg to webp', 'change format', 'image converter', 'convert images'],
   'image-compressor': ['compress image', 'shrink image', 'reduce image size', 'image compression'],
   'image-resizer': ['resize image', 'scale image', 'change dimensions', 'image resize'],
-  'conversion-pipeline': ['pipeline', 'batch conversion', 'multi-step pipeline', 'workflow pipeline', 'conversion pipeline'],
   'text-to-pdf': ['text to pdf', 'txt to pdf', 'convert text', 'markdown to pdf', 'notes to pdf'],
   'qr-generator': ['qr', 'barcode', 'generate qr', 'custom qr code', 'embed url qr'],
   'unzip-file': ['unzip', 'extract zip', 'decompress', 'expand zip', 'unzip archive'],
@@ -156,7 +153,7 @@ const DEEP_KNOWLEDGE = [
   {
     text: "Stitch Canvas Overview: The Stitch Canvas is DocForge's visual node-based workflow studio (located at /canvas or the Workspace tab). It allows users to build multi-step document pipelines by dragging files, dropping operator nodes (like Merge, OCR, Compress, Convert, Sign), connecting them with interactive bezier cables, and executing entire workflows locally in the browser with zero cloud latency.",
     source: "Stitch Canvas Overview",
-    metadata: { id: 'conversion-pipeline', path: '/canvas' }
+    metadata: { id: 'canvas', path: '/canvas' }
   },
   {
     text: "Canvas Viewport Navigation and Pan/Zoom: To pan the viewport, click and drag anywhere on the empty canvas dot-grid (or use a two-finger touchpad scroll). To zoom in and out, hold Ctrl while scrolling the mouse wheel, use a pinch gesture, or click the Zoom in (+) / Zoom out (-) buttons in the bottom-right toolbar. You can also click 'Fit to Screen' to center all nodes or 'Reset Viewport' to return to 100% zoom.",
@@ -278,7 +275,7 @@ const DEEP_KNOWLEDGE = [
 
   // --- PRIVACY, SECURITY & CRYPTOGRAPHY ---
   {
-    text: "100% Local First Privacy Architecture and Data Security: Is my document data secure and private? Yes, DocForge executes all document processing, conversions, OCR, compression, and visual editing locally in your browser using WebAssembly (WASM), Web Workers, and WebGPU. Your files and data are NEVER uploaded to third-party cloud servers or telemetry trackers, ensuring strict GDPR, HIPAA, and corporate confidentiality compliance.",
+    text: "Enterprise Privacy Architecture and Data Security: Is my document data secure and private? Yes, DocScalar executes document processing in isolated transient memory sandboxes with secure transit encryption. Your files and data are never stored permanently, never used for AI training, and files are automatically shredded from memory immediately after download, ensuring strict privacy and corporate confidentiality compliance.",
     source: "Privacy Guarantee",
     metadata: { path: '/privacy' }
   },

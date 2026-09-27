@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 import React, { useState, useMemo } from 'react';
+import { AlertTriangle, Sparkles } from 'lucide-react';
 import { useResumeContext } from '../../context/ResumeContext.jsx';
 import {
   calculateAtsHealthScore,
@@ -397,7 +398,8 @@ export default function AtsDiagnosticModal({
                     }}
                   >
                     <div style={{ fontSize: '0.85rem', fontWeight: '800', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <span>⚠️ Detected {xrayAnalysis.scrambledLines.length} Multi Column Text Collision(s)</span>
+                      <AlertTriangle size={15} className="shrink-0 text-red-500" />
+                      <span>Detected {xrayAnalysis.scrambledLines.length} Multi Column Text Collision(s)</span>
                     </div>
                     <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
                       Legacy parsers (Workday, Taleo) read horizontally across columns at identical vertical coordinates, causing data corruption.
@@ -484,7 +486,8 @@ export default function AtsDiagnosticModal({
                     {conceptualList.length > 0 && (
                       <div>
                         <div style={{ fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.4rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                          <span>💡 Transferable Skills Recognized (75% credit):</span>
+                          <Sparkles size={14} className="shrink-0 text-indigo-500" />
+                          <span>Transferable Skills Recognized (75% credit):</span>
                         </div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
                           {conceptualList.map((cm, idx) => (

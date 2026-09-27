@@ -44,7 +44,7 @@ BIN_DIR.mkdir(parents=True, exist_ok=True)
 
 # Server Config
 PORT = int(os.getenv("PORT", 8000))
-HOST = os.getenv("HOST", "127.0.0.1")
+HOST = os.getenv("HOST", "0.0.0.0")
 
 # Redis Config
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")

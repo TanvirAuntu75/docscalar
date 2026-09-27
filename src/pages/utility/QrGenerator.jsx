@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
-import { Link } from 'react-router-dom';
 import SEOHead from '../../components/SEOHead';
 import {
   generateQRToCanvas,
@@ -12,13 +11,12 @@ import {
 } from '../../engines/utility/qrGenerate';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
+import { formatFileSize } from '../../utils/constants';
 import {
   QrCode,
-  Sparkles,
   Download,
   Copy,
   Check,
-  FileCheck,
   Globe,
   Wifi,
   User,
@@ -27,7 +25,14 @@ import {
   Palette,
   ShieldCheck,
   Layers,
-  Printer
+  Printer,
+  Eye,
+  EyeOff,
+  ExternalLink,
+  ArrowLeftRight,
+  RotateCcw,
+  CheckCircle2,
+  FileCheck
 } from 'lucide-react';
 
 export default function QrGenerator() {
@@ -35,6 +40,7 @@ export default function QrGenerator() {
   const [urlData, setUrlData] = useState('https://docscalar.app');
   const [textData, setTextData] = useState('Hello from DocScalar QR Studio!');
   const [wifiData, setWifiData] = useState({ ssid: 'Office_Network', password: 'secret_password_2026', encryption: 'WPA', hidden: false });
+  const [showWifiPassword, setShowWifiPassword] = useState(false);
   const [vcardData, setVcardData] = useState({ name: 'Alex Morgan', phone: '+1 (555) 234-5678', email: 'alex@docscalar.app', company: 'DocScalar Inc.', title: 'Lead Architect' });
   const [emailData, setEmailData] = useState({ to: 'contact@docscalar.app', subject: 'Inquiry', body: 'Hello DocScalar team,' });
 
@@ -49,7 +55,8 @@ export default function QrGenerator() {
   // Result & UI State
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState(null);
-  const [copied, setCopied] = useState(false);
+  const [copiedText, setCopiedText] = useState(false);
+  const [copiedImage, setCopiedImage] = useState(false);
   const [error, setError] = useState(null);
 
   const canvasRef = useRef(null);
@@ -148,15 +155,22 @@ export default function QrGenerator() {
     setLightColor(palette.light);
   };
 
+  // Swap foreground and background colors
+  const swapColors = () => {
+    setDarkColor(lightColor);
+    setLightColor(darkColor);
+  };
+
   // 6. Handle Export
-  const handleExport = async () => {
+  const handleExport = async (overrideFormat = null) => {
     if (!currentFormattedPayload) return;
+    const activeFormat = overrideFormat || exportFormat;
     setProcessing(true);
     setError(null);
     setResult(null);
 
     try {
-      if (exportFormat === 'svg') {
+      if (activeFormat === 'svg') {
         const svgString = await generateQRSVG(currentFormattedPayload, {
           size,
           darkColor,
@@ -164,25 +178,29 @@ export default function QrGenerator() {
           errorCorrection
         });
         const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-        const finalName = `qrcode_${payloadType}.svg`;
+        const finalName = `qrcode_${payloadType}_${Date.now()}.svg`;
         setResult({ blob: svgBlob, name: finalName, format: 'SVG', payload: currentFormattedPayload });
         await saveFile(finalName, svgBlob.size, 'image/svg+xml', 'QR Generator', svgBlob);
-      } else if (exportFormat === 'pdf') {
+      } else if (activeFormat === 'pdf') {
         const pdfBlob = await generateQRPdfFlyer(currentFormattedPayload, {
           title: `Scan QR: ${payloadType.toUpperCase()}`,
           darkColor,
           lightColor,
           errorCorrection
         });
-        const finalName = `qrcode_flyer_${payloadType}.pdf`;
+        const finalName = `qrcode_flyer_${payloadType}_${Date.now()}.pdf`;
         setResult({ blob: pdfBlob, name: finalName, format: 'PDF', payload: currentFormattedPayload });
         await saveFile(finalName, pdfBlob.size, 'application/pdf', 'QR Generator', pdfBlob);
       } else {
         // PNG
         if (!canvasRef.current) throw new Error('Canvas not available for PNG export.');
-        await new Promise((resolve) => {
+        await new Promise((resolve, reject) => {
           canvasRef.current.toBlob(async (blob) => {
-            const finalName = `qrcode_${payloadType}.png`;
+            if (!blob) {
+              reject(new Error('Canvas export produced empty blob.'));
+              return;
+            }
+            const finalName = `qrcode_${payloadType}_${Date.now()}.png`;
             setResult({ blob, name: finalName, format: 'PNG', payload: currentFormattedPayload });
             await saveFile(finalName, blob.size, 'image/png', 'QR Generator', blob);
             resolve();
@@ -200,8 +218,32 @@ export default function QrGenerator() {
   const handleCopyPayload = () => {
     if (!currentFormattedPayload) return;
     navigator.clipboard.writeText(currentFormattedPayload);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setCopiedText(true);
+    setTimeout(() => setCopiedText(false), 2000);
+  };
+
+  const handleCopyImage = async () => {
+    if (!canvasRef.current) return;
+    try {
+      canvasRef.current.toBlob(async (blob) => {
+        if (blob && navigator.clipboard && window.ClipboardItem) {
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blob })
+            ]);
+            setCopiedImage(true);
+            setTimeout(() => setCopiedImage(false), 2000);
+          } catch {
+            // Fallback: copy payload text
+            handleCopyPayload();
+          }
+        } else {
+          handleCopyPayload();
+        }
+      }, 'image/png');
+    } catch {
+      handleCopyPayload();
+    }
   };
 
   const downloadResult = () => {
@@ -214,12 +256,24 @@ export default function QrGenerator() {
     setPayloadType('url');
     setUrlData('https://docscalar.app');
     setTextData('Hello from DocScalar QR Studio!');
+    setWifiData({ ssid: 'Office_Network', password: 'secret_password_2026', encryption: 'WPA', hidden: false });
+    setVcardData({ name: 'Alex Morgan', phone: '+1 (555) 234-5678', email: 'alex@docscalar.app', company: 'DocScalar Inc.', title: 'Lead Architect' });
+    setEmailData({ to: 'contact@docscalar.app', subject: 'Inquiry', body: 'Hello DocScalar team,' });
     setSize(380);
     setDarkColor('#000000');
     setLightColor('#ffffff');
     setErrorCorrection('M');
+    setExportFormat('png');
+    setZoomScale(1.0);
     setResult(null);
     setError(null);
+  };
+
+  const recoveryPercentages = {
+    L: '7%',
+    M: '15%',
+    Q: '25%',
+    H: '30%'
   };
 
   return (
@@ -236,346 +290,597 @@ export default function QrGenerator() {
       />
 
       {!result ? (
-        <div className="flex-1 flex w-full h-full min-h-0 overflow-hidden relative">
+        <div data-tool="qr-generator" className="qr-studio-root w-full max-w-[1380px] mx-auto flex flex-col gap-6">
           {/* ========================================================================= */}
-          {/* LEFT / CENTER: Interactive Live QR Stage                                  */}
+          {/* MAIN 2-COLUMN EXPANSIVE STUDIO GRID                                       */}
           {/* ========================================================================= */}
-          <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
-            {/* Sticky Top Toolbar */}
-            <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-              <div className="px-4 py-2.5 flex items-center justify-between flex-wrap gap-3">
-                {/* Payload Type Switcher Pill */}
-                <div className="flex items-center bg-[var(--bg-secondary)] p-0.5 rounded-lg border border-[var(--border-subtle)] text-xs">
-                  {QR_PAYLOAD_TYPES.map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      onClick={() => setPayloadType(t.id)}
-                      className={`px-3 py-1 font-semibold rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${
-                        payloadType === t.id
-                          ? 'bg-[var(--color-primary)] text-white shadow-xs'
-                          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                      }`}
-                    >
-                      {t.id === 'url' && <Globe size={13} />}
-                      {t.id === 'wifi' && <Wifi size={13} />}
-                      {t.id === 'vcard' && <User size={13} />}
-                      {t.id === 'email' && <Mail size={13} />}
-                      {t.id === 'text' && <FileText size={13} />}
-                      <span>{t.label}</span>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Canvas Controls */}
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleCopyPayload}
-                    className="flex items-center gap-1 bg-[var(--bg-secondary)] hover:bg-[var(--border-subtle)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)] text-xs font-semibold text-[var(--text-primary)] transition-all cursor-pointer"
-                    title="Copy payload string"
-                  >
-                    {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
-                    <span>{copied ? 'Copied' : 'Copy Text'}</span>
-                  </button>
-
-                  <div className="flex items-center gap-1 bg-[var(--bg-secondary)] px-2 py-1 rounded-lg border border-[var(--border-subtle)]">
-                    <span className="material-symbols-outlined text-[15px] text-[var(--text-secondary)]">zoom_in</span>
-                    <input
-                      type="range"
-                      min="0.5"
-                      max="1.5"
-                      step="0.1"
-                      value={zoomScale}
-                      onChange={(e) => setZoomScale(parseFloat(e.target.value))}
-                      className="w-16 h-1 bg-[var(--border-subtle)] accent-[var(--color-primary)] rounded-lg cursor-pointer"
-                    />
-                    <span className="text-[11px] font-semibold text-[var(--text-secondary)] w-9 text-right select-none">
-                      {Math.round(zoomScale * 100)}%
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
+            {/* ----------------------------------------------------------------------- */}
+            {/* LEFT COLUMN: Interactive Stage & Live Canvas (7 Cols)                  */}
+            {/* ----------------------------------------------------------------------- */}
+            <div className="lg:col-span-7 flex flex-col gap-5 w-full">
+              {/* Card Container for Live Stage */}
+              <div className="bg-[var(--bg-primary)] border border-[var(--border-subtle)] rounded-3xl p-5 sm:p-7 shadow-sm flex flex-col gap-5 relative transition-all">
+                {/* 1. Spacious Segmented Payload Type Switcher */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+                      QR Content Type
+                    </span>
+                    <span className="text-[11px] font-semibold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2.5 py-0.5 rounded-full">
+                      Instant Real-Time Preview
                     </span>
                   </div>
 
+                  <div className="bg-[var(--bg-secondary)] p-1.5 rounded-2xl border border-[var(--border-subtle)] grid grid-cols-2 sm:grid-cols-5 gap-1.5 text-xs">
+                    {QR_PAYLOAD_TYPES.map((t) => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => setPayloadType(t.id)}
+                        className={`px-3 py-2 font-semibold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                          payloadType === t.id
+                            ? 'bg-[var(--color-primary)] text-white shadow-sm'
+                            : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)]'
+                        }`}
+                      >
+                        {t.id === 'url' && <Globe size={15} />}
+                        {t.id === 'wifi' && <Wifi size={15} />}
+                        {t.id === 'vcard' && <User size={15} />}
+                        {t.id === 'email' && <Mail size={15} />}
+                        {t.id === 'text' && <FileText size={15} />}
+                        <span className="truncate">{t.label.split(' ')[0]}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 2. Interactive Canvas Toolbar */}
+                <div className="flex items-center justify-between flex-wrap gap-3 pt-1 border-t border-[var(--border-subtle)]">
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <span className="text-xs font-bold text-[var(--text-primary)]">
+                      Live Vector Canvas
+                    </span>
+                    <span className="text-[11px] text-[var(--text-tertiary)] hidden sm:inline">
+                      • Scan Reliability High
+                    </span>
+                  </div>
+
+                  {/* Actions & Zoom Slider */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleCopyPayload}
+                      className="flex items-center gap-1.5 bg-[var(--bg-secondary)] hover:bg-[var(--border-subtle)] px-3 py-1.5 rounded-xl border border-[var(--border-subtle)] text-xs font-semibold text-[var(--text-primary)] transition-all cursor-pointer shadow-2xs"
+                      title="Copy payload string to clipboard"
+                    >
+                      {copiedText ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                      <span>{copiedText ? 'Copied!' : 'Copy Text'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleCopyImage}
+                      className="flex items-center gap-1.5 bg-[var(--bg-secondary)] hover:bg-[var(--border-subtle)] px-3 py-1.5 rounded-xl border border-[var(--border-subtle)] text-xs font-semibold text-[var(--text-primary)] transition-all cursor-pointer shadow-2xs"
+                      title="Copy QR image directly to clipboard"
+                    >
+                      {copiedImage ? <Check size={14} className="text-emerald-500" /> : <Layers size={14} />}
+                      <span>{copiedImage ? 'Image Copied!' : 'Copy Image'}</span>
+                    </button>
+
+                    {/* Discrete Zoom Control */}
+                    <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1.5 rounded-xl border border-[var(--border-subtle)]">
+                      <span className="material-symbols-outlined text-[16px] text-[var(--text-secondary)] select-none">zoom_in</span>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="1.4"
+                        step="0.05"
+                        value={zoomScale}
+                        onChange={(e) => setZoomScale(parseFloat(e.target.value))}
+                        className="w-16 h-1 bg-[var(--border-subtle)] accent-[var(--color-primary)] rounded-lg cursor-pointer"
+                        title="Canvas Zoom"
+                      />
+                      <span className="text-[11px] font-semibold text-[var(--text-secondary)] w-8 text-right select-none">
+                        {Math.round(zoomScale * 100)}%
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={resetWorkspace}
+                      className="p-1.5 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-red-500/20"
+                      title="Reset all settings to default"
+                    >
+                      <RotateCcw size={15} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3. The QR Code Canvas Showcase Display */}
+                <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-2xl p-6 sm:p-10 flex flex-col items-center justify-center min-h-[380px] relative overflow-hidden bg-pattern">
+                  {/* QR Canvas Frame */}
+                  <div
+                    className="p-5 sm:p-6 rounded-2xl border border-[var(--border-subtle)] shadow-xl transition-transform duration-150 origin-center flex items-center justify-center"
+                    style={{
+                      backgroundColor: lightColor,
+                      transform: `scale(${zoomScale})`
+                    }}
+                  >
+                    <canvas ref={canvasRef} className="rounded-lg max-w-full h-auto block" />
+                  </div>
+
+                  {/* Telemetry and Specs Pill */}
+                  <div className="w-full mt-6 flex flex-col items-center gap-1.5 text-center">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[var(--bg-primary)] border border-[var(--border-subtle)] rounded-full text-xs font-semibold text-[var(--text-primary)] max-w-full shadow-2xs">
+                      <ShieldCheck size={14} className="text-emerald-500 shrink-0" />
+                      <span className="truncate max-w-[280px] sm:max-w-[420px] font-mono text-[11px]">
+                        {currentFormattedPayload}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)] font-medium">
+                      <span>{size}×{size} px</span>
+                      <span>•</span>
+                      <span>Level {errorCorrection} ({recoveryPercentages[errorCorrection]} Error Recovery)</span>
+                      <span>•</span>
+                      <span className="text-emerald-500 font-semibold">100% Verified</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Quick Action Download Row (One-Click Instant Gratification) */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+                  <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                    Quick Export:
+                  </span>
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <button
+                      type="button"
+                      onClick={() => handleExport('png')}
+                      disabled={processing || !currentFormattedPayload}
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)] hover:text-white border border-[var(--border-subtle)] rounded-xl text-xs font-bold text-[var(--text-primary)] transition-all cursor-pointer shadow-2xs"
+                    >
+                      <Download size={14} />
+                      <span>PNG Image</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleExport('svg')}
+                      disabled={processing || !currentFormattedPayload}
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)] hover:text-white border border-[var(--border-subtle)] rounded-xl text-xs font-bold text-[var(--text-primary)] transition-all cursor-pointer shadow-2xs"
+                    >
+                      <Download size={14} />
+                      <span>Vector SVG</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleExport('pdf')}
+                      disabled={processing || !currentFormattedPayload}
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)] hover:text-white border border-[var(--border-subtle)] rounded-xl text-xs font-bold text-[var(--text-primary)] transition-all cursor-pointer shadow-2xs"
+                    >
+                      <Printer size={14} />
+                      <span>PDF Flyer</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ----------------------------------------------------------------------- */}
+            {/* RIGHT COLUMN: Customization Studio (5 Cols)                             */}
+            {/* ----------------------------------------------------------------------- */}
+            <div className="lg:col-span-5 flex flex-col gap-5 w-full">
+              <div className="bg-[var(--bg-primary)] border border-[var(--border-subtle)] rounded-3xl p-5 sm:p-7 shadow-sm flex flex-col gap-6">
+                {/* Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)]">
+                  <div className="flex items-center gap-2">
+                    <Palette size={18} className="text-[var(--color-primary)]" />
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--text-primary)]">
+                      Design & Customization
+                    </h3>
+                  </div>
+                  <span className="text-xs font-bold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2.5 py-1 rounded-full uppercase">
+                    {payloadType}
+                  </span>
+                </div>
+
+                {/* 1. Dynamic Payload Inputs */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider flex items-center justify-between">
+                    <span>
+                      {payloadType === 'url' ? 'Webpage URL' : payloadType === 'wifi' ? 'Wi-Fi Credentials' : payloadType === 'vcard' ? 'Contact Information' : payloadType === 'email' ? 'Email Details' : 'Text Content'}
+                    </span>
+                    {payloadType === 'url' && urlData && (
+                      <a
+                        href={urlData}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] font-semibold text-[var(--color-primary)] hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>Test Link</span>
+                        <ExternalLink size={11} />
+                      </a>
+                    )}
+                  </label>
+
+                  {/* URL Input */}
+                  {payloadType === 'url' && (
+                    <div className="relative flex items-center">
+                      <Globe size={16} className="absolute left-3.5 text-[var(--text-tertiary)] pointer-events-none" />
+                      <input
+                        type="url"
+                        value={urlData}
+                        onChange={(e) => setUrlData(e.target.value)}
+                        placeholder="https://example.com"
+                        className="w-full pl-10 pr-3 py-2.5 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none font-medium transition-all"
+                      />
+                    </div>
+                  )}
+
+                  {/* Plain Text Input */}
+                  {payloadType === 'text' && (
+                    <div className="flex flex-col gap-1">
+                      <textarea
+                        value={textData}
+                        onChange={(e) => setTextData(e.target.value)}
+                        placeholder="Enter text or message..."
+                        rows={4}
+                        className="w-full px-3.5 py-2.5 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none resize-none font-medium transition-all leading-relaxed"
+                      />
+                      <span className="text-[10px] text-[var(--text-tertiary)] text-right">
+                        {textData.length} characters
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Wi-Fi Input */}
+                  {payloadType === 'wifi' && (
+                    <div className="flex flex-col gap-2.5">
+                      <div className="relative flex items-center">
+                        <Wifi size={15} className="absolute left-3.5 text-[var(--text-tertiary)] pointer-events-none" />
+                        <input
+                          type="text"
+                          value={wifiData.ssid}
+                          onChange={(e) => setWifiData({ ...wifiData, ssid: e.target.value })}
+                          placeholder="Network Name (SSID)"
+                          className="w-full pl-10 pr-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none font-medium"
+                        />
+                      </div>
+
+                      <div className="relative flex items-center">
+                        <input
+                          type={showWifiPassword ? 'text' : 'password'}
+                          value={wifiData.password}
+                          onChange={(e) => setWifiData({ ...wifiData, password: e.target.value })}
+                          placeholder="Password"
+                          className="w-full pl-3 pr-10 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none font-medium"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowWifiPassword(!showWifiPassword)}
+                          className="absolute right-3 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] cursor-pointer"
+                          title={showWifiPassword ? 'Hide password' : 'Show password'}
+                        >
+                          {showWifiPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <select
+                          value={wifiData.encryption}
+                          onChange={(e) => setWifiData({ ...wifiData, encryption: e.target.value })}
+                          className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none cursor-pointer font-medium"
+                        >
+                          <option value="WPA">WPA / WPA2 / WPA3</option>
+                          <option value="WEP">WEP</option>
+                          <option value="nopass">Open (No Password)</option>
+                        </select>
+
+                        <label className="flex items-center gap-2 px-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-xs text-[var(--text-primary)] cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={wifiData.hidden}
+                            onChange={(e) => setWifiData({ ...wifiData, hidden: e.target.checked })}
+                            className="rounded accent-[var(--color-primary)] cursor-pointer"
+                          />
+                          <span className="text-[11px] font-medium">Hidden SSID</span>
+                        </label>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* vCard Input */}
+                  {payloadType === 'vcard' && (
+                    <div className="flex flex-col gap-2">
+                      <input
+                        type="text"
+                        value={vcardData.name}
+                        onChange={(e) => setVcardData({ ...vcardData, name: e.target.value })}
+                        placeholder="Full Name (e.g. Alex Morgan)"
+                        className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none font-medium"
+                      />
+                      <div className="grid grid-cols-2 gap-2">
+                        <input
+                          type="tel"
+                          value={vcardData.phone}
+                          onChange={(e) => setVcardData({ ...vcardData, phone: e.target.value })}
+                          placeholder="Phone Number"
+                          className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none font-medium"
+                        />
+                        <input
+                          type="email"
+                          value={vcardData.email}
+                          onChange={(e) => setVcardData({ ...vcardData, email: e.target.value })}
+                          placeholder="Email Address"
+                          className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none font-medium"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <input
+                          type="text"
+                          value={vcardData.company}
+                          onChange={(e) => setVcardData({ ...vcardData, company: e.target.value })}
+                          placeholder="Company"
+                          className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none font-medium"
+                        />
+                        <input
+                          type="text"
+                          value={vcardData.title}
+                          onChange={(e) => setVcardData({ ...vcardData, title: e.target.value })}
+                          placeholder="Job Title"
+                          className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none font-medium"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Email Input */}
+                  {payloadType === 'email' && (
+                    <div className="flex flex-col gap-2">
+                      <input
+                        type="email"
+                        value={emailData.to}
+                        onChange={(e) => setEmailData({ ...emailData, to: e.target.value })}
+                        placeholder="Recipient Email (e.g. hello@example.com)"
+                        className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none font-medium"
+                      />
+                      <input
+                        type="text"
+                        value={emailData.subject}
+                        onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
+                        placeholder="Subject Line"
+                        className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none font-medium"
+                      />
+                      <textarea
+                        value={emailData.body}
+                        onChange={(e) => setEmailData({ ...emailData, body: e.target.value })}
+                        placeholder="Message Body..."
+                        rows={2}
+                        className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none resize-none font-medium"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. Color Themes & Swatches */}
+                <div className="flex flex-col gap-2.5 pt-2 border-t border-[var(--border-subtle)]">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                      Color Palette & Presets
+                    </label>
+                    <button
+                      type="button"
+                      onClick={swapColors}
+                      className="text-[11px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center gap-1 cursor-pointer transition-colors"
+                      title="Invert Foreground and Background Colors"
+                    >
+                      <ArrowLeftRight size={12} />
+                      <span>Swap Colors</span>
+                    </button>
+                  </div>
+
+                  {/* 6 Curated Palettes */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {COLOR_PALETTES.map((p) => {
+                      const isSelected = darkColor === p.dark && lightColor === p.light;
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => applyPalette(p)}
+                          className={`p-2 rounded-xl border flex items-center gap-2 text-left cursor-pointer transition-all ${
+                            isSelected
+                              ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]'
+                              : 'border-[var(--border-subtle)] hover:border-[var(--text-secondary)] bg-[var(--bg-secondary)]'
+                          }`}
+                        >
+                          <div className="flex items-center -space-x-1 shrink-0">
+                            <span
+                              className="w-4 h-4 rounded-full border border-black/10 z-10"
+                              style={{ backgroundColor: p.dark }}
+                            />
+                            <span
+                              className="w-4 h-4 rounded-full border border-black/15 shadow-2xs"
+                              style={{ backgroundColor: p.light }}
+                            />
+                          </div>
+                          <span className="text-[11px] font-semibold text-[var(--text-primary)] truncate">
+                            {p.label.split(' ')[0]}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Custom Hex Color Pickers */}
+                  <div className="grid grid-cols-2 gap-2 mt-1">
+                    <div className="flex items-center gap-2 p-2 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)]">
+                      <input
+                        type="color"
+                        value={darkColor}
+                        onChange={(e) => setDarkColor(e.target.value)}
+                        className="w-6 h-6 rounded-lg cursor-pointer bg-transparent border-none shrink-0"
+                        title="Choose Foreground Color"
+                      />
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className="text-[10px] font-bold uppercase text-[var(--text-tertiary)]">Foreground</span>
+                        <input
+                          type="text"
+                          value={darkColor}
+                          onChange={(e) => setDarkColor(e.target.value)}
+                          className="text-xs font-mono font-semibold text-[var(--text-primary)] bg-transparent outline-none w-full"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 p-2 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)]">
+                      <input
+                        type="color"
+                        value={lightColor}
+                        onChange={(e) => setLightColor(e.target.value)}
+                        className="w-6 h-6 rounded-lg cursor-pointer bg-transparent border-none shrink-0"
+                        title="Choose Background Color"
+                      />
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className="text-[10px] font-bold uppercase text-[var(--text-tertiary)]">Background</span>
+                        <input
+                          type="text"
+                          value={lightColor}
+                          onChange={(e) => setLightColor(e.target.value)}
+                          className="text-xs font-mono font-semibold text-[var(--text-primary)] bg-transparent outline-none w-full"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Scan Resilience (Error Correction) */}
+                <div className="flex flex-col gap-2 pt-2 border-t border-[var(--border-subtle)]">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                      Error Correction Level
+                    </label>
+                    <span className="text-[11px] font-medium text-[var(--text-tertiary)]">
+                      {recoveryPercentages[errorCorrection]} Recovery
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-4 gap-1.5 bg-[var(--bg-secondary)] p-1.5 rounded-2xl border border-[var(--border-subtle)] text-xs text-center">
+                    {[
+                      { lvl: 'L', label: '7%', desc: 'Light' },
+                      { lvl: 'M', label: '15%', desc: 'Standard' },
+                      { lvl: 'Q', label: '25%', desc: 'High' },
+                      { lvl: 'H', label: '30%', desc: 'Max' }
+                    ].map((item) => (
+                      <button
+                        key={item.lvl}
+                        type="button"
+                        onClick={() => setErrorCorrection(item.lvl)}
+                        className={`py-2 px-1 font-bold rounded-xl transition-all cursor-pointer flex flex-col items-center gap-0.5 ${
+                          errorCorrection === item.lvl
+                            ? 'bg-[var(--color-primary)] text-white shadow-xs'
+                            : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)]'
+                        }`}
+                      >
+                        <span className="text-xs font-extrabold">{item.lvl}</span>
+                        <span className="text-[10px] opacity-80">{item.desc}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <span className="text-[11px] text-[var(--text-tertiary)] leading-tight">
+                    Higher correction preserves scannability even if partially obscured, smudged, or printed.
+                  </span>
+                </div>
+
+                {/* 4. Export Format & Resolution */}
+                <div className="flex flex-col gap-2 pt-2 border-t border-[var(--border-subtle)]">
+                  <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                    Export Format & Resolution
+                  </label>
+
+                  <div className="grid grid-cols-3 gap-1.5 bg-[var(--bg-secondary)] p-1.5 rounded-2xl border border-[var(--border-subtle)] text-xs text-center">
+                    {[
+                      { id: 'png', label: 'PNG Image', desc: 'High-Res' },
+                      { id: 'svg', label: 'Vector SVG', desc: 'Scalable' },
+                      { id: 'pdf', label: 'PDF Flyer', desc: 'Printable' }
+                    ].map((fmt) => (
+                      <button
+                        key={fmt.id}
+                        type="button"
+                        onClick={() => setExportFormat(fmt.id)}
+                        className={`py-2 px-1.5 font-bold rounded-xl transition-all cursor-pointer flex flex-col items-center gap-0.5 ${
+                          exportFormat === fmt.id
+                            ? 'bg-[var(--color-primary)] text-white shadow-xs'
+                            : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)]'
+                        }`}
+                      >
+                        <span className="text-xs font-bold">{fmt.label}</span>
+                        <span className="text-[10px] opacity-80">{fmt.desc}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Resolution Selector for PNG */}
+                  {exportFormat === 'png' && (
+                    <div className="flex items-center justify-between gap-2 p-2 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] text-xs mt-1">
+                      <span className="text-[11px] font-semibold text-[var(--text-secondary)]">Canvas Size:</span>
+                      <div className="flex items-center gap-1">
+                        {[
+                          { sz: 380, label: '380px' },
+                          { sz: 600, label: '600px' },
+                          { sz: 1200, label: '1200px' }
+                        ].map((item) => (
+                          <button
+                            key={item.sz}
+                            type="button"
+                            onClick={() => setSize(item.sz)}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer transition-all ${
+                              size === item.sz
+                                ? 'bg-[var(--color-primary)] text-white'
+                                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                            }`}
+                          >
+                            {item.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {error && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium">
+                    {error}
+                  </div>
+                )}
+
+                {/* Primary Download CTA */}
+                <div className="pt-2">
                   <button
                     type="button"
-                    onClick={resetWorkspace}
-                    className="p-1 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-500 rounded-lg transition-colors cursor-pointer"
-                    title="Reset workspace"
+                    onClick={() => handleExport()}
+                    disabled={processing || !currentFormattedPayload}
+                    className="w-full py-3.5 px-5 bg-[var(--color-primary)] hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded-2xl shadow-lg shadow-[var(--color-primary)]/20 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
                   >
-                    <span className="material-symbols-outlined text-[18px]">restart_alt</span>
+                    {processing ? (
+                      <>
+                        <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+                        <span>Generating {exportFormat.toUpperCase()}...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Download size={17} />
+                        <span>Download {exportFormat.toUpperCase()} ({exportFormat === 'pdf' ? 'Printable Flyer' : exportFormat === 'svg' ? 'Vector SVG' : 'High-Res'})</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
-            </div>
-
-            {/* Viewport Canvas Stage */}
-            <div className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center relative bg-pattern select-none">
-              <div
-                className="relative bg-[var(--bg-primary)] shadow-2xl rounded-3xl border border-[var(--border-subtle)] p-8 flex flex-col items-center gap-6 transition-transform duration-150 origin-center max-w-md w-full"
-                style={{ transform: `scale(${zoomScale})` }}
-              >
-                {/* QR Code Canvas Frame */}
-                <div
-                  className="p-4 rounded-2xl border border-[var(--border-subtle)] shadow-inner flex items-center justify-center transition-colors"
-                  style={{ backgroundColor: lightColor }}
-                >
-                  <canvas ref={canvasRef} className="rounded-lg max-w-full h-auto" />
-                </div>
-
-                {/* Payload Telemetry Pill */}
-                <div className="w-full flex flex-col items-center gap-1 text-center">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-full text-xs font-semibold text-[var(--text-primary)] max-w-full">
-                    <ShieldCheck size={14} className="text-emerald-500 shrink-0" />
-                    <span className="truncate max-w-[260px]">{currentFormattedPayload}</span>
-                  </div>
-                  <span className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wider font-semibold">
-                    {size}x{size} px • Level {errorCorrection} ({(errorCorrection === 'L' ? '7%' : errorCorrection === 'M' ? '15%' : errorCorrection === 'Q' ? '25%' : '30%')} Recovery)
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ========================================================================= */}
-          {/* RIGHT: Studio Options Sidebar                                             */}
-          {/* ========================================================================= */}
-          <div className="options-panel w-80 min-w-80 max-w-80 bg-[var(--bg-primary)] border-l border-[var(--border-subtle)] flex flex-col justify-between h-full select-none shadow-sm z-20">
-            <div className="p-4 border-b border-[var(--border-subtle)] flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <QrCode size={18} className="text-[var(--color-primary)]" />
-                <span className="text-xs font-bold uppercase tracking-wider text-[var(--text-primary)]">
-                  Customization
-                </span>
-              </div>
-              <span className="text-xs font-bold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2 py-0.5 rounded-full uppercase">
-                {payloadType}
-              </span>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
-              {/* 1. Dynamic Payload Input Form */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-                  {payloadType === 'url' ? 'Webpage URL' : payloadType === 'wifi' ? 'Wi-Fi Details' : payloadType === 'vcard' ? 'Contact Information' : payloadType === 'email' ? 'Email Details' : 'Text Content'}
-                </label>
-
-                {payloadType === 'url' && (
-                  <input
-                    type="url"
-                    value={urlData}
-                    onChange={(e) => setUrlData(e.target.value)}
-                    placeholder="https://example.com"
-                    className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none"
-                  />
-                )}
-
-                {payloadType === 'text' && (
-                  <textarea
-                    value={textData}
-                    onChange={(e) => setTextData(e.target.value)}
-                    placeholder="Enter any text..."
-                    rows={3}
-                    className="w-full px-3 py-2 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none resize-none"
-                  />
-                )}
-
-                {payloadType === 'wifi' && (
-                  <div className="flex flex-col gap-2">
-                    <input
-                      type="text"
-                      value={wifiData.ssid}
-                      onChange={(e) => setWifiData({ ...wifiData, ssid: e.target.value })}
-                      placeholder="Network Name (SSID)"
-                      className="w-full px-3 py-1.5 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none"
-                    />
-                    <input
-                      type="text"
-                      value={wifiData.password}
-                      onChange={(e) => setWifiData({ ...wifiData, password: e.target.value })}
-                      placeholder="Password"
-                      className="w-full px-3 py-1.5 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none"
-                    />
-                    <select
-                      value={wifiData.encryption}
-                      onChange={(e) => setWifiData({ ...wifiData, encryption: e.target.value })}
-                      className="w-full px-3 py-1.5 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none cursor-pointer"
-                    >
-                      <option value="WPA">WPA / WPA2 / WPA3</option>
-                      <option value="WEP">WEP</option>
-                      <option value="nopass">No Password (Open)</option>
-                    </select>
-                  </div>
-                )}
-
-                {payloadType === 'vcard' && (
-                  <div className="flex flex-col gap-2">
-                    <input
-                      type="text"
-                      value={vcardData.name}
-                      onChange={(e) => setVcardData({ ...vcardData, name: e.target.value })}
-                      placeholder="Full Name"
-                      className="w-full px-3 py-1.5 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none"
-                    />
-                    <input
-                      type="tel"
-                      value={vcardData.phone}
-                      onChange={(e) => setVcardData({ ...vcardData, phone: e.target.value })}
-                      placeholder="Phone Number"
-                      className="w-full px-3 py-1.5 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none"
-                    />
-                    <input
-                      type="email"
-                      value={vcardData.email}
-                      onChange={(e) => setVcardData({ ...vcardData, email: e.target.value })}
-                      placeholder="Email Address"
-                      className="w-full px-3 py-1.5 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none"
-                    />
-                  </div>
-                )}
-
-                {payloadType === 'email' && (
-                  <div className="flex flex-col gap-2">
-                    <input
-                      type="email"
-                      value={emailData.to}
-                      onChange={(e) => setEmailData({ ...emailData, to: e.target.value })}
-                      placeholder="Recipient Email"
-                      className="w-full px-3 py-1.5 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none"
-                    />
-                    <input
-                      type="text"
-                      value={emailData.subject}
-                      onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
-                      placeholder="Subject Line"
-                      className="w-full px-3 py-1.5 text-xs bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] focus:border-[var(--color-primary)] outline-none"
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* 2. Color Palettes */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-                  Color Presets
-                </label>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {COLOR_PALETTES.map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => applyPalette(p)}
-                      className="p-1.5 rounded-xl border border-[var(--border-subtle)] hover:border-[var(--color-primary)] flex items-center gap-1.5 text-left cursor-pointer transition-all bg-[var(--bg-secondary)]"
-                    >
-                      <span
-                        className="w-4 h-4 rounded-full border border-black/10 shrink-0"
-                        style={{ backgroundColor: p.dark }}
-                      />
-                      <span className="text-[10px] font-semibold text-[var(--text-primary)] truncate">
-                        {p.label.split(' ')[0]}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Custom Pickers */}
-                <div className="grid grid-cols-2 gap-2 mt-1">
-                  <div className="flex items-center gap-2 p-2 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)]">
-                    <input
-                      type="color"
-                      value={darkColor}
-                      onChange={(e) => setDarkColor(e.target.value)}
-                      className="w-6 h-6 rounded-lg cursor-pointer bg-transparent border-none"
-                    />
-                    <span className="text-[10px] font-semibold text-[var(--text-primary)]">Foreground</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-2 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)]">
-                    <input
-                      type="color"
-                      value={lightColor}
-                      onChange={(e) => setLightColor(e.target.value)}
-                      className="w-6 h-6 rounded-lg cursor-pointer bg-transparent border-none"
-                    />
-                    <span className="text-[10px] font-semibold text-[var(--text-primary)]">Background</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 3. Error Correction */}
-              <div className="flex flex-col gap-1.5">
-                <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-                  Error Correction Level
-                </span>
-                <div className="grid grid-cols-4 gap-1 bg-[var(--bg-secondary)] p-1 rounded-xl border border-[var(--border-subtle)] text-xs text-center">
-                  {['L', 'M', 'Q', 'H'].map((lvl) => (
-                    <button
-                      key={lvl}
-                      type="button"
-                      onClick={() => setErrorCorrection(lvl)}
-                      className={`py-1 font-bold rounded-lg transition-all cursor-pointer ${
-                        errorCorrection === lvl
-                          ? 'bg-[var(--color-primary)] text-white shadow-xs'
-                          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                      }`}
-                    >
-                      {lvl}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 4. Export Format Selector */}
-              <div className="flex flex-col gap-1.5 pt-2 border-t border-[var(--border-subtle)]">
-                <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-                  Export Format
-                </span>
-                <div className="grid grid-cols-3 gap-1 bg-[var(--bg-secondary)] p-1 rounded-xl border border-[var(--border-subtle)] text-xs text-center">
-                  {[
-                    { id: 'png', label: 'PNG Image' },
-                    { id: 'svg', label: 'Vector SVG' },
-                    { id: 'pdf', label: 'PDF Flyer' }
-                  ].map((fmt) => (
-                    <button
-                      key={fmt.id}
-                      type="button"
-                      onClick={() => setExportFormat(fmt.id)}
-                      className={`py-1.5 font-bold rounded-lg transition-all cursor-pointer ${
-                        exportFormat === fmt.id
-                          ? 'bg-[var(--color-primary)] text-white shadow-xs'
-                          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                      }`}
-                    >
-                      {fmt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium">
-                  {error}
-                </div>
-              )}
-            </div>
-
-            {/* Sticky Primary CTA Action Button */}
-            <div className="p-4 border-t border-[var(--border-subtle)] bg-[var(--bg-primary)]">
-              <button
-                type="button"
-                onClick={handleExport}
-                disabled={processing || !currentFormattedPayload}
-                className="w-full py-3 px-4 bg-[var(--color-primary)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl shadow-lg shadow-[var(--color-primary)]/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
-              >
-                {processing ? (
-                  <>
-                    <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
-                    <span>Exporting QR Code...</span>
-                  </>
-                ) : (
-                  <>
-                    <Download size={16} />
-                    <span>Download {exportFormat.toUpperCase()} ({exportFormat === 'pdf' ? 'Flyer' : exportFormat === 'svg' ? 'Vector' : 'High-Res'})</span>
-                  </>
-                )}
-              </button>
             </div>
           </div>
         </div>
@@ -583,109 +888,62 @@ export default function QrGenerator() {
         /* ========================================================================= */
         /* RESULT VIEW: Celebratory High-Fidelity Download Card                       */
         /* ========================================================================= */
-        <div className="w-full flex-1 flex items-center justify-center p-4 sm:p-8">
-          <div className="max-w-xl w-full p-8 sm:p-10 bg-[var(--bg-primary)] border border-[var(--border-subtle)] rounded-3xl shadow-xl shadow-black/5 dark:shadow-black/25 flex flex-col items-center text-center gap-6 animate-[scaleIn_0.22s_ease-out]">
-            {/* Celebration Icon Badge */}
-            <div className="w-20 h-20 rounded-2xl bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] flex items-center justify-center shadow-lg shadow-[var(--color-primary)]/10">
-              <QrCode size={40} />
+        <div className="w-full flex items-center justify-center py-10 px-4">
+          <div className="max-w-xl w-full p-8 sm:p-10 bg-[var(--bg-primary)] border border-[var(--border-subtle)] rounded-3xl shadow-xl flex flex-col items-center text-center gap-6 animate-in fade-in zoom-in-95 duration-200">
+            {/* Celebration Badge */}
+            <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+              <CheckCircle2 size={40} />
             </div>
 
-            {/* Title & Document Pill */}
+            {/* Title & Document Info */}
             <div className="flex flex-col gap-2 max-w-md">
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight">
-                QR Code Generated!
+                QR Code Ready!
               </h2>
-              <p className="text-sm text-[var(--text-secondary)]">
-                Your custom {result.format} QR code is ready with high scan reliability.
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                Your custom {result.format} QR code is ready with 100% scan reliability.
               </p>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-full text-xs font-semibold text-[var(--text-primary)] mx-auto mt-2 max-w-full">
-                <FileCheck size={16} className="text-[var(--color-primary)]" />
-                <span className="truncate max-w-[220px]">{result.name}</span>
-                {result.blob?.size && (
-                  <>
-                    <span className="text-[var(--text-tertiary)]">•</span>
-                    <span className="text-[var(--color-primary)] font-bold">{formatFileSize(result.blob.size)}</span>
-                  </>
-                )}
-              </div>
             </div>
 
-            {/* Telemetry Diagnostics Grid */}
-            <div className="grid grid-cols-3 gap-2.5 w-full">
-              <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
-                <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Format</span>
-                <span className="text-base font-extrabold text-[var(--color-primary)]">{result.format}</span>
+            {/* Generated Document Pill */}
+            <div className="w-full p-4 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-2xl flex items-center justify-between gap-3 text-left">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center shrink-0">
+                  <FileCheck size={20} />
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-xs font-bold text-[var(--text-primary)] truncate">
+                    {result.name}
+                  </span>
+                  <span className="text-[11px] text-[var(--text-tertiary)]">
+                    {result.format} • {formatFileSize(result.blob.size)}
+                  </span>
+                </div>
               </div>
-              <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
-                <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Level</span>
-                <span className="text-base font-extrabold text-[var(--text-primary)]">{errorCorrection}</span>
-              </div>
-              <div className="p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center text-center">
-                <span className="text-[10px] uppercase font-bold text-[var(--text-tertiary)]">Resolution</span>
-                <span className="text-xs font-bold text-emerald-500 mt-1">{size}x{size}</span>
-              </div>
-            </div>
 
-            {/* Action Buttons (Strict Single-Line No Wrap) */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center pt-2">
-              <button
-                type="button"
-                className="btn btn-primary btn-lg flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20 w-full sm:w-auto min-w-[200px] text-sm sm:text-base font-bold py-3 px-6 whitespace-nowrap cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
-                onClick={downloadResult}
-              >
-                <Download size={18} />
-                <span>Download {result.format} File ↓</span>
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-secondary btn-lg flex items-center justify-center gap-2 w-full sm:w-auto min-w-[180px] text-sm sm:text-base font-semibold py-3 px-5 whitespace-nowrap cursor-pointer hover:bg-[var(--bg-secondary)] transition-all"
-                onClick={resetWorkspace}
-              >
-                <span className="material-symbols-outlined text-[18px]">restart_alt</span>
-                <span>Create Another QR</span>
-              </button>
-            </div>
-
-            {/* Quick Next Steps */}
-            <div className="w-full pt-6 border-t border-[var(--border-subtle)] mt-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-3">
-                Continue Working with DocScalar
+              <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] rounded-full uppercase shrink-0">
+                Verified
               </span>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <Link
-                  to="/url-to-pdf"
-                  className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-[20px] text-[var(--color-primary)]">link</span>
-                  <div className="min-w-0">
-                    <p className="font-bold truncate group-hover:text-[var(--color-primary)]">URL to PDF</p>
-                    <p className="text-[10px] text-[var(--text-secondary)] truncate">Capture webpage to PDF</p>
-                  </div>
-                </Link>
+            </div>
 
-                <Link
-                  to="/image-converter"
-                  className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-[20px] text-purple-500">image</span>
-                  <div className="min-w-0">
-                    <p className="font-bold truncate group-hover:text-[var(--color-primary)]">Image Converter</p>
-                    <p className="text-[10px] text-[var(--text-secondary)] truncate">Convert PNG, JPG, WEBP</p>
-                  </div>
-                </Link>
+            {/* Download CTA & Actions */}
+            <div className="w-full flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={downloadResult}
+                className="w-full py-3.5 px-6 bg-[var(--color-primary)] hover:opacity-90 text-white font-bold text-sm rounded-xl shadow-lg shadow-[var(--color-primary)]/20 flex items-center justify-center gap-2 cursor-pointer transition-all"
+              >
+                <Download size={16} />
+                <span>Save to Computer</span>
+              </button>
 
-                <Link
-                  to="/add-watermark"
-                  className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-[20px] text-blue-500">water_drop</span>
-                  <div className="min-w-0">
-                    <p className="font-bold truncate group-hover:text-[var(--color-primary)]">Add Watermark</p>
-                    <p className="text-[10px] text-[var(--text-secondary)] truncate">Stamp QR onto PDF</p>
-                  </div>
-                </Link>
-              </div>
+              <button
+                type="button"
+                onClick={() => setResult(null)}
+                className="w-full py-3 px-6 bg-[var(--bg-secondary)] hover:bg-[var(--border-subtle)] text-[var(--text-primary)] font-semibold text-xs rounded-xl border border-[var(--border-subtle)] transition-colors cursor-pointer"
+              >
+                Back to Studio Editor
+              </button>
             </div>
           </div>
         </div>

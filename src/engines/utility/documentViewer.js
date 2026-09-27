@@ -23,9 +23,7 @@ export const SMART_ACTIONS = {
     { label: 'Redact PDF', path: '/redact-pdf', icon: 'ink_eraser' }
   ],
   docx: [
-    { label: 'Convert to PDF', path: '/docx-to-pdf', icon: 'picture_as_pdf' },
-    { label: 'AI Translate', path: '/ai-translator', icon: 'translate' },
-    { label: 'AI Summarizer', path: '/ai-summarizer', icon: 'psychology' }
+    { label: 'Convert to PDF', path: '/docx-to-pdf', icon: 'picture_as_pdf' }
   ],
   excel: [
     { label: 'Convert to PDF', path: '/excel-to-pdf', icon: 'picture_as_pdf' }

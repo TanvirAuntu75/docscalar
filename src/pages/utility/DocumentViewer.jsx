@@ -57,6 +57,7 @@ export default function DocumentViewer({ file = null }) {
   const [activeIdx, setActiveIdx] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isPasswordProtected, setIsPasswordProtected] = useState(false);
 
   // Layout Dials
   const filterDropdownRef = useRef(null);
@@ -201,7 +202,7 @@ export default function DocumentViewer({ file = null }) {
   useEffect(() => {
     const checkServer = async () => {
       try {
-        const res = await apiFetch('/health');
+        const res = await apiFetch(`${BACKEND_URL}/health`);
         if (res.ok) setBackendActive(true);
       } catch (e) {
         setBackendActive(false);
@@ -342,7 +343,7 @@ export default function DocumentViewer({ file = null }) {
             setLoading(false);
           });
       } else if (pollStatus === 'failed') {
-        setError(pollError || 'Server Side PowerPoint rendering failed. Switching to local slideshow fallback...');
+        setError(pollError || 'High-fidelity slide rendering failed. Switching to presentation fallback...');
         loadLocalPptx(activeFile.fileObject);
       }
     }
@@ -367,7 +368,7 @@ export default function DocumentViewer({ file = null }) {
         throw new Error('No slides found');
       }
     } catch (err) {
-      setError('Client Side slide renderer failed. View file details or metadata below.');
+      setError('Slide preview could not be loaded. View file details or metadata below.');
     } finally {
       setLoading(false);
     }
@@ -378,6 +379,7 @@ export default function DocumentViewer({ file = null }) {
     if (!activeFile) return;
     setLoading(true);
     setError(null);
+    setIsPasswordProtected(false);
     setPdfDoc(null);
     setExcelBook(null);
     setZipFiles([]);
@@ -407,11 +409,21 @@ export default function DocumentViewer({ file = null }) {
           pdfjsModule.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
           setPdfjs(pdfjsModule);
           const buffer = await fileObj.arrayBuffer();
-          const doc = await pdfjsModule.getDocument({ data: buffer }).promise;
-          setPdfDoc(doc);
-          setPdfTotalPages(doc.numPages);
-          setPdfPage(1);
-          setLoading(false);
+          try {
+            const doc = await pdfjsModule.getDocument({ data: buffer }).promise;
+            setPdfDoc(doc);
+            setPdfTotalPages(doc.numPages);
+            setPdfPage(1);
+            setLoading(false);
+          } catch (pdfErr) {
+            if (pdfErr?.name === 'PasswordException' || pdfErr?.message?.toLowerCase().includes('password')) {
+              setIsPasswordProtected(true);
+              setError('This PDF document is password-protected. Please unlock it with your password to view its contents.');
+              setLoading(false);
+              return;
+            }
+            throw pdfErr;
+          }
           break;
         }
         case 'docx': {
@@ -448,14 +460,13 @@ export default function DocumentViewer({ file = null }) {
             // Trigger server job PPTX to PDF
             const uploadData = await uploadFileSecure(BACKEND_URL, fileObj);
             if (uploadData.success) {
+              const convertFormData = new FormData();
+              convertFormData.append('file_id', uploadData.file_id);
+              convertFormData.append('filename', uploadData.filename);
+              convertFormData.append('target_format', 'pdf');
               const res = await apiFetch(`${BACKEND_URL}/api/convert`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  file_id: uploadData.file_id,
-                  filename: uploadData.filename,
-                  target_format: 'pdf'
-                })
+                body: convertFormData
               });
               if (res.ok) {
                 const data = await res.json();
@@ -467,7 +478,7 @@ export default function DocumentViewer({ file = null }) {
               throw new Error('PPTX upload failed');
             }
           } else {
-            // Client Side client PPTX builder fallback
+            // Presentation builder fallback
             await loadLocalPptx(fileObj);
           }
           break;
@@ -778,7 +789,7 @@ export default function DocumentViewer({ file = null }) {
     }`}>
       <SEOHead 
         title="Document Viewer | DocScalar" 
-        description="Preview any document type fully Client Side and Client Side on DocScalar."
+        description="Preview any document type with high fidelity on DocScalar."
       />
 
       {files.length === 0 ? (
@@ -793,7 +804,7 @@ export default function DocumentViewer({ file = null }) {
                 All-in-One Preview Studio
               </h1>
               <p className="text-xs text-text-tertiary max-w-md mx-auto leading-relaxed">
-                Upload any PDF, Word, Excel, PowerPoint, ZIP, image, audio, or code file to preview it fully Client Side. Your files never touch our servers.
+                Upload any PDF, Word, Excel, PowerPoint, ZIP, image, audio, or code file to preview it instantly with secure, encrypted rendering.
               </p>
             </div>
 
@@ -1123,6 +1134,16 @@ export default function DocumentViewer({ file = null }) {
                 <div className="flex flex-col items-center gap-4 max-w-md text-center p-6 subtle-border bg-red-500/5 rounded-2xl border-red-500/10">
                   <AlertCircle className="w-10 h-10 text-red-500" />
                   <p className="text-xs leading-relaxed text-text-secondary">{error}</p>
+                  {isPasswordProtected && activeFile && (
+                    <button
+                      type="button"
+                      onClick={() => navigate('/pdf/unlock-pdf', { state: { initialFiles: [activeFile.fileObject] } })}
+                      className="mt-1 px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/90 transition flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">lock_open</span>
+                      Unlock This PDF
+                    </button>
+                  )}
                 </div>
               )}
 

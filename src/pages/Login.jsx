@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SEOHead from '../components/SEOHead';
 
@@ -8,6 +8,7 @@ import { BACKEND_URL } from '../utils/api';
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -44,7 +45,8 @@ export default function Login() {
         accessToken: data.access_token
       });
 
-      navigate('/');
+      const destination = location.state?.from?.pathname || '/workspace';
+      navigate(destination, { replace: true });
     } catch (err) {
       setError(err.message || 'Login failed. Please verify your credentials and server connection.');
     }
@@ -115,6 +117,12 @@ export default function Login() {
             </div>
           </div>
 
+          <p className="text-[11px] text-on-surface-variant leading-relaxed mt-3">
+            By logging in, you agree to our{' '}
+            <Link to="/terms" className="text-primary hover:underline font-medium">Terms of Service</Link>
+            {' '}and{' '}
+            <Link to="/privacy" className="text-primary hover:underline font-medium">Privacy Policy</Link>.
+          </p>
           <button
             type="submit"
             className="w-full font-button text-button btn-theme-primary py-3 rounded-lg shadow-sm mt-2"
@@ -130,6 +138,12 @@ export default function Login() {
               Create an account
             </Link>
           </p>
+          <div className="mt-3">
+            <Link to="/" className="font-body-sm text-xs text-on-surface-variant hover:text-primary transition-colors inline-flex items-center gap-1">
+              <span>Continue as Guest</span>
+              <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

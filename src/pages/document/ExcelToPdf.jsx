@@ -34,7 +34,7 @@ export default function ExcelToPdf() {
   const [zoomScale, setZoomScale] = useState(1.0);
 
   // Conversion Configuration State
-  const [engineMode, setEngineMode] = useState('client'); // 'client' | 'server'
+  const [engineMode, setEngineMode] = useState('server'); // 'client' | 'server'
   const [pageSize, setPageSize] = useState('a4'); // 'a4' | 'letter'
   const [orientation, setOrientation] = useState('auto'); // 'auto' | 'portrait' | 'landscape'
   const [gridlines, setGridlines] = useState(true);
@@ -58,9 +58,13 @@ export default function ExcelToPdf() {
         if (res.ok) {
           setBackendActive(true);
           setEngineMode('server');
+        } else {
+          setBackendActive(false);
+          setEngineMode('client');
         }
       } catch (e) {
         setBackendActive(false);
+        setEngineMode('client');
       }
     };
     checkServer();
@@ -330,12 +334,13 @@ export default function ExcelToPdf() {
       title="Excel to PDF Studio"
       description="Convert Excel workbooks (.xlsx, .xls, .csv) into clean, beautifully paginated PDF documents with auto-fitted tables."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="Excel to PDF Online Free — Convert XLSX to PDF | DocScalar"
-        description="Convert Excel spreadsheets (.xlsx, .xls, .csv) into PDF with customized orientation, gridlines, and page margins. 100% private in-browser conversion."
+        description="Convert Excel spreadsheets (.xlsx, .xls, .csv) into PDF with customized orientation, gridlines, and page margins. Fast, secure, and encrypted conversion."
       />
 
       {!result ? (

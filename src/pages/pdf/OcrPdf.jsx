@@ -23,7 +23,7 @@ const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.u
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const LANGUAGES = [
-  { code: 'all', name: 'Auto-Detect (All Languages)', flag: '🌐' },
+  { code: 'all', name: 'Auto-Detect (All Languages)', flag: 'GLOBAL' },
   { code: 'eng', name: 'English', flag: 'US' },
   { code: 'ben', name: 'Bengali (বাংলা)', flag: 'BD' },
   { code: 'hin', name: 'Hindi (हिन्दी)', flag: 'IN' },
@@ -75,7 +75,7 @@ export default function OcrPdf() {
   });
 
   // OCR Configuration State
-  const [ocrMode, setOcrMode] = useState('client'); // 'client' | 'server'
+  const [ocrMode, setOcrMode] = useState('server'); // 'client' | 'server'
   const [selectedLanguage, setSelectedLanguage] = useState('all');
   const [autoEnhance, setAutoEnhance] = useState(true);
   const [embedInvisibleText, setEmbedInvisibleText] = useState(true);
@@ -98,7 +98,10 @@ export default function OcrPdf() {
     const checkServer = async () => {
       try {
         const res = await apiFetch(`${BACKEND_URL}/api/meta/conversions`, { signal: AbortSignal.timeout(1500) });
-        if (res.ok) setBackendActive(true);
+        if (res.ok) {
+          setBackendActive(true);
+          setOcrMode('server');
+        }
       } catch (e) {
         setBackendActive(false);
       }
@@ -425,12 +428,13 @@ export default function OcrPdf() {
       title="OCR PDF Studio"
       description="Transform scanned PDFs into searchable, selectable, and copyable documents with neural character recognition."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="OCR PDF Online Free — Searchable PDF Converter | DocScalar"
-        description="Make scanned PDFs searchable with high precision text recognition. Fast on-device and deep recognition options."
+        description="Make scanned PDFs searchable with high precision text recognition. High-speed neural and deep recognition options."
       />
 
       {!result ? (

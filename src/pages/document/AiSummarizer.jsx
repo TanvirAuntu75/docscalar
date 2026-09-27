@@ -292,12 +292,13 @@ export default function AiSummarizer() {
       title="AI Document Summarizer Studio"
       description="Condense multi-page PDF documents and research papers into executive briefs, key takeaways, and structured insights in seconds."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="AI PDF Summarizer Online Free — Executive Document Briefs | DocScalar"
-        description="Summarize PDF documents and research reports with advanced AI graph centrality. Free, instantaneous, and 100% private in-browser processing."
+        description="Summarize PDF documents and research reports with advanced AI graph centrality. Fast, secure, and encrypted document processing with zero data retention."
       />
 
       {!result ? (

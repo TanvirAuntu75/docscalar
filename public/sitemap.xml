@@ -2,8 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Core Hub Pages -->
   <url><loc>https://docscalar.app/</loc><priority>1.0</priority><changefreq>daily</changefreq></url>
-  <url><loc>https://docscalar.app/workspace</loc><priority>0.9</priority><changefreq>weekly</changefreq></url>
-  <url><loc>https://docscalar.app/canvas</loc><priority>0.9</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docscalar.app/about</loc><priority>0.70</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://docscalar.app/security</loc><priority>0.75</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://docscalar.app/contact</loc><priority>0.70</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://docscalar.app/resume-builder</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://docscalar.app/document-viewer</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://docscalar.app/pricing</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
@@ -53,10 +54,11 @@
   <url><loc>https://docscalar.app/add-page-numbers</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
 
   <!-- Intelligence & Utilities -->
-  <url><loc>https://docscalar.app/translate-pdf</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
-  <url><loc>https://docscalar.app/ai-summarizer</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
   <url><loc>https://docscalar.app/image-converter</loc><priority>0.90</priority><changefreq>weekly</changefreq></url>
   <url><loc>https://docscalar.app/image-resizer</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
   <url><loc>https://docscalar.app/image-compressor</loc><priority>0.85</priority><changefreq>weekly</changefreq></url>
   <url><loc>https://docscalar.app/qr-generator</loc><priority>0.80</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docscalar.app/unzip-file</loc><priority>0.80</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://docscalar.app/privacy</loc><priority>0.30</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://docscalar.app/terms</loc><priority>0.30</priority><changefreq>monthly</changefreq></url>
 </urlset>

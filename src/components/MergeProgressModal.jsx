@@ -223,10 +223,10 @@ export default function MergeProgressModal({
           </button>
         )}
 
-        {/* Footer: Local Execution Guarantee */}
+        {/* Footer: Secure Processing Guarantee */}
         <p className="text-[11px] text-[var(--text-tertiary)] flex items-center gap-1.5 -mt-2">
           <span className="material-symbols-outlined text-[14px] text-emerald-500">lock</span>
-          <span>100% Client-Side In-Memory Assembly. Your documents never leave your device.</span>
+          <span>Encrypted Secure Assembly · Automatic Memory Purge</span>
         </p>
       </div>
     </div>

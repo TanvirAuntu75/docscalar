@@ -42,13 +42,13 @@ const DEFAULT_HTML_SAMPLE = `<!DOCTYPE html>
   <div class="feature-box">
     <h2>Key Capabilities</h2>
     <ul>
-      <li>Client-side 100% private sandbox rendering</li>
+      <li>High-fidelity sandbox rendering with privacy protection</li>
       <li>Full CSS styling, fonts, and layout preservation</li>
       <li>Automatic A4 pagination and scaling</li>
     </ul>
   </div>
   
-  <p>DocScalar delivers instant, enterprise-grade document tools right in your browser.</p>
+  <p>DocScalar delivers instant, enterprise-grade document tools with high precision and security.</p>
 </body>
 </html>`;
 
@@ -60,7 +60,7 @@ export default function HtmlToPdf() {
   const [activeFileIndex, setActiveFileIndex] = useState(0);
 
   // Layout State
-  const [engineMode, setEngineMode] = useState('client'); // 'client' | 'server'
+  const [engineMode, setEngineMode] = useState('server'); // 'client' | 'server'
   const [pageSize, setPageSize] = useState('a4'); // 'a4' | 'letter'
   const [orientation, setOrientation] = useState('portrait'); // 'portrait' | 'landscape'
   const [outputFileName, setOutputFileName] = useState('');
@@ -81,9 +81,16 @@ export default function HtmlToPdf() {
     const checkServer = async () => {
       try {
         const res = await apiFetch(`${BACKEND_URL}/api/meta/conversions`, { signal: AbortSignal.timeout(1500) });
-        if (res.ok) setBackendActive(true);
+        if (res.ok) {
+          setBackendActive(true);
+          setEngineMode('server');
+        } else {
+          setBackendActive(false);
+          setEngineMode('client');
+        }
       } catch (e) {
         setBackendActive(false);
+        setEngineMode('client');
       }
     };
     checkServer();
@@ -287,12 +294,13 @@ export default function HtmlToPdf() {
       title="HTML to PDF Studio"
       description="Convert HTML documents, live web code, or uploaded .html files into pixel-perfect PDF documents."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="HTML to PDF Online Free — Convert HTML to PDF | DocScalar"
-        description="Convert HTML code or files to PDF with full CSS support. 100% private in-browser tool with live sandboxed preview."
+        description="Convert HTML code or files to PDF with full CSS support. Fast, secure, and encrypted tool with live sandboxed preview."
       />
 
       {!result ? (

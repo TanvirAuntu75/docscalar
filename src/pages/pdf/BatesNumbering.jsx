@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../../utils/pdfConfig';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import { applyBatesNumbering } from '../../engines/pdf/batesNumbering';
@@ -216,7 +217,7 @@ export default function BatesNumbering() {
       setCanvasLoading(true);
       try {
         const arrayBuffer = await currentFile.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await loadPdfDocument(arrayBuffer).promise;
         if (isCancelled) {
           pdf.destroy();
           return;
@@ -500,7 +501,7 @@ export default function BatesNumbering() {
     try {
       const currentFile = files[activeFileIndex] || files[0];
       const arrayBuffer = await currentFile.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const pdf = await loadPdfDocument(arrayBuffer).promise;
       const numPages = pdf.numPages;
 
       const results = [];
@@ -614,7 +615,7 @@ export default function BatesNumbering() {
           const fileBlob = new Blob([fileBytes], { type: 'application/pdf' });
 
           const arrayBuffer = await f.arrayBuffer();
-          const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const pdfDoc = await loadPdfDocument(arrayBuffer).promise;
           runningStartNumber += pdfDoc.numPages;
 
           const baseName = f.name.replace(/\.[^.]+$/, '');
@@ -735,12 +736,13 @@ export default function BatesNumbering() {
       title="Bates Numbering PDF"
       description="Add sequential legal Bates numbers, discovery stamps, and alphanumeric prefixes to your PDF."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="Bates Numbering PDF Online Free — Legal Stamp Generator | DocScalar"
-        description="Apply sequential Bates numbering and legal discovery stamps to PDF files 100% locally in your browser. Enterprise confidentiality guaranteed."
+        description="Apply sequential Bates numbering and legal discovery stamps to PDF files securely. Enterprise confidentiality and precision guaranteed."
       />
 
       {!result ? (
@@ -836,7 +838,7 @@ export default function BatesNumbering() {
                         <span className="material-symbols-outlined text-[16px]">chevron_right</span>
                       </button>
                     </div>
-                  </div>
+
                     {/* Safe Margin Active Badge */}
                     {shrinkToFit && (
                       <div className="hidden md:inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold rounded-full">
@@ -1118,6 +1120,7 @@ export default function BatesNumbering() {
                   )}
                 </div>
               </div>
+            </div>
 
             {/* ========================================================================= */}
             {/* RIGHT: Studio Options Sidebar                                             */}

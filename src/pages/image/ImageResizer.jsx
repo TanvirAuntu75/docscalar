@@ -10,6 +10,7 @@ import {
 } from '../../engines/image/resizeImage';
 import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
+import { generateBatchImageThumbnails, safeRevokeUrls } from '../../utils/imagePreviewHelper';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import {
@@ -47,6 +48,7 @@ export default function ImageResizer() {
   const [viewMode, setViewMode] = useState('inspect'); // 'inspect' | 'gallery'
   const [zoomScale, setZoomScale] = useState(1.0);
   const [previewUrls, setPreviewUrls] = useState([]);
+  const [thumbnails, setThumbnails] = useState([]);
   const [naturalDims, setNaturalDims] = useState([]); // Array of { w, h }
 
   // Processing & Result State
@@ -106,29 +108,67 @@ export default function ImageResizer() {
     }
   }, [files, mode, width, height, percentage, presetId, lockAspectRatio, format, quality]);
 
-  // 3. Generate Previews and Extract Natural Dimensions
+  // 3. Generate Previews, Downsampled Thumbnails and Extract Natural Dimensions
   useEffect(() => {
+    let isCancelled = false;
+    const cancellationToken = { isCancelled: false };
+
     const urls = files.map((f) => URL.createObjectURL(f));
     setPreviewUrls(urls);
 
-    const dims = [];
-    files.forEach((f, idx) => {
-      const img = new Image();
-      img.onload = () => {
-        dims[idx] = { w: img.width, h: img.height };
-        if (idx === 0 && dims[0]) {
-          setWidth(dims[0].w);
-          setHeight(dims[0].h);
+    generateBatchImageThumbnails(files, {
+      maxDimension: 320,
+      quality: 0.8,
+      cancellationToken
+    })
+      .then((thumbs) => {
+        if (!isCancelled) {
+          setThumbnails(thumbs);
+          const dims = thumbs.map((t) => ({
+            w: t.originalWidth || 1080,
+            h: t.originalHeight || 1080
+          }));
+          if (dims.length > 0 && dims[0]) {
+            setWidth(dims[0].w);
+            setHeight(dims[0].h);
+          }
+          setNaturalDims(dims);
+        } else {
+          safeRevokeUrls(thumbs);
         }
-        setNaturalDims([...dims]);
-      };
-      img.src = urls[idx];
-    });
+      })
+      .catch((err) => {
+        if (!isCancelled) {
+          console.warn('Image Resizer thumbnail generation warning:', err);
+          const dims = [];
+          files.forEach((f, idx) => {
+            const img = new Image();
+            img.onload = () => {
+              if (isCancelled) return;
+              dims[idx] = { w: img.width || 1080, h: img.height || 1080 };
+              if (idx === 0 && dims[0]) {
+                setWidth(dims[0].w);
+                setHeight(dims[0].h);
+              }
+              setNaturalDims([...dims]);
+            };
+            img.src = urls[idx];
+          });
+        }
+      });
 
     return () => {
-      urls.forEach((u) => URL.revokeObjectURL(u));
+      isCancelled = true;
+      cancellationToken.isCancelled = true;
+      safeRevokeUrls(urls);
     };
   }, [files]);
+
+  useEffect(() => {
+    return () => {
+      safeRevokeUrls(thumbnails);
+    };
+  }, [thumbnails]);
 
   // 4. Aspect Ratio Linked Dimension Handlers
   const currentNatural = naturalDims[activeFileIndex] || naturalDims[0] || { w: 1080, h: 1080 };
@@ -223,11 +263,15 @@ export default function ImageResizer() {
 
   const resetWorkspace = () => {
     clearStudioDraft('image-resizer');
+    safeRevokeUrls(previewUrls);
+    safeRevokeUrls(thumbnails);
     setFiles([]);
+    setThumbnails([]);
     setActiveFileIndex(0);
     setResult(null);
     setError(null);
     setProgress(0);
+    setNaturalDims([]);
   };
 
   const currentFile = files[activeFileIndex] || files[0];
@@ -255,12 +299,13 @@ export default function ImageResizer() {
       title="Image Resizer Studio"
       description="Resize images by exact pixels, percentage scale, or social media presets with high-quality bicubic resampling."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="Image Resizer Online Free — Resize JPG, PNG, WEBP in Bulk | DocScalar"
-        description="Resize images online for free by exact pixels, percentage scale, or social media presets (Instagram, YouTube, Twitter). 100% private in-browser resizing."
+        description="Resize images online for free by exact pixels, percentage scale, or social media presets (Instagram, YouTube, Twitter). Fast, high-fidelity processing with strict privacy."
       />
 
       {!result ? (
@@ -483,7 +528,7 @@ export default function ImageResizer() {
                       >
                         <div className="w-full aspect-square bg-[var(--bg-secondary)] rounded-xl overflow-hidden flex items-center justify-center relative">
                           <img
-                            src={previewUrls[idx]}
+                            src={thumbnails[idx]?.previewUrl || previewUrls[idx]}
                             alt={file.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                           />

@@ -48,7 +48,7 @@ export default function TranslatePdf() {
   // Translation Configuration State
   const [sourceLang, setSourceLang] = useState('auto');
   const [targetLang, setTargetLang] = useState('es');
-  const [engineMode, setEngineMode] = useState('client'); // 'client' | 'server'
+  const [engineMode, setEngineMode] = useState('server'); // 'client' | 'server'
   const [outputFileName, setOutputFileName] = useState('');
 
   // Processing & Poller
@@ -67,9 +67,16 @@ export default function TranslatePdf() {
     const checkServer = async () => {
       try {
         const res = await apiFetch(`${BACKEND_URL}/api/meta/conversions`, { signal: AbortSignal.timeout(1500) });
-        if (res.ok) setBackendActive(true);
+        if (res.ok) {
+          setBackendActive(true);
+          setEngineMode('server');
+        } else {
+          setBackendActive(false);
+          setEngineMode('client');
+        }
       } catch (e) {
         setBackendActive(false);
+        setEngineMode('client');
       }
     };
     checkServer();
@@ -332,10 +339,11 @@ export default function TranslatePdf() {
         const convertFormData = new FormData();
         convertFormData.append('file_id', uploadData.file_id);
         convertFormData.append('filename', uploadData.filename);
-        convertFormData.append('source_lang', sourceLang);
-        convertFormData.append('target_lang', targetLang);
+        convertFormData.append('mode', 'translate');
+        convertFormData.append('target_language', targetLang);
+        if (sourceLang) convertFormData.append('source_language', sourceLang);
 
-        const convertRes = await apiFetch(`${BACKEND_URL}/api/convert/translate-pdf`, {
+        const convertRes = await apiFetch(`${BACKEND_URL}/api/smart-convert`, {
           method: 'POST',
           body: convertFormData
         });
@@ -409,12 +417,13 @@ export default function TranslatePdf() {
       title="AI Document Translator Studio"
       description="Translate entire PDF documents across 20+ languages while preserving layout, structure, and vector typography."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="PDF Translator Online Free — Translate PDF Documents | DocScalar"
-        description="Translate PDF documents into Spanish, French, German, Chinese, Japanese, and 20+ languages online with 100% private in-browser translation."
+        description="Translate PDF documents into Spanish, French, German, Chinese, Japanese, and 20+ languages online with enterprise-grade privacy and layout preservation."
       />
 
       {!result ? (

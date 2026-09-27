@@ -46,7 +46,7 @@ export default function PdfToWord() {
   const [canvasLoading, setCanvasLoading] = useState(false);
 
   // Conversion Configuration State
-  const [engineMode, setEngineMode] = useState('client'); // 'client' | 'server'
+  const [engineMode, setEngineMode] = useState('server'); // 'client' | 'server'
   const [preserveHeadings, setPreserveHeadings] = useState(true);
   const [preserveImages, setPreserveImages] = useState(true);
   const [outputFileName, setOutputFileName] = useState('');
@@ -74,9 +74,16 @@ export default function PdfToWord() {
         });
         if (res.ok && isMounted) {
           setBackendActive(true);
+          setEngineMode('server');
+        } else if (isMounted) {
+          setBackendActive(false);
+          setEngineMode('client');
         }
       } catch (e) {
-        if (isMounted) setBackendActive(false);
+        if (isMounted) {
+          setBackendActive(false);
+          setEngineMode('client');
+        }
       }
     };
     checkServer();
@@ -346,7 +353,7 @@ export default function PdfToWord() {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
-    poller.resetPoller();
+    poller.cancelJob();
     setProcessing(false);
     setProgress(0);
     setStatusMessage('');
@@ -369,6 +376,7 @@ export default function PdfToWord() {
         setStatusMessage(`Processing batch of ${files.length} documents...`);
         const zip = new JSZip();
         const convertedItems = [];
+        const failedDocs = [];
 
         for (let idx = 0; idx < files.length; idx++) {
           if (abortControllerRef.current?.signal?.aborted) {
@@ -383,23 +391,82 @@ export default function PdfToWord() {
           setStatusMessage(`Converting document ${idx + 1} of ${files.length}: ${currentDoc.name}`);
           setProgress(baseProgress + 2);
 
-          const docxBlob = await convertPdfToWord(
-            currentDoc,
-            { preserveHeadings, preserveImages },
-            (subPct) => {
-              const docStep = Math.round((subPct / 100) * (90 / files.length));
-              setProgress(Math.min(95, baseProgress + docStep));
+          let docxBlob;
+          try {
+            if (engineMode === 'server' && backendActive) {
+              try {
+                const uploadData = await uploadFileSecure(BACKEND_URL, currentDoc);
+                if (!uploadData.success) throw new Error(`Upload failed for ${currentDoc.name}`);
+
+                const convertFormData = new FormData();
+                convertFormData.append('file_id', uploadData.file_id);
+                convertFormData.append('filename', uploadData.filename);
+
+                const convertRes = await apiFetch(`${BACKEND_URL}/api/convert/pdf-to-docx`, {
+                  method: 'POST',
+                  body: convertFormData,
+                  signal: abortControllerRef.current?.signal
+                });
+                if (!convertRes.ok) throw new Error(`Failed to queue conversion for ${currentDoc.name}`);
+                const convertData = await convertRes.json();
+
+                let completed = false;
+                let attempts = 0;
+                while (!completed && attempts < 60) {
+                  if (abortControllerRef.current?.signal?.aborted) {
+                    throw new Error('Batch conversion was cancelled.');
+                  }
+                  await new Promise(r => setTimeout(r, 1000));
+                  attempts++;
+                  const stRes = await apiFetch(`${BACKEND_URL}/api/job/${convertData.job_id}/status`);
+                  if (stRes.ok) {
+                    const stData = await stRes.json();
+                    if (stData.status === 'finished') {
+                      const downRes = await apiFetch(stData.download_url);
+                      docxBlob = await downRes.blob();
+                      completed = true;
+                    } else if (stData.status === 'failed') {
+                      throw new Error(stData.error || `Server conversion failed for ${currentDoc.name}`);
+                    }
+                  }
+                }
+              } catch (serverErr) {
+                console.warn(`Server batch item failed, falling back to local engine:`, serverErr);
+              }
             }
-          );
 
-          zip.file(docxName, docxBlob);
-          convertedItems.push({
-            name: docxName,
-            blob: docxBlob,
-            size: docxBlob.size
-          });
+            if (!docxBlob) {
+              docxBlob = await convertPdfToWord(
+                currentDoc,
+                { preserveHeadings, preserveImages },
+                (subPct) => {
+                  const docStep = Math.round((subPct / 100) * (90 / files.length));
+                  setProgress(Math.min(95, baseProgress + docStep));
+                }
+              );
+            }
 
-          await saveFile(docxName, docxBlob.size, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'PDF to WORD', docxBlob);
+            zip.file(docxName, docxBlob);
+            convertedItems.push({
+              name: docxName,
+              blob: docxBlob,
+              size: docxBlob.size
+            });
+
+            await saveFile(docxName, docxBlob.size, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'PDF to WORD', docxBlob);
+          } catch (docErr) {
+            console.error(`Failed to convert ${currentDoc.name}:`, docErr);
+            failedDocs.push({ name: currentDoc.name, reason: docErr.message || 'Conversion failed' });
+          }
+        }
+
+        if (convertedItems.length === 0) {
+          throw new Error(`Batch conversion failed: None of the ${files.length} documents could be converted. ${failedDocs.map(f => `${f.name}: ${f.reason}`).join('; ')}`);
+        }
+
+        if (failedDocs.length > 0) {
+          const report = `Unconverted Documents Summary:\n${failedDocs.map((f, i) => `${i + 1}. ${f.name} - Reason: ${f.reason}`).join('\n')}`;
+          zip.file('unconverted_files_summary.txt', report);
         }
 
         setStatusMessage('Packaging batch ZIP archive...');
@@ -414,7 +481,8 @@ export default function PdfToWord() {
           name: zipName,
           size: zipBlob.size,
           items: convertedItems,
-          engineMode: 'client'
+          engineMode: engineMode === 'server' && backendActive ? 'server' : 'client',
+          failedCount: failedDocs.length
         });
         await clearStudioDraft('pdf-to-word');
       } else {
@@ -530,12 +598,13 @@ export default function PdfToWord() {
       title="PDF to Word (DOCX)"
       description="Convert PDF documents into fully editable Microsoft Word (.docx) files with preserved layout, typography, and page structure."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="PDF to Word Converter Online — Convert PDF to DOCX | DocScalar"
-        description="Convert PDF documents into fully editable Microsoft Word (.docx) files. Fast client-side private conversion and desktop high-fidelity layout support."
+        description="Convert PDF documents into fully editable Microsoft Word (.docx) files. Fast, secure conversion and desktop high-fidelity layout support."
       />
 
       {!result ? (
@@ -900,7 +969,7 @@ export default function PdfToWord() {
                   </div>
                   <span className="text-[10px] text-[var(--text-tertiary)] px-1">
                     {engineMode === 'client'
-                      ? 'Client-side processing preserves complete privacy with zero cloud upload.'
+                      ? 'Fast processing mode optimizes document throughput.'
                       : backendActive
                       ? 'High-precision layout reconstruction with deep structural formatting.'
                       : 'Full Precision engine is currently offline. Fast Mode is active.'}
@@ -989,9 +1058,21 @@ export default function PdfToWord() {
 
                 {/* Error Banner */}
                 {error && (
-                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium flex items-start gap-2">
-                    <AlertCircle size={15} className="shrink-0 mt-0.5" />
-                    <span>{error}</span>
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium flex flex-col gap-2">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle size={15} className="shrink-0 mt-0.5" />
+                      <span>{error}</span>
+                    </div>
+                    {error.toLowerCase().includes('password') && (
+                      <Link
+                        to="/pdf/unlock-pdf"
+                        state={{ initialFiles: files }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-[11px] rounded-lg transition-colors w-fit shadow-xs"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">lock_open</span>
+                        <span>Unlock Document with Unlock PDF →</span>
+                      </Link>
+                    )}
                   </div>
                 )}
               </div>

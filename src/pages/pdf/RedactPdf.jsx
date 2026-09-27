@@ -691,6 +691,7 @@ export default function RedactPdf() {
       title="Redact PDF Studio"
       description="Permanently remove sensitive personal information, custom text terms, and hidden metadata from your PDF."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >

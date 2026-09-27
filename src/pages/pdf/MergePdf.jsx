@@ -20,10 +20,118 @@ import {
 import { countPagesInRange, validatePageRange, sanitizePdfFilename } from '../../engines/pdf/pageRangeUtils';
 export { countPagesInRange, validatePageRange, sanitizePdfFilename };
 
+import { releaseCanvas } from '../../utils/canvasLifecycle';
+import { computeThumbnailViewport } from '../../utils/thumbnailHelper';
 import * as pdfjsLib from 'pdfjs-dist';
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+
+/**
+ * Generates a DPR-aware thumbnail preview and inspects first page for scan borders.
+ * Uses computeThumbnailViewport (targetWidth: 160, maxDpr: 2) and guarantees
+ * immediate release of temporary canvas backing stores via releaseCanvas().
+ * 
+ * @param {object} firstPage - PDF.js PageProxy object
+ * @param {File|object} [file] - Document file reference for logging
+ * @param {object} [options={}] - Viewport and rendering options
+ * @returns {Promise<{ thumbnailUrl: string|null, hasScanBorders: boolean, detectedCropBox: object|null, pdfCropBox: object|null, croppedThumbnailUrl: string|null, viewport: object }>}
+ */
+export async function generateThumbnail(firstPage, file, options = {}) {
+  const viewport = computeThumbnailViewport(firstPage, {
+    targetWidth: options.targetWidth || 160,
+    maxDpr: options.maxDpr || 2,
+    ...(options.rotation !== undefined ? { rotation: options.rotation } : {}),
+    ...(options.dpr !== undefined ? { dpr: options.dpr } : {})
+  });
+
+  const canvas = options.canvas || (typeof document !== 'undefined' && document.createElement
+    ? document.createElement('canvas')
+    : null);
+
+  if (!canvas) {
+    return {
+      thumbnailUrl: null,
+      hasScanBorders: false,
+      detectedCropBox: null,
+      pdfCropBox: null,
+      croppedThumbnailUrl: null,
+      viewport
+    };
+  }
+
+  canvas.width = Math.round(viewport.width);
+  canvas.height = Math.round(viewport.height);
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  let thumbnailUrl = null;
+  let hasScanBorders = false;
+  let detectedCropBox = null;
+  let pdfCropBox = null;
+  let croppedThumbnailUrl = null;
+
+  try {
+    if (ctx) {
+      await firstPage.render({ canvasContext: ctx, viewport }).promise;
+      thumbnailUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+      // VisionClean: Smart Scan Border Analysis on First Page
+      try {
+        detectedCropBox = detectSmartBorders(canvas);
+        if (detectedCropBox && detectedCropBox.hasBlackBorders) {
+          hasScanBorders = true;
+          pdfCropBox = computeCleanPdfCropBox(
+            (firstPage.view && firstPage.view[2]) || viewport.width,
+            (firstPage.view && firstPage.view[3]) || viewport.height,
+            canvas.width,
+            canvas.height,
+            detectedCropBox
+          );
+
+          // Generate clean cropped thumbnail preview
+          if (detectedCropBox.cleanBoxPx) {
+            const { x, y, width: cw, height: ch } = detectedCropBox.cleanBoxPx;
+            const cropCanvas = (typeof document !== 'undefined' && document.createElement)
+              ? document.createElement('canvas')
+              : null;
+            if (cropCanvas) {
+              cropCanvas.width = cw;
+              cropCanvas.height = ch;
+              try {
+                const cropCtx = cropCanvas.getContext('2d');
+                if (cropCtx) {
+                  cropCtx.drawImage(canvas, x, y, cw, ch, 0, 0, cw, ch);
+                  croppedThumbnailUrl = cropCanvas.toDataURL('image/jpeg', 0.85);
+                }
+              } finally {
+                releaseCanvas(cropCanvas);
+              }
+            }
+          }
+        }
+      } catch (cropErr) {
+        console.warn('[DocScalar] Border detection error on', file?.name || 'file', cropErr);
+      }
+    }
+  } finally {
+    releaseCanvas(canvas);
+  }
+
+  return {
+    thumbnailUrl,
+    hasScanBorders,
+    detectedCropBox,
+    pdfCropBox,
+    croppedThumbnailUrl,
+    viewport
+  };
+}
+
+export const getPagePreview = generateThumbnail;
 
 export default function MergePdf() {
   const [files, setFiles] = useState([]);
@@ -480,51 +588,14 @@ export default function MergePdf() {
         const pageCount = pdf.numPages;
 
         const firstPage = await pdf.getPage(1);
-        const viewport = firstPage.getViewport({ scale: 0.35 });
+        const {
+          thumbnailUrl,
+          hasScanBorders,
+          detectedCropBox,
+          pdfCropBox,
+          croppedThumbnailUrl
+        } = await generateThumbnail(firstPage, file);
 
-        const canvas = document.createElement('canvas');
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        await firstPage.render({ canvasContext: ctx, viewport }).promise;
-        const thumbnailUrl = canvas.toDataURL('image/jpeg', 0.85);
-
-        // VisionClean: Smart Scan Border Analysis on First Page
-        let hasScanBorders = false;
-        let detectedCropBox = null;
-        let pdfCropBox = null;
-        let croppedThumbnailUrl = null;
-
-        try {
-          detectedCropBox = detectSmartBorders(canvas);
-          if (detectedCropBox && detectedCropBox.hasBlackBorders) {
-            hasScanBorders = true;
-            pdfCropBox = computeCleanPdfCropBox(
-              firstPage.view[2] || viewport.width,
-              firstPage.view[3] || viewport.height,
-              canvas.width,
-              canvas.height,
-              detectedCropBox
-            );
-
-            // Generate clean cropped thumbnail preview
-            if (detectedCropBox.cleanBoxPx) {
-              const { x, y, width: cw, height: ch } = detectedCropBox.cleanBoxPx;
-              const cropCanvas = document.createElement('canvas');
-              cropCanvas.width = cw;
-              cropCanvas.height = ch;
-              const cropCtx = cropCanvas.getContext('2d');
-              cropCtx.drawImage(canvas, x, y, cw, ch, 0, 0, cw, ch);
-              croppedThumbnailUrl = cropCanvas.toDataURL('image/jpeg', 0.85);
-            }
-          }
-
-        } catch (cropErr) {
-          console.warn('[DocScalar] Border detection error on', file.name, cropErr);
-        }
 
         setPdfItems((prev) =>
           prev.map((item) =>
@@ -1085,12 +1156,15 @@ export default function MergePdf() {
       title="Merge PDFs"
       description="Combine multiple PDF files into one document and arrange them in the exact order you want."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
+      setResult={setResult}
+      onReset={reset}
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Merge PDF Online (100% Free & Local) | DocScalar"
-        description="Combine PDF documents in your browser. Reorder, rotate, sort, and merge multiple PDF files locally with total privacy."
+        title="Merge PDF Online Free — Fast & Secure PDF Combiner | DocScalar"
+        description="Combine PDF documents securely. Reorder, rotate, sort, and merge multiple PDF files with secure transit encryption."
       />
 
       {!result ? (

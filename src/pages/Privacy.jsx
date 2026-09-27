@@ -16,17 +16,17 @@ export default function Privacy() {
 
       <div className="bg-surface-container border border-outline-variant rounded-xl p-8 md:p-12 max-w-3xl w-full shadow-md z-10 text-left">
         <h1 className="font-h1 text-[32px] md:text-[40px] text-on-background mb-2 font-semibold">Privacy Policy</h1>
-        <p className="font-body-md text-on-surface-variant mb-6 text-sm">Last updated: June 14, 2026</p>
+        <p className="font-body-md text-on-surface-variant mb-6 text-sm">Last updated: September 26, 2026</p>
 
         <div className="prose dark:prose-invert max-w-none flex flex-col gap-6 text-on-surface-variant font-body-md leading-relaxed">
           <section className="flex flex-col gap-2">
-            <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">1. Introduction & Local-First Commitment</h2>
+            <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">1. Introduction & Security Commitment</h2>
             <p>
-              Welcome to DocScalar ("we", "our", "us"). We are committed to protecting your personal data and privacy. 
-              Our primary design principle is **Privacy First**:
+              Welcome to DocScalar ("we", "our", "us"). We are committed to protecting your personal data, privacy, and document confidentiality. 
+              Our primary design principle is **Security & Privacy by Design**:
             </p>
             <blockquote className="border-l-4 border-primary pl-4 py-1 my-2 bg-surface-container-low/50 rounded-r-lg font-medium text-on-surface">
-              Whenever possible, your documents are processed 100% locally in your browser using Client Side WebAssembly, Javascript, and canvas engines. This means your files never leave your device.
+              Your documents are transmitted over secure encrypted connections. File processing is isolated, transient, and automatically purged immediately upon completion.
             </blockquote>
           </section>
 
@@ -38,14 +38,14 @@ export default function Privacy() {
             <ul className="list-disc pl-6 flex flex-col gap-1.5">
               <li><strong>Immediate Deletion:</strong> Files are stored in encrypted temporary folders on the worker server, processed, and immediately deleted upon completion or failure of the task.</li>
               <li><strong>No Long-term Storage:</strong> We do not store, copy, analyze, or train AI models on the contents of your uploaded documents.</li>
-              <li><strong>Temporary Cache:</strong> Completed jobs are kept in a transient storage cache for a maximum of 1 hour to allow you to download them. After 1 hour, they are permanently purged.</li>
+              <li><strong>Temporary Cache:</strong> Completed jobs are kept in a transient storage cache for a maximum of 30 minutes to allow you to download them. After 30 minutes, they are permanently purged.</li>
             </ul>
           </section>
 
           <section className="flex flex-col gap-2">
-            <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">3. Compliance with New Zealand Privacy Act 2020</h2>
+            <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">3. International Privacy Compliance</h2>
             <p>
-              As a service operating out of New Zealand, we fully adhere to the Information Privacy Principles (IPPs) outlined in the **Privacy Act 2020**:
+              We fully adhere to international privacy standards including GDPR (EU) and CCPA (California):
             </p>
             <ul className="list-disc pl-6 flex flex-col gap-1.5">
               <li><strong>Access and Correction:</strong> You have the right to request access to and correction of any personal information we hold about you (such as your account email).</li>
@@ -78,8 +78,18 @@ export default function Privacy() {
           <section className="flex flex-col gap-2">
             <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">6. Contact Us</h2>
             <p>
-              If you have any questions about this Privacy Policy or wish to exercise your data rights, please contact us at: <strong>privacy@docscalar.com</strong>.
+              If you have any questions about this Privacy Policy or wish to exercise your data rights, please contact us at: <strong>privacy@docscalar.app</strong>.
             </p>
+          </section>
+
+          <section className="flex flex-col gap-2">
+            <h2 className="font-h3 text-xl font-bold text-on-background border-b border-outline-variant/30 pb-2">7. Third-Party Service Providers</h2>
+            <ul className="list-disc pl-6 flex flex-col gap-1.5">
+              <li>Stripe (Payment processing, San Francisco, USA)</li>
+              <li>Cloudflare (CDN, DNS, R2 object storage; global edge network)</li>
+              <li>Anthropic (AI-assisted document analysis, optional; San Francisco, USA)</li>
+              <li>Google (AI-assisted document analysis, optional; global)</li>
+            </ul>
           </section>
         </div>
       </div>

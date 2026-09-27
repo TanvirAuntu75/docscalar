@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, PenTool, Type, Upload, RotateCcw, ShieldCheck } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../../../utils/pdfConfig';
+import { releaseCanvas, safeDestroyPdf, safeCancelRenderTask } from '../../../utils/canvasLifecycle';
 
 export default function SignStudio({ file, params, onChange, nlpOp }) {
   const [pdfDocument, setPdfDocument] = useState(null);
@@ -26,6 +28,14 @@ export default function SignStudio({ file, params, onChange, nlpOp }) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [isDraggingSig, setIsDraggingSig] = useState(false);
 
+  // Teardown canvas memory on unmount
+  useEffect(() => {
+    return () => {
+      releaseCanvas(pdfCanvasRef.current);
+      releaseCanvas(drawCanvasRef.current);
+    };
+  }, []);
+
   // Load cursive fonts for typing tab
   useEffect(() => {
     const link = document.createElement('link');
@@ -43,10 +53,11 @@ export default function SignStudio({ file, params, onChange, nlpOp }) {
     const loadPdf = async () => {
       try {
         setLoading(true);
+        setPdfDocument(null);
         const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await loadPdfDocument(arrayBuffer).promise;
         if (!active) {
-          pdf.destroy();
+          safeDestroyPdf(pdf);
           return;
         }
         loadedPdf = pdf;
@@ -63,7 +74,7 @@ export default function SignStudio({ file, params, onChange, nlpOp }) {
 
     return () => {
       active = false;
-      if (loadedPdf) loadedPdf.destroy();
+      safeDestroyPdf(loadedPdf);
     };
   }, [file]);
 
@@ -71,9 +82,14 @@ export default function SignStudio({ file, params, onChange, nlpOp }) {
   useEffect(() => {
     if (!pdfDocument) return;
 
+    let renderTask = null;
+    let cancelled = false;
+
     const renderPage = async () => {
       try {
         const page = await pdfDocument.getPage(activePageIndex + 1);
+        if (cancelled) return;
+
         const canvas = pdfCanvasRef.current;
         if (!canvas) return;
 
@@ -82,13 +98,21 @@ export default function SignStudio({ file, params, onChange, nlpOp }) {
         canvas.height = viewport.height;
 
         const ctx = canvas.getContext('2d');
-        await page.render({ canvasContext: ctx, viewport }).promise;
+        renderTask = page.render({ canvasContext: ctx, viewport });
+        await renderTask.promise;
       } catch (err) {
-        console.error("Error rendering PDF page in SignStudio:", err);
+        if (err?.name !== 'RenderingCancelledException') {
+          console.error("Error rendering PDF page in SignStudio:", err);
+        }
       }
     };
 
     renderPage();
+
+    return () => {
+      cancelled = true;
+      safeCancelRenderTask(renderTask);
+    };
   }, [pdfDocument, activePageIndex]);
 
   // Synchronize changes back to StitchCanvas params

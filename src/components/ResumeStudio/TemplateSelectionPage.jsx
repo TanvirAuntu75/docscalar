@@ -6,7 +6,7 @@ import React, { useState, useMemo } from 'react';
 import ToolPageLayout from '../ToolPageLayout';
 import SEOHead from '../SEOHead';
 import { useResumeContext } from '../../context/ResumeContext.jsx';
-import { TEMPLATE_MAP } from '../../engines/utility/templateMetadata.js';
+import { TEMPLATE_MAP } from '../../engines/utility/templateRegistry.js';
 import TemplateCard from './shared/TemplateCard.jsx';
 
 const THEME_COLORS = [
@@ -102,9 +102,9 @@ export default function TemplateSelectionPage() {
         className="cv-template-selection-page"
         style={{
           width: '100%',
-          maxWidth: '100%',
+          maxWidth: '1680px',
           margin: '0 auto',
-          padding: '1.5rem clamp(1.25rem, 3.5vw, 4rem) 3.5rem',
+          padding: '1.5rem clamp(1rem, 2.5vw, 3rem) 3.5rem',
           boxSizing: 'border-box'
         }}
       >

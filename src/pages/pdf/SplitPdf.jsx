@@ -8,6 +8,7 @@ import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '..
 import { saveAs } from 'file-saver';
 import { useJobPoller } from '../../hooks/useJobPoller';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../../utils/pdfConfig';
 import JSZip from 'jszip';
 import { splitPdf as localSplitPdf } from '../../engines/pdf/splitPdf';
 import { formatFileSize } from '../../utils/constants';
@@ -32,6 +33,7 @@ export default function SplitPdf() {
   const [files, setFiles] = useState([]);
   const [activeFileIndex, setActiveFileIndex] = useState(0);
   const [processing, setProcessing] = useState(false);
+  const [docLoading, setDocLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -109,6 +111,47 @@ export default function SplitPdf() {
     checkServer();
   }, []);
 
+  // Monitor Backend Poller for Split PDF Job Completion
+  useEffect(() => {
+    if (poller.status === 'finished' && poller.result) {
+      setProcessing(false);
+      const downloadUrl = poller.result.downloadUrl;
+      const originalName = files[activeFileIndex]?.name.replace(/\.[^.]+$/, '') || 'document';
+      const isZip = !downloadUrl?.endsWith('.pdf');
+      const finalName = outputFileName || (isZip ? `${originalName}_split.zip` : `${originalName}_split.pdf`);
+
+      apiFetch(downloadUrl)
+        .then(res => res.blob())
+        .then(blob => {
+          setResult({
+            downloadUrl,
+            blob,
+            name: finalName,
+            size: blob.size,
+            isZip,
+            filesCount: isZip ? 2 : 1,
+            isSinglePdf: !isZip,
+            totalSize: blob.size
+          });
+          saveFile(finalName, blob.size, isZip ? 'application/zip' : 'application/pdf', 'Split PDF', blob);
+          clearStudioDraft('split-pdf');
+        })
+        .catch(() => {
+          setResult({
+            downloadUrl,
+            name: finalName,
+            isZip
+          });
+          clearStudioDraft('split-pdf');
+        });
+    } else if (poller.status === 'failed') {
+      setProcessing(false);
+      setError(poller.error || 'Server PDF splitting task failed.');
+    } else if (poller.status === 'started' || poller.status === 'queued') {
+      setProgress(poller.progress || 35);
+    }
+  }, [poller.status, poller.result, poller.error, poller.progress, files, activeFileIndex, outputFileName]);
+
   const paintThumbnailCanvas = useCallback((idx, isCropped) => {
     const canvas = canvasRefs.current[idx];
     const offCanvas = rawCanvasCacheRef.current[idx];
@@ -144,11 +187,12 @@ export default function SplitPdf() {
     if (activeFileIndex >= files.length) { setActiveFileIndex(0); return; }
     let isCancelled = false;
     const loadPdfThumbnails = async () => {
-      setProcessing(true); setError(null); setPageCropBoxes({});
+      setDocLoading(true); setError(null); setPageCropBoxes({});
       rawCanvasCacheRef.current = {}; detectionCacheRef.current = {};
       try {
         const file = files[activeFileIndex];
-        const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await loadPdfDocument(arrayBuffer).promise;
         if (isCancelled) { pdf.destroy(); return; }
         pdfInstanceRef.current = pdf;
         const count = pdf.numPages;
@@ -158,7 +202,7 @@ export default function SplitPdf() {
         const baseName = file.name.replace(/\.[^.]+$/, '');
         setOutputFileName(`${baseName}-split.zip`);
         setThumbnails(Array.from({ length: count }, (_, idx) => idx + 1));
-        setProcessing(false);
+        setDocLoading(false);
         setTimeout(async () => {
           const detectedBoxes = {};
           let anyScanBordersFound = false;
@@ -199,18 +243,15 @@ export default function SplitPdf() {
               detectionCacheRef.current[i - 1] = pageDetection;
 
               // Paint thumbnail immediately
-              paintThumbnailCanvas(i - 1, cropper.isActive || hasScanBorders);
+              paintThumbnailCanvas(i - 1, cropper.isActive);
             } catch (err) { console.warn(`Error rendering thumbnail page ${i}:`, err); }
           }
           if (!isCancelled) {
             setPageCropBoxes(detectedBoxes);
-            if (anyScanBordersFound) {
-              cropper.activate();
-            }
           }
         }, 80);
       } catch (err) {
-        if (!isCancelled) { setProcessing(false); setError('Failed to parse PDF document.'); }
+        if (!isCancelled) { setDocLoading(false); setError('Failed to parse PDF document.'); }
       }
     };
     loadPdfThumbnails();
@@ -300,7 +341,11 @@ export default function SplitPdf() {
       try {
         const uploadData = await uploadFileSecure(BACKEND_URL, files[activeFileIndex], setProgress);
         const fd = new FormData();
-        fd.append('file_id', uploadData.file_id); fd.append('mode', modeArg); fd.append('range', rangeArg); fd.append('extra_params', JSON.stringify(extraArg));
+        fd.append('file_id', uploadData.file_id);
+        fd.append('filename', uploadData.filename);
+        fd.append('mode', modeArg);
+        fd.append('range', rangeArg);
+        fd.append('extra_params', JSON.stringify(extraArg));
         const res = await apiFetch(`${BACKEND_URL}/api/convert/split-pdf`, { method: 'POST', body: fd });
         if (!res.ok) throw new Error();
         poller.startPolling((await res.json()).job_id);
@@ -348,7 +393,8 @@ export default function SplitPdf() {
   };
 
   const downloadAll = async () => {
-    if (result.downloadUrl) saveAs(result.downloadUrl, result.name);
+    if (result.blob) saveAs(result.blob, result.name);
+    else if (result.downloadUrl) saveAs(result.downloadUrl, result.name);
     else if (result.localResult) {
       if (result.isSinglePdf) saveAs(result.localResult.blobs[0], result.name);
       else {
@@ -369,6 +415,7 @@ export default function SplitPdf() {
     setThumbnails([]);
     rawCanvasCacheRef.current = {};
     detectionCacheRef.current = {};
+    poller.resetPoller();
   };
 
   const getGridTemplate = () => {
@@ -393,11 +440,13 @@ export default function SplitPdf() {
       title="Split PDF"
       description="Extract specific pages, partition custom ranges, split at intervals, or divide outline bookmarks."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
+      setResult={setResult}
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Split PDF Pages Online Free (100% Local) | DocScalar"
+        title="Split PDF Pages Online Free — Separate PDF Files | DocScalar"
         description="Split PDF pages online. Choose Custom Ranges, Fixed Intervals, Size-Based limits, or Visual selection grid thumbnail extractor. Fully responsive & private."
       />
 
@@ -417,8 +466,8 @@ export default function SplitPdf() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-y-auto relative bg-[var(--bg-tertiary)]">
               {/* Sticky Workspace Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2 flex-wrap">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
+                  <div className="flex items-center gap-2 shrink-0">
                     {/* Active File Switcher / Document Identity */}
                     {files.length > 1 ? (
                       <div className="h-8 flex items-center gap-1.5 bg-[var(--bg-secondary)] px-3 py-1.5 rounded-lg border border-[var(--border-subtle)]">
@@ -563,131 +612,138 @@ export default function SplitPdf() {
 
               {/* Visual Grid of PDF Pages */}
               <div className="workspace-canvas flex-1 p-4 sm:p-6">
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: getGridTemplate(),
-                    gap: zoomLevel === 1 ? '0.75rem' : '1.25rem'
-                  }}
-                  className="w-full"
-                >
-                  {visibleThumbnails.map((pageNum) => {
-                    const idx = pageNum - 1;
-                    const isSelected = selectedPages.includes(idx);
-                    const rangeBadges = pageRangeMapping[pageNum] || [];
-                    const hasRangeBadge = rangeBadges.length > 0;
-                    const primaryBadge = rangeBadges[0];
-                    const isInteractiveExtract = activeTab === 'extract' && extractMode === 'selected';
+                {docLoading ? (
+                  <div className="flex flex-col items-center justify-center min-h-[360px] py-16 gap-3 text-slate-500">
+                    <div className="w-9 h-9 border-3 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+                    <span className="text-xs font-semibold text-[var(--text-secondary)]">Reading document pages...</span>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: getGridTemplate(),
+                      gap: zoomLevel === 1 ? '0.75rem' : '1.25rem'
+                    }}
+                    className="w-full"
+                  >
+                    {visibleThumbnails.map((pageNum) => {
+                      const idx = pageNum - 1;
+                      const isSelected = selectedPages.includes(idx);
+                      const rangeBadges = pageRangeMapping[pageNum] || [];
+                      const hasRangeBadge = rangeBadges.length > 0;
+                      const primaryBadge = rangeBadges[0];
+                      const isInteractiveExtract = activeTab === 'extract' && extractMode === 'selected';
 
-                    return (
-                      <div
-                        key={pageNum}
-                        onClick={() => {
-                          if (isInteractiveExtract) togglePageSelection(idx);
-                        }}
-                        className={`group relative flex flex-col bg-[var(--bg-primary)] border rounded-xl overflow-hidden select-none transition-all shadow-xs hover:shadow-md ${
-                          isInteractiveExtract ? 'cursor-pointer' : 'cursor-default'
-                        } ${
-                          isInteractiveExtract
-                            ? isSelected
-                              ? 'ring-2 ring-[var(--color-primary)] border-[var(--color-primary)] bg-[var(--color-primary)]/5'
-                              : 'border-[var(--border-subtle)] opacity-50 hover:opacity-100 hover:border-[var(--color-primary)]/60'
-                            : hasRangeBadge
-                            ? `ring-1 ${primaryBadge.color.ring} ${primaryBadge.color.border}`
-                            : 'border-[var(--border-subtle)]'
-                        }`}
-                      >
-                        {/* Sequence Number Badge & Checkbox */}
-                        <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5">
-                          {isInteractiveExtract && (
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => togglePageSelection(idx)}
-                              onClick={(e) => e.stopPropagation()}
-                              className="w-4 h-4 rounded accent-[var(--color-primary)] cursor-pointer"
-                            />
-                          )}
-                          <span className="bg-black/70 backdrop-blur-xs text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-xs">
-                            #{pageNum}
-                          </span>
-                          {cropper.isActive ? (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                cropper.revert();
-                              }}
-                              className="text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1 cursor-pointer transition-all bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-500/50 shrink-0"
-                              title="Smart Cropping Active — Click to restore original document"
-                            >
-                              <span className="material-symbols-outlined text-[11px]">check_circle</span>
-                              <span>Cropped</span>
-                            </button>
-                          ) : pageCropBoxes[idx]?.hasScanBorders ? (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                cropper.activate();
-                              }}
-                              className="text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1 cursor-pointer transition-all bg-amber-500 hover:bg-amber-600 text-white border border-amber-400/50 shrink-0"
-                              title="Photocopy scan borders detected — Click to remove scan borders"
-                            >
-                              <span className="material-symbols-outlined text-[11px]">auto_fix_high</span>
-                              <span>Borders Detected</span>
-                            </button>
-                          ) : (
-                            <div
-                              className="text-[9px] font-semibold px-2 py-0.5 rounded-md shadow-xs flex items-center gap-1 bg-white text-slate-600 border border-slate-200 shrink-0 select-none cursor-default"
-                              title="Clean digital document: zero scan borders detected"
-                            >
-                              <span className="material-symbols-outlined text-[11px] text-slate-500">check_circle</span>
-                              <span>Clean Page</span>
+                      return (
+                        <div
+                          key={pageNum}
+                          onClick={() => {
+                            if (isInteractiveExtract) togglePageSelection(idx);
+                          }}
+                          className={`group relative flex flex-col bg-[var(--bg-primary)] border rounded-xl overflow-hidden select-none transition-all shadow-xs hover:shadow-md ${
+                            isInteractiveExtract ? 'cursor-pointer' : 'cursor-default'
+                          } ${
+                            isInteractiveExtract
+                              ? isSelected
+                                ? 'ring-2 ring-[var(--color-primary)] border-[var(--color-primary)] bg-[var(--color-primary)]/5'
+                                : 'border-[var(--border-subtle)] opacity-50 hover:opacity-100 hover:border-[var(--color-primary)]/60'
+                              : hasRangeBadge
+                              ? `ring-1 ${primaryBadge.color.ring} ${primaryBadge.color.border}`
+                              : 'border-[var(--border-subtle)]'
+                          }`}
+                        >
+                          {/* Sequence Number Badge & Checkbox */}
+                          <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5">
+                            {isInteractiveExtract && (
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => togglePageSelection(idx)}
+                                onClick={(e) => e.stopPropagation()}
+                                className="w-4 h-4 rounded accent-[var(--color-primary)] cursor-pointer"
+                              />
+                            )}
+                            <span className="bg-black/70 backdrop-blur-xs text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-xs">
+                              #{pageNum}
+                            </span>
+                            {cropper.isActive ? (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  cropper.revert();
+                                }}
+                                className="text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1 cursor-pointer transition-all bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-500/50 shrink-0"
+                                title="Smart Cropping Active — Click to restore original document"
+                              >
+                                <span className="material-symbols-outlined text-[11px]">check_circle</span>
+                                <span>Cropped</span>
+                              </button>
+                            ) : pageCropBoxes[idx]?.hasScanBorders ? (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  cropper.activate();
+                                }}
+                                className="text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1 cursor-pointer transition-all bg-amber-500 hover:bg-amber-600 text-white border border-amber-400/50 shrink-0"
+                                title="Photocopy scan borders detected — Click to remove scan borders"
+                              >
+                                <span className="material-symbols-outlined text-[11px]">auto_fix_high</span>
+                                <span>Borders Detected</span>
+                              </button>
+                            ) : (
+                              <div
+                                className="text-[9px] font-semibold px-2 py-0.5 rounded-md shadow-xs flex items-center gap-1 bg-white text-slate-600 border border-slate-200 shrink-0 select-none cursor-default"
+                                title="Clean digital document: zero scan borders detected"
+                              >
+                                <span className="material-symbols-outlined text-[11px] text-slate-500">check_circle</span>
+                                <span>Clean Page</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Top-Right Visual Range Badges */}
+                          {hasRangeBadge && (
+                            <div className="absolute top-2 right-2 z-10 flex items-center gap-1">
+                              {rangeBadges.map((rb, rbIdx) => (
+                                <span
+                                  key={rbIdx}
+                                  className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded shadow-xs ${rb.color.badge}`}
+                                  title={`Belongs to Range ${rb.label}`}
+                                >
+                                  {rb.label}
+                                </span>
+                              ))}
                             </div>
                           )}
-                        </div>
 
-                        {/* Top-Right Visual Range Badges */}
-                        {hasRangeBadge && (
-                          <div className="absolute top-2 right-2 z-10 flex items-center gap-1">
-                            {rangeBadges.map((rb, rbIdx) => (
-                              <span
-                                key={rbIdx}
-                                className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded shadow-xs ${rb.color.badge}`}
-                                title={`Belongs to Range ${rb.label}`}
-                              >
-                                {rb.label}
-                              </span>
-                            ))}
+                          {/* Page Preview Canvas */}
+                          <div className={`w-full aspect-[4/5] bg-slate-900/5 dark:bg-black/20 flex items-center justify-center p-2 overflow-hidden relative transition-all ${
+                            cropper.isActive && pageCropBoxes[idx]?.hasScanBorders ? 'ring-2 ring-emerald-500/50 bg-emerald-500/5' : ''
+                          }`}>
+                            <canvas
+                              ref={(el) => (canvasRefs.current[idx] = el)}
+                              className="max-w-full max-h-full object-contain pointer-events-none drop-shadow-xs"
+                            />
                           </div>
-                        )}
 
-                        {/* Page Preview Canvas */}
-                        <div className={`w-full aspect-[4/5] bg-slate-900/5 dark:bg-black/20 flex items-center justify-center p-2 overflow-hidden relative transition-all ${
-                          cropper.isActive && pageCropBoxes[idx]?.hasScanBorders ? 'ring-2 ring-emerald-500/50 bg-emerald-500/5' : ''
-                        }`}>
-                          <canvas
-                            ref={(el) => (canvasRefs.current[idx] = el)}
-                            className="max-w-full max-h-full object-contain pointer-events-none drop-shadow-xs"
-                          />
-                        </div>
-
-                        {/* Card Footer Details */}
-                        <div className="p-2 bg-[var(--bg-primary)] border-t border-[var(--border-subtle)] flex items-center justify-between gap-1">
-                          <span className="text-[11px] font-semibold text-[var(--text-primary)]">
-                            Page {pageNum}
-                          </span>
-                          {hasRangeBadge && (
-                            <span className={`text-[10px] font-bold ${primaryBadge.color.text}`}>
-                              {primaryBadge.label}
+                          {/* Card Footer Details */}
+                          <div className="p-2 bg-[var(--bg-primary)] border-t border-[var(--border-subtle)] flex items-center justify-between gap-1">
+                            <span className="text-[11px] font-semibold text-[var(--text-primary)]">
+                              Page {pageNum}
                             </span>
-                          )}
+                            {hasRangeBadge && (
+                              <span className={`text-[10px] font-bold ${primaryBadge.color.text}`}>
+                                {primaryBadge.label}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1030,6 +1086,7 @@ export default function SplitPdf() {
                   onClick={handleSplit}
                   disabled={
                     processing ||
+                    docLoading ||
                     totalPages === 0 ||
                     (activeTab === 'extract' && extractMode === 'selected' && selectedPages.length === 0)
                   }
@@ -1039,6 +1096,11 @@ export default function SplitPdf() {
                     <>
                       <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
                       <span>Splitting ({progress}%)...</span>
+                    </>
+                  ) : docLoading ? (
+                    <>
+                      <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+                      <span>Loading Pages...</span>
                     </>
                   ) : (
                     <>

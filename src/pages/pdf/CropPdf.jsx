@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../../utils/pdfConfig';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import { cropPdf } from '../../engines/pdf/cropPdf';
@@ -20,6 +21,7 @@ export default function CropPdf() {
   const [files, setFiles] = useState([]);
   const [activeFileIndex, setActiveFileIndex] = useState(0);
   const [processing, setProcessing] = useState(false);
+  const [docLoading, setDocLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -130,12 +132,12 @@ export default function CropPdf() {
 
     let isCancelled = false;
     const loadPdf = async () => {
-      setProcessing(true);
+      setDocLoading(true);
       setError(null);
       try {
         const file = files[activeFileIndex];
         const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await loadPdfDocument(arrayBuffer).promise;
         if (isCancelled) {
           pdf.destroy();
           return;
@@ -146,10 +148,10 @@ export default function CropPdf() {
 
         const baseName = file.name.replace(/\.[^.]+$/, '');
         setOutputFileName(`${baseName}_cropped.pdf`);
-        setProcessing(false);
+        setDocLoading(false);
       } catch (err) {
         if (!isCancelled) {
-          setProcessing(false);
+          setDocLoading(false);
           setError('Failed to parse PDF document. It might be corrupted or password-protected.');
         }
       }
@@ -456,12 +458,13 @@ export default function CropPdf() {
       title="Crop PDF"
       description="Crop document margins visually, trim headers/footers, or apply precise page boundaries."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Crop PDF Pages Online Free (100% Local Studio) | DocScalar"
-        description="Crop document margins visually with interactive drag handles. Fully private, adjusting page boundaries locally without uploading to server."
+        title="Crop PDF Pages Online Free — Trim PDF Margins | DocScalar"
+        description="Crop document margins visually with interactive drag handles. Adjust page boundaries with pixel precision and enterprise privacy."
       />
 
       {!result ? (
@@ -480,8 +483,8 @@ export default function CropPdf() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
               {/* Sticky Top Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2 overflow-visible">
-                  <div className="flex items-center gap-2 flex-wrap">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
+                  <div className="flex items-center gap-2 shrink-0">
                     {/* Active File Switcher */}
                     {/* Active File Switcher / Document Identity */}
                     {files.length > 1 ? (
@@ -638,6 +641,12 @@ export default function CropPdf() {
 
               {/* Central Visual Document Viewport */}
               <div ref={viewportRef} className="flex-1 overflow-auto p-4 sm:p-8 flex items-start justify-center relative bg-pattern select-none">
+                {docLoading ? (
+                  <div className="flex flex-col items-center justify-center m-auto py-16 gap-3 text-slate-500">
+                    <div className="w-9 h-9 border-3 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+                    <span className="text-xs font-semibold text-[var(--text-secondary)]">Reading document pages...</span>
+                  </div>
+                ) : (
                 <div
                   ref={containerRef}
                   style={{
@@ -751,6 +760,7 @@ export default function CropPdf() {
                     />
                   </div>
                 </div>
+                )}
               </div>
             </div>
 
@@ -1068,13 +1078,18 @@ export default function CropPdf() {
                 <button
                   type="button"
                   onClick={handleCrop}
-                  disabled={processing || totalPages === 0}
+                  disabled={processing || docLoading || totalPages === 0}
                   className="w-full py-3 px-4 bg-[var(--color-primary)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl shadow-lg shadow-[var(--color-primary)]/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
                 >
                   {processing ? (
                     <>
                       <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
                       <span>Cropping ({progress}%)...</span>
+                    </>
+                  ) : docLoading ? (
+                    <>
+                      <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+                      <span>Loading Document...</span>
                     </>
                   ) : (
                     <>

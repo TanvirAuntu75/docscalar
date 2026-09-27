@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SEOHead from '../components/SEOHead';
 
@@ -24,6 +24,7 @@ function getPasswordStrength(password) {
 
 export default function SignUp() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -72,7 +73,8 @@ export default function SignUp() {
         accessToken: data.access_token
       });
 
-      navigate('/');
+      const destination = location.state?.from?.pathname || '/workspace';
+      navigate(destination, { replace: true });
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
     }
@@ -194,6 +196,12 @@ export default function SignUp() {
             )}
           </div>
 
+          <p className="text-[11px] text-on-surface-variant leading-relaxed mt-3">
+            By creating an account, you agree to our{' '}
+            <Link to="/terms" className="text-primary hover:underline font-medium">Terms of Service</Link>
+            {' '}and{' '}
+            <Link to="/privacy" className="text-primary hover:underline font-medium">Privacy Policy</Link>.
+          </p>
           <button
             type="submit"
             className="w-full font-button text-button btn-theme-primary py-3 rounded-lg shadow-sm mt-2"
@@ -205,10 +213,16 @@ export default function SignUp() {
         <div className="text-center mt-6 pt-6 border-t border-outline-variant">
           <p className="font-body-sm text-sm text-on-surface-variant">
             Already have an account?{' '}
-            <Link to="/login" className="text-primary font-semibold hover:underline">
+            <Link to="/login" state={location.state} className="text-primary font-semibold hover:underline">
               Log in instead
             </Link>
           </p>
+          <div className="mt-3">
+            <Link to="/" className="font-body-sm text-xs text-on-surface-variant hover:text-primary transition-colors inline-flex items-center gap-1">
+              <span>Continue as Guest</span>
+              <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

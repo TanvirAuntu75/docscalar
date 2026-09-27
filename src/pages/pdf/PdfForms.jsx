@@ -242,7 +242,7 @@ export default function PdfForms() {
       });
 
       setActiveMode('fill');
-      setScanMessage(`✨ Detected ${detected.length} form boxes on Page ${currentPage}. Click any box to type directly.`);
+      setScanMessage(`Detected ${detected.length} form boxes on Page ${currentPage}. Click any box to type directly.`);
       if (detected[0]) {
         setSelectedFieldId(detected[0].id);
       }
@@ -279,7 +279,7 @@ export default function PdfForms() {
       });
 
       setActiveMode('fill');
-      setScanMessage(`✨ Scan complete: Found ${allDetected.length} form boxes across ${totalPages} pages.`);
+      setScanMessage(`Scan complete: Found ${allDetected.length} form boxes across ${totalPages} pages.`);
     } catch (err) {
       console.warn('Error scanning all pages:', err);
     } finally {
@@ -735,7 +735,7 @@ export default function PdfForms() {
               return [...prev, ...detected];
             });
             setActiveMode('fill');
-            setScanMessage(`✨ Analyzed Page ${currentPage}: ${detected.length} form boxes detected. Click any box to type directly.`);
+            setScanMessage(`Analyzed Page ${currentPage}: ${detected.length} form boxes detected. Click any box to type directly.`);
           }
         }
       } catch (err) {
@@ -1037,12 +1037,13 @@ export default function PdfForms() {
       title="PDF Forms Studio"
       description="Fill interactive forms, place new fillable fields visually, or flatten PDF forms into static documents."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="PDF Form Creator & Filler Online Free — Edit Fillable PDFs | DocScalar"
-        description="Place fillable fields visually or fill and save interactive PDF form fields instantly in your browser. 100% private Client Side processing."
+        description="Place fillable fields visually or fill and save interactive PDF form fields instantly. Secure encrypted in memory processing."
       />
 
       {!result ? (

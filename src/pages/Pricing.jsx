@@ -2,19 +2,48 @@ import { useState, useEffect } from 'react';
 import SEOHead from '../components/SEOHead';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { apiFetch, BACKEND_URL } from '../utils/api';
+
+const PRICING_FAQS = [
+  {
+    q: 'Can I cancel my DocScalar Pro subscription at any time?',
+    a: 'Yes, absolutely. You can cancel your subscription at any time with a single click via the Manage Subscription portal in your profile dropdown. There are no cancellation fees, contracts, or hidden hurdles. Your Pro benefits remain active until the end of your prepaid billing period.'
+  },
+  {
+    q: 'How does the 1 GB file size limit work?',
+    a: 'While guest and free tier users are limited to 50 MB per file, Pro subscribers unlock up to 1,024 MB (1 GB) per document. Large files are processed using high-memory transient cloud sandboxes with dedicated CPU and memory allocation to ensure ultra-fast throughput without memory errors.'
+  },
+  {
+    q: 'What is your document retention and auto-purge policy?',
+    a: 'DocScalar operates under an absolute zero-persistence guarantee. All uploaded documents are held transiently in volatile RAM and automatically purged within 30 minutes of processing completion. We do not maintain cold backups of user files, nor do we ever read, index, or retain your data.'
+  },
+  {
+    q: 'What is your refund policy?',
+    a: 'We offer an unconditional 14-day 100% money-back guarantee on all DocScalar Pro subscriptions. If you are not completely satisfied for any reason, email support@docscalar.app within 14 days of purchase and we will issue a full refund immediately.'
+  },
+  {
+    q: 'Are my files used to train AI or machine learning models?',
+    a: 'Never. We maintain a strict policy: no customer documents, text snippets, OCR recognition outputs, or metadata are ever used to train or fine-tune artificial intelligence models. Your proprietary data remains completely private.'
+  },
+  {
+    q: 'What payment methods do you accept?',
+    a: 'We accept all major credit and debit cards (Visa, MasterCard, American Express, Discover), Apple Pay, Google Pay, and localized bank transfer rails through our secure payment gateway partner, Stripe. All billing transactions are encrypted with TLS 1.3.'
+  }
+];
 
 export default function Pricing() {
   const navigate = useNavigate();
   const { login, setTier, isAuthenticated, isPro, userEmail } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState(null);
   const [email, setEmail] = useState('');
-  const [cardName, setCardName] = useState('');
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiry, setExpiry] = useState('');
-  const [cvc, setCvc] = useState('');
   const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+
+  const toggleFaq = (idx) => {
+    setOpenFaq(prev => prev === idx ? null : idx);
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -24,84 +53,100 @@ export default function Pricing() {
 
   const isAlreadyPro = isPro;
 
-  const handleCardNumberChange = (e) => {
-    const val = e.target.value.replace(/\s?/g, '').replace(/[^0-9]/g, '');
-    let formatted = '';
-    for (let i = 0; i < val.length; i++) {
-      if (i > 0 && i % 4 === 0) formatted += ' ';
-      formatted += val[i];
-    }
-    setCardNumber(formatted.substring(0, 19));
-  };
-
-  const handleExpiryChange = (e) => {
-    const val = e.target.value.replace(/\//g, '').replace(/[^0-9]/g, '');
-    let formatted = val;
-    if (val.length >= 2) {
-      formatted = val.substring(0, 2) + '/' + val.substring(2, 4);
-    }
-    setExpiry(formatted.substring(0, 5));
-  };
-
-  const handleCvcChange = (e) => {
-    const val = e.target.value.replace(/[^0-9]/g, '');
-    setCvc(val.substring(0, 4));
-  };
-
-  const handlePaymentSubmit = (e) => {
-    e.preventDefault();
-    setError('');
-
-    if (!email.trim() || !email.includes('@')) {
-      setError('Please enter a valid email address.');
+  const handleGetStartedPro = async () => {
+    if (isAlreadyPro) {
+      navigate('/workspace');
       return;
     }
-    if (!cardName.trim()) {
-      setError('Please enter cardholder name.');
-      return;
-    }
-    if (cardNumber.replace(/\s/g, '').length < 16) {
-      setError('Card number must be 16 digits.');
-      return;
-    }
-    if (expiry.length < 5) {
-      setError('Expiry must be MM/YY.');
-      return;
-    }
-    if (cvc.length < 3) {
-      setError('CVC must be at least 3 digits.');
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: { pathname: '/pricing' } } });
       return;
     }
 
     setPaying(true);
+    setError('');
 
-    // Simulate gateway delay
-    setTimeout(() => {
-      setPaying(false);
-      setSuccess(true);
-      
-      const randomHash = Array.from({length: 24}, () => 
-        Math.floor(Math.random()*16).toString(16)
-      ).join('').toUpperCase();
-      const licenseKey = `DF-PRO-SIG-${randomHash}`;
+    try {
+      const res = await apiFetch(`${BACKEND_URL}/api/billing/create-checkout`, {
+        method: 'POST'
+      });
 
-      if (isAuthenticated) {
-        setTier({ tier: 'pro', proLicenseKey: licenseKey });
-      } else {
-        login({ email: email.trim(), tier: 'pro', proLicenseKey: licenseKey });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.checkout_url) {
+          window.location.href = data.checkout_url;
+          return;
+        }
       }
 
-      // Auto redirect to home dashboard after success animation
+      // If Stripe is not configured or in beta mode, open the Early Access activation modal
+      setModalOpen(true);
+    } catch (err) {
+      // Backend unavailable or offline fallback
+      setModalOpen(true);
+    } finally {
+      setPaying(false);
+    }
+  };
+
+  const handleActivateBetaPro = async () => {
+    setPaying(true);
+    setError('');
+
+    try {
+      const randomHash = Array.from({ length: 24 }, () =>
+        Math.floor(Math.random() * 16).toString(16)
+      ).join('').toUpperCase();
+      const licenseKey = `DS-PRO-BETA-${randomHash}`;
+
+      if (isAuthenticated) {
+        try {
+          await apiFetch('/api/auth/upgrade-pro', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ license_key: licenseKey })
+          });
+        } catch (apiErr) {
+          console.warn('Backend upgrade-pro failed, continuing with client state upgrade:', apiErr);
+        }
+        setTier({ tier: 'pro', proLicenseKey: licenseKey });
+      } else {
+        login({ email: email.trim() || 'beta-user@docscalar.internal', tier: 'pro', proLicenseKey: licenseKey });
+      }
+
+      setPaying(false);
+      setSuccess(true);
+
       setTimeout(() => {
         setModalOpen(false);
-        navigate('/');
-      }, 1800);
-    }, 1800);
+        navigate('/workspace');
+      }, 1600);
+    } catch (err) {
+      setPaying(false);
+      setError(err.message || 'Failed to activate Pro beta license.');
+    }
+  };
+
+  const pricingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': PRICING_FAQS.map(faq => ({
+      '@type': 'Question',
+      'name': faq.q,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': faq.a
+      }
+    }))
   };
 
   return (
     <div className="bg-background min-h-screen py-24 px-margin-mobile md:px-margin-desktop relative">
-      <SEOHead title="Pricing Plans (DocScalar)" description="Choose between our free local toolset and pro batch features. Secure, private document utilities." />
+      <SEOHead 
+        title="Pricing Plans (DocScalar)" 
+        description="Choose between our free tier and pro batch features. Fast, secure, and private document utilities." 
+        schema={pricingSchema}
+      />
       <div className="absolute inset-0 bg-pattern opacity-10 pointer-events-none"></div>
 
       <div className="max-w-container-max mx-auto relative z-10">
@@ -112,7 +157,7 @@ export default function Pricing() {
             Tactile value,<br />transparent pricing.
           </h1>
           <p className="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto">
-            Choose the fit for your workflow. Free local processing, or premium batch capabilities.
+            Choose the fit for your workflow. Free standard processing, or premium batch capabilities.
           </p>
         </div>
 
@@ -137,19 +182,19 @@ export default function Pricing() {
               <ul className="flex flex-col gap-3.5 mb-8">
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  Local in-browser conversion
+                  High speed secure processing
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  10 basic Local Compute tools
+                  All 41 document & image tools
                 </li>
-                <li className="flex items-center gap-3 font-body-md text-sm text-on-surface-variant opacity-85">
-                  <span className="material-symbols-outlined text-outline/40 text-[20px] select-none">remove</span>
+                <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
                   10 MB file size limit
                 </li>
-                <li className="flex items-center gap-3 font-body-md text-sm text-on-surface-variant opacity-80">
-                  <span className="material-symbols-outlined text-outline/40 text-[20px] select-none">remove</span>
-                  No batch queue
+                <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  3 free operations per calendar day
                 </li>
               </ul>
             </div>
@@ -168,7 +213,7 @@ export default function Pricing() {
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <h3 className="font-h3 text-h3 font-semibold text-on-background mb-1">Standard Utility</h3>
-                  <p className="font-body-sm text-sm text-on-surface-variant">For regular Client Side document workflows.</p>
+                  <p className="font-body-sm text-sm text-on-surface-variant">For regular document workflows.</p>
                 </div>
               </div>
               
@@ -180,19 +225,27 @@ export default function Pricing() {
               <ul className="flex flex-col gap-3.5 mb-8">
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  Local in-browser conversion
+                  High speed secure processing
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  31 standard tools & basic templates
+                  All 41 conversion & editing tools
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  100 MB file size limit
+                  15 MB file size limit
+                </li>
+                <li className="flex items-center gap-3 font-body-md text-sm text-on-background font-semibold text-primary">
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  Unlimited daily document operations
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  5-file batch queue
+                  10 Daily Stitch Canvas Preview actions
+                </li>
+                <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  5-file batch queue & drafts history
                 </li>
               </ul>
             </div>
@@ -237,41 +290,45 @@ export default function Pricing() {
               <ul className="flex flex-col gap-3.5 mb-8">
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background font-semibold text-primary">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  Everything in Standard
+                  Everything in Free Account
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  50-file batch queue
+                  1 GB file size limit & All 41 tools
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  AI Summarizer & Text Tools
+                  Unlimited Stitch Canvas pipelines
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  AI Translation & CV Builder
+                  50-file parallel batch queue
                 </li>
                 <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
                   <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  1 GB file size limit & All 38 tools
+                  Unlimited Smart Cropping & GPU OCR
+                </li>
+                <li className="flex items-center gap-3 font-body-md text-sm text-on-background">
+                  <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
+                  ATS Resume & CV Studio
                 </li>
               </ul>
             </div>
 
             <button
-              onClick={() => {
-                if (isAlreadyPro) {
-                  navigate('/');
-                } else {
-                  setModalOpen(true);
-                }
-              }}
-              className="w-full font-button text-button btn-theme-primary py-3.5 rounded-lg shadow-sm flex items-center justify-center gap-2"
+              onClick={handleGetStartedPro}
+              disabled={paying}
+              className="w-full font-button text-button btn-theme-primary py-3.5 rounded-lg shadow-sm flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isAlreadyPro ? (
                 <>
                   <span className="material-symbols-outlined text-[18px]">workspace_premium</span>
                   Already Pro (Workspace)
+                </>
+              ) : paying ? (
+                <>
+                  <span className="animate-spin material-symbols-outlined text-[18px]">progress_activity</span>
+                  Connecting to Checkout...
                 </>
               ) : (
                 'Get Started Pro'
@@ -285,7 +342,7 @@ export default function Pricing() {
         <div className="mt-12 text-center">
           <p className="font-body-md text-sm text-on-surface-variant flex items-center justify-center gap-2">
             <span className="material-symbols-outlined text-primary text-[18px]">verified_user</span>
-            All payment details are handled securely. Local processing remains fully active Client Side.
+            All payment details are handled securely. Enterprise-grade encryption on every tier.
           </p>
         </div>
 
@@ -317,9 +374,15 @@ export default function Pricing() {
                 </tr>
                 <tr className="hover:bg-surface-container-high/40 transition-colors">
                   <td className="py-4 px-6 font-medium text-on-background">Max file size limit</td>
-                  <td className="py-4 px-6 text-center text-on-surface-variant">10 MB</td>
-                  <td className="py-4 px-6 text-center text-on-surface-variant font-medium">100 MB</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant font-medium">10 MB</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant font-medium">15 MB</td>
                   <td className="py-4 px-6 text-center text-on-background font-semibold">1 GB</td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Daily document operations</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant font-medium">3 ops/day</td>
+                  <td className="py-4 px-6 text-center text-primary font-bold">Unlimited</td>
+                  <td className="py-4 px-6 text-center text-primary font-bold">Unlimited</td>
                 </tr>
                 <tr className="hover:bg-surface-container-high/40 transition-colors">
                   <td className="py-4 px-6 font-medium text-on-background">Batch queue limit</td>
@@ -328,7 +391,7 @@ export default function Pricing() {
                   <td className="py-4 px-6 text-center text-on-background font-semibold">50 files</td>
                 </tr>
                 <tr className="hover:bg-surface-container-high/40 transition-colors">
-                  <td className="py-4 px-6 font-medium text-on-background">Local execution</td>
+                  <td className="py-4 px-6 font-medium text-on-background">Encrypted processing</td>
                   <td className="py-4 px-6 text-center">
                     <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
                   </td>
@@ -347,23 +410,27 @@ export default function Pricing() {
                   </td>
                 </tr>
                 <tr className="hover:bg-surface-container-high/40 transition-colors">
-                  <td className="py-4 px-6 font-medium text-on-background">Conversion tools</td>
-                  <td className="py-4 px-6 text-center text-on-surface-variant">Basic (10)</td>
-                  <td className="py-4 px-6 text-center text-on-surface-variant">Standard (31)</td>
-                  <td className="py-4 px-6 text-center text-on-background font-medium">All (38)</td>
+                  <td className="py-4 px-6 font-medium text-on-background">Document & Image Tools</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant">All (41)</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant font-medium">All (41)</td>
+                  <td className="py-4 px-6 text-center text-on-background font-bold">All (41)</td>
                 </tr>
                 <tr className="hover:bg-surface-container-high/40 transition-colors">
-                  <td className="py-4 px-6 font-medium text-on-background">OCR text extraction</td>
-                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
-                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
-                  <td className="py-4 px-6 text-center">
-                    <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
-                  </td>
+                  <td className="py-4 px-6 font-medium text-on-background">Stitch Canvas DAG Pipelines</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant/50">Account Required</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant font-medium">10 actions/day preview</td>
+                  <td className="py-4 px-6 text-center text-primary font-bold">Unlimited</td>
                 </tr>
                 <tr className="hover:bg-surface-container-high/40 transition-colors">
-                  <td className="py-4 px-6 font-medium text-on-background">AI summarizer & translation</td>
+                  <td className="py-4 px-6 font-medium text-on-background">OCR text recognition</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant">Included (10MB)</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant font-medium">Unlimited (15MB)</td>
+                  <td className="py-4 px-6 text-center text-primary font-bold">GPU Accelerated (1GB)</td>
+                </tr>
+                <tr className="hover:bg-surface-container-high/40 transition-colors">
+                  <td className="py-4 px-6 font-medium text-on-background">Smart Cropper (Margin Trimming)</td>
                   <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
-                  <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
+                  <td className="py-4 px-6 text-center text-on-surface-variant">3 uses/day</td>
                   <td className="py-4 px-6 text-center">
                     <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
                   </td>
@@ -376,7 +443,7 @@ export default function Pricing() {
                   </td>
                 </tr>
                 <tr className="hover:bg-surface-container-high/40 transition-colors">
-                  <td className="py-4 px-6 font-medium text-on-background">Local browser history cache</td>
+                  <td className="py-4 px-6 font-medium text-on-background">Browser history cache</td>
                   <td className="py-4 px-6 text-center text-on-surface-variant/40">—</td>
                   <td className="py-4 px-6 text-center">
                     <span className="material-symbols-outlined text-primary text-[20px] select-none">check</span>
@@ -431,9 +498,57 @@ export default function Pricing() {
           </div>
         </div>
 
+        {/* Pricing FAQ Accordion Section */}
+        <div className="mt-20 border-t border-outline-variant/30 pt-16">
+          <div className="text-center mb-10">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
+              Billing & Trust FAQ
+            </span>
+            <h2 className="text-2xl md:text-3xl font-h2 font-bold text-on-background mt-3 tracking-tight">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xs md:text-sm text-on-surface-variant mt-2 max-w-lg mx-auto">
+              Everything you need to know about DocScalar Pro plans, cancellation, 1GB file limits, and document security.
+            </p>
+          </div>
+
+          <div className="max-w-3xl mx-auto flex flex-col gap-3">
+            {PRICING_FAQS.map((faq, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div
+                  key={idx}
+                  className="border border-outline-variant/40 rounded-2xl overflow-hidden bg-surface-container/40 transition-colors"
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleFaq(idx)}
+                    className="w-full flex items-center justify-between p-4 md:p-5 text-left text-xs md:text-sm font-semibold text-on-background hover:text-primary transition-colors cursor-pointer select-none"
+                    aria-expanded={isOpen}
+                  >
+                    <span>{faq.q}</span>
+                    <span 
+                      className={`material-symbols-outlined text-[20px] text-on-surface-variant transition-transform duration-200 flex-shrink-0 ${
+                        isOpen ? 'rotate-180 text-primary' : ''
+                      }`}
+                    >
+                      expand_more
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="px-4 md:px-5 pb-5 pt-1 text-xs text-on-surface-variant leading-relaxed border-t border-outline-variant/20 animate-in fade-in duration-200">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
       </div>
 
-      {/* Stripe Mock Secure Checkout Modal */}
+      {/* DocScalar Pro Early Access / Beta Activation Modal */}
       {modalOpen && (
         <div className="fixed inset-0 bg-on-background/25 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-surface-container border border-outline-variant rounded-2xl p-8 max-w-md w-full shadow-2xl relative animate-[fadeIn_0.2s_ease-out] text-left">
@@ -449,100 +564,55 @@ export default function Pricing() {
             </button>
 
             {/* Header */}
-            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-outline-variant">
-              <span className="material-symbols-outlined text-primary text-[24px]">lock</span>
-              <span className="font-h3 text-[18px] font-semibold text-on-background">DocScalar Secure Checkout</span>
+            <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-outline-variant">
+              <span className="material-symbols-outlined text-primary text-[24px]">workspace_premium</span>
+              <div>
+                <h3 className="font-h3 text-[18px] font-semibold text-on-background leading-tight">DocScalar Pro Access</h3>
+                <span className="font-body-sm text-xs text-primary font-medium">Public Beta Preview</span>
+              </div>
             </div>
 
             {success ? (
               <div className="flex flex-col items-center justify-center py-8 text-center gap-3">
                 <span className="material-symbols-outlined text-[64px] text-primary fill animate-pulse">verified</span>
-                <h3 className="font-h2 text-[22px] font-bold text-on-background">Payment Confirmed!</h3>
+                <h3 className="font-h2 text-[22px] font-bold text-on-background">Pro Access Activated!</h3>
                 <p className="font-body-md text-sm text-on-surface-variant">
-                  Welcome to DocScalar Pro. Upgrading your account...
+                  Welcome to DocScalar Pro. Redirecting to your workspace...
                 </p>
               </div>
             ) : (
-              <form onSubmit={handlePaymentSubmit} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-5">
                 
-                {/* Total */}
-                <div className="bg-surface-container-low p-4 rounded-lg border border-outline-variant flex justify-between items-center mb-2">
-                  <span className="font-body-md font-semibold text-on-surface-variant">DocScalar Pro Subscription</span>
-                  <span className="font-h3 text-primary font-bold text-[20px]">$9.00/mo</span>
-                </div>
-
-                {/* Email */}
-                <div className="flex flex-col gap-1">
-                  <label className="font-body-sm text-[13px] font-semibold text-on-surface-variant">Account Email</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="tanvir@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isAuthenticated}
-                    className="p-3 bg-surface-container-low border border-outline-variant rounded-lg text-on-background placeholder-on-surface-variant/40 outline-none focus:border-primary transition-colors disabled:bg-surface-container-highest disabled:text-on-surface-variant/80"
-                  />
-                </div>
-
-                {/* Name */}
-                <div className="flex flex-col gap-1">
-                  <label className="font-body-sm text-[13px] font-semibold text-on-surface-variant">Cardholder Name</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Tanvir Alam"
-                    value={cardName}
-                    onChange={(e) => setCardName(e.target.value)}
-                    className="p-3 bg-surface-container-low border border-outline-variant rounded-lg text-on-background placeholder-on-surface-variant/40 outline-none focus:border-primary transition-colors"
-                  />
-                </div>
-
-                {/* Card Number */}
-                <div className="flex flex-col gap-1">
-                  <label className="font-body-sm text-[13px] font-semibold text-on-surface-variant">Card Number</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      required
-                      placeholder="4242 4242 4242 4242"
-                      value={cardNumber}
-                      onChange={handleCardNumberChange}
-                      className="p-3 pl-10 bg-surface-container-low border border-outline-variant rounded-lg text-on-background placeholder-on-surface-variant/40 outline-none focus:border-primary w-full transition-colors font-label-mono"
-                    />
-                    <span className="material-symbols-outlined absolute left-3 top-3 text-[20px] text-on-surface-variant/50 select-none">credit_card</span>
+                {/* Early Access Banner */}
+                <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-body-md font-semibold text-on-background">Pro Workspace Plan</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">Early Beta</span>
                   </div>
+                  <p className="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                    Stripe billing is currently in pre-launch preview mode. You can activate full Pro workspace privileges instantly without entering payment details.
+                  </p>
                 </div>
 
-                {/* Expiry & CVC */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1">
-                    <label className="font-body-sm text-[13px] font-semibold text-on-surface-variant">Expiry Date</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="MM/YY"
-                      value={expiry}
-                      onChange={handleExpiryChange}
-                      className="p-3 bg-surface-container-low border border-outline-variant rounded-lg text-on-background placeholder-on-surface-variant/40 outline-none focus:border-primary transition-colors font-label-mono text-center"
-                    />
+                {/* Features list */}
+                <div className="space-y-2.5 py-1">
+                  <div className="flex items-center gap-2.5 text-xs text-on-background">
+                    <span className="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                    <span>1 GB maximum file size limit unlocked</span>
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="font-body-sm text-[13px] font-semibold text-on-surface-variant">CVC</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="123"
-                      value={cvc}
-                      onChange={handleCvcChange}
-                      className="p-3 bg-surface-container-low border border-outline-variant rounded-lg text-on-background placeholder-on-surface-variant/40 outline-none focus:border-primary transition-colors font-label-mono text-center"
-                    />
+                  <div className="flex items-center gap-2.5 text-xs text-on-background">
+                    <span className="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                    <span>Multi-file batch conversions & OCR acceleration</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-xs text-on-background">
+                    <span className="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                    <span>All 41 document studios & StitchCanvas DAG pipelines</span>
                   </div>
                 </div>
 
                 {/* Error */}
                 {error && (
-                  <p className="text-error font-body-sm text-xs mt-1 flex items-center gap-1.5">
+                  <p className="text-error font-body-sm text-xs flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-[16px]">error</span>
                     {error}
                   </p>
@@ -550,30 +620,31 @@ export default function Pricing() {
 
                 {/* Submit */}
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={handleActivateBetaPro}
                   disabled={paying}
-                  className="w-full font-button text-button btn-theme-primary py-4 rounded-lg shadow-sm mt-4 flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full font-button text-button btn-theme-primary py-3.5 rounded-lg shadow-sm flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {paying ? (
                     <>
                       <span className="animate-spin material-symbols-outlined text-[18px]">progress_activity</span>
-                      Processing Mock Payment...
+                      Activating Pro Workspace...
                     </>
                   ) : (
                     <>
-                      <span className="material-symbols-outlined text-[18px]">shopping_cart</span>
-                      Pay $9.00 / month
+                      <span className="material-symbols-outlined text-[18px]">bolt</span>
+                      Activate Free Pro Access
                     </>
                   )}
                 </button>
 
                 {/* Footer Safe Note */}
-                <span className="text-[11px] text-on-surface-variant/60 text-center leading-relaxed mt-2 select-none flex items-center justify-center gap-1.5">
+                <span className="text-[11px] text-on-surface-variant/60 text-center leading-relaxed select-none flex items-center justify-center gap-1.5">
                   <span className="material-symbols-outlined text-[13px]">lock</span>
-                  <span>Encrypted connection. DocScalar is local and Client Side first. This mock transaction completes entirely inside your browser.</span>
+                  <span>TLS 1.3 Encrypted. No credit card required during early access preview.</span>
                 </span>
 
-              </form>
+              </div>
             )}
 
           </div>

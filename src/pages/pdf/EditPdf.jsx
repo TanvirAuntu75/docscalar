@@ -8,7 +8,7 @@ import { editPdf } from '../../engines/pdf/editPdf';
 import { formatFileSize } from '../../utils/constants';
 import { saveFile, saveStudioDraft, loadStudioDraft, clearStudioDraft } from '../../utils/db';
 import { saveAs } from 'file-saver';
-import { apiFetch, uploadFileSecure } from '../../utils/api';
+import { apiFetch, uploadFileSecure, BACKEND_URL } from '../../utils/api';
 import { useJobPoller } from '../../hooks/useJobPoller';
 import useSmartCropper from '../../hooks/useSmartCropper';
 import useCanvasPinchZoom from '../../hooks/useCanvasPinchZoom';
@@ -34,8 +34,6 @@ import {
 
 const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
 const EDITOR_TOOLS = [
   { id: 'select', label: 'Select / Move', icon: 'near_me', desc: 'Select, reposition, or delete annotations (V)' },
@@ -1829,12 +1827,13 @@ export default function EditPdf() {
       title="Edit PDF Document"
       description="Draw smooth pen strokes, highlight lines, place visual shapes, or directly edit text inline visually"
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
         title="Edit PDF Online Free — Annotate & Direct Edit PDF | DocScalar"
-        description="Add smooth handwritten curves, highlight lines, vector shapes, and rewrite existing PDF text inline. 100% private Client Side annotations editor."
+        description="Add smooth handwritten curves, highlight lines, vector shapes, and rewrite existing PDF text inline. Encrypted annotations editor with full vector fidelity."
       />
 
       {!result ? (

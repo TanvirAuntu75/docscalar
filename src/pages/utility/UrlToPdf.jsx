@@ -37,7 +37,7 @@ export default function UrlToPdf() {
   const [landscape, setLandscape] = useState(false);
   const [printBackground, setPrintBackground] = useState(true);
   const [marginType, setMarginType] = useState('default');
-  const [engineMode, setEngineMode] = useState('client'); // 'client' | 'server'
+  const [engineMode, setEngineMode] = useState('server'); // 'client' | 'server'
   const [deviceViewport, setDeviceViewport] = useState('desktop'); // 'desktop' | 'tablet' | 'mobile'
   const [zoomScale, setZoomScale] = useState(1.0);
   const [outputFileName, setOutputFileName] = useState('');
@@ -57,9 +57,16 @@ export default function UrlToPdf() {
     const checkServer = async () => {
       try {
         const res = await apiFetch(`${BACKEND_URL}/api/meta/conversions`, { signal: AbortSignal.timeout(1500) });
-        if (res.ok) setBackendActive(true);
+        if (res.ok) {
+          setBackendActive(true);
+          setEngineMode('server');
+        } else {
+          setBackendActive(false);
+          setEngineMode('client');
+        }
       } catch (e) {
         setBackendActive(false);
+        setEngineMode('client');
       }
     };
     checkServer();
@@ -201,7 +208,7 @@ export default function UrlToPdf() {
 
         const data = await res.json();
         setProgress(40);
-        poller.start(data.job_id);
+        poller.startPolling(data.job_id);
       } else {
         setStatusMessage('Fetching webpage markup and typesetting vector PDF...');
         const pdfBlob = await convertUrlToPdf(
@@ -265,7 +272,7 @@ export default function UrlToPdf() {
     >
       <SEOHead
         title="URL to PDF Converter Online Free — Save Webpages as PDF | DocScalar"
-        description="Convert any website URL or online article into a print-ready PDF document. High-resolution rendering, background color preservation, and 100% private processing."
+        description="Convert any website URL or online article into a print-ready PDF document. High-resolution rendering, background color preservation, and enterprise security."
       />
 
       {!result ? (
@@ -709,13 +716,13 @@ export default function UrlToPdf() {
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <Link
-                  to="/ai-summarizer"
+                  to="/compress-pdf"
                   className="p-3 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--color-primary)]/10 border border-[var(--border-subtle)] hover:border-[var(--color-primary)]/30 flex items-center gap-2.5 text-xs font-semibold text-[var(--text-primary)] transition-all text-left group cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-[20px] text-purple-500">auto_awesome</span>
+                  <span className="material-symbols-outlined text-[20px] text-emerald-500">compress</span>
                   <div className="min-w-0">
-                    <p className="font-bold truncate group-hover:text-[var(--color-primary)]">AI Summarize</p>
-                    <p className="text-[10px] text-[var(--text-secondary)] truncate">Summarize document</p>
+                    <p className="font-bold truncate group-hover:text-[var(--color-primary)]">Compress PDF</p>
+                    <p className="text-[10px] text-[var(--text-secondary)] truncate">Reduce file size</p>
                   </div>
                 </Link>
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../../utils/pdfConfig';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import { removePages } from '../../engines/pdf/removePages';
@@ -98,7 +99,7 @@ export default function RemovePages() {
       setLoadingThumbnails(true);
       try {
         const arrayBuffer = await currentFile.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await loadPdfDocument(arrayBuffer).promise;
         if (isCancelled) {
           pdf.destroy();
           return;
@@ -128,7 +129,6 @@ export default function RemovePages() {
               (borderResult.cropTop > 0 || borderResult.cropBottom > 0 || borderResult.cropLeft > 0 || borderResult.cropRight > 0);
             if (hasScanBorders) {
               cropBox = computeCleanPdfCropBox(borderResult, { width: page.view[2], height: page.view[3] }, viewport.scale);
-              cropper.activate();
             }
           } catch (e) {}
 
@@ -331,12 +331,13 @@ export default function RemovePages() {
       title="Remove PDF Pages"
       description="Delete unwanted pages, blank sheets, or specific sections from your PDF file."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Remove Pages from PDF Online Free (100% Local Studio) | DocScalar"
-        description="Delete pages from your PDF file instantly and securely in your browser. Complete privacy without server uploads."
+        title="Remove Pages from PDF Online Free — Delete PDF Pages | DocScalar"
+        description="Delete pages from your PDF file instantly and securely. Complete privacy and immediate download."
       />
 
       {!result ? (
@@ -355,8 +356,8 @@ export default function RemovePages() {
             <div className="workspace-canvas-wrapper flex-1 flex flex-col min-h-0 h-full overflow-hidden relative bg-[var(--bg-tertiary)]">
               {/* Sticky Canvas Toolbar */}
               <div className="sticky top-0 z-20 flex flex-col w-full shadow-xs bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
-                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2 flex-wrap">
+                <div className="workspace-toolbar px-4 py-2 flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
+                  <div className="flex items-center gap-2 shrink-0">
                     {/* Active File Switcher */}
                     {files.length > 1 ? (
                       <div className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-2.5 py-1 rounded-lg border border-[var(--border-subtle)]">

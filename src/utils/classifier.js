@@ -226,7 +226,6 @@ const BOOST_KEYWORDS = {
   'pdf-to-pdfa': /\b(pdfa|archive)\b/i,
   'url-to-pdf': /\b(url|website|webpage|link)\b/i,
   'pdf-to-image': /\b(image|jpg|png|jpeg)\b/i,
-  'ai-translator': /\b(translate|translation|language)\b/i,
   'text-to-pdf': /\b(text|txt)\b/i,
   'sign-pdf': /\b(sign|signature)\b/i,
   'extract-pages': /\b(extract|select)\b/i,
@@ -234,7 +233,6 @@ const BOOST_KEYWORDS = {
   'pdf-forms': /\b(form|field|fill)\b/i,
   'repair-pdf': /\b(repair|fix|broken|corrupted|restore)\b/i,
   'scan-to-pdf': /\b(scan|webcam|scanner)\b/i,
-  'conversion-pipeline': /\b(pipeline|batch|sequence|workflow)\b/i,
   'resume-builder': /\b(resume|cv|builder|template)\b/i
 };
 

@@ -6,6 +6,7 @@ import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 import PublicOnlyRoute from './components/PublicOnlyRoute'
 import { BACKEND_URL } from './utils/api'
+import { pruneExpiredStudioDrafts } from './utils/db'
 const AIChatBot = lazyWithRetry(() => import('./components/AIChatBot'));
 
 // Resilient dynamic importer that auto-reloads once if a Vite HMR or browser chunk cache error occurs
@@ -48,8 +49,6 @@ const ImageCompressor = lazyWithRetry(() => import('./pages/image/ImageCompresso
 const ImageResizer = lazyWithRetry(() => import('./pages/image/ImageResizer'))
 const DocxToPdf = lazyWithRetry(() => import('./pages/document/DocxToPdf'))
 const TextToPdf = lazyWithRetry(() => import('./pages/document/TextToPdf'))
-const TranslatePdf = lazyWithRetry(() => import('./pages/document/TranslatePdf'))
-const AiSummarizer = lazyWithRetry(() => import('./pages/document/AiSummarizer'))
 const QrGenerator = lazyWithRetry(() => import('./pages/utility/QrGenerator'))
 const NotFound = lazyWithRetry(() => import('./pages/NotFound'))
 const Login = lazyWithRetry(() => import('./pages/Login'))
@@ -59,6 +58,9 @@ const Pricing = lazyWithRetry(() => import('./pages/Pricing'))
 const ComingSoon = lazyWithRetry(() => import('./pages/utility/ComingSoon'))
 const Privacy = lazyWithRetry(() => import('./pages/Privacy'))
 const Terms = lazyWithRetry(() => import('./pages/Terms'))
+const Security = lazyWithRetry(() => import('./pages/Security'))
+const About = lazyWithRetry(() => import('./pages/About'))
+const Contact = lazyWithRetry(() => import('./pages/Contact'))
 const ProtectPdf = lazyWithRetry(() => import('./pages/pdf/ProtectPdf'))
 const UnlockPdf = lazyWithRetry(() => import('./pages/pdf/UnlockPdf'))
 const RemovePages = lazyWithRetry(() => import('./pages/pdf/RemovePages'))
@@ -85,7 +87,6 @@ const RedactPdf = lazyWithRetry(() => import('./pages/pdf/RedactPdf'))
 const OcrPdf = lazyWithRetry(() => import('./pages/pdf/OcrPdf'))
 const UnOcrPdf = lazyWithRetry(() => import('./pages/pdf/UnOcrPdf'))
 const BatesNumbering = lazyWithRetry(() => import('./pages/pdf/BatesNumbering'))
-const ConversionPipeline = lazyWithRetry(() => import('./pages/utility/ConversionPipeline'))
 const ResumeBuilder = lazyWithRetry(() => import('./pages/utility/ResumeBuilder'))
 const UrlToPdf = lazyWithRetry(() => import('./pages/utility/UrlToPdf'))
 const UnzipFile = lazyWithRetry(() => import('./pages/utility/UnzipFile'))
@@ -95,7 +96,13 @@ import Skeleton from './components/ui/Skeleton'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
-  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  useEffect(() => { 
+    window.scrollTo(0, 0);
+    if (typeof document !== 'undefined') {
+      if (document.documentElement) document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    }
+  }, [pathname])
   return null
 }
 
@@ -124,7 +131,7 @@ function PageSkeleton() {
 export default function App() {
   const { isPro, isAuthenticated } = useAuth();
   const location = useLocation();
-  const isCanvas = location.pathname === '/canvas';
+  const isCanvas = location.pathname === '/canvas' || location.pathname.startsWith('/canvas/');
 
   // Smooth window reveal for Tauri desktop mode — prevents black/white screen flashes on launch
   useEffect(() => {
@@ -136,6 +143,14 @@ export default function App() {
         }).catch(() => {});
       }
     }
+  }, []);
+
+  // Background idle sweep of expired studio drafts to protect storage quota
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      pruneExpiredStudioDrafts().catch(() => {});
+    }, 1500);
+    return () => clearTimeout(timer);
   }, []);
 
   // Non-blocking backend health ping — silently retries in the background,
@@ -169,10 +184,20 @@ export default function App() {
     return () => { cancelled = true; };
   }, []);
 
-  const isWorkspace = location.pathname === '/workspace';
-  const isResumeBuilder = location.pathname === '/resume-builder';
-  const hideFooter = isWorkspace || isResumeBuilder || isCanvas;
-  const mainPadding = isCanvas ? 'pt-0' : (isPro ? 'pt-[72px]' : 'pt-[88px]');
+  const isWorkspace = location.pathname === '/workspace' || location.pathname.startsWith('/workspace/');
+  const isResumeBuilder = location.pathname === '/resume-builder' || location.pathname.startsWith('/resume-builder/');
+  const isStudioPath = 
+    location.pathname.endsWith('/studio') || 
+    location.pathname.includes('/studio/') ||
+    ['/resume-builder', '/document-viewer', '/qr-generator'].some(
+      r => location.pathname === r || location.pathname.startsWith(r + '/')
+    );
+  const hideFooter = isWorkspace || isResumeBuilder || isCanvas || isStudioPath;
+  const mainPadding = isCanvas 
+    ? 'pt-0' 
+    : (isStudioPath 
+        ? 'pt-[56px]' 
+        : (isPro ? 'pt-[72px]' : 'pt-[88px]'));
 
 
 
@@ -190,61 +215,72 @@ export default function App() {
                   <Home />
                 </ProtectedRoute>
               } />
-              <Route path="/canvas" element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              } />
-              <Route path="/pdf-to-image" element={<PdfToImage />} />
-            <Route path="/image-to-pdf" element={<ImageToPdf />} />
-            <Route path="/merge-pdf" element={<MergePdf />} />
-            <Route path="/split-pdf" element={<SplitPdf />} />
-            <Route path="/compress-pdf" element={<CompressPdf />} />
-            <Route path="/rotate-pdf" element={<RotatePdf />} />
-            <Route path="/image-converter" element={<ImageConverter />} />
-            <Route path="/image-compressor" element={<ImageCompressor />} />
-            <Route path="/image-resizer" element={<ImageResizer />} />
-            <Route path="/docx-to-pdf" element={<DocxToPdf />} />
-            <Route path="/text-to-pdf" element={<TextToPdf />} />
-            <Route path="/ai-translator" element={<TranslatePdf />} />
-            <Route path="/ai-summarizer" element={<AiSummarizer />} />
-            <Route path="/qr-generator" element={<QrGenerator />} />
-            <Route path="/protect-pdf" element={<ProtectPdf />} />
-            <Route path="/unlock-pdf" element={<UnlockPdf />} />
-            <Route path="/remove-pages" element={<RemovePages />} />
-            <Route path="/extract-pages" element={<ExtractPages />} />
-            <Route path="/organize-pdf" element={<OrganizePdf />} />
-            <Route path="/add-watermark" element={<AddWatermark />} />
-            <Route path="/add-page-numbers" element={<AddPageNumbers />} />
-            <Route path="/sign-pdf" element={<SignPdf />} />
-            <Route path="/powerpoint-to-pdf" element={<PowerpointToPdf />} />
-            <Route path="/excel-to-pdf" element={<ExcelToPdf />} />
-            <Route path="/html-to-pdf" element={<HtmlToPdf />} />
-            <Route path="/pdf-to-word" element={<PdfToWord />} />
-            <Route path="/crop-pdf" element={<CropPdf />} />
-            <Route path="/pdf-forms" element={<PdfForms />} />
-            <Route path="/scan-to-pdf" element={<ScanToPdf />} />
-            <Route path="/compare-pdf" element={<ComparePdf />} />
-            <Route path="/edit-pdf" element={<EditPdf />} />
-            <Route path="/repair-pdf" element={<RepairPdf />} />
-            <Route path="/pdf-to-excel" element={<PdfToExcel />} />
-            <Route path="/pdf-to-powerpoint" element={<PdfToPowerpoint />} />
-            <Route path="/pdf-to-pdfa" element={<PdfToPdfa />} />
-            <Route path="/redact-pdf" element={<RedactPdf />} />
+              <Route path="/canvas" element={<Home />} />
+              <Route path="/dashboard" element={<Navigate to="/workspace" replace />} />
+              <Route path="/pdf-to-image/*" element={<PdfToImage />} />
+            <Route path="/image-to-pdf/*" element={<ImageToPdf />} />
+            <Route path="/merge-pdf/*" element={<MergePdf />} />
+            <Route path="/split-pdf/*" element={<SplitPdf />} />
+            <Route path="/split%20pdf/*" element={<SplitPdf />} />
+            <Route path="/split pdf/*" element={<SplitPdf />} />
+            <Route path="/compress-pdf/*" element={<CompressPdf />} />
+            <Route path="/rotate-pdf/*" element={<RotatePdf />} />
+            <Route path="/rotate%20pdf/*" element={<RotatePdf />} />
+            <Route path="/rotate pdf/*" element={<RotatePdf />} />
+            <Route path="/image-converter/*" element={<ImageConverter />} />
+            <Route path="/image-compressor/*" element={<ImageCompressor />} />
+            <Route path="/image-resizer/*" element={<ImageResizer />} />
+            <Route path="/docx-to-pdf/*" element={<DocxToPdf />} />
+            <Route path="/text-to-pdf/*" element={<TextToPdf />} />
+            <Route path="/ai-translator/*" element={<Navigate to="/" replace />} />
+            <Route path="/qr-generator/*" element={<QrGenerator />} />
+            <Route path="/qr_generator/*" element={<Navigate to="/qr-generator" replace />} />
+            <Route path="/qr_generator" element={<Navigate to="/qr-generator" replace />} />
+            <Route path="/protect-pdf/*" element={<ProtectPdf />} />
+            <Route path="/unlock-pdf/*" element={<UnlockPdf />} />
+            <Route path="/remove-pages/*" element={<RemovePages />} />
+            <Route path="/extract-pages/*" element={<ExtractPages />} />
+            <Route path="/organize-pdf/*" element={<OrganizePdf />} />
+            <Route path="/organize%20pdf/*" element={<OrganizePdf />} />
+            <Route path="/organize pdf/*" element={<OrganizePdf />} />
+            <Route path="/add-watermark/*" element={<AddWatermark />} />
+            <Route path="/add-page-numbers/*" element={<AddPageNumbers />} />
+            <Route path="/sign-pdf/*" element={<SignPdf />} />
+            <Route path="/powerpoint-to-pdf/*" element={<PowerpointToPdf />} />
+            <Route path="/excel-to-pdf/*" element={<ExcelToPdf />} />
+            <Route path="/html-to-pdf/*" element={<HtmlToPdf />} />
+            <Route path="/pdf-to-word/*" element={<PdfToWord />} />
+            <Route path="/crop-pdf/*" element={<CropPdf />} />
+            <Route path="/crop%20pdf/*" element={<CropPdf />} />
+            <Route path="/crop pdf/*" element={<CropPdf />} />
+            <Route path="/pdf-forms/*" element={<PdfForms />} />
+            <Route path="/scan-to-pdf/*" element={<ScanToPdf />} />
+            <Route path="/compare-pdf/*" element={<ComparePdf />} />
+            <Route path="/edit-pdf/*" element={<EditPdf />} />
+            <Route path="/repair-pdf/*" element={<RepairPdf />} />
+            <Route path="/pdf-to-excel/*" element={<PdfToExcel />} />
+            <Route path="/pdf-to-powerpoint/*" element={<PdfToPowerpoint />} />
+            <Route path="/pdf-to-pdfa/*" element={<PdfToPdfa />} />
+            <Route path="/redact-pdf/*" element={<RedactPdf />} />
 
-            <Route path="/ocr-pdf" element={<OcrPdf />} />
-            <Route path="/un-ocr-pdf" element={<UnOcrPdf />} />
-            <Route path="/bates-numbering" element={<BatesNumbering />} />
-            <Route path="/conversion-pipeline" element={<ConversionPipeline />} />
-            <Route path="/resume-builder" element={<ResumeBuilder />} />
-            <Route path="/url-to-pdf" element={<UrlToPdf />} />
-            <Route path="/unzip-file" element={<UnzipFile />} />
-            <Route path="/document-viewer" element={<DocumentViewer />} />
-            <Route path="/summarize-pdf" element={<Navigate to="/ai-summarizer" replace />} />
-            <Route path="/translate-pdf" element={<Navigate to="/ai-translator" replace />} />
+            <Route path="/ocr-pdf/*" element={<OcrPdf />} />
+            <Route path="/un-ocr-pdf/*" element={<UnOcrPdf />} />
+            <Route path="/bates-numbering/*" element={<BatesNumbering />} />
+            <Route path="/bates%20numbering/*" element={<Navigate to="/bates-numbering" replace />} />
+            <Route path="/bates numbering/*" element={<Navigate to="/bates-numbering" replace />} />
+            <Route path="/conversion-pipeline/*" element={<Navigate to="/canvas" replace />} />
+            <Route path="/resume-builder/*" element={<ResumeBuilder />} />
+            <Route path="/url-to-pdf/*" element={<UrlToPdf />} />
+            <Route path="/unzip-file/*" element={<UnzipFile />} />
+            <Route path="/document-viewer/*" element={<DocumentViewer />} />
+            <Route path="/summarize-pdf/*" element={<Navigate to="/" replace />} />
+            <Route path="/translate-pdf/*" element={<Navigate to="/" replace />} />
             <Route path="/coming-soon/:toolId" element={<ComingSoon />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/security" element={<Security />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             {TOOLS.filter(t => !t.implemented).map(t => (
               <Route key={t.id} path={t.path} element={<ComingSoon toolId={t.id} />} />
             ))}

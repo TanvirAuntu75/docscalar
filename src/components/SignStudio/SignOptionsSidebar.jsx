@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { DATE_FORMAT_PRESETS, formatDateByPattern, validateAndFormatDate, formatTypingDate } from '../../utils/dateFormats.js';
 import { STAMP_PRESETS, generateStampDataUrl } from '../../utils/stampGenerator.js';
 import SmartCropperPanel from '../SmartCropperPanel';
@@ -44,7 +44,25 @@ export default function SignOptionsSidebar({
   const [customCompany, setCustomCompany] = useState('DocScalar Organization');
   const [customTextContent] = useState('Approved & Verified');
   const [showFieldConfig, setShowFieldConfig] = useState(false);
+  const [showSecurityInfo, setShowSecurityInfo] = useState(false);
   const [showStampPicker, setShowStampPicker] = useState(false);
+  const infoButtonRef = useRef(null);
+  const infoPopoverRef = useRef(null);
+
+  useEffect(() => {
+    if (!showSecurityInfo) return;
+    const handleClickOutside = (e) => {
+      if (
+        infoPopoverRef.current &&
+        !infoPopoverRef.current.contains(e.target) &&
+        !infoButtonRef.current?.contains(e.target)
+      ) {
+        setShowSecurityInfo(false);
+      }
+    };
+    document.addEventListener('pointerdown', handleClickOutside);
+    return () => document.removeEventListener('pointerdown', handleClickOutside);
+  }, [showSecurityInfo]);
 
   const selectedField = fields.find((f) => f.id === selectedFieldId);
 
@@ -450,7 +468,7 @@ export default function SignOptionsSidebar({
                             });
                           }
                         }}
-                        className="sr-only"
+                        className="hidden"
                       />
                     </label>
                   )}
@@ -598,37 +616,247 @@ export default function SignOptionsSidebar({
         )}
 
         {/* ========================================================================= */}
-        {/* 1. SECURITY MODE SWITCHER                                                  */}
+        {/* 1. SIGNATURE SECURITY STANDARD (Unified Single Selector)                  */}
         {/* ========================================================================= */}
-        <div className="flex flex-col gap-1.5">
-          <div className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-            Signature Security Mode
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between relative">
+            <div className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+              Signature Security Standard
+            </div>
+            <div className="relative">
+              <button
+                ref={infoButtonRef}
+                type="button"
+                onClick={() => setShowSecurityInfo((prev) => !prev)}
+                className={`w-6 h-6 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                  showSecurityInfo
+                    ? 'bg-[var(--color-primary)] text-white shadow-xs'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--color-primary)] hover:bg-[var(--bg-tertiary)]'
+                }`}
+                title="What is Digital Signature (PRO)?"
+                aria-label="Signature security info"
+              >
+                <span className="material-symbols-outlined text-[17px]">info</span>
+              </button>
+
+              {/* Anchored Info Box Popover (Non-blocking popup, directly in front/below the icon) */}
+              {showSecurityInfo && (
+                <div
+                  ref={infoPopoverRef}
+                  className="absolute right-0 top-full mt-2 w-76 sm:w-80 p-3.5 bg-[var(--bg-primary)] border border-[var(--border-subtle)] rounded-2xl shadow-xl z-50 text-[var(--text-primary)] animate-[fadeIn_0.15s_ease-out]"
+                  role="tooltip"
+                >
+                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-[var(--border-subtle)]">
+                    <div className="flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-amber-500 text-[16px]">verified_user</span>
+                      <span className="text-xs font-bold">Digital Signature</span>
+                      <span className="text-[8.5px] bg-amber-400/20 text-amber-700 dark:text-amber-300 font-black px-1.5 py-0.2 rounded border border-amber-500/30">
+                        PRO
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowSecurityInfo(false)}
+                      className="w-5 h-5 rounded-full flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-colors cursor-pointer"
+                      title="Close info"
+                    >
+                      <span className="material-symbols-outlined text-[15px]">close</span>
+                    </button>
+                  </div>
+
+                  <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed mb-2.5">
+                    DocScalar Pro digital signatures provide <strong className="text-[var(--text-primary)]">cryptographic legal certification</strong> adhering to <strong className="text-[var(--text-primary)]">eIDAS (EU) & US ESIGN Act</strong> standards (matching iLovePDF Digital Signature Pro).
+                  </p>
+
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2">
+                      <span className="material-symbols-outlined text-[15px] text-amber-500 mt-0.5 shrink-0">lock</span>
+                      <div>
+                        <div className="text-[11px] font-bold text-[var(--text-primary)]">Cryptographic Tamper Seal</div>
+                        <div className="text-[10px] text-[var(--text-secondary)] leading-normal">
+                          Any subsequent edit or alteration immediately invalidates the signature seal.
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2">
+                      <span className="material-symbols-outlined text-[15px] text-amber-500 mt-0.5 shrink-0">verified</span>
+                      <div>
+                        <div className="text-[11px] font-bold text-[var(--text-primary)]">Adobe Reader Green Checkmark</div>
+                        <div className="text-[10px] text-[var(--text-secondary)] leading-normal">
+                          Displays certified verification status in Adobe Acrobat and standard PDF readers.
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2">
+                      <span className="material-symbols-outlined text-[15px] text-amber-500 mt-0.5 shrink-0">key</span>
+                      <div>
+                        <div className="text-[11px] font-bold text-[var(--text-primary)]">Custom Enterprise PKI (.pfx/.p12)</div>
+                        <div className="text-[10px] text-[var(--text-secondary)] leading-normal">
+                          Optionally attach your organization&apos;s digital certificate with private key.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-2.5 pt-2 border-t border-[var(--border-subtle)] flex items-center justify-between text-[10px]">
+                    <span className="text-[var(--text-secondary)]">Simple: Visual Stamp (SES)</span>
+                    <span className="font-bold text-amber-600 dark:text-amber-400">Digital: Cryptographic Seal (AES)</span>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="flex gap-1.5 bg-[var(--bg-secondary)] p-1 rounded-xl border border-[var(--border-subtle)] shadow-xs">
+
+          <div className="grid grid-cols-2 gap-1.5 bg-[var(--bg-secondary)] p-1 rounded-xl border border-[var(--border-subtle)] shadow-xs">
+            {/* Simple Signature (Free / SES) */}
             <button
+              type="button"
               onClick={() => setSecurityMode('simple')}
-              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+              className={`py-2 px-2.5 rounded-lg text-left transition-all cursor-pointer flex flex-col gap-1 border ${
                 securityMode === 'simple'
-                  ? 'btn-primary text-white shadow-xs'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'
+                  ? 'bg-[var(--bg-primary)] border-[var(--color-primary)] shadow-xs ring-1 ring-[var(--color-primary)]/20 text-[var(--text-primary)]'
+                  : 'bg-transparent border-transparent hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
-              <span className="material-symbols-outlined text-[15px]">draw</span>
-              Simple Electronic
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[15px] text-[var(--color-primary)]">draw</span>
+                  Simple Signature
+                </span>
+                <span className="text-[9px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold px-1.5 py-0.2 rounded border border-emerald-500/20">
+                  SES
+                </span>
+              </div>
+              <span className="text-[10px] text-[var(--text-secondary)] leading-tight">
+                Standard electronic · Free & instant
+              </span>
             </button>
 
+            {/* Digital Signature [PRO] (eIDAS / AES) */}
             <button
+              type="button"
               onClick={() => setSecurityMode('digital')}
-              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+              className={`py-2 px-2.5 rounded-lg text-left transition-all cursor-pointer flex flex-col gap-1 border ${
                 securityMode === 'digital'
-                  ? 'btn-primary text-white shadow-xs'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'
+                  ? 'bg-[var(--bg-primary)] border-[var(--color-primary)] shadow-xs ring-1 ring-[var(--color-primary)]/20 text-[var(--text-primary)]'
+                  : 'bg-transparent border-transparent hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
-              <span className="material-symbols-outlined text-[15px]">verified</span>
-              Digital X.509
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[15px] text-amber-500">verified_user</span>
+                  Digital Signature
+                </span>
+                <span className="text-[9px] bg-amber-400/20 text-amber-700 dark:text-amber-300 font-black px-1.5 py-0.2 rounded border border-amber-500/30">
+                  PRO
+                </span>
+              </div>
+              <span className="text-[10px] text-[var(--text-secondary)] leading-tight">
+                Cryptographic seal · eIDAS / AES
+              </span>
             </button>
           </div>
+
+          {/* Digital Signature Detailed Certificate Options (Directly in Section 1 when Digital is active) */}
+          {securityMode === 'digital' && (
+            <div className="bg-[var(--bg-secondary)]/70 rounded-xl p-3 border border-[var(--border-subtle)] flex flex-col gap-2.5 animate-[fadeIn_0.15s_ease-out] shadow-2xs">
+              {/* Section Header */}
+              <div className="flex items-center justify-between pb-1 border-b border-[var(--border-subtle)]/60">
+                <div className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[15px] text-amber-500">verified_user</span>
+                  <span className="text-[11px] font-bold text-[var(--text-primary)]">Digital Certificate Settings</span>
+                </div>
+                <span className="text-[9.5px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-500/20">
+                  <span className="material-symbols-outlined text-[11px]">lock</span>
+                  Tamper-Sealed
+                </span>
+              </div>
+
+              {/* Signer Full Name */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                  Signer Name
+                </label>
+                <input
+                  type="text"
+                  value={digitalCertSettings.commonName || ''}
+                  onChange={(e) => setDigitalCertSettings({ ...digitalCertSettings, commonName: e.target.value })}
+                  placeholder="DocScalar Verified Signer"
+                  className="w-full bg-[var(--bg-primary)] border border-[var(--border-subtle)] focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/20 rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] outline-none transition-all placeholder:text-[var(--text-secondary)]/50"
+                />
+              </div>
+
+              {/* Signer Email */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                  Signer Email
+                </label>
+                <input
+                  type="email"
+                  value={digitalCertSettings.email || ''}
+                  onChange={(e) => setDigitalCertSettings({ ...digitalCertSettings, email: e.target.value })}
+                  placeholder="signer@company.com"
+                  className="w-full bg-[var(--bg-primary)] border border-[var(--border-subtle)] focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/20 rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] outline-none transition-all placeholder:text-[var(--text-secondary)]/50"
+                />
+              </div>
+
+              {/* Custom Certificate (Optional) */}
+              <div className="flex flex-col gap-1.5 pt-1.5 border-t border-[var(--border-subtle)]/60">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <label className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                      Custom Certificate
+                    </label>
+                    <span className="text-[8.5px] bg-blue-500/15 text-blue-600 dark:text-blue-400 font-bold px-1.5 py-0.2 rounded">
+                      PRO
+                    </span>
+                  </div>
+                  <span className="text-[9.5px] text-[var(--text-secondary)] opacity-75">Optional</span>
+                </div>
+
+                {digitalCertSettings.customCertificateFile ? (
+                  <div className="p-2 bg-emerald-500/10 border border-emerald-500/25 rounded-lg text-xs text-emerald-800 dark:text-emerald-300 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="material-symbols-outlined text-[15px] text-emerald-600 dark:text-emerald-400 shrink-0">key</span>
+                      <span className="truncate font-mono text-[11px]">{digitalCertSettings.customCertificateFile.name}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setDigitalCertSettings({ ...digitalCertSettings, customCertificateFile: null })}
+                      className="text-[11px] text-red-500 hover:text-red-700 hover:underline cursor-pointer shrink-0 font-medium"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex items-center justify-center gap-2 py-2 px-3 bg-[var(--bg-primary)] hover:bg-[var(--bg-tertiary)] border border-dashed border-[var(--border-subtle)] hover:border-[var(--color-primary)] rounded-lg text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer transition-all">
+                    <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">upload_file</span>
+                    <span>Upload .pfx or .p12 certificate</span>
+                    <input
+                      type="file"
+                      accept=".pfx,.p12"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) setDigitalCertSettings({ ...digitalCertSettings, customCertificateFile: file });
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+
+                {/* Passphrase input */}
+                <input
+                  type="password"
+                  value={digitalCertSettings.passphrase || ''}
+                  onChange={(e) => setDigitalCertSettings({ ...digitalCertSettings, passphrase: e.target.value })}
+                  placeholder="Certificate passphrase (optional)"
+                  className="w-full bg-[var(--bg-primary)] border border-[var(--border-subtle)] focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/20 rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-primary)] outline-none transition-all placeholder:text-[var(--text-secondary)]/50 mt-1"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ========================================================================= */}
@@ -944,7 +1172,7 @@ export default function SignOptionsSidebar({
                     type="file"
                     accept="image/png,image/jpeg,image/svg+xml"
                     onChange={handleCustomStampUpload}
-                    className="sr-only"
+                    className="hidden"
                   />
                 </label>
               </div>
@@ -984,127 +1212,12 @@ export default function SignOptionsSidebar({
         )}
 
         {/* ========================================================================= */}
-        {/* 4. SECURITY & COMPLIANCE                                                  */}
+        {/* 4. DOCUMENT FINALIZATION & COMPLIANCE                                     */}
         {/* ========================================================================= */}
         <div className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl p-3 flex flex-col gap-3 text-xs shadow-xs">
           <div className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-            Signature Security Standard
+            Document Finalization & Compliance
           </div>
-
-          {/* Security Mode Selector Tabs */}
-          <div className="grid grid-cols-2 gap-1.5 p-1 bg-[var(--bg-primary)] rounded-xl border border-[var(--border-subtle)]">
-            <button
-              type="button"
-              onClick={() => setSecurityMode('simple')}
-              className={`py-1.5 px-2 rounded-lg text-xs font-bold flex flex-col items-center gap-0.5 transition-all cursor-pointer ${
-                securityMode === 'simple'
-                  ? 'bg-[var(--color-primary)] text-white shadow-xs'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
-            >
-              <span>Standard (SES)</span>
-              <span className="text-[9px] font-normal opacity-80">100% Local Privacy</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setSecurityMode('digital')}
-              className={`py-1.5 px-2 rounded-lg text-xs font-bold flex flex-col items-center gap-0.5 transition-all cursor-pointer ${
-                securityMode === 'digital'
-                  ? 'bg-[var(--color-primary)] text-white shadow-xs'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
-            >
-              <div className="flex items-center gap-1">
-                <span>Digital Seal</span>
-                <span className="text-[8px] bg-amber-400 text-amber-950 font-black px-1 rounded">X.509</span>
-              </div>
-              <span className="text-[9px] font-normal opacity-80">pyHanko Cryptographic</span>
-            </button>
-          </div>
-
-          {/* Digital Signature Detailed Certificate Options */}
-          {securityMode === 'digital' && (
-            <div className="bg-[var(--bg-primary)] p-2.5 rounded-xl border border-[var(--border-subtle)] flex flex-col gap-2 animate-[fadeIn_0.15s_ease-out]">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase">X.509 Certificate Settings</span>
-                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
-                  <span className="material-symbols-outlined text-[13px]">verified_user</span>
-                  Tamper-Sealed
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-semibold text-[var(--text-secondary)]">Signer Common Name (CN)</label>
-                <input
-                  type="text"
-                  value={digitalCertSettings.commonName || ''}
-                  onChange={(e) => setDigitalCertSettings({ ...digitalCertSettings, commonName: e.target.value })}
-                  placeholder="DocScalar Verified Signer"
-                  className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg px-2 py-1 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--color-primary)]"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-semibold text-[var(--text-secondary)]">Signer Email</label>
-                <input
-                  type="email"
-                  value={digitalCertSettings.email || ''}
-                  onChange={(e) => setDigitalCertSettings({ ...digitalCertSettings, email: e.target.value })}
-                  placeholder="signer@company.com"
-                  className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg px-2 py-1 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--color-primary)]"
-                />
-              </div>
-
-              {/* Custom PKCS#12 (.pfx / .p12) Certificate Upload (Pro Feature) */}
-              <div className="flex flex-col gap-1 pt-1 border-t border-[var(--border-subtle)]">
-                <div className="flex items-center justify-between">
-                  <label className="text-[10px] font-semibold text-[var(--text-secondary)] flex items-center gap-1">
-                    <span>Enterprise PKCS#12 (.pfx)</span>
-                    <span className="text-[8.5px] bg-blue-500/15 text-blue-600 dark:text-blue-400 font-bold px-1.5 py-0.2 rounded">PRO</span>
-                  </label>
-                  {digitalCertSettings.customCertificateFile && (
-                    <button
-                      type="button"
-                      onClick={() => setDigitalCertSettings({ ...digitalCertSettings, customCertificateFile: null })}
-                      className="text-[10px] text-red-500 hover:underline cursor-pointer"
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-
-                {digitalCertSettings.customCertificateFile ? (
-                  <div className="p-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-[10px] text-emerald-800 dark:text-emerald-300 flex items-center justify-between">
-                    <span className="truncate max-w-[180px] font-mono">{digitalCertSettings.customCertificateFile.name}</span>
-                    <span className="text-[9px] font-bold">Attached</span>
-                  </div>
-                ) : (
-                  <label className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] border border-dashed border-[var(--border-subtle)] rounded-lg text-[11px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer transition-colors">
-                    <span className="material-symbols-outlined text-[14px]">file_upload</span>
-                    <span>Upload .pfx or .p12 certificate</span>
-                    <input
-                      type="file"
-                      accept=".pfx,.p12"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) setDigitalCertSettings({ ...digitalCertSettings, customCertificateFile: file });
-                      }}
-                      className="sr-only"
-                    />
-                  </label>
-                )}
-
-                <input
-                  type="password"
-                  value={digitalCertSettings.passphrase || ''}
-                  onChange={(e) => setDigitalCertSettings({ ...digitalCertSettings, passphrase: e.target.value })}
-                  placeholder="Certificate passphrase (optional)"
-                  className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg px-2 py-1 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--color-primary)] mt-1"
-                />
-              </div>
-            </div>
-          )}
 
           {/* Flatten Document & Audit Trail Toggles */}
           <label className="flex items-start justify-between gap-2 cursor-pointer group">
@@ -1174,12 +1287,14 @@ export default function SignOptionsSidebar({
             {processing ? (
               <>
                 <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
-                <span>Signing Document...</span>
+                <span>{securityMode === 'digital' ? 'Sealing & Certifying...' : 'Signing Document...'}</span>
               </>
             ) : (
               <>
-                <span className="material-symbols-outlined text-[20px]">draw</span>
-                <span>Sign PDF</span>
+                <span className="material-symbols-outlined text-[20px]">
+                  {securityMode === 'digital' ? 'verified_user' : 'draw'}
+                </span>
+                <span>{securityMode === 'digital' ? 'Sign & Certify PDF' : 'Sign PDF'}</span>
                 {fields.length > 0 && (
                   <span className="px-2 py-0.5 text-[11px] rounded-full bg-white/20 text-white font-semibold ml-1">
                     {fields.length} {fields.length === 1 ? 'field' : 'fields'}

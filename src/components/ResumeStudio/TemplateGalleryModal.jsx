@@ -4,7 +4,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useResumeContext } from '../../context/ResumeContext.jsx';
-import { TEMPLATE_MAP } from '../../engines/utility/templateMetadata.js';
+import { TEMPLATE_MAP } from '../../engines/utility/templateRegistry.js';
 import TemplateCard from './shared/TemplateCard.jsx';
 
 export default function TemplateGalleryModal({

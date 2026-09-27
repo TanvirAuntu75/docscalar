@@ -26,7 +26,7 @@ import {
 } from '../engines/utility/resumeIntelligenceEngine.js';
 import { injectPhotoCropStyles, injectPrintStyles } from '../engines/utility/printUtils.js';
 import { exportResumeToDocx } from '../engines/utility/docxExporter.js';
-import { apiFetch, uploadFileSecure } from '../utils/api.js';
+import { apiFetch, uploadFileSecure, BACKEND_URL } from '../utils/api.js';
 import { saveAs } from 'file-saver';
 import * as pdfjsLib from 'pdfjs-dist';
 
@@ -36,7 +36,6 @@ if (typeof window !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
   pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 }
 
-const BACKEND_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_BACKEND_URL) || 'http://localhost:8000';
 const DRAFT_STORAGE_KEY = 'docscalar_resume_draft_v1';
 
 import { sanitizeData, sanitizeDeep } from '../engines/utility/resumeParserEngine.js';
@@ -695,7 +694,7 @@ export function ResumeProvider({ children }) {
 
       dispatch({ type: ACTION_TYPES.SET_PROGRESS, payload: 45 });
 
-      const response = await apiFetch('/api/convert/html-to-pdf', {
+      const response = await apiFetch(`${BACKEND_URL}/api/convert/html-to-pdf`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

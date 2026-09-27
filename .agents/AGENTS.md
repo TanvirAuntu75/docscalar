@@ -3,6 +3,12 @@
 ## Quick Commands
 - **Run Command**: Whenever the user says "run", "start", "start project", or similar, immediately run the `run_project.bat` script located in the workspace root. Do not ask for confirmation or write long explanations; run the script directly.
 
+## DocScalar OCR Accuracy Invariant (The 90% / 99% Rule)
+- **Mandatory Quality Invariant**: The user has established an unbreakable standard for DocScalar OCR performance:
+  1. **Raw Model Accuracy**: $\ge 90\%$ Exact Match Sequence Accuracy generally across real-world document evaluations.
+  2. **Enhanced Pipeline (with Language Model / Lexicon / Post-Processing)**: $> 99\%$ Exact Match Accuracy.
+- **Persistent Non-Negotiable Standard**: Never declare an OCR model finished, satisfactory, or deployment-ready if it scores below 90% exact match (e.g. ~43%). If a model is below this benchmark, it is an intermediate training checkpoint. The agent must formulate and execute strategies (real-world dataset scaling, language model beam search decoding, architecture refinement) to bridge the gap to 90%+ raw and 99%+ post-processed.
+
 ## Background Task Execution (Zero-Polling Protocol)
 - **Rest Until Finished**: Whenever a background task, build process, or long-running command is launched, DO NOT poll or repeatedly check its status using `manage_task(Action='status')` or rapid timer loops. Once the task is initiated, output a brief acknowledgment if needed, immediately stop calling tools, and REST until the system automatically notifies you upon task completion.
 

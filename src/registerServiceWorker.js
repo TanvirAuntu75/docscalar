@@ -35,7 +35,7 @@ export function register() {
               if (navigator.serviceWorker.controller) {
                 console.log('[Service Worker] New content available — please refresh.');
               } else {
-                console.log('[Service Worker] Content cached for Client Side use.');
+                console.log('[Service Worker] Content cached for offline use.');
               }
             }
           };

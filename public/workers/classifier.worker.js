@@ -21,13 +21,10 @@ let classifierPipeline = null;
 const LABEL_TO_TOOL_ID = {
   'add-page-numbers': 'add-page-numbers',
   'add-watermark': 'add-watermark',
-  'ai-summarizer': 'ai-summarizer',
-  'ai-translator': 'ai-translator',
   'bates-numbering': 'bates-numbering',
   'compare-pdf': 'compare-pdf',
   'compress-pdf': 'compress-pdf',
   'condition-router': 'condition-router',
-  'conversion-pipeline': 'conversion-pipeline',
   'crop-pdf': 'crop-pdf',
   'document-viewer': 'document-viewer',
   'docx-to-pdf': 'docx-to-pdf',

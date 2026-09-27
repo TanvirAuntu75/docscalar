@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import ToolPageLayout from '../../components/ToolPageLayout';
 import { Link } from 'react-router-dom';
 import * as pdfjsLib from 'pdfjs-dist';
+import { loadPdfDocument } from '../../utils/pdfConfig';
 import FileDropzone from '../../components/FileDropzone';
 import SEOHead from '../../components/SEOHead';
 import { addPageNumbers } from '../../engines/pdf/addPageNumbers';
@@ -222,7 +223,7 @@ export default function AddPageNumbers() {
       setCanvasLoading(true);
       try {
         const arrayBuffer = await currentFile.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const pdf = await loadPdfDocument(arrayBuffer).promise;
         if (isCancelled) {
           pdf.destroy();
           return;
@@ -464,7 +465,7 @@ export default function AddPageNumbers() {
     try {
       const currentFile = files[activeFileIndex] || files[0];
       const arrayBuffer = await currentFile.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const pdf = await loadPdfDocument(arrayBuffer).promise;
       const numPages = pdf.numPages;
 
       const results = [];
@@ -602,7 +603,7 @@ export default function AddPageNumbers() {
 
           // Read page count of this file to advance counter
           const arrayBuffer = await f.arrayBuffer();
-          const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const pdfDoc = await loadPdfDocument(arrayBuffer).promise;
           runningStartNumber += pdfDoc.numPages;
 
           const baseName = f.name.replace(/\.[^.]+$/, '');
@@ -721,12 +722,13 @@ export default function AddPageNumbers() {
       title="Add PDF Page Numbers"
       description="Draw custom sequence numbers, headers, and footers across your PDF document."
       files={files}
+      setFiles={setFiles}
       hasResult={Boolean(result)}
       suppressSwitcher={true}
     >
       <SEOHead
-        title="Add Page Numbers to PDF Online Free (100% Local Studio) | DocScalar"
-        description="Insert customized headers, footers, and page numbers into your PDF files securely in your browser. Complete privacy without server uploads."
+        title="Add Page Numbers to PDF Online Free — Number PDF Pages | DocScalar"
+        description="Insert customized headers, footers, and page numbers into your PDF files securely. Complete privacy with fast processing."
       />
 
       {!result ? (
