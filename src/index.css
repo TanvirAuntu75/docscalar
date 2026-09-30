@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital,wght@0,400;1,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital,wght@0,400;1,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -90,8 +90,8 @@
 
   /* Premium Typography */
   --text-primary: #0f172a;          /* slate-900 */
-  --text-secondary: #475569;        /* slate-600 */
-  --text-tertiary: #64748b;         /* slate-500 */
+  --text-secondary: #334155;        /* slate-700 */
+  --text-tertiary: #475569;         /* slate-600 */
   --text-inverse: #ffffff;
 
   /* Professional/Clean Borders */
@@ -132,9 +132,9 @@
   --radius-full: 9999px;
 
   /* Fonts */
-  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-family-headings: 'Space Grotesk', system-ui, sans-serif;
-  --font-family-display: 'Space Grotesk', sans-serif;
+  --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-headings: var(--font-family);
+  --font-family-display: var(--font-family);
 
   /* Transitions */
   --transition-fast: 0.12s cubic-bezier(0.4, 0, 0.2, 1);
@@ -179,9 +179,9 @@
   --bg-input: #111827;
 
   /* Premium High-Contrast Typography */
-  --text-primary: #f3f4f6;          /* Gray 100 */
-  --text-secondary: #9ca3af;        /* Gray 400 */
-  --text-tertiary: #6b7280;         /* Gray 500 */
+  --text-primary: #f8fafc;          /* slate-50 */
+  --text-secondary: #cbd5e1;        /* slate-300 */
+  --text-tertiary: #94a3b8;         /* slate-400 */
   --text-inverse: #0b0f19;
 
   /* Organic/Tactile Borders */
@@ -205,8 +205,9 @@
                    radial-gradient(at 90% 80%, rgba(6, 182, 212, 0.02) 0%, transparent 60%);
 
   /* Fonts */
-  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-family-headings: 'Space Grotesk', system-ui, sans-serif;
+  --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-headings: var(--font-family);
+  --font-family-display: var(--font-family);
 
   --max-width: 1240px;
   --header-height: 76px;
@@ -225,8 +226,8 @@
 }
 
 html {
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -236,9 +237,10 @@ body {
   color: var(--text-primary);
   background: var(--bg-primary);
   min-height: 100vh;
+  min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: clip;
+  overflow-x: hidden;
   position: relative;
 }
 
@@ -2585,30 +2587,30 @@ body:has(.options-panel):has(.dropzone, .workspace-canvas) footer {
    ========================================================================== */
 
 .stitch-dot-grid {
-  position: relative;
   background-image: 
-    radial-gradient(rgba(232, 103, 43, 0.22) 1.2px, transparent 1.2px);
-  background-size: 20px 20px;
-  background-color: transparent !important;
+    radial-gradient(rgba(249, 115, 22, 0.15) 1.1px, transparent 1.1px);
+  background-size: 22px 22px;
+  background-color: transparent;
 }
 
 .dark .stitch-dot-grid {
   background-image: 
-    radial-gradient(rgba(232, 103, 43, 0.16) 1.2px, transparent 1.2px);
-  background-size: 20px 20px;
+    radial-gradient(rgba(249, 115, 22, 0.14) 1.1px, transparent 1.1px);
+  background-size: 22px 22px;
 }
 
 .stitch-dot-grid-glow {
-  background-image: radial-gradient(rgba(232, 103, 43, 0.8) 1.2px, transparent 1.2px);
-  background-size: 20px 20px;
+  background-image: radial-gradient(rgba(249, 115, 22, 0.85) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
   opacity: 0;
-  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
+  pointer-events: none;
 }
 
 .dark .stitch-dot-grid-glow {
-  background-image: radial-gradient(rgba(232, 103, 43, 0.85) 1.2px, transparent 1.2px);
+  background-image: radial-gradient(rgba(249, 115, 22, 0.9) 1.5px, transparent 1.5px);
 }
 
 .stitch-node {
@@ -3204,6 +3206,71 @@ table {
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   Mobile Responsive Utilities & Insets (DocScalar Mobile Foundation V1)
+   ═══════════════════════════════════════════════════════════════════════════ */
 
+/* 100dvh Dynamic Viewport Height Utilities */
+.min-h-100dvh {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
 
+.h-100dvh {
+  height: 100vh;
+  height: 100dvh;
+}
 
+/* iOS Safe-Area Padding & Margin Helpers */
+.pb-safe {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+.pt-safe {
+  padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
+}
+
+.mb-safe {
+  margin-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+/* Mobile Bottom Sheet Drawer Pattern */
+.mobile-bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-primary, var(--bg-surface, #ffffff));
+  border-top: 1px solid var(--border-subtle, var(--border-medium));
+  border-top-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
+  box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.28);
+  z-index: 50;
+  max-height: 85dvh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-bottom-sheet-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 9999px;
+  background-color: var(--border-medium, #94a3b8);
+  opacity: 0.8;
+  margin: 10px auto 4px auto;
+  flex-shrink: 0;
+}
+
+/* Mobile Pinned Action Bar for Studios */
+.mobile-action-bar {
+  flex-shrink: 0;
+  width: 100%;
+  z-index: 40;
+  background: var(--bg-primary, #ffffff);
+  border-top: 1px solid var(--border-subtle);
+  padding: 0.625rem 0.875rem;
+  padding-bottom: max(0.625rem, env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+}
