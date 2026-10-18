@@ -1,7 +1,7 @@
 # DocScalar ⚡
 ### The 100% Client-Side Document Manipulation & Visual DAG Studio
 
-[![CI/CD Pipeline](https://github.com/TanvirAuntu75/docforge/actions/workflows/deploy.yml/badge.svg)](https://github.com/TanvirAuntu75/docforge/actions/workflows/deploy.yml)
+[![CI/CD Pipeline](https://github.com/TanvirAuntu75/docscalar/actions/workflows/deploy.yml/badge.svg)](https://github.com/TanvirAuntu75/docscalar/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![React 18](https://img.shields.io/badge/React-18.3.1-61dafb.svg)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.4-646cff.svg)](https://vitejs.dev/)
@@ -32,7 +32,7 @@
 | **Document Conversion** | PDF to Word (DOCX), PDF to Excel (XLSX), PDF to PowerPoint (PPTX), PDF to PDF/A, DOCX to PDF, Excel to PDF, PowerPoint to PDF, HTML to PDF, URL to PDF, Text to PDF |
 | **Image & Media** | PDF to Image (PNG/JPG), Image to PDF, Image Format Converter (WebP/PNG/JPG), Image Compressor, Image Resizer |
 | **Security & Forensics** | Protect PDF (AES-256), Unlock PDF (4-Layer Auto-Bypass), Redact PDF (PII & Coordinates), Digital X.509 Signatures, Forensic Metadata Stripping |
-| **Intelligence & Utilities** | Document Viewer, TextRank AI Summarizer, QR Code Generator, Compare PDF (Visual Heatmap), Repair Broken PDF, Scan to PDF, Unzip/Expand File |
+| **Inspection & Utilities** | Document Viewer, Smart Cropper (Margin Trimming), QR Code Generator, Compare PDF (Visual Heatmap), Repair Broken PDF, Scan to PDF, Unzip/Expand File |
 
 ---
 
